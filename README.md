@@ -6,27 +6,18 @@ This is the repository for the back-end and web front-end for the member registr
 
 See the Project Structure section from the yeoman generator page for more on how the project is structured: https://www.npmjs.org/package/generator-angular-fullstack: https://www.npmjs.com/package/generator-angular-fullstack#project-structure
 
-## Building ##
+# Global dependencies #
+There are some global dependencies that need to be installed to build the project:
+* MongoDB 3.0.x
+* Ruby
+* Compass
+* NPM
+* Node v.0.10 (higher versions and iojs should also work)
+* Bower (install through npm)
+* Grunt (install through npm)
 
-Developers can build the repository using npm, bower, grunt, ruby and MongoDB. See Installing dependencies for more.
+Below are some guides to install them on Mac OS X through either the package manager brew or gems. Note that Bower, Grunt and Node should be installed through NPM.
 
-Other project dependencies are installed or updated through NPM and Bower as shown below:
-
-```bash
-# On first install
-npm install
-bower install
-
-# When updating
-npm update
-bower update
-
-#removing unused packages
-npm prune
-bower prune
-```
-
-# Installing dependencies
 ## Installing MongoDB ##
 ### Mac OS X ###
 ```bash
@@ -62,7 +53,8 @@ npm install -g bower
 npm install -g grunt-cli
 ```
 
-# Building and Running #
+# Building #
+After you have cloned the repository and made sure that you have installed all the dependencies 
 ## Database ##
 When running database on Unix systems the following command can be used to start the database in a console window:
 ```bash
@@ -72,6 +64,22 @@ Note that you can also run it with a config file option with more configurations
 part here is to be consistent with which storage engine is used. As once the database files have been started they can 
 only use the storage engine that it was started with. Migration can be done by dumping the database and restoring it 
 with another storage engine or simply deleting the database folder and using another storage engine.
+
+## Installing local third-party libraries ##
+
+```bash
+# On first install
+npm install
+bower install
+
+# When updating
+npm update
+bower update
+
+#removing unused packages
+npm prune
+bower prune
+```
 
 ## Environment ##
 When launching it in development ensure the environment is set to development with the following:
@@ -86,7 +94,7 @@ To launch it in production enter the following:
 export NODE_ENV=production
 ```
 
-## Grunt ##
+## Running with Grunt ##
 Launch the express server in development mode by running (this command assumes that the node environment variable is already set to development)
 
 ```bash
