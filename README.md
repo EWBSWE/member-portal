@@ -6,7 +6,7 @@ This is the repository for the back-end and web front-end for the member registr
 
 See the Project Structure section from the yeoman generator page for more on how the project is structured: https://www.npmjs.org/package/generator-angular-fullstack: https://www.npmjs.com/package/generator-angular-fullstack#project-structure
 
-## <a name="building"></a> Building
+## Building ##
 
 Developers can build the repository using npm, bower, grunt, ruby and MongoDB. See Installing dependencies for more.
 
