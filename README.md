@@ -6,7 +6,17 @@ This is the repository for the back-end and web front-end for the member registr
 
 See the Project Structure section from the yeoman generator page for more on how the project is structured: https://www.npmjs.org/package/generator-angular-fullstack: https://www.npmjs.com/package/generator-angular-fullstack#project-structure
 
-# Global dependencies #
+# Quickstart guide #
+To get the project up and running on your local machine follow the following steps:
+
+1. Install Global dependencies
+2. Clone repository
+3. Start Database
+4. Install Third-party Libraries
+5. Configure Node Environment
+6. Build and/or run with Grunt
+
+# 1. Global dependencies #
 There are some global dependencies that need to be installed to build the project:
 * MongoDB 3.0.x
 * Ruby
@@ -53,9 +63,10 @@ npm install -g bower
 npm install -g grunt-cli
 ```
 
-# Building #
-After you have cloned the repository and made sure that you have installed all the dependencies 
-## Database ##
+# 2. Clone repository #
+Clone the repository using git commands or download a GUI like SourceTree.
+  
+# 3. Start Database #
 When running database on Unix systems the following command can be used to start the database in a console window:
 ```bash
 mongod  --storageEngine wiredTiger
@@ -65,7 +76,7 @@ part here is to be consistent with which storage engine is used. As once the dat
 only use the storage engine that it was started with. Migration can be done by dumping the database and restoring it 
 with another storage engine or simply deleting the database folder and using another storage engine.
 
-## Installing local third-party libraries ##
+# 4. Install Third-party Libraries #
 
 ```bash
 # On first install
@@ -76,12 +87,12 @@ bower install
 npm update
 bower update
 
-#removing unused packages
+# When removing unused packages
 npm prune
 bower prune
 ```
 
-## Environment ##
+# 5. Configure Node Environment #
 When launching it in development ensure the environment is set to development with the following:
 
 ```bash
@@ -94,7 +105,7 @@ To launch it in production enter the following:
 export NODE_ENV=production
 ```
 
-## Running with Grunt ##
+# 6. Build and/or run with Grunt #
 Launch the express server in development mode by running (this command assumes that the node environment variable is already set to development)
 
 ```bash
@@ -121,6 +132,6 @@ Generate a dist-folder that can easily be deployed by running (this command assu
 grunt
 ```
 
-# Testing
+# 7. Testing #
 `grunt test` will run both server and client tests. You can also run
 `grunt test:server` and `grunt test:client`.
