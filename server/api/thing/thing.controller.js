@@ -16,7 +16,7 @@ var Thing = require('./thing.model');
 exports.index = function(req, res) {
   Thing.find(function (err, things) {
     if(err) { return handleError(res, err); }
-    return res.json(200, things);
+    return res.status(200).json(things);
   });
 };
 
@@ -33,7 +33,7 @@ exports.show = function(req, res) {
 exports.create = function(req, res) {
   Thing.create(req.body, function(err, thing) {
     if(err) { return handleError(res, err); }
-    return res.json(201, thing);
+    return res.status(201).json(thing);
   });
 };
 
@@ -46,7 +46,7 @@ exports.update = function(req, res) {
     var updated = _.merge(thing, req.body);
     updated.save(function (err) {
       if (err) { return handleError(res, err); }
-      return res.json(200, thing);
+      return res.status(200).json(thing);
     });
   });
 };
