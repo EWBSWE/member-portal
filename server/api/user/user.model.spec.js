@@ -4,15 +4,18 @@ var should = require('should');
 var app = require('../../app');
 var User = require('./user.model');
 
-var user = new User({
-  provider: 'local',
-  name: 'Fake User',
-  email: 'test@test.com',
-  password: 'password'
-});
+var user = new User({});
+var initUser = function() {
+  user.provider = 'local',
+  user.firstName = 'Fake',
+  user.lastName = 'User',
+  user.email = 'test@test.com',
+  user.password = 'password'
+}
 
 describe('User Model', function() {
   before(function(done) {
+    initUser();
     // Clear users before testing
     User.remove().exec().then(function() {
       done();
@@ -20,6 +23,7 @@ describe('User Model', function() {
   });
 
   afterEach(function(done) {
+    initUser();
     User.remove().exec().then(function() {
       done();
     });
@@ -44,6 +48,22 @@ describe('User Model', function() {
 
   it('should fail when saving without an email', function(done) {
     user.email = '';
+    user.save(function(err) {
+      should.exist(err);
+      done();
+    });
+  });
+
+  it('should fail when saving without a firstName', function(done) {
+    user.firstName = '';
+    user.save(function(err) {
+      should.exist(err);
+      done();
+    });
+  });
+
+  it('should fail when saving without a last name', function(done) {
+    user.lastName = '';
     user.save(function(err) {
       should.exist(err);
       done();

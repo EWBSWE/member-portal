@@ -5,7 +5,8 @@ var Schema = mongoose.Schema;
 var crypto = require('crypto');
 
 var UserSchema = new Schema({
-  name: String,
+  firstName: String,
+  lastName: String,
   email: { type: String, lowercase: true },
   role: {
     type: String,
@@ -35,7 +36,8 @@ UserSchema
   .virtual('profile')
   .get(function() {
     return {
-      'name': this.name,
+      'firstName': this.firstName,
+      'lastName': this.lastName,
       'role': this.role
     };
   });
@@ -60,6 +62,20 @@ UserSchema
   .validate(function(email) {
     return email.length;
   }, 'Email cannot be blank');
+
+// Validate empty first name
+UserSchema
+  .path('firstName')
+  .validate(function(firstName) {
+    return firstName.length;
+  }, 'First name cannot be blank');
+
+// Validate empty last name
+UserSchema
+  .path('lastName')
+  .validate(function(lastName) {
+    return lastName.length;
+  }, 'Last name cannot be blank');
 
 // Validate empty password
 UserSchema
