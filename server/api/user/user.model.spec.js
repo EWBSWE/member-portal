@@ -6,12 +6,12 @@ var User = require('./user.model');
 
 var user = new User({});
 var initUser = function() {
-  user.provider = 'local',
-  user.firstName = 'Fake',
-  user.lastName = 'User',
-  user.email = 'test@test.com',
-  user.password = 'password'
-}
+  user.provider = 'local';
+  user.firstName = 'Fake';
+  user.lastName = 'User';
+  user.email = 'test@test.com';
+  user.password = 'password';
+};
 
 describe('User Model', function() {
   before(function(done) {
