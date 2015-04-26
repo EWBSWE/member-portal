@@ -14,7 +14,13 @@ var UserSchema = new Schema({
   },
   hashedPassword: String,
   provider: String,
-  salt: String
+  salt: String,
+  memberType: {type: String},
+  address: {type: String},
+  zipCode: {type: Number},
+  city: {type: String},
+  subOrganisation: {type: String},
+  newsLetter: {type: Boolean}
 });
 
 /**
