@@ -5,6 +5,9 @@ angular.module('ewbMemberApp')
     $scope.menu = [{
       'title': 'Home',
       'link': '/'
+    }, {
+      'title': 'Billing',
+      'link': '/billing'
     }];
 
     $scope.isCollapsed = true;
