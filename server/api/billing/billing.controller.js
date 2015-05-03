@@ -14,20 +14,21 @@ exports.index = function(req, res) {
 // Get a users single billing
 exports.getMyBilling = function(req, res) {
   var userId = req.user._id;
-  return getBilling(userId, res);
+  return getBilling(userId, req, res);
 };
 
 // Get a single billing (given Admin Access Control)
 exports.getUsersBilling = function(req, res) {
   var userId = req.params.user;
-  return getBilling(userId, res);
+  return getBilling(userId, req, res);
 };
 
-function getBilling(userId, res){
-  Billing.findById(req.params.id, function (err, billing) {
+function getBilling(userId, req,  res){
+  Billing.findOne({_id: req.params.id, user: userId})
+    .lean()
+    .exec(function (err, billing) {
     if(err) { return handleError(res, err); }
     if(!billing) { return res.sendStatus(404); }
-    if(billing.user !== userId){ return res.sendStatus(403);}
     return res.json(billing);
   });
 }
@@ -76,10 +77,10 @@ function createBilling(userId, req, res){
 exports.update = function(req, res) {
   var userId = req.user._id;
   if(req.body._id) { delete req.body._id; }
-  Billing.findById(req.params.id, function (err, billing) {
+  Billing.findOne({_id: req.params.id, user: userId})
+    .exec(function (err, billing) {
     if (err) { return handleError(res, err); }
     if(!billing) { return res.sendStatus(404); }
-    if(billing.user !== userId){ return res.sendStatus(403);}
     var updated = _.merge(billing, req.body);
     updated.save(function (err) {
       if (err) { return handleError(res, err); }
