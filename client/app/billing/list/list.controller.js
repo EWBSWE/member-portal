@@ -4,7 +4,7 @@ angular.module('ewbMemberApp')
   .controller('BillingListCtrl', function ($scope, $http, socket) {
     $scope.billings = [];
 
-    $http.get('/api/billings').success(function(billings) {
+    $http.get('/api/billings/my').success(function(billings) {
       $scope.billings = billings;
       socket.syncUpdates('billings', $scope.billings);
     });

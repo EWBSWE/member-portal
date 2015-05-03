@@ -10,7 +10,7 @@ var BillingSchema = new Schema({
   status: {type: String, required: true},
   paidAt: {type: Date},
   billingType: {type: String, required: true},
-  invoiceNumber: {type: Number, required: true}
+  invoiceNumber: {type: Number}
 });
 
 module.exports = mongoose.model('Billing', BillingSchema);
