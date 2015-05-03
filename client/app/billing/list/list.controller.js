@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ewbMemberApp')
-  .controller('BillingCtrl', function ($scope, $http, socket) {
+  .controller('BillingListCtrl', function ($scope, $http, socket) {
     $scope.billings = [];
 
     $http.get('/api/billings').success(function(billings) {

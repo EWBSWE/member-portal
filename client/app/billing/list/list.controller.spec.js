@@ -1,12 +1,12 @@
 'use strict';
 
-describe('Controller: BillingCtrl', function () {
+describe('Controller: BillingListCtrl', function () {
 
   // load the controller's module
   beforeEach(module('ewbMemberApp'));
   beforeEach(module('socketMock'));
 
-  var BillingCtrl,
+  var BillingListCtrl,
       scope,
       $httpBackend;
 
@@ -17,7 +17,7 @@ describe('Controller: BillingCtrl', function () {
       .respond(['HTML5 Boilerplate', 'AngularJS', 'Karma', 'Express']);
 
     scope = $rootScope.$new();
-    BillingCtrl = $controller('BillingCtrl', {
+    BillingListCtrl = $controller('BillingListCtrl', {
       $scope: scope
     });
   }));
