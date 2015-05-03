@@ -1,0 +1,23 @@
+<div ng-include="'components/navbar/navbar.html'"></div>
+
+<header class="hero-unit" id="banner">
+  <div class="container">
+    <h1>Billing details</h1>
+  </div>
+</header>
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12">
+      <ul class="nav nav-tabs nav-stacked col-md-4 col-lg-4 col-sm-6">
+        <li>{{billing._id}}</li>
+        <li>{{billing.user}}</li>
+        <li>{{billing.amount}}</li>
+        <li>{{billing.status}}</li>
+        <li>{{billing.paidAt}}</li>
+        <li>{{billing.billingType}}</li>
+        <li>{{billing.invoiceNumber}}</li>
+      </ul>
+    </div>
+  </div>
+</div>

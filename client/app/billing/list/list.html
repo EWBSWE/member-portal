@@ -1,0 +1,44 @@
+<div ng-include="'components/navbar/navbar.html'"></div>
+
+<header class="hero-unit" id="banner">
+  <div class="container">
+    <h1>Billings</h1>
+  </div>
+</header>
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12">
+      <table>
+        <thead>
+          <tr>
+            <td>Id</td>
+            <td>User</td>
+            <td>Amount</td>
+            <td>Status</td>
+            <td>Paid at</td>
+            <td>Billing Type</td>
+            <td>Invoice number</td>
+          </tr>
+        </thead>
+        <tbody ng-repeat="billing in billings">
+          <tr>
+            <td><a href="/billing/{{billing._id}}">{{billing._id}}</a></td>
+            <td>{{billing.user}}</td>
+            <td>{{billing.amount}}</td>
+            <td>{{billing.status}}</td>
+            <td>{{billing.paidAt}}</td>
+            <td>{{billing.billingType}}</td>
+            <td>{{billing.invoiceNumber}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+      <p>heyoooo~~~~~~~~~~</p>
+  </div>
+</footer>
