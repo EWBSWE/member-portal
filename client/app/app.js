@@ -9,7 +9,6 @@ angular.module('ewbMemberApp', [
   'ui.bootstrap'
 ])
   .config(function ($routeProvider, $locationProvider, $httpProvider) {
-    console.log('app.js router');
     $routeProvider
       .otherwise({
         redirectTo: '/'
