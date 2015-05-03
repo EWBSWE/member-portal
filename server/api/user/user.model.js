@@ -5,22 +5,23 @@ var Schema = mongoose.Schema;
 var crypto = require('crypto');
 
 var UserSchema = new Schema({
-  firstName: String,
-  lastName: String,
-  email: { type: String, lowercase: true },
+  firstName: {type: String, required: true },
+  lastName: {type: String, required: true },
+  email: { type: String, lowercase: true, required: true },
   role: {
     type: String,
-    default: 'user'
+    default: 'user',
+    required: true
   },
-  hashedPassword: String,
+  hashedPassword: {type: String, required: true },
   provider: String,
-  salt: String,
-  memberType: {type: String},
+  salt: {type: String, required: true },
+  memberType: {type: String, required: true, default: 'student'}, //, match: /^student|working|retired/i
   address: {type: String},
   zipCode: {type: Number},
   city: {type: String},
   subOrganisation: {type: String},
-  newsLetter: {type: Boolean}
+  newsLetter: {type: Boolean, required: true, default: true}
 });
 
 /**
