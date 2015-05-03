@@ -7,6 +7,7 @@
 
 var Thing = require('../api/thing/thing.model');
 var User = require('../api/user/user.model');
+var Billing = require('../api/billing/billing.model');
 
 Thing.find({}).remove(function() {
   Thing.create({
@@ -46,6 +47,32 @@ User.find({}).remove(function() {
     password: 'admin'
   }, function() {
       console.log('finished populating users');
+      createBillings();
     }
   );
 });
+
+var createBillings = function() {
+  var testUser;
+
+  User.findOne({email: 'test@test.com'}, function(err, user) {
+    testUser = user;
+    addBillings();
+  });
+
+  var addBillings = function() {
+    Billing.find({}).remove(function() {
+      Billing.create({
+        user: testUser.id,
+        amount: 100,
+        currency: 'SEK',
+        status: 'active',
+        paidAt: new Date(),
+        billingType: 'MasterCard',
+        invoiceNumber: 1,
+      }, function() {
+        console.log('billings done!');
+      });
+    });
+  };
+};
