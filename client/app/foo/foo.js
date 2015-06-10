@@ -3,8 +3,8 @@
 angular.module('ewbMemberApp')
   .config(function ($routeProvider) {
     $routeProvider
-      .when('/', {
-        templateUrl: 'app/main/main.html',
-        controller: 'MainCtrl'
+      .when('/foo', {
+        templateUrl: 'app/foo/foo.html',
+        controller: 'FooCtrl'
       });
   });
