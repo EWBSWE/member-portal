@@ -23,7 +23,6 @@ exports.create = function(req, res) {
   }
 
   amount = amount * 100;
-  console.log(amount, subscriptionLength, isStudent);
 
   var chargeSuccessful = false;
   var errorMessage = 'Vi misslyckades med att genomföra din betalning';
@@ -33,9 +32,12 @@ exports.create = function(req, res) {
     currency: "SEK",
     amount: amount,
     source: stripeToken.id,
-    description: "membership test charge",
+    description: "Membership test charge", // todo this shows up in the stripe web interface
   }, function(err, charge) {
-    if (err) {
+    if (err === null) {
+      chargeSuccessful = true;
+    } else {
+      console.log('err', err);
       // TODO act on errors
       if (err.type === 'StripeCardError') {
         // Card was declined
@@ -43,26 +45,26 @@ exports.create = function(req, res) {
         // Invalid parameters were supplied to Stripe's API
       } else if (err.type === 'StripeAPIError') {
         // An error occurred internally with Stripe's API
-      } else if (err.type === 'StripeConnectioncError') {
+      } else if (err.type === 'StripeConnectionError') {
         // Some kind of error occurred during the HTTPS communication
       } else if (err.type === 'StripeAuthenticationError') {
         // Probably used incorrect API key
       }
+    }
+
+    if (chargeSuccessful) {
+      // TODO create connection between user and membership?
+      Membership.create(req.body, function(err, membership) {
+        if (err) {
+          return handleError(res, err);
+        }
+        console.log(membership);
+        return res.status(201).json(membership);
+      });
     } else {
-      chargeSuccessful = true;
+        return res.status(400).json({ message: errorMessage });
     }
   });
-
-  if (chargeSuccessful) {
-    Membership.create(req.body, function(err, membership) {
-      if (err) {
-        return handleError(res, err);
-      }
-      return res.status(201).json(membership);
-    });
-  } else {
-      return res.status(400).json({ message: errorMessage });
-  }
 };
 
 function handleError(res, err) {
