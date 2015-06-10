@@ -29,18 +29,24 @@ angular.module('ewbMemberApp')
 
     $scope.paymentOptions = {
       student: {
-        description: 'Studentmedlemskap',
-        amount: {
-          oneYear: 40,
-          threeYear: 90,
-        }
+        oneYear: {
+          description: 'Medlemskap som student ett år',
+          amount: 40,
+        },
+        threeYear: {
+          description: 'Medlemskap som student tre år',
+          amount: 90,
+        },
       },
       worker: {
-        description: 'Medlemskap som yrkesverksam',
-        amount: {
-          oneYear: 100,
-          threeYear: 250,
-        }
+        oneYear: {
+          description: 'Medlemskap som yrkesverksam ett år',
+          amount: 100,
+        },
+        threeYear: {
+          description: 'Medlemskap som yrkesverksam tre år',
+          amount: 250,
+        },
       },
     };
 
@@ -59,11 +65,29 @@ angular.module('ewbMemberApp')
         return;
       }
 
+      var validateMembership = function (membership) {
+        return membership;
+      };
+
+      var membership = validateMembership($scope.membership);
+
+      var paymentOption = $scope.paymentOptions.worker;
+      if (membership.isStudent === '1') {
+        paymentOption = $scope.paymentOptions.student;
+      }
+
+      if (membership.subscriptionLength === '1') {
+        paymentOption = paymentOption.oneYear;
+      } else {
+        paymentOption = paymentOption.threeYear;
+      }
+
+
       stripeHandler.open({
         name: 'Ingejörer utan gränser',
-        description: 'description',
-        currency: 'sek',
-        amount: 2000,
+        description: paymentOption.description,
+        currency: 'SEK',
+        amount: paymentOption.amount * 100,
         email: $scope.membership.email,
       });
     };
