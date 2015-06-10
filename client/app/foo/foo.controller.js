@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ewbMemberApp')
-  .controller('FooCtrl', function ($scope, $http, socket) {
+  .controller('FooCtrl', function ($scope, $http) {
     $scope.membership = {};
 
     $scope.initiatePayment = function() {
