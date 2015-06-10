@@ -65,18 +65,12 @@ angular.module('ewbMemberApp')
         return;
       }
 
-      var validateMembership = function (membership) {
-        return membership;
-      };
-
-      var membership = validateMembership($scope.membership);
-
       var paymentOption = $scope.paymentOptions.worker;
-      if (membership.isStudent === '1') {
+      if ($scope.membership.isStudent === '1') {
         paymentOption = $scope.paymentOptions.student;
       }
 
-      if (membership.subscriptionLength === '1') {
+      if ($scope.membership.subscriptionLength === '1') {
         paymentOption = paymentOption.oneYear;
       } else {
         paymentOption = paymentOption.threeYear;
