@@ -1,66 +1,68 @@
-/**
- * Using Rails-like standard naming convention for endpoints.
- * GET     /things              ->  index
- * POST    /things              ->  create
- * GET     /things/:id          ->  show
- * PUT     /things/:id          ->  update
- * DELETE  /things/:id          ->  destroy
- */
-
 'use strict';
 
 var _ = require('lodash');
 var Membership = require('./membership.model');
+var stripe = require('stripe')('sk_test_XYJalXkc7mCuSxM2O5QBILf3');
 
-// Get list of things
-exports.index = function(req, res) {
-  Membership.find(function (err, things) {
-    if(err) { return handleError(res, err); }
-    return res.status(200).json(things);
-  });
-};
-
-// Get a single thing
-exports.show = function(req, res) {
-  Membership.findById(req.params.id, function (err, thing) {
-    if(err) { return handleError(res, err); }
-    if(!thing) { return res.sendStatus(404); }
-    return res.json(thing);
-  });
-};
-
-// Creates a new thing in the DB.
 exports.create = function(req, res) {
-  Membership.create(req.body, function(err, thing) {
-    if(err) { return handleError(res, err); }
-    return res.status(201).json(thing);
-  });
-};
+  var stripeToken = req.body.stripeToken;
+  var subscriptionLength = req.body.subscriptionLength;
+  var isStudent = req.body.isStudent;
 
-// Updates an existing thing in the DB.
-exports.update = function(req, res) {
-  if(req.body._id) { delete req.body._id; }
-  Membership.findById(req.params.id, function (err, thing) {
-    if (err) { return handleError(res, err); }
-    if(!thing) { return res.sendStatus(404); }
-    var updated = _.merge(thing, req.body);
-    updated.save(function (err) {
-      if (err) { return handleError(res, err); }
-      return res.status(200).json(thing);
-    });
-  });
-};
+  // TODO refactor this into model or something, currently duplicated between frontend
+  // and backend
+  var amount = 0;
+  if (isStudent && subscriptionLength === '1') {
+      amount = 40;
+  } else if (isStudent && subscriptionLength === '3') {
+      amount = 100;
+  } else if (subscriptionLength === '1') {
+      amount = 90;
+  } else if (subscriptionLength === '3') {
+      amount = 250;
+  }
 
-// Deletes a thing from the DB.
-exports.destroy = function(req, res) {
-  Membership.findById(req.params.id, function (err, thing) {
-    if(err) { return handleError(res, err); }
-    if(!thing) { return res.sendStatus(404); }
-    thing.remove(function(err) {
-      if(err) { return handleError(res, err); }
-      return res.sendStatus(204);
-    });
+  amount = amount * 100;
+  console.log(amount, subscriptionLength, isStudent);
+
+  var chargeSuccessful = false;
+  var errorMessage = 'Vi misslyckades med att genomföra din betalning';
+
+  // communicate with stripe
+  stripe.charges.create({
+    currency: "SEK",
+    amount: amount,
+    source: stripeToken.id,
+    description: "membership test charge",
+  }, function(err, charge) {
+    if (err) {
+      // TODO act on errors
+      if (err.type === 'StripeCardError') {
+        // Card was declined
+      } else if (err.type === 'StripeInvalidError') {
+        // Invalid parameters were supplied to Stripe's API
+      } else if (err.type === 'StripeAPIError') {
+        // An error occurred internally with Stripe's API
+      } else if (err.type === 'StripeConnectioncError') {
+        // Some kind of error occurred during the HTTPS communication
+      } else if (err.type === 'StripeAuthenticationError') {
+        // Probably used incorrect API key
+      }
+    } else {
+      chargeSuccessful = true;
+    }
   });
+
+  if (chargeSuccessful) {
+    Membership.create(req.body, function(err, membership) {
+      if (err) {
+        return handleError(res, err);
+      }
+      return res.status(201).json(membership);
+    });
+  } else {
+      return res.status(400).json({ message: errorMessage });
+  }
 };
 
 function handleError(res, err) {
