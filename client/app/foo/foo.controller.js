@@ -86,6 +86,7 @@ angular.module('ewbMemberApp')
       stripeHandler.open({
         name: 'Ingejörer utan gränser',
         description: paymentOption.description,
+        // image: 'bild.png', // TODO 
         currency: 'SEK',
         amount: paymentOption.amount * 100,
         email: $scope.membership.email,
