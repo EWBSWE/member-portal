@@ -23,6 +23,7 @@ angular.module('ewbMemberApp')
         $location.path('/receipt').search('id', data._id);
       }).error(function(data) {
         // error with request, communicate accordingly
+        alert('sadpanda.png');
         console.log('error', data);
       });
     };
