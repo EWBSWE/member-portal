@@ -1,13 +1,12 @@
 'use strict';
 
 angular.module('ewbMemberApp')
-  .controller('FooCtrl', function ($scope, $http) {
+  .controller('MembershipCtrl', function ($scope, $http, $location) {
     $scope.membership = {};
 
     var stripeHandler = StripeCheckout.configure({
       key: 'pk_test_NkGJralO01ISbEWdNpaPkoWZ',
       token: function (token) {
-        console.log(token);
         callback(token);
       }
     });
@@ -20,10 +19,10 @@ angular.module('ewbMemberApp')
         subscriptionLength: $scope.membership.subscriptionLength,
       }).success(function(data) {
         // redirect to receipt/confirmation
-        console.log(data);
+        console.log('success', data);
       }).error(function(data) {
         // error with request, communicate accordingly
-        console.log(data);
+        console.log('error', data);
       });
     };
 
