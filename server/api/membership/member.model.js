@@ -7,11 +7,11 @@ var MemberSchema = new Schema({
   email: {
     type: String, 
     lowercase: true, 
-    index: { unique: true }, 
+    unique: true, 
     required: true 
   },
   student: { type: Boolean, required: true, default: true },
-  createdAt: { type: Date, default: new Date() }
+  createdAt: { type: Date, default: Date.now }
 });
 
 MemberSchema

@@ -1,7 +1,8 @@
 'use strict';
 
 var _ = require('lodash');
-var Membership = require('./membership.model');
+var Member = require('./member.model');
+var Payment = require('../payment/payment.model');
 var stripe = require('stripe')('sk_test_XYJalXkc7mCuSxM2O5QBILf3');
 
 exports.create = function(req, res) {
@@ -55,20 +56,39 @@ exports.create = function(req, res) {
     }
 
     if (chargeSuccessful) {
-      // TODO create connection between user and membership?
-      Membership.create(req.body, function(err, membership) {
+      var createPayment = function(member) {
+        Payment.create({ member: member, amount: amount }, function(err, payment) {
+          if (err) {
+            return handleError(res, err);
+          }
+          console.log('payment', err, payment);
+          return res.status(201).json(payment);
+        });
+      };
+
+      Member.findOne({ email: req.body.email }, function(err, member) {
         if (err) {
-          return handleError(res, err);
+          // TODO successful payment
+          console.log(err);
         }
-        console.log(membership);
-        return res.status(201).json(membership);
+        if (!member) {
+          Member.create({ email: req.body.email, student: isStudent }, function(err, member) {
+            if (err) {
+              // TODO successful payment
+              console.log(err);
+            }
+            createPayment(member);
+          });
+        } else {
+          createPayment(member);
+        }
       });
     } else {
-        return res.status(400).json({ message: errorMessage });
+      return res.status(400).json({ message: errorMessage });
     }
   });
 };
 
 function handleError(res, err) {
   return res.status(500).send(err);
-}
+};
