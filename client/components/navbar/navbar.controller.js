@@ -6,8 +6,8 @@ angular.module('ewbMemberApp')
       'title': 'Home',
       'link': '/'
     }, {
-      'title': 'Billing',
-      'link': '/billing'
+      'title': 'Payment',
+      'link': '/payments'
     }];
 
     $scope.isCollapsed = true;

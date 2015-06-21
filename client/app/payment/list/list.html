@@ -2,7 +2,7 @@
 
 <header class="hero-unit" id="banner">
   <div class="container">
-    <h1>Billings</h1>
+    <h1>Payments</h1>
   </div>
 </header>
 
@@ -15,21 +15,17 @@
             <td>Id</td>
             <td>User</td>
             <td>Amount</td>
-            <td>Status</td>
-            <td>Paid at</td>
-            <td>Billing Type</td>
-            <td>Invoice number</td>
+            <td>Student</td>
+            <td>Created at</td>
           </tr>
         </thead>
-        <tbody ng-repeat="billing in billings">
+        <tbody ng-repeat="payment in payments">
           <tr>
-            <td><a href="/billing/{{billing._id}}">{{billing._id}}</a></td>
-            <td>{{billing.user}}</td>
-            <td>{{billing.amount}}</td>
-            <td>{{billing.status}}</td>
-            <td>{{billing.paidAt}}</td>
-            <td>{{billing.billingType}}</td>
-            <td>{{billing.invoiceNumber}}</td>
+            <td><a href="/payment/{{payment._id}}">{{payment._id}}</a></td>
+            <td>{{payment.user}}</td>
+            <td>{{payment.amount}}</td>
+            <td>{{payment.student}}</td>
+            <td>{{payment.createdAt}}</td>
           </tr>
         </tbody>
       </table>
