@@ -18,8 +18,7 @@ function onConnect(socket) {
   });
 
   // Insert sockets below
-  require('../api/billing/billing.socket').register(socket);
-  require('../api/thing/thing.socket').register(socket);
+  require('../api/payment/payment.socket').register(socket);
 }
 
 module.exports = function (socketio) {

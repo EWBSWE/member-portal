@@ -5,31 +5,9 @@
 
 'use strict';
 
-var Thing = require('../api/thing/thing.model');
 var User = require('../api/user/user.model');
-var Billing = require('../api/billing/billing.model');
-
-Thing.find({}).remove(function() {
-  Thing.create({
-    name : 'Development Tools',
-    info : 'Integration with popular tools such as Bower, Grunt, Karma, Mocha, JSHint, Node Inspector, Livereload, Protractor, Jade, Stylus, Sass, CoffeeScript, and Less.'
-  }, {
-    name : 'Server and Client integration',
-    info : 'Built with a powerful and fun stack: MongoDB, Express, AngularJS, and Node.'
-  }, {
-    name : 'Smart Build System',
-    info : 'Build system ignores `spec` files, allowing you to keep tests alongside code. Automatic injection of scripts and styles into your index.html'
-  },  {
-    name : 'Modular Structure',
-    info : 'Best practice client and server structures allow for more code reusability and maximum scalability'
-  },  {
-    name : 'Optimized Build',
-    info : 'Build process packs up your templates as a single JavaScript payload, minifies your scripts/css/images, and rewrites asset names for caching.'
-  },{
-    name : 'Deployment Ready',
-    info : 'Easily deploy your app to Heroku or Openshift with the heroku and openshift subgenerators'
-  });
-});
+var Member = require('../api/membership/member.model');
+var Payment = require('../api/membership/member.model');
 
 User.find({}).remove(function() {
   User.create({
@@ -46,33 +24,45 @@ User.find({}).remove(function() {
     email: 'admin@admin.com',
     password: 'admin'
   }, function() {
-      console.log('finished populating users');
-      createBillings();
+      console.log('Finished populating users');
+      createPayments();
     }
   );
 });
 
-var createBillings = function() {
-  var testUser;
+Member.find({}).remove(function() {
+  Member.create({
+    email: 'some-guy@test.com',
+    student: false,
+  }, {
+    email: 'some-student@test.com',
+    student: true,
+  });
+});
 
-  User.findOne({email: 'test@test.com'}, function(err, user) {
-    testUser = user;
-    addBillings();
+var createPayments = function() {
+  var testMember;
+  Payment.find({}).remove(function() {
+    console.log('Remove payments..');
   });
 
-  var addBillings = function() {
-    Billing.find({}).remove(function() {
-      Billing.create({
-        user: testUser.id,
-        amount: 100,
-        currency: 'SEK',
-        status: 'active',
-        paidAt: new Date(),
-        billingType: 'MasterCard',
-        invoiceNumber: 1,
-      }, function() {
-        console.log('billings done!');
-      });
+  Member.findOne({email: 'some-guy@test.com'}, function(err, member) {
+    testMember = member;
+    addPayments();
+  });
+
+  Member.findOne({email: 'some-student@test.com'}, function(err, member) {
+    testMember = member;
+    addPayments();
+  });
+
+  var addPayments = function() {
+    Payment.create({
+      member: testMember,
+      amount: 100,
+      currency: 'SEK',
+    }, function() {
+      console.log('Payments done!');
     });
   };
 };
