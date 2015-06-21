@@ -13,6 +13,16 @@ exports.index = function(req, res) {
   });
 };
 
+exports.show = function(req, res) {
+  Payment.findOne({ _id: req.params.id }, function(err, payment) {
+    if (err) {
+      return handleError(res, err);
+    } else {
+      return res.status(200).json(payment);
+    }
+  });
+};
+
 // Get a users single payment
 exports.getMyPayment = function(req, res) {
   var userId = req.user._id;

@@ -7,7 +7,7 @@ angular.module('ewbMemberApp')
         templateUrl: 'app/payment/list/list.html',
         controller: 'PaymentListCtrl'
       })
-      .when('/payments/:id', {
+      .when('/payment/:id', {
         templateUrl: 'app/payment/detail/detail.html',
         controller: 'PaymentDetailCtrl'
       });
