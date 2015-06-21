@@ -4,9 +4,10 @@ angular.module('ewbMemberApp')
   .controller('PaymentListCtrl', function ($scope, $http, socket) {
     $scope.payments = [];
 
-    $http.get('/api/payments/my').success(function(payments) {
+    $http.get('/api/payments').success(function(payments) {
       $scope.payments = payments;
       socket.syncUpdates('payments', $scope.payments);
+      console.log(payments);
     });
 
     $scope.addPayment = function() {
