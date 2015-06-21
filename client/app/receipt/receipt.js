@@ -3,7 +3,7 @@
 angular.module('ewbMemberApp')
   .config(function ($routeProvider) {
     $routeProvider
-      .when('/receipt', {
+      .when('/kvitto', {
         templateUrl: 'app/receipt/receipt.html',
         controller: 'ReceiptCtrl'
       });

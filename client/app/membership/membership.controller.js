@@ -20,7 +20,7 @@ angular.module('ewbMemberApp')
       }).success(function(data) {
         // redirect to receipt/confirmation
         console.log('success', data);
-        $location.path('/receipt').search('id', data._id);
+        $location.path('/kvitto').search('id', data._id);
       }).error(function(data) {
         // error with request, communicate accordingly
         alert('sadpanda.png');
