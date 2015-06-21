@@ -22,6 +22,8 @@ exports.create = function(req, res) {
       amount = 250;
   }
 
+  // Set Stripe lowest monetary value. 1 USD should be sent as 100 cents and so
+  // forth.
   amount = amount * 100;
 
   var chargeSuccessful = false;
