@@ -10,5 +10,9 @@ angular.module('ewbMemberApp')
       .when('/members', {
         templateUrl: 'app/member/list/list.html',
         controller: 'MemberListCtrl'
+      })
+      .when('/member/:id', {
+        templateUrl: 'app/member/detail/detail.html',
+        controller: 'MemberDetailCtrl'
       });
   });

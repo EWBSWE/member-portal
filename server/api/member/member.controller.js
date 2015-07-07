@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('lodash');
+var mongoose = require('mongoose');
 var Member = require('./member.model');
 var Payment = require('../payment/payment.model');
 var stripe = require('stripe')('sk_test_XYJalXkc7mCuSxM2O5QBILf3');
@@ -11,6 +12,24 @@ exports.index = function(req, res) {
       return handleError(res, err);
     }
     return res.status(200).json(members);
+  });
+};
+
+exports.show = function(req, res) {
+  Member.findOne({ _id: req.params.id }, function(err, member) {
+    if (err) {
+      return handleError(res, err);
+    }
+    return res.status(200).json(member);
+  });
+};
+
+exports.getPayments = function(req, res) {
+  Payment.find({ member: new mongoose.Types.ObjectId(req.params.id) }, function(err, payments) {
+    if (err) {
+      return handleError(res, err);
+    } 
+    return res.status(200).json(payments);
   });
 };
 
