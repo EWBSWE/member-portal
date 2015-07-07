@@ -13,18 +13,18 @@
         <thead>
           <tr>
             <td>Id</td>
-            <td>User</td>
+            <td>Member</td>
             <td>Amount</td>
-            <td>Student</td>
+            <td>Currency</td>
             <td>Created at</td>
           </tr>
         </thead>
         <tbody ng-repeat="payment in payments">
           <tr>
             <td><a href="/payment/{{payment._id}}">{{payment._id}}</a></td>
-            <td>{{payment.user}}</td>
+            <td><a href="/member/{{payment.member}}">{{payment.member}}</a></td>
             <td>{{payment.amount}}</td>
-            <td>{{payment.student}}</td>
+            <td>{{payment.currency}}</td>
             <td>{{payment.createdAt}}</td>
           </tr>
         </tbody>
