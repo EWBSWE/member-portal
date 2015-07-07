@@ -11,5 +11,7 @@ router.post('/', controller.create);
 
 router.get('/:id/payments', controller.getPayments);
 
+router.post('/confirm-payment', controller.confirmPayment);
+
 
 module.exports = router;

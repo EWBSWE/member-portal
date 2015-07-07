@@ -24,6 +24,15 @@ exports.show = function(req, res) {
   });
 };
 
+exports.create = function(req, res) {
+  Member.create({ email: req.body.email, student: req.body.isStudent }, function(err, member) {
+    if (err) {
+      return handleError(res, err);
+    }
+    return res.status(201).json(member);
+  });
+};
+
 exports.getPayments = function(req, res) {
   Payment.find({ member: new mongoose.Types.ObjectId(req.params.id) }, function(err, payments) {
     if (err) {
@@ -33,7 +42,7 @@ exports.getPayments = function(req, res) {
   });
 };
 
-exports.create = function(req, res) {
+exports.confirmPayment = function(req, res) {
   var stripeToken = req.body.stripeToken;
   var subscriptionLength = req.body.subscriptionLength;
   var isStudent = req.body.isStudent;
