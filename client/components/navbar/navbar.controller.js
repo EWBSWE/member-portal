@@ -6,8 +6,11 @@ angular.module('ewbMemberApp')
       'title': 'Home',
       'link': '/'
     }, {
-      'title': 'Payment',
+      'title': 'Payments',
       'link': '/payments'
+    }, {
+      'title': 'Members',
+      'link': '/members'
     }];
 
     $scope.isCollapsed = true;
