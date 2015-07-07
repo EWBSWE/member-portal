@@ -5,6 +5,15 @@ var Member = require('./member.model');
 var Payment = require('../payment/payment.model');
 var stripe = require('stripe')('sk_test_XYJalXkc7mCuSxM2O5QBILf3');
 
+exports.index = function(req, res) {
+  Member.find(function(err, members) {
+    if (err) {
+      return handleError(res, err);
+    }
+    return res.status(200).json(members);
+  });
+};
+
 exports.create = function(req, res) {
   var stripeToken = req.body.stripeToken;
   var subscriptionLength = req.body.subscriptionLength;
