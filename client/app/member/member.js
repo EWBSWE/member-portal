@@ -11,12 +11,12 @@ angular.module('ewbMemberApp')
         templateUrl: 'app/member/list/list.html',
         controller: 'MemberListCtrl'
       })
-      .when('/member/:id', {
-        templateUrl: 'app/member/detail/detail.html',
-        controller: 'MemberDetailCtrl'
-      });
       .when('/member/new', {
         templateUrl: 'app/member/new/new.html',
         controller: 'MemberNewCtrl'
+      })
+      .when('/member/:id', {
+        templateUrl: 'app/member/detail/detail.html',
+        controller: 'MemberDetailCtrl'
       });
   });

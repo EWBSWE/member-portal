@@ -10,16 +10,16 @@
   <form class="member-form">
     <div class="form-group">
       <label for="inputEmail">Epost adress</label>
-      <input type="text" id="inputEmail" ng-model="member.email"/>
+      <input type="text" id="inputEmail" ng-model="newMember.email"/>
     </div>
 
     <div class="radio">
       <label class="radio-inline">
-        <input type="radio" name="isStudent" value="1" ng-model="membership.isStudent"/>
+        <input type="radio" name="isStudent" value="1" ng-model="newMember.student"/>
         Student
       </label>
       <label class="radio-inline">
-        <input type="radio" name="isStudent" value="0" ng-model="membership.isStudent" />
+        <input type="radio" name="isStudent" value="0" ng-model="newMember.student" />
         Yrkesverksam
       </label>
     </div>

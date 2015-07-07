@@ -25,7 +25,7 @@ exports.show = function(req, res) {
 };
 
 exports.create = function(req, res) {
-  Member.create({ email: req.body.email, student: req.body.isStudent }, function(err, member) {
+  Member.create({ email: req.body.email, student: req.body.student }, function(err, member) {
     if (err) {
       return handleError(res, err);
     }
