@@ -4,7 +4,7 @@ angular.module('ewbMemberApp')
   .config(function ($routeProvider) {
     $routeProvider
       .when('/bli-medlem', {
-        templateUrl: 'app/member/new/membership.html',
+        templateUrl: 'app/member/membership/membership.html',
         controller: 'MembershipCtrl'
       })
       .when('/members', {
@@ -14,5 +14,9 @@ angular.module('ewbMemberApp')
       .when('/member/:id', {
         templateUrl: 'app/member/detail/detail.html',
         controller: 'MemberDetailCtrl'
+      });
+      .when('/member/new', {
+        templateUrl: 'app/member/new/new.html',
+        controller: 'MemberNewCtrl'
       });
   });
