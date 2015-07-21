@@ -5,6 +5,7 @@ var mongoose = require('mongoose');
 var Member = require('./member.model');
 var Payment = require('../payment/payment.model');
 var stripe = require('stripe')('sk_test_XYJalXkc7mCuSxM2O5QBILf3');
+var moment = require('moment');
 
 exports.index = function(req, res) {
   Member.find(function(err, members) {
@@ -108,16 +109,26 @@ exports.confirmPayment = function(req, res) {
           // TODO successful payment
           console.log(err);
         }
-        if (!member) {
-          Member.create({ email: req.body.email, student: isStudent }, function(err, member) {
+
+        if (member) {
+          createPayment(member);
+        } else {
+          var expirationDate = moment().add(1, 'year');
+          if (subscriptionLength === '3') {
+            expirationDate = moment().add(3, 'year');
+          }
+
+          Member.create({
+            email: req.body.email,
+            student: isStudent,
+            expirationDate: expirationDate,
+          }, function(err, member) {
             if (err) {
               // TODO successful payment
               console.log(err);
             }
             createPayment(member);
           });
-        } else {
-          createPayment(member);
         }
       });
     } else {
