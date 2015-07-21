@@ -1,7 +1,8 @@
 'use strict';
 
-var mongoose = require('mongoose'),
-    Schema = mongoose.Schema;
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
+var moment = require('moment');
 
 var MemberSchema = new Schema({
   email: {
@@ -11,7 +12,8 @@ var MemberSchema = new Schema({
     required: true 
   },
   student: { type: Boolean, required: true, default: true },
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: moment() },
+  expirationDate: { type: Date, default: moment().add(1, 'year') },
 });
 
 MemberSchema

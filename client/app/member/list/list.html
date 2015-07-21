@@ -16,6 +16,7 @@
             <td>Email</td>
             <td>Student</td>
             <td>Created at</td>
+            <td>Member until</td>
           </tr>
         </thead>
         <tbody ng-repeat="member in members">
@@ -24,6 +25,7 @@
             <td>{{member.email}}</td>
             <td>{{member.student}}</td>
             <td>{{member.createdAt}}</td>
+            <td>{{member.expirationDate}}</td>
           </tr>
         </tbody>
       </table>
