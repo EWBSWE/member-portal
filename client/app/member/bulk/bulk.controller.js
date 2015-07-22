@@ -2,6 +2,8 @@
 
 angular.module('ewbMemberApp')
   .controller('MemberBulkCtrl', function ($scope, $http) {
+    $scope.showValidMembers = false;
+    $scope.showInvalidMembers = false;
 
     $scope.addMembers = function() {
       if ($scope.csv === '') {
@@ -11,9 +13,23 @@ angular.module('ewbMemberApp')
       $http.post('/api/members/bulk', {
         csv: $scope.csv,
       }).success(function(data, status) {
-        console.log('successfully added');
+        if (data.valid.length) {
+          $scope.validMembers = data.valid;
+          $scope.showValidMembers = true;
+        } else {
+          $scope.showValidMembers = false;
+        }
+
+        if (data.invalid.length) {
+          $scope.invalidMembers = data.invalid;
+          $scope.showInvalidMembers = true;
+        } else {
+          $scope.showInvalidMembers = false;
+        }
+
+        $scope.noMembersAdded = data.valid.length === 0 && data.invalid.length === 0;
       }).error(function(data, status) {
-        console.log('failed to add a single member');
+        alert('Internal error, please try again or contact admin if problem persists.');
       });
     };
   });
