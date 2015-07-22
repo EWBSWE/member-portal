@@ -5,13 +5,17 @@ var Schema = mongoose.Schema;
 var moment = require('moment');
 
 var MemberSchema = new Schema({
+  name: { type: String, required: true },
+  location: { type: String, required: true },
+  profession: { type: String, required: true },
   email: {
     type: String, 
     lowercase: true, 
     unique: true, 
-    required: true 
+    required: true,
   },
   student: { type: Boolean, required: true, default: true },
+  telephone: { type: String, required: true },
   createdAt: { type: Date, default: moment() },
   expirationDate: { type: Date, default: moment().add(1, 'year') },
 });

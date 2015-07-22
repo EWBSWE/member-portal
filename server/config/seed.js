@@ -32,11 +32,19 @@ User.find({}).remove(function() {
 
 Member.find({}).remove(function() {
   Member.create({
-    email: 'some-guy@test.com',
-    student: false,
-  }, {
-    email: 'some-student@test.com',
+    name: 'Some Guy',
+    location: 'Somewhere', 
     student: true,
+    profession: 'Mapper',
+    email: 'some-guy@test.com',
+    telephone: '+46123456789',
+  }, {
+    name: 'Arne Testman',
+    location: 'Tensta', 
+    student: false,
+    profession: 'President',
+    email: 'arne_testman@test.com',
+    telephone: '+46123456790',
   });
 });
 
@@ -51,7 +59,7 @@ var createPayments = function() {
     addPayments();
   });
 
-  Member.findOne({email: 'some-student@test.com'}, function(err, member) {
+  Member.findOne({email: 'arne_testman@test.com'}, function(err, member) {
     testMember = member;
     addPayments();
   });
