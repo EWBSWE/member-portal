@@ -26,11 +26,25 @@ exports.show = function(req, res) {
 };
 
 exports.create = function(req, res) {
-  Member.create({ email: req.body.email, student: req.body.student }, function(err, member) {
+  Member.findOne({ email: req.body.email }, function(err, member) {
     if (err) {
       return handleError(res, err);
     }
-    return res.status(201).json(member);
+
+    if (member) {
+      return res.status(400).json({ message: 'Member exists' });
+    } else {
+      Member.create({
+        email: req.body.email,
+        student: req.body.student,
+        expirationDate: req.body.expirationDate,
+      }, function(err, member) {
+        if (err) {
+          return handleError(res, err);
+        }
+        return res.status(201).json(member);
+      });
+    }
   });
 };
 
