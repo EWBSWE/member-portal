@@ -17,4 +17,33 @@ angular.module('ewbMemberApp')
         });
       }
     };
+
+    $scope.generateCsv = function() {
+      if ($scope.members.length === 0) {
+        return;
+      }
+
+      var keysToIgnore = ['_id', '__v', '$$hashKey'];
+      var csvContent = 'data:text/csv;charset=utf-8,';
+
+      var memberKeys = Object.keys($scope.members[0]);
+      _.remove(memberKeys, function(key) {
+          return _.contains(keysToIgnore, key);
+      });
+
+      // Create headers of the member keys
+      csvContent += memberKeys.join(',') + '\n';
+
+      _.each($scope.members, function(member, index) {
+          csvContent += _.map(memberKeys, function(key) {
+            return member[key];
+          }).join(',');
+
+          if (index < $scope.members.length) {
+            csvContent += '\n';
+          }
+      });
+
+      window.open(encodeURI(csvContent));
+    };
   });
