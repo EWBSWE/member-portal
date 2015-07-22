@@ -48,6 +48,62 @@ exports.create = function(req, res) {
   });
 };
 
+exports.bulkAdd = function(req, res) {
+  var csv = req.body.csv;
+
+  // Remove whitespace and split on newline
+  var members = csv.replace(/ /g, '').split(/\n/);
+
+  // Map raw csv to object for manipulation
+  members = _.map(members, function(csv) {
+    return { raw: csv };
+  });
+
+  _.each(members, function(member) {
+    var info = member.raw.split(/,/);
+
+    // If we have the correct number of fields, validate each field otherwise
+    // set member as invalid
+    if (info.length === 3) {
+      if (validateEmail(info[0])) {
+        member.email = info[0];
+      } else {
+        member.invalid = true;
+      }
+
+      if (validateType(info[1])) {
+        member.student = info[1] === 'student';
+      } else {
+        member.invalid = true;
+      }
+
+      if (validateExpirationDate(info[2])) {
+        member.expirationDate = info[2];
+      } else {
+        member.invalid = true;
+      }
+    } else {
+      member.invalid = true;
+    }
+  });
+
+  var validMembers = _.filter(members, function(member) {
+    return !member.invalid;
+  })
+
+  var invalidMembers = _.filter(members, function(member) {
+    return member.invalid;
+  });
+
+  Member.create(validMembers, function(err, members) {
+    if (err) {
+      return handleError(res, err);
+    }
+
+    return res.status(200).json({ valid: members, invalid: invalidMembers });
+  });
+};
+
 exports.getPayments = function(req, res) {
   Payment.find({ member: new mongoose.Types.ObjectId(req.params.id) }, function(err, payments) {
     if (err) {
@@ -153,4 +209,29 @@ exports.confirmPayment = function(req, res) {
 
 function handleError(res, err) {
   return res.status(500).send(err);
+};
+
+function validateEmail(email) {
+  if (!email) {
+    return false;
+  }
+
+  var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+  return re.test(email);
+};
+
+function validateType(text) {
+  if (!text) {
+    return false;
+  }
+
+  return text.toLowerCase() === 'student' || text.toLowerCase() === 'yrkesverksam';
+};
+
+function validateExpirationDate(expirationDate) {
+  if (!expirationDate) {
+    return false;
+  }
+
+  return moment(expirationDate).isValid();
 };
