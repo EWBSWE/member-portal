@@ -95,12 +95,29 @@ exports.bulkAdd = function(req, res) {
     return member.invalid;
   });
 
-  Member.create(validMembers, function(err, members) {
+  Member.find({ email: { $in: _.map(validMembers, 'email') } }, function(err, members) {
     if (err) {
       return handleError(res, err);
     }
 
-    return res.status(200).json({ valid: members, invalid: invalidMembers });
+    if (members.length) {
+      var matchingEmails = _.map(members, 'email');
+      _.remove(validMembers, function(member) {
+        return _.contains(matchingEmails, member.email);
+      });
+    }
+
+    if (validMembers.length) {
+      Member.create(validMembers, function(err, members) {
+        if (err) {
+          return handleError(res, err);
+        }
+
+        return res.status(200).json({ valid: members, invalid: invalidMembers });
+      });
+    } else {
+      return res.status(202).json({ valid: [], invalid: invalidMembers });
+    }
   });
 };
 
