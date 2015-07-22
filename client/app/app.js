@@ -6,7 +6,9 @@ angular.module('ewbMemberApp', [
   'ngSanitize',
   'ngRoute',
   'btford.socket-io',
-  'ui.bootstrap'
+  'ui.bootstrap',
+  'angularMoment',
+  'ngMessages',
 ])
   .config(function ($routeProvider, $locationProvider, $httpProvider) {
     $routeProvider
