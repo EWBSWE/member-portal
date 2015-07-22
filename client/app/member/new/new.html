@@ -8,9 +8,18 @@
 
 <div class="container">
   <form class="member-form">
+
+    <div class="bg-success" ng-messages="successMessages">
+      <div ng-message="memberCreated">Medlem sparad</div>
+    </div>
+
+    <div class="bg-danger" ng-messages="newMember.$error" ng-messages-multiple>
+      <div ng-message="emailExists">Epostadressen finns redan.</div>
+    </div>
+
     <div class="form-group">
       <label for="inputEmail">Epost adress</label>
-      <input type="text" id="inputEmail" ng-model="newMember.email"/>
+      <input type="text" name="inputEmail" id="inputEmail" ng-model="newMember.email"/>
     </div>
 
     <div class="radio">
@@ -21,6 +30,26 @@
       <label class="radio-inline">
         <input type="radio" name="isStudent" value="0" ng-model="newMember.student" />
         Yrkesverksam
+      </label>
+    </div>
+
+    <div class="form-group">
+      <p>Nedan kan du valja att ge ett exakt slutdatum for medlemmen eller valja en fordefinierad langd</p>
+      <label for="inputDate">Medlem till och med</label>
+      <input type="date" id="inputDate" ng-model="newMember.expirationDate" aria-describedBy="helpBlock"/>
+      <span id="helpBlock" class="help-block">
+        Skriv ett datum enligt formen YYYY-MM-DD, till exempel 2016-09-01.
+      </span>
+    </div>
+
+    <div class="radio">
+      <label class="radio-inline">
+        <input type="radio" name="subscriptionLength" value="1" ng-model="newMember.subscriptionLength"/>
+        1 år
+      </label>
+      <label class="radio-inline">
+        <input type="radio" name="subscriptionLength" value="3" ng-model="newMember.subscriptionLength" />
+        3 år
       </label>
     </div>
 
