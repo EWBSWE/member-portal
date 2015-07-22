@@ -8,43 +8,39 @@
 
 <div class="container">
   <form class="member-form">
-
-    <div class="bg-success" ng-messages="successMessages">
-      <div ng-message="memberCreated">Medlem sparad</div>
+    <div class="bg-success" ng-show="showValidMembers">
+      valida members
+      {{validMembers}}
     </div>
-
-    <div class="bg-danger" ng-messages="newMember.$error" ng-messages-multiple>
-      <div ng-message="emailExists">Epostadressen finns redan.</div>
+    <div class="bg-warning" ng-show="noMembersAdded">
+      NO MEMBERS ADDED
     </div>
-
+    <div class="bg-danger" ng-show="showInvalidMembers">
+      invalida members
+      {{invalidMembers}}
+    </div>
     <p>
       Mata in en medlem pa varje rad enligt formen
     </p>
-
     <p class="text-info">
       Slutdatum ar det datum medlemskapets anses forbrukat och skrivs pa formen YYYY-MM-DD, till exempel 2015-01-01
     </p>
-
     <pre>
       epost,student,slutdatum
       epost,yrkesverksam,slutdatum
       ...
     </pre>
-
     <p>
       Till exempel
     </p>
-
     <pre>
       some_email@somewhere.com,student,2016-08-10
       some_other_email@overhere.com,yrkesverksam,2019-08-10
     </pre>
-
     <div class="form-group">
       <label for="inputEmail">Medlemmar</label>
       <textarea type="text" name="inputCSV" class="form-control" id="inputCSV" rows="10" ng-model="csv"></textarea>
     </div>
-
     <span class="input-group-btn">
       <button type="submit" class="btn btn-primary" ng-click="addMembers()">Lägg till medlemmar</button>
     </span>
