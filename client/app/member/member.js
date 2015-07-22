@@ -11,6 +11,10 @@ angular.module('ewbMemberApp')
         templateUrl: 'app/member/list/list.html',
         controller: 'MemberListCtrl'
       })
+      .when('/member/bulk', {
+        templateUrl: 'app/member/bulk/bulk.html',
+        controller: 'MemberBulkCtrl'
+      })
       .when('/member/new', {
         templateUrl: 'app/member/new/new.html',
         controller: 'MemberNewCtrl'
