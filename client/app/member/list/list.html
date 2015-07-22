@@ -21,6 +21,7 @@
             <td>Student</td>
             <td>Created at</td>
             <td>Member until</td>
+            <td>Actions</td>
           </tr>
         </thead>
         <tbody ng-repeat="member in members">
@@ -30,6 +31,7 @@
             <td>{{member.student}}</td>
             <td>{{member.createdAt}}</td>
             <td>{{member.expirationDate}}</td>
+            <td><a href="#" ng-click="deleteUser(member._id)">Ta bort</a></td>
           </tr>
         </tbody>
       </table>
