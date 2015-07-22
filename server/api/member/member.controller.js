@@ -48,6 +48,23 @@ exports.create = function(req, res) {
   });
 };
 
+exports.destroy = function(req, res) {
+  Member.findById(req.params.id, function(err, member) {
+    if (err) {
+      return handleError(res, err);
+    }
+    if (!member) {
+      return res.sendStatus(404);
+    }
+    member.remove(function(err) {
+      if (err) {
+        return handleError(res, err);
+      }
+      return res.sendStatus(204);
+    });
+  });
+};
+
 exports.bulkAdd = function(req, res) {
   var csv = req.body.csv;
 
