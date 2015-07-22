@@ -8,9 +8,12 @@
 
 <div class="container">
   <div class="row">
-     <a href="/member/new">add member</a>
-     <a href="/member/bulk">bulk add members</a>
-     <a href="#" ng-click="generateCsv()">exportera</a>
+    <a href="/member/new">add member</a>
+    <a href="/member/bulk">bulk add members</a>
+    <a href="#" ng-click="generateCsv()">exportera</a>
+  </div>
+  <div class="row">
+    <input type="text" ng-model="filter">
   </div>
   <div class="row">
     <div class="col-lg-12">
@@ -25,7 +28,7 @@
             <td>Actions</td>
           </tr>
         </thead>
-        <tbody ng-repeat="member in members">
+        <tbody ng-repeat="member in members | filter : filterMembers">
           <tr>
             <td><a href="/member/{{member._id}}">{{member._id}}</a></td>
             <td>{{member.email}}</td>

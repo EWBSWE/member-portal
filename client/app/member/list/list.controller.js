@@ -46,4 +46,12 @@ angular.module('ewbMemberApp')
 
       window.open(encodeURI(csvContent));
     };
+
+    $scope.filterMembers = function(member) {
+        if (!$scope.filter) {
+          return true;
+        }
+
+        return member.email.match($scope.filter);
+    };
   });
