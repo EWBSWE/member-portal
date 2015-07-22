@@ -8,7 +8,6 @@ angular.module('ewbMemberApp', [
   'btford.socket-io',
   'ui.bootstrap',
   'angularMoment',
-  'ngMessages',
 ])
   .config(function ($routeProvider, $locationProvider, $httpProvider) {
     $routeProvider

@@ -35,6 +35,10 @@ exports.create = function(req, res) {
       return res.status(400).json({ message: 'Member exists' });
     } else {
       Member.create({
+        name: req.body.name,
+        location: req.body.location,
+        telephone: req.body.telephone,
+        profession: req.body.profession,
         email: req.body.email,
         student: req.body.student,
         expirationDate: req.body.expirationDate,
