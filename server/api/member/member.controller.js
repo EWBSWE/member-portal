@@ -179,7 +179,7 @@ exports.confirmPayment = function(req, res) {
 
   // Set Stripe lowest monetary value. 1 USD should be sent as 100 cents and so
   // forth.
-  amount = amount * 100;
+  var stripeAmount = amount * 100;
 
   var chargeSuccessful = false;
   var errorMessage = 'Vi misslyckades med att genomföra din betalning';
@@ -187,7 +187,7 @@ exports.confirmPayment = function(req, res) {
   // communicate with stripe
   stripe.charges.create({
     currency: "SEK",
-    amount: amount,
+    amount: stripeAmount,
     source: stripeToken.id,
     description: "Membership test charge", // todo this shows up in the stripe web interface
   }, function(err, charge) {
