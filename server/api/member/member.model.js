@@ -17,7 +17,7 @@ var MemberSchema = new Schema({
   student: { type: Boolean, required: true, default: true },
   telephone: { type: String, required: true },
   createdAt: { type: Date, default: moment() },
-  expirationDate: { type: Date, default: moment().add(1, 'year') },
+  expirationDate: { type: Date, required: true, default: moment().add(1, 'year') },
 });
 
 MemberSchema

@@ -73,7 +73,7 @@ exports.bulkAdd = function(req, res) {
   var csv = req.body.csv;
 
   // Remove whitespace and split on newline
-  var members = csv.replace(/ /g, '').split(/\n/);
+  var members = csv.replace(/ /g, ' ').split(/\n/);
 
   // Map raw csv to object for manipulation
   members = _.map(members, function(csv) {
@@ -85,21 +85,29 @@ exports.bulkAdd = function(req, res) {
 
     // If we have the correct number of fields, validate each field otherwise
     // set member as invalid
-    if (info.length === 3) {
-      if (validateEmail(info[0])) {
-        member.email = info[0];
+    // 0 namn, 1 ort, 2 student, 3 yrke, 4 epost, 5 telefon, 6 slutdatum
+    if (info.length === Member.schema._requiredpaths.length) {
+      member.name = info[0].trim();
+      member.location = info[1].trim();
+
+      if (validateType(info[2])) {
+        member.student = info[2] === 'student';
       } else {
         member.invalid = true;
       }
 
-      if (validateType(info[1])) {
-        member.student = info[1] === 'student';
+      member.profession = info[3].trim();
+
+      if (validateEmail(info[4])) {
+        member.email = info[4];
       } else {
         member.invalid = true;
       }
 
-      if (validateExpirationDate(info[2])) {
-        member.expirationDate = info[2];
+      member.telephone = info[5].replace(/ /g, '');
+
+      if (validateExpirationDate(info[6])) {
+        member.expirationDate = info[6];
       } else {
         member.invalid = true;
       }
