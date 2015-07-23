@@ -234,13 +234,19 @@ exports.confirmPayment = function(req, res) {
             expirationDate = moment().add(3, 'year');
           }
 
+          // TODO let database take care of trimming the input
           Member.create({
+            name: req.body.name.trim(),
+            location: req.body.location.trim(),
+            profession: req.body.profession.trim(),
             email: req.body.email,
+            telephone: req.body.telephone.replace(/ /g, ''),
             student: isStudent,
             expirationDate: expirationDate,
           }, function(err, member) {
             if (err) {
-              // TODO successful payment
+              // TODO successful payment but failed to add member
+              // send mail to admins and customer?
               console.log(err);
             }
             createPayment(member);

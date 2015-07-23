@@ -14,7 +14,11 @@ angular.module('ewbMemberApp')
     var callback = function(token) {
       $http.post('/api/members/confirm-payment', {
         stripeToken: token,
+        name: $scope.membership.name,
+        location: $scope.membership.location,
+        profession: $scope.membership.profession,
         email: $scope.membership.email,
+        telephone: $scope.membership.telephone,
         isStudent: $scope.membership.isStudent === '1',
         subscriptionLength: $scope.membership.subscriptionLength,
       }).success(function(data) {
