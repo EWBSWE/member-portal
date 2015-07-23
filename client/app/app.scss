@@ -15,6 +15,8 @@ $fa-font-path: "/bower_components/font-awesome/fonts/";
     padding: 0.2em 0;
 }
 
+@import '../components/footer/footer.scss';
+
 // Component styles are injected through grunt
 // injector
 @import 'account/login/login.scss';
@@ -28,5 +30,6 @@ $fa-font-path: "/bower_components/font-awesome/fonts/";
 @import 'payment/detail/detail.scss';
 @import 'payment/list/list.scss';
 @import 'receipt/receipt.scss';
+@import 'footer/footer.scss';
 @import 'modal/modal.scss';
 // endinjector
