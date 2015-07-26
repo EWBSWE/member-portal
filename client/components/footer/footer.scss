@@ -14,3 +14,39 @@ footer .navigation a {
         text-decoration: none;
     }
 }
+
+footer .social a {
+    background: url("../assets/images/social-icons.png") no-repeat scroll 0 0;
+    color: transparent;
+    display: block;
+    float: right;
+    height: 33px;
+    opacity: 0.5;
+    width: 40px;
+    margin-left: 5px;
+
+    &.youtube {
+        background-position: -168px 0;
+    }
+
+    &.facebook {
+        background-position: 0 0;
+    }
+
+    &.twitter {
+        background-position: -40px 0;
+    }
+
+    &.linkedin {
+        background-position: -80px 0;
+    }
+
+    &.rss {
+        background-position: -120px 0;
+    }
+
+    &:hover {
+        opacity: 1;
+        color: #fff;
+    }
+}
