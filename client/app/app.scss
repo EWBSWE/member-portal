@@ -15,6 +15,10 @@ $fa-font-path: "/bower_components/font-awesome/fonts/";
     padding: 0.2em 0;
 }
 
+.container {
+    max-width: 960px;
+}
+
 @import '../components/header/header.scss';
 @import '../components/footer/footer.scss';
 
