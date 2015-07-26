@@ -1,0 +1,45 @@
+header {
+    background: url("../assets/images/bg-repeat.png") repeat-x scroll 0 0;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1) inset;
+}
+
+header .world {
+    background: url("../assets/images/header-bg.png") no-repeat scroll center top;
+    padding-top: 20px;
+}
+
+header .menu a {
+    color: #db8b16;
+    font-size: 11px;
+}
+
+header input.search {
+    max-width: 200px;
+}
+
+header .inner-addon {
+    position: relative;
+}
+
+.inner-addon .search-icon {
+    position: absolute;
+    padding: 10px;
+}
+
+.right-addon .search-icon {
+    right: 5px;
+}
+
+.right-addon input {
+    padding-right: 30px;
+}
+
+.search-icon {
+    background: url("../assets/images/search.png") no-repeat scroll center 10px;
+    opacity: 0.5;
+    border: medium none;
+
+    &:hover {
+        opacity: 1;
+    }
+}

@@ -1,0 +1,41 @@
+<header>
+    <div class="container world">
+        <div class="row">
+            <div class="col-xs-6">
+                <a href="/" title="Hem">
+                    <img src="/assets/images/logo.png" alt="Hem" />
+                </a>
+            </div>
+            <div class="col-xs-6">
+                <div class="row">
+                    <ul class="menu list-inline pull-right">
+                        <li>
+                            <a href="/organisation">Kontakt</a>
+                        </li>
+                        <li>
+                            <a href="/user/register">Registrera bloggkonto</a>
+                        </li>
+                        <li>
+                            <a href="/user/login">Logga in</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="row">
+                    <form action="/search" method="get" accept-charset="UTF-8" class="form-inline pull-right">
+                        <div class="form-group">
+                            <div class="inner-addon right-addon">
+                                <input type="submit" class="search-icon" value="" name=""/>
+                                <input type="text" class="search form-control" name="search_api_views_fulltext" id="" value="" size="30" maxlength="128" />
+                                
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div ng-include="'components/navbar/navbar.html'"></div>
+        </div>
+    </div>
+</header>
+
