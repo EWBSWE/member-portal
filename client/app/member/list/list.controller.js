@@ -1,4 +1,5 @@
 'use strict';
+/* globals confirm*/
 
 angular.module('ewbMemberApp')
   .controller('MemberListCtrl', function ($scope, $http) {

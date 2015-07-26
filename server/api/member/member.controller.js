@@ -41,7 +41,7 @@ exports.create = function(req, res) {
         profession: req.body.profession,
         email: req.body.email,
         student: req.body.student,
-        expirationDate: req.body.expirationDate,
+        expirationDate: req.body.expirationDate
       }, function(err, member) {
         if (err) {
           return handleError(res, err);
@@ -118,7 +118,7 @@ exports.bulkAdd = function(req, res) {
 
   var validMembers = _.filter(members, function(member) {
     return !member.invalid;
-  })
+  });
 
   var invalidMembers = _.filter(members, function(member) {
     return member.invalid;
@@ -154,7 +154,7 @@ exports.getPayments = function(req, res) {
   Payment.find({ member: new mongoose.Types.ObjectId(req.params.id) }, function(err, payments) {
     if (err) {
       return handleError(res, err);
-    } 
+    }
     return res.status(200).json(payments);
   });
 };
@@ -242,7 +242,7 @@ exports.confirmPayment = function(req, res) {
             email: req.body.email,
             telephone: req.body.telephone.replace(/ /g, ''),
             student: isStudent,
-            expirationDate: expirationDate,
+            expirationDate: expirationDate
           }, function(err, member) {
             if (err) {
               // TODO successful payment but failed to add member
@@ -261,7 +261,7 @@ exports.confirmPayment = function(req, res) {
 
 function handleError(res, err) {
   return res.status(500).send(err);
-};
+}
 
 function validateEmail(email) {
   if (!email) {
@@ -270,7 +270,7 @@ function validateEmail(email) {
 
   var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
   return re.test(email);
-};
+}
 
 function validateType(text) {
   if (!text) {
@@ -278,7 +278,7 @@ function validateType(text) {
   }
 
   return text.toLowerCase() === 'student' || text.toLowerCase() === 'yrkesverksam';
-};
+}
 
 function validateExpirationDate(expirationDate) {
   if (!expirationDate) {
@@ -286,4 +286,4 @@ function validateExpirationDate(expirationDate) {
   }
 
   return moment(expirationDate).isValid();
-};
+}
