@@ -33,22 +33,22 @@ User.find({}).remove(function() {
 Member.find({}).remove(function() {
   Member.create({
     name: 'Some Guy',
-    location: 'Somewhere', 
+    location: 'Somewhere',
     student: true,
     profession: 'Mapper',
     email: 'some-guy@test.com',
-    telephone: '+46123456789',
+    telephone: '+46123456789'
   }, {
     name: 'Arne Testman',
-    location: 'Tensta', 
+    location: 'Tensta',
     student: false,
     profession: 'President',
     email: 'arne_testman@test.com',
-    telephone: '+46123456790',
+    telephone: '+46123456790'
   });
 });
 
-var createPayments = function() {
+function createPayments() {
   var testMember;
   Payment.find({}).remove(function() {
     console.log('Remove payments..');
@@ -68,9 +68,9 @@ var createPayments = function() {
     Payment.create({
       member: testMember,
       amount: 100,
-      currency: 'SEK',
+      currency: 'SEK'
     }, function() {
       console.log('Payments done!');
     });
   };
-};
+}

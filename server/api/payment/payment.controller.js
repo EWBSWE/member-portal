@@ -47,7 +47,7 @@ function getPayment(userId, req,  res){
       }
       return res.json(payment);
     });
-};
+}
 
 // Get a single users payments
 exports.getUsersPayments = function(req, res) {
@@ -95,7 +95,7 @@ function createPayment(userId, req, res){
     }
     return res.status(201).json(payment);
   });
-};
+}
 
 // Updates an existing payment in the DB.
 exports.update = function(req, res) {
@@ -141,4 +141,4 @@ exports.destroy = function(req, res) {
 
 function handleError(res, err) {
   return res.status(500).send(err);
-};
+}

@@ -9,10 +9,10 @@ var MemberSchema = new Schema({
   location: { type: String, required: true },
   profession: { type: String, required: true },
   email: {
-    type: String, 
-    lowercase: true, 
-    unique: true, 
-    required: true,
+    type: String,
+    lowercase: true,
+    unique: true,
+    required: true
   },
   student: { type: Boolean, required: true, default: true },
   telephone: { type: String, required: true },

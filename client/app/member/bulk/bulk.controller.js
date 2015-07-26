@@ -1,4 +1,5 @@
 'use strict';
+/* globals alert*/
 
 angular.module('ewbMemberApp')
   .controller('MemberBulkCtrl', function ($scope, $http) {
@@ -11,7 +12,7 @@ angular.module('ewbMemberApp')
       }
 
       $http.post('/api/members/bulk', {
-        csv: $scope.csv,
+        csv: $scope.csv
       }).success(function(data, status) {
         if (data.valid.length) {
           $scope.validMembers = data.valid;
