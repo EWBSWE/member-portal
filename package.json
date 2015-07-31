@@ -18,6 +18,7 @@
     "express-session": "~1.x",
     "jsonwebtoken": "~5.x",
     "lodash": "~2.4.1",
+    "mailgun-js": "^0.7.1",
     "method-override": "~2.x",
     "moment": "^2.10.3",
     "mongoose": "~4.x",
