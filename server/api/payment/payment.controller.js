@@ -4,6 +4,7 @@ var _ = require('lodash');
 var Payment = require('./payment.model');
 var Member = require('../member/member.model');
 var stripe = require('stripe')('sk_test_XYJalXkc7mCuSxM2O5QBILf3');
+var mailgun = require('mailgun-js')({apiKey: 'key-a84831826d3c3bd17d42855f08fba084', domain: 'sandboxcbadc25cc29f4237a9b52f88691afe42.mailgun.org' });
 var moment = require('moment');
 
 // Get list of payments
@@ -180,6 +181,22 @@ exports.confirmPayment = function(req, res) {
   }, function(err, charge) {
     if (err === null) {
       chargeSuccessful = true;
+
+      // TODO better text
+      var data = {
+        from: 'kvitto@ingenjorerutangranser.se',
+        to: req.body.email,
+        subject: 'Bekräftelse pa betalning',
+        text: 'Tack för ditt stöd!',
+      };
+
+      mailgun.messages().send(data, function(error, body) {
+        console.log(body);
+        if (error) {
+          // TODO log error somewhere
+          console.log('error', error);
+        }
+      });
     } else {
       console.log('err', err);
       // TODO act on errors
