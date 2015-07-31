@@ -12,7 +12,7 @@ angular.module('ewbMemberApp')
     });
 
     var callback = function(token) {
-      $http.post('/api/members/confirm-payment', {
+      $http.post('/api/payment/confirm', {
         stripeToken: token,
         name: $scope.membership.name,
         location: $scope.membership.location,

@@ -18,6 +18,8 @@ router.get('/:id', auth.isAuthenticated(), controller.getMyPayment);
 router.post('/user/:user', auth.hasRole('admin'), controller.createUsersPayment);
 router.post('/', auth.isAuthenticated(), controller.createMyPayment);
 
+router.post('/confirm', controller.confirmPayment);
+
 router.put('/:id', auth.isAuthenticated(), controller.update);
 router.delete('/:id', auth.hasRole('admin'), controller.destroy);
 
