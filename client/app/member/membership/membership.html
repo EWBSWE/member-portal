@@ -21,46 +21,46 @@
         <div class="form-group">
           <label for="inputName" class="col-sm-2 control-label">Namn och efternamn</label>
           <div class="col-sm-10">
-            <input class="form-control" type="text" name="inputName" id="inputName" ng-model="membership.name"/>
+            <input class="form-control" type="text" name="inputName" id="inputName" ng-model="newMember.name"/>
           </div>
         </div>
 
         <div class="form-group">
           <label for="inputLocation" class="col-sm-2 control-label">Ort</label>
           <div class="col-sm-10">
-            <input class="form-control" type="text" name="inputLocation" id="inputLocation" ng-model="membership.location"/>
+            <input class="form-control" type="text" name="inputLocation" id="inputLocation" ng-model="newMember.location"/>
           </div>
         </div>
 
         <div class="form-group">
           <label for="inputProfession" class="col-sm-2 control-label">Yrke/Utbildning</label>
           <div class="col-sm-10">
-            <input class="form-control" type="text" name="inputProfession" id="inputProfession" ng-model="membership.profession"/>
+            <input class="form-control" type="text" name="inputProfession" id="inputProfession" ng-model="newMember.profession"/>
           </div>
         </div>
 
         <div class="form-group">
           <label for="inputEmail" class="col-sm-2 control-label">E-postadress</label>
           <div class="col-sm-10">
-            <input class="form-control" type="text" id="inputEmail" ng-model="membership.email"/>
+            <input class="form-control" type="text" id="inputEmail" ng-model="newMember.email"/>
           </div>
         </div>
 
         <div class="form-group">
           <label for="inputTelephone" class="col-sm-2 control-label">Telefon</label>
           <div class="col-sm-10">
-            <input class="form-control" type="text" name="inputTelephone" id="inputTelephone" ng-model="membership.telephone"/>
+            <input class="form-control" type="text" name="inputTelephone" id="inputTelephone" ng-model="newMember.telephone"/>
           </div>
         </div>
 
         <div class="form-group">
           <div class="col-sm-offset-2 col-sm-10">
             <label class="radio-inline">
-              <input type="radio" name="isStudent" value="1" ng-model="membership.isStudent"/>
+              <input type="radio" name="isStudent" value="1" ng-model="newMember.isStudent"/>
               Student
             </label>
             <label class="radio-inline">
-              <input type="radio" name="isStudent" value="0" ng-model="membership.isStudent" />
+              <input type="radio" name="isStudent" value="0" ng-model="newMember.isStudent" />
               Yrkesverksam eller senior
             </label>
           </div>
@@ -69,11 +69,11 @@
         <div class="form-group">
           <div class="col-sm-offset-2 col-sm-10">
             <label class="radio-inline">
-              <input type="radio" name="subscriptionLength" value="1" ng-model="membership.subscriptionLength" />
+              <input type="radio" name="subscriptionLength" value="1" ng-model="newMember.subscriptionLength" />
               1 år, 100 kr (40 kr för student)
             </label>
             <label class="radio-inline">
-              <input type="radio" name="subscriptionLength" value="3" ng-model="membership.subscriptionLength" />
+              <input type="radio" name="subscriptionLength" value="3" ng-model="newMember.subscriptionLength" />
               3 år, 250 kr (90 kr för student)
             </label>
           </div>

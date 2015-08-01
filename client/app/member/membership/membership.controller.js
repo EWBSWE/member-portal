@@ -2,7 +2,7 @@
 /* globals StripeCheckout, alert*/
 angular.module('ewbMemberApp')
   .controller('MembershipCtrl', function ($scope, $http, $location) {
-    $scope.membership = {};
+    $scope.newMember = {};
 
     var stripeHandler = StripeCheckout.configure({
       key: 'pk_test_NkGJralO01ISbEWdNpaPkoWZ',
@@ -14,13 +14,13 @@ angular.module('ewbMemberApp')
     var callback = function(token) {
       $http.post('/api/payments/confirm', {
         stripeToken: token,
-        name: $scope.membership.name,
-        location: $scope.membership.location,
-        profession: $scope.membership.profession,
-        email: $scope.membership.email,
-        telephone: $scope.membership.telephone,
-        isStudent: $scope.membership.isStudent === '1',
-        subscriptionLength: $scope.membership.subscriptionLength,
+        name: $scope.newMember.name,
+        location: $scope.newMember.location,
+        profession: $scope.newMember.profession,
+        email: $scope.newMember.email,
+        telephone: $scope.newMember.telephone,
+        isStudent: $scope.newMember.isStudent === '1',
+        subscriptionLength: $scope.newMember.subscriptionLength,
       }).success(function(data) {
         // redirect to receipt/confirmation
         console.log('success', data);
@@ -56,31 +56,30 @@ angular.module('ewbMemberApp')
     };
 
     $scope.initiatePayment = function() {
-      console.log($scope.membership);
-      // todo check validate membership details in a more centralized way instead
+      console.log($scope.newMember);
+      // todo check validate newMember details in a more centralized way instead
       // of in the frontend
-      // maybe create membership model?
-      if ($scope.membership.email === '') {
+      // maybe create newMember model?
+      if ($scope.newMember.email === '') {
         return;
       }
-      if ($scope.membership.isStudent !== '0' && $scope.membership.isStudent !== '1') {
+      if ($scope.newMember.isStudent !== '0' && $scope.newMember.isStudent !== '1') {
         return;
       }
-      if ($scope.membership.subscriptionLength !== '1' && $scope.membership.subscriptionLength !== '3') {
+      if ($scope.newMember.subscriptionLength !== '1' && $scope.newMember.subscriptionLength !== '3') {
         return;
       }
 
       var paymentOption = $scope.paymentOptions.worker;
-      if ($scope.membership.isStudent === '1') {
+      if ($scope.newMember.isStudent === '1') {
         paymentOption = $scope.paymentOptions.student;
       }
 
-      if ($scope.membership.subscriptionLength === '1') {
+      if ($scope.newMember.subscriptionLength === '1') {
         paymentOption = paymentOption.oneYear;
       } else {
         paymentOption = paymentOption.threeYear;
       }
-
 
       stripeHandler.open({
         name: 'Ingejörer utan gränser',
@@ -88,7 +87,7 @@ angular.module('ewbMemberApp')
         // image: 'bild.png', // TODO
         currency: 'SEK',
         amount: paymentOption.amount * 100,
-        email: $scope.membership.email,
+        email: $scope.newMember.email,
       });
     };
   });

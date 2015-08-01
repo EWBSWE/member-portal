@@ -177,7 +177,7 @@ exports.confirmPayment = function(req, res) {
     currency: "SEK",
     amount: stripeAmount,
     source: stripeToken.id,
-    description: "Membership test charge", // todo this shows up in the stripe web interface
+    description: "Membership test charge", // TODO this shows up in the stripe web interface
   }, function(err, charge) {
     if (err === null) {
       chargeSuccessful = true;
@@ -186,7 +186,7 @@ exports.confirmPayment = function(req, res) {
       var data = {
         from: 'kvitto@ingenjorerutangranser.se',
         to: req.body.email,
-        subject: 'Bekräftelse pa betalning',
+        subject: 'Bekräftelse på betalning',
         text: 'Tack för ditt stöd!',
       };
 
@@ -226,18 +226,31 @@ exports.confirmPayment = function(req, res) {
 
       Member.findOne({ email: req.body.email }, function(err, member) {
         if (err) {
-          // TODO successful payment
+          // TODO what do on successful payment?
           console.log(err);
         }
 
+        var expirationDate = moment().add(1, 'year');
+        if (subscriptionLength === '3') {
+          expirationDate = moment().add(3, 'year');
+        }
+
         if (member) {
-          createPayment(member);
-        } else {
-          var expirationDate = moment().add(1, 'year');
-          if (subscriptionLength === '3') {
-            expirationDate = moment().add(3, 'year');
+          member.name = req.body.name.trim();
+          member.location = req.body.location.trim();
+          member.profession = req.body.profession.trim();
+          member.telephone = req.body.telephone.replace(/ /g, '');
+          member.student = isStudent;
+
+          // Only update expirationDate if it extends the membership
+          if (moment(member.expirationDate) < expirationDate) {
+            member.expirationDate = expirationDate;
           }
 
+          member.save(function() {
+            createPayment(member);
+          });
+        } else {
           // TODO let database take care of trimming the input
           Member.create({
             name: req.body.name.trim(),
