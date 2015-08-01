@@ -1,0 +1,26 @@
+.navbar.public {
+    margin-top: 7px;
+    margin-bottom: 0px;
+    background-color: #3f4351;
+    background-image: -webkit-linear-gradient(top, #666978, #3f4351);
+    background-image:    -moz-linear-gradient(top, #666978, #3f4351);
+    background-image:      -o-linear-gradient(top, #666978, #3f4351);
+    background-image:         linear-gradient(to bottom, #666978, #3f4351);
+    border-radius: 4px;
+}
+
+.navbar.public .public-link {
+    color: #fff;
+    font-size: 14px; 
+    font-weight: bold;
+    text-shadow: 0 1px 1px #333;
+    
+    &:hover {
+        color: #fff;
+        background-color: #d98913;
+        background-image: -webkit-linear-gradient(top, #EFA230, #d98913);
+        background-image:    -moz-linear-gradient(top, #EFA230, #d98913);
+        background-image:      -o-linear-gradient(top, #EFA230, #d98913);
+        background-image:         linear-gradient(to bottom, #EFA230, #d98913);
+    }
+}

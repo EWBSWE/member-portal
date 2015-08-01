@@ -1,4 +1,4 @@
-<header>
+<header ng-controller="HeaderCtrl">
     <div class="container world">
         <div class="row">
             <div class="col-xs-6">
@@ -34,7 +34,7 @@
             </div>
         </div>
         <div class="row">
-            <div ng-include="'components/navbar/navbar.html'"></div>
+          <div ng-include="navbarPath"></div>
         </div>
     </div>
 </header>
