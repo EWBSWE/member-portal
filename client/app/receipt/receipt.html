@@ -2,10 +2,29 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-lg-12">
-      Kvitto.
-
-      Vi skickar en bekfraftelse pa mailen.
+    <div class="col-xs-12">
+      <h1>Tack för ditt stöd!</h1>
+      <p>
+      Vi har tagit emot din betalning på <strong>{{receipt.amount}} kr</strong>.
+      </p>
+      <p>
+        Nedan följer en sammanställning av ditt medlemskap. Vi skickar även en kopia till <strong>{{member.email}}</strong> som borde vara hos dig inom ett par timmar.
+      </p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <h2>Medlemsuppgifter</h2>
+    </div>
+    <div class="col-xs-12 col-sm-6">
+      <p>{{member.name}}</p>
+      <p>{{member.location}}</p>
+      <p>{{member.profession}}</p>
+      <p>{{member.email}}</p>
+      <p>{{member.telephone}}</p>
+    </div>
+    <div class="col-xs-12 col-sm-6">
+      <p>{{memberTypeText()}} till och med {{member.expirationDate | amDateFormat: 'YYYY-MM-DD'}}.</p>
     </div>
   </div>
 </div>
