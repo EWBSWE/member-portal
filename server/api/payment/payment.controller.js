@@ -1,11 +1,12 @@
 'use strict';
 
 var _ = require('lodash');
+var stripe = require('stripe')('sk_test_XYJalXkc7mCuSxM2O5QBILf3');
+var moment = require('moment');
+
 var Payment = require('../../models/payment.model');
 var Member = require('../../models/member.model');
-var stripe = require('stripe')('sk_test_XYJalXkc7mCuSxM2O5QBILf3');
-var mailgun = require('mailgun-js')({apiKey: 'key-a84831826d3c3bd17d42855f08fba084', domain: 'sandboxcbadc25cc29f4237a9b52f88691afe42.mailgun.org' });
-var moment = require('moment');
+var OutgoingMessage = require('../../models/outgoing-message.model');
 
 // Get list of payments
 exports.index = function(req, res) {
@@ -190,11 +191,9 @@ exports.confirmPayment = function(req, res) {
         text: 'Tack för ditt stöd!',
       };
 
-      mailgun.messages().send(data, function(error, body) {
-        console.log(body);
-        if (error) {
-          // TODO log error somewhere
-          console.log('error', error);
+      OutgoingMessage.create(data, function(err, outgoingMessage) {
+        if (err) {
+          // TODO log error
         }
       });
     } else {

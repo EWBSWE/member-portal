@@ -10,6 +10,8 @@ var OutgoingMessageSchema = new Schema({
     subject: { type: String, required: true },
     text: { type: String, required: true },
     createdAt: { type: Date, default: moment() },
+    sendAt: { type: Date, default: moment() },
+    priority: { type: Number, default: 0 },
     failedAttempts: { type: Number, default: 0 },
 });
 
