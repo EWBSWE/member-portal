@@ -7,8 +7,8 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 var mongoose = require('mongoose');
 var config = require('../server/config/environment');
 
-var Member = require('../server/api/member/member.model');
-var OutgoingMessage = require('./outgoing-message.model');
+var Member = require('../server/models/member.model');
+var OutgoingMessage = require('../server/models/outgoing-message.model');
 
 var moment = require('moment');
 var mailgun = require('mailgun-js')({apiKey: 'key-a84831826d3c3bd17d42855f08fba084', domain: 'sandboxcbadc25cc29f4237a9b52f88691afe42.mailgun.org' });
@@ -52,5 +52,8 @@ Member.find({ expirationDate: { $lt: moment().add(1, 'month'), $gt: moment() } }
 
             process.exit();
         });
+    } else {
+        // No expiring members
+        process.exit();
     }
 });
