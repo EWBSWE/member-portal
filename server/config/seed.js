@@ -5,9 +5,9 @@
 
 'use strict';
 
-var User = require('../api/user/user.model');
-var Member = require('../api/member/member.model');
-var Payment = require('../api/payment/payment.model');
+var User = require('../models/user.model');
+var Member = require('../models/member.model');
+var Payment = require('../models/payment.model');
 
 User.find({}).remove(function() {
   User.create({

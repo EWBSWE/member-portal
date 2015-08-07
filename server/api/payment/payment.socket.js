@@ -4,7 +4,7 @@
 
 'use strict';
 
-var Payment = require('./payment.model');
+var Payment = require('../../models/payment.model');
 
 exports.register = function(socket) {
   Payment.schema.post('save', function (doc) {
