@@ -8,6 +8,25 @@
 var User = require('../models/user.model');
 var Member = require('../models/member.model');
 var Payment = require('../models/payment.model');
+var OutgoingMessage = require('../models/outgoing-message.model');
+
+OutgoingMessage.find().remove(function() {
+  console.log('Removing outgoing messages..');
+  OutgoingMessage.create({
+    from: 'noreply@ingenjorerutangranser.se',
+    to: 'dan.albin.johansson@gmail.com', 
+    subject: 'Seed test mail',
+    text: 'Test body',
+  }, {
+    from: 'noreply@ingenjorerutangranser.se',
+    to: 'dan.albin.johansson@gmail.com', 
+    subject: 'High prio',
+    text: 'Test body high prio',
+    priority: 1,
+  }, function() {
+    console.log('Finished populating outgoing messages');
+  })
+});
 
 User.find({}).remove(function() {
   User.create({
