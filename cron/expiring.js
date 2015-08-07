@@ -11,7 +11,6 @@ var Member = require('../server/models/member.model');
 var OutgoingMessage = require('../server/models/outgoing-message.model');
 
 var moment = require('moment');
-var mailgun = require('mailgun-js')({apiKey: 'key-a84831826d3c3bd17d42855f08fba084', domain: 'sandboxcbadc25cc29f4237a9b52f88691afe42.mailgun.org' });
 
 mongoose.connect(config.mongo.uri, config.mongo.options);
 
@@ -53,7 +52,6 @@ Member.find({ expirationDate: { $lt: moment().add(1, 'month'), $gt: moment() } }
             process.exit();
         });
     } else {
-        // No expiring members
         process.exit();
     }
 });
