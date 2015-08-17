@@ -18,13 +18,13 @@
     </div>
 
     <div class="form-group">
-      <label for="inputName">Namn och efternamn</label>
-      <input type="text" name="inputName" id="inputName" ng-model="newMember.name"/>
+      <label for="inputName">Namn</label>
+      <input type="text" name="inputName" id="inputName" class="form-control" ng-model="newMember.name"/>
     </div>
 
     <div class="form-group">
-      <label for="inputLocation">Ort</label>
-      <input type="text" name="inputLocation" id="inputLocation" ng-model="newMember.location"/>
+      <label for="inputLocation" class="control-label">Ort</label>
+      <input type="text" name="inputLocation" id="inputLocation" class="form-control" ng-model="newMember.location"/>
     </div>
 
     <div class="radio">
@@ -40,22 +40,22 @@
 
     <div class="form-group">
       <label for="inputProfession">Yrke/Utbildning</label>
-      <input type="text" name="inputProfession" id="inputProfession" ng-model="newMember.profession"/>
+      <input type="text" name="inputProfession" id="inputProfession" class="form-control" ng-model="newMember.profession"/>
     </div>
 
     <div class="form-group">
       <label for="inputEmail">E-postadress</label>
-      <input type="text" name="inputEmail" id="inputEmail" ng-model="newMember.email"/>
+      <input type="text" name="inputEmail" id="inputEmail" class="form-control" ng-model="newMember.email"/>
     </div>
 
     <div class="form-group">
       <label for="inputTelephone">Telefon</label>
-      <input type="text" name="inputTelephone" id="inputTelephone" ng-model="newMember.telephone"/>
+      <input type="text" name="inputTelephone" id="inputTelephone" class="form-control" ng-model="newMember.telephone"/>
     </div>
 
 
     <div class="form-group">
-      <p>Nedan kan du valja att ge ett exakt slutdatum for medlemmen eller valja en fordefinierad langd</p>
+      <p>Nedan kan du välja att ge ett exakt slutdatum för medlemmen eller välja en fördefinierad längd</p>
       <label for="inputDate">Medlem till och med</label>
       <input type="date" id="inputDate" ng-model="newMember.expirationDate" aria-describedBy="helpBlock"/>
       <span id="helpBlock" class="help-block">
