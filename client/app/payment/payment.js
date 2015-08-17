@@ -5,10 +5,12 @@ angular.module('ewbMemberApp')
     $routeProvider
       .when('/payments', {
         templateUrl: 'app/payment/list/list.html',
-        controller: 'PaymentListCtrl'
+        controller: 'PaymentListCtrl',
+        authenticate: true, 
       })
       .when('/payment/:id', {
         templateUrl: 'app/payment/detail/detail.html',
-        controller: 'PaymentDetailCtrl'
+        controller: 'PaymentDetailCtrl',
+        authenticate: true, 
       });
   });
