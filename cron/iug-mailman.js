@@ -38,8 +38,10 @@ OutgoingMessage
                             message.failedAttempts++;
                             message.sendAt = moment().add(message.failedAttempts, 'minutes');
                             message.save();
+                        } else {
+                            console.log(body);
+                            message.remove();
                         }
-                        console.log(body);
                     });
                 } else {
                     console.log('No messages left in queue');
@@ -48,6 +50,7 @@ OutgoingMessage
                 }
             }, 3000);
         } else {
+            console.log('No messages in queue');
             process.exit();
         }
     });
