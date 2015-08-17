@@ -51,6 +51,30 @@ exports.create = function(req, res) {
   });
 };
 
+exports.update = function(req, res) {
+  var memberId = req.params.id;
+  Member.findById(memberId, function(err, member) {
+    if (err) {
+      return handleError(res, err);
+    }
+
+    member.name = req.body.name;
+    member.location = req.body.location;
+    member.telephone = req.body.telephone;
+    member.profession = req.body.profession;
+    member.email = req.body.email;
+    member.student = req.body.student;
+    member.expirationDate = req.body.expirationDate;
+
+    member.save(function(err) {
+      if (err) {
+        return handleError(res, err);
+      }
+      return res.status(202).json(member);
+    });
+  });
+};
+
 exports.destroy = function(req, res) {
   Member.findById(req.params.id, function(err, member) {
     if (err) {
