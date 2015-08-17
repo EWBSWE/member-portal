@@ -5,6 +5,12 @@ angular.module('ewbMemberApp')
     $scope.user = {};
     $scope.errors = {};
 
+    var landingPage = '/admin';
+
+    if (Auth.isLoggedIn()) {
+      $location.path(landingPage);
+    }
+
     $scope.login = function(form) {
       $scope.submitted = true;
 
@@ -14,8 +20,7 @@ angular.module('ewbMemberApp')
           password: $scope.user.password
         })
         .then( function() {
-          // Logged in, redirect to home
-          $location.path('/');
+          $location.path(landingPage);
         })
         .catch( function(err) {
           $scope.errors.other = err.message;
