@@ -1,4 +1,4 @@
-<footer>
+<footer ng-controller="FooterCtrl">
     <div class="container public">
         <div class="row">
             <div class="col-xs-8">
@@ -10,7 +10,7 @@
                     <li><a class="active-trail" href="/content/syfte-och-arbetsgrupper">Om oss</a></li>
                     <li><a href="/partners-1">Partners</a></li>
                 </ul>
-                <div class="copyright">&copy; 2015 Ingenjörer utan gränser.</div>
+                <div class="copyright">&copy; {{year | amDateFormat: 'YYYY'}} Ingenjörer utan gränser.</div>
             </div>
             <div class="col-xs-4 social">
                 <a target="_blank" class="youtube" href="http://www.youtube.com/user/IngenjoreUtanGranser"></a>
