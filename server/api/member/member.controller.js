@@ -110,6 +110,10 @@ exports.bulkAdd = function(req, res) {
       } else {
         member.invalid = true;
       }
+
+      member.invalid = _.some(info, function(field) {
+        return field.length === 0;
+      });
     } else {
       member.invalid = true;
     }
