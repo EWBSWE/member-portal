@@ -41,8 +41,8 @@
             <td>{{member.profession}}</td>
             <td>{{member.telephone}}</td>
             <td>{{member.student}}</td>
-            <td>{{member.createdAt}}</td>
-            <td>{{member.expirationDate}}</td>
+            <td>{{member.createdAt | amDateFormat: 'YYYY-MM-DD'}}</td>
+            <td>{{member.expirationDate | amDateFormat: 'YYYY-MM-DD'}}</td>
             <td><a href="#" ng-click="deleteUser(member._id)">Ta bort</a></td>
           </tr>
         </tbody>
