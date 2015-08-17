@@ -4,6 +4,7 @@ var _ = require('lodash');
 var mongoose = require('mongoose');
 var Member = require('../../models/member.model');
 var Payment = require('../../models/payment.model');
+var moment = require('moment');
 
 exports.index = function(req, res) {
   Member.find(function(err, members) {
