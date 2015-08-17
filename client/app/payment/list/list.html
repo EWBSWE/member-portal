@@ -25,7 +25,7 @@
             <td><a href="/member/{{payment.member}}">{{payment.member}}</a></td>
             <td>{{payment.amount}}</td>
             <td>{{payment.currency}}</td>
-            <td>{{payment.createdAt}}</td>
+            <td>{{payment.createdAt | amDateFormat: 'YYYY-MM-DD HH:mm:ss'}}</td>
           </tr>
         </tbody>
       </table>
