@@ -43,7 +43,10 @@
             <td>{{member.student}}</td>
             <td>{{member.createdAt | amDateFormat: 'YYYY-MM-DD'}}</td>
             <td>{{member.expirationDate | amDateFormat: 'YYYY-MM-DD'}}</td>
-            <td><a href="#" ng-click="deleteUser(member._id)">Ta bort</a></td>
+            <td>
+              <a href="/member/{{member._id}}/edit" class="btn btn-default btn-xs">Redigera</a>
+              <a href="#" ng-click="deleteUser(member._id)" class="btn btn-danger btn-xs">Ta bort</a>
+            </td>
           </tr>
         </tbody>
       </table>

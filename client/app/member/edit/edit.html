@@ -2,7 +2,7 @@
 
 <header class="hero-unit" id="banner">
   <div class="container">
-    <h1>New member</h1>
+    <h1>{{ editMember ? 'Edit member' : 'New member' }}</h1>
   </div>
 </header>
 
@@ -19,45 +19,45 @@
 
     <div class="form-group">
       <label for="inputName">Namn</label>
-      <input type="text" name="inputName" id="inputName" class="form-control" ng-model="newMember.name"/>
+      <input type="text" name="inputName" id="inputName" class="form-control" ng-model="member.name"/>
     </div>
 
     <div class="form-group">
       <label for="inputLocation" class="control-label">Ort</label>
-      <input type="text" name="inputLocation" id="inputLocation" class="form-control" ng-model="newMember.location"/>
+      <input type="text" name="inputLocation" id="inputLocation" class="form-control" ng-model="member.location"/>
     </div>
 
     <div class="radio">
       <label class="radio-inline">
-        <input type="radio" name="isStudent" value="1" ng-model="newMember.student"/>
+        <input type="radio" name="isStudent" value="1" ng-model="member.student"/>
         Student
       </label>
       <label class="radio-inline">
-        <input type="radio" name="isStudent" value="0" ng-model="newMember.student" />
+        <input type="radio" name="isStudent" value="0" ng-model="member.student" />
         Yrkesverksam/Senior
       </label>
     </div>
 
     <div class="form-group">
       <label for="inputProfession">Yrke/Utbildning</label>
-      <input type="text" name="inputProfession" id="inputProfession" class="form-control" ng-model="newMember.profession"/>
+      <input type="text" name="inputProfession" id="inputProfession" class="form-control" ng-model="member.profession"/>
     </div>
 
     <div class="form-group">
       <label for="inputEmail">E-postadress</label>
-      <input type="text" name="inputEmail" id="inputEmail" class="form-control" ng-model="newMember.email"/>
+      <input type="text" name="inputEmail" id="inputEmail" class="form-control" ng-model="member.email"/>
     </div>
 
     <div class="form-group">
       <label for="inputTelephone">Telefon</label>
-      <input type="text" name="inputTelephone" id="inputTelephone" class="form-control" ng-model="newMember.telephone"/>
+      <input type="text" name="inputTelephone" id="inputTelephone" class="form-control" ng-model="member.telephone"/>
     </div>
 
 
     <div class="form-group">
       <p>Nedan kan du välja att ge ett exakt slutdatum för medlemmen eller välja en fördefinierad längd</p>
       <label for="inputDate">Medlem till och med</label>
-      <input type="date" id="inputDate" ng-model="newMember.expirationDate" aria-describedBy="helpBlock"/>
+      <input type="date" id="inputDate" ng-model="member.expirationDate" aria-describedBy="helpBlock"/>
       <span id="helpBlock" class="help-block">
         Skriv ett datum enligt formen YYYY-MM-DD, till exempel 2016-09-01.
       </span>
@@ -65,17 +65,17 @@
 
     <div class="radio">
       <label class="radio-inline">
-        <input type="radio" name="subscriptionLength" value="1" ng-model="newMember.subscriptionLength"/>
+        <input type="radio" name="subscriptionLength" value="1" ng-model="member.subscriptionLength"/>
         1 år
       </label>
       <label class="radio-inline">
-        <input type="radio" name="subscriptionLength" value="3" ng-model="newMember.subscriptionLength" />
+        <input type="radio" name="subscriptionLength" value="3" ng-model="member.subscriptionLength" />
         3 år
       </label>
     </div>
 
     <span class="input-group-btn">
-      <button type="submit" class="btn btn-primary" ng-click="addMember()">Lägg till medlem</button>
+      <button type="submit" class="btn btn-primary" ng-click="submit()">Spara medlem</button>
     </span>
   </form>
 </div>

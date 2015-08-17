@@ -18,8 +18,13 @@ angular.module('ewbMemberApp')
         authenticate: true, 
       })
       .when('/member/new', {
-        templateUrl: 'app/member/new/new.html',
-        controller: 'MemberNewCtrl',
+        templateUrl: 'app/member/edit/edit.html',
+        controller: 'MemberEditCtrl',
+        authenticate: true, 
+      })
+      .when('/member/:id/edit', {
+        templateUrl: 'app/member/edit/edit.html',
+        controller: 'MemberEditCtrl',
         authenticate: true, 
       })
       .when('/member/:id', {
