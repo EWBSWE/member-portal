@@ -9,21 +9,75 @@
 <div class="container">
   <form class="member-form">
     <div class="bg-success" ng-show="showValidMembers">
-      valida members
-      {{validMembers}}
+      <p>Tillagda medlemmar:</p>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <td>Id</td>
+            <td>Name</td>
+            <td>Epost</td>
+            <td>Ort</td>
+            <td>Yrke</td>
+            <td>Telefon</td>
+            <td>Student</td>
+            <td>Created at</td>
+            <td>Member until</td>
+          </tr>
+        </thead>
+        <tbody ng-repeat="member in validMembers">
+          <tr>
+            <td>{{member._id}}</td>
+            <td>{{member.name}}</td>
+            <td>{{member.email}}</td>
+            <td>{{member.location}}</td>
+            <td>{{member.profession}}</td>
+            <td>{{member.telephone}}</td>
+            <td>{{member.student}}</td>
+            <td>{{member.createdAt | amDateFormat: 'YYYY-MM-DD'}}</td>
+            <td>{{member.expirationDate | amDateFormat: 'YYYY-MM-DD'}}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
     <div class="bg-warning" ng-show="noMembersAdded">
-      NO MEMBERS ADDED
+      <p>Inga medlemmar tillagda.</p>
     </div>
     <div class="bg-danger" ng-show="showInvalidMembers">
-      invalida members
-      {{invalidMembers}}
+      <p>Misslyckades med följande medlemmar:</p>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <td>Id</td>
+            <td>Name</td>
+            <td>Epost</td>
+            <td>Ort</td>
+            <td>Yrke</td>
+            <td>Telefon</td>
+            <td>Student</td>
+            <td>Created at</td>
+            <td>Member until</td>
+          </tr>
+        </thead>
+        <tbody ng-repeat="member in invalidMembers">
+          <tr>
+            <td>{{member._id}}</td>
+            <td>{{member.name}}</td>
+            <td>{{member.email}}</td>
+            <td>{{member.location}}</td>
+            <td>{{member.profession}}</td>
+            <td>{{member.telephone}}</td>
+            <td>{{member.student}}</td>
+            <td>{{member.createdAt | amDateFormat: 'YYYY-MM-DD'}}</td>
+            <td>{{member.expirationDate | amDateFormat: 'YYYY-MM-DD'}}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
     <p>
-      Mata in en medlem pa varje rad enligt formen
+      Mata in en medlem på varje rad enligt formen
     </p>
-    <p class="text-info">
-      Slutdatum ar det datum medlemskapets anses forbrukat och skrivs pa formen YYYY-MM-DD, till exempel 2015-01-01
+    <p class="bg-info">
+      Slutdatum är det datum medlemskapets anses förbrukat och skrivs på formen YYYY-MM-DD, till exempel 2015-01-01
     </p>
     <pre>
       namn,ort,student,yrke/utbildning,epost,telefon,slutdatum
@@ -34,7 +88,7 @@
       Till exempel
     </p>
     <pre>
-      Glenn Hysen,Goteborg,yrkesverksam,Legend,glenn@hysen.com,+46123456789,2016-08-10
+      Glenn Hysen,Göteborg,yrkesverksam,Legend,glenn@hysen.com,+46123456789,2016-08-10
       Tobias Hysen,Kina,student,Fotbollsproffs,tobias@hysen.com,0730000000,2019-08-10
     </pre>
     <div class="form-group">
