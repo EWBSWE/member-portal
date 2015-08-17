@@ -7,13 +7,13 @@
 </header>
 
 <div class="container">
-  <div class="row">
-    <a href="/member/new">add member</a>
-    <a href="/member/bulk">bulk add members</a>
-    <a href="#" ng-click="generateCsv()">exportera</a>
+  <div class="row member-actions">
+    <a href="/member/new" class="btn btn-default">Add member</a>
+    <a href="/member/bulk" class="btn btn-default">Bulk add members</a>
+    <a href="#" ng-click="generateCsv()" class="btn btn-default">Export members</a>
+    <input type="text" class="pull-right" ng-model="filter" placeholder="Filtrera på epost">
   </div>
   <div class="row">
-    <input type="text" ng-model="filter">
   </div>
   <div class="row">
     <div class="col-lg-12">
