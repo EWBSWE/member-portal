@@ -1,55 +1,109 @@
 <div ng-include="'components/navbar/navbar.html'"></div>
 
 <header class="hero-unit" id="banner">
-  <div class="container">
-    <h1>Members</h1>
-  </div>
+    <div class="container">
+        <h1>Members</h1>
+    </div>
 </header>
 
 <div class="container">
-  <div class="row member-actions">
-    <a href="/member/new" class="btn btn-default">Add member</a>
-    <a href="/member/bulk" class="btn btn-default">Bulk add members</a>
-    <a href="#" ng-click="generateCsv()" class="btn btn-default">Export members</a>
-    <input type="text" class="pull-right" ng-model="filter" placeholder="Filtrera på epost">
-  </div>
-  <div class="row">
-  </div>
-  <div class="row">
-    <div class="col-lg-12">
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <td>Id</td>
-            <td>Name</td>
-            <td>Epost</td>
-            <td>Ort</td>
-            <td>Yrke</td>
-            <td>Telefon</td>
-            <td>Student</td>
-            <td>Created at</td>
-            <td>Member until</td>
-            <td>Actions</td>
-          </tr>
-        </thead>
-        <tbody ng-repeat="member in members | filter : filterMembers">
-          <tr>
-            <td><a href="/member/{{member._id}}">{{member._id}}</a></td>
-            <td>{{member.name}}</td>
-            <td>{{member.email}}</td>
-            <td>{{member.location}}</td>
-            <td>{{member.profession}}</td>
-            <td>{{member.telephone}}</td>
-            <td>{{member.student}}</td>
-            <td>{{member.createdAt | amDateFormat: 'YYYY-MM-DD'}}</td>
-            <td>{{member.expirationDate | amDateFormat: 'YYYY-MM-DD'}}</td>
-            <td>
-              <a href="/member/{{member._id}}/edit" class="btn btn-default btn-xs">Redigera</a>
-              <a href="#" ng-click="deleteUser(member._id)" class="btn btn-danger btn-xs">Ta bort</a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="row member-actions">
+        <a href="/member/new" class="btn btn-default">Add member</a>
+        <a href="/member/bulk" class="btn btn-default">Bulk add members</a>
+        <a href="#" ng-click="generateCsv()" class="btn btn-default">Export members</a>
+        <input type="text" class="pull-right" ng-model="filter" placeholder="Filtrera på epost">
     </div>
-  </div>
+    <div class="row">
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <td>
+                            <a href="#" ng-click="sortType = 'id'; sortReverse = !sortReverse">
+                                Id
+                                <span ng-show="sortType == 'id' && !sortReverse" class="glyphicon glyphicon-chevron-down">
+                                <span ng-show="sortType == 'id' && sortReverse" class="glyphicon glyphicon-chevron-up">
+                            </a>
+                        </td>
+                        <td>
+                            <a href="#" ng-click="sortType = 'name'; sortReverse = !sortReverse">
+                                Name
+                                <span ng-show="sortType == 'name' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
+                                <span ng-show="sortType == 'name' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="#" ng-click="sortType = 'email'; sortReverse = !sortReverse">
+                                Epost
+                                <span ng-show="sortType == 'email' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
+                                <span ng-show="sortType == 'email' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="#" ng-click="sortType = 'location'; sortReverse = !sortReverse">
+                                Ort
+                                <span ng-show="sortType == 'location' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
+                                <span ng-show="sortType == 'location' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="#" ng-click="sortType = 'profession'; sortReverse = !sortReverse">
+                                Yrke
+                                <span ng-show="sortType == 'profession' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
+                                <span ng-show="sortType == 'profession' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="#" ng-click="sortType = 'telephone'; sortReverse = !sortReverse">
+                                Telefon
+                                <span ng-show="sortType == 'telephone' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
+                                <span ng-show="sortType == 'telephone' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="#" ng-click="sortType = 'student'; sortReverse = !sortReverse">
+                                Student
+                                <span ng-show="sortType == 'student' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
+                                <span ng-show="sortType == 'student' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="#" ng-click="sortType = 'createdAt'; sortReverse = !sortReverse">
+                                Created at
+                                <span ng-show="sortType == 'createdAt' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
+                                <span ng-show="sortType == 'createdAt' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="#" ng-click="sortType = 'expirationDate'; sortReverse = !sortReverse">
+                                Member until
+                                <span ng-show="sortType == 'expirationDate' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
+                                <span ng-show="sortType == 'expirationDate' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
+                            </a>
+                        </td>
+                        <td>Actions</td>
+                    </tr>
+                </thead>
+                <tbody ng-repeat="member in members | orderBy:sortBy:sortReverse | filter:filterByEmail">
+                    <tr>
+                        <td><a href="/member/{{member._id}}">{{member._id}}</a></td>
+                        <td>{{member.name}}</td>
+                        <td>{{member.email}}</td>
+                        <td>{{member.location}}</td>
+                        <td>{{member.profession}}</td>
+                        <td>{{member.telephone}}</td>
+                        <td>{{member.student}}</td>
+                        <td>{{member.createdAt | amDateFormat: 'YYYY-MM-DD'}}</td>
+                        <td>{{member.expirationDate | amDateFormat: 'YYYY-MM-DD'}}</td>
+                        <td>
+                            <a href="/member/{{member._id}}/edit" class="btn btn-default btn-xs">Redigera</a>
+                            <a href="#" ng-click="deleteUser(member._id)" class="btn btn-danger btn-xs">Ta bort</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>

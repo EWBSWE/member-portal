@@ -4,6 +4,8 @@
 angular.module('ewbMemberApp')
   .controller('MemberListCtrl', function ($scope, $http) {
     $scope.members = [];
+    $scope.sortBy = 'name';
+    $scope.sortReverse = false;
 
     $http.get('/api/members').success(function(members) {
       $scope.members = members;
@@ -48,7 +50,7 @@ angular.module('ewbMemberApp')
       window.open(encodeURI(csvContent));
     };
 
-    $scope.filterMembers = function(member) {
+    $scope.filterByEmail = function(member) {
         if (!$scope.filter) {
           return true;
         }
