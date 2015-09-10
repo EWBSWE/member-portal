@@ -241,9 +241,10 @@ exports.confirmPayment = function(req, res) {
           member.telephone = req.body.telephone.replace(/ /g, '');
           member.student = isStudent;
 
-          // Only update expirationDate if it extends the membership
-          if (moment(member.expirationDate) < expirationDate) {
-            member.expirationDate = expirationDate;
+          if (subscriptionLength === '1') {
+              member.expirationDate = moment(member.expirationDate).add(1, 'year');
+          } else if (subscriptionLength === '3') {
+              member.expirationDate = moment(member.expirationDate).add(3, 'years');
           }
 
           member.save(function() {
