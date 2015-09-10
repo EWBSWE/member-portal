@@ -7,7 +7,8 @@ angular.module('ewbMemberApp')
     $scope.showInvalidMembers = false;
 
     $scope.addMembers = function() {
-      if ($scope.csv === '') {
+        console.log($scope.csv);
+      if ($scope.csv === '' || $scope.csv === undefined) {
         return;
       }
 
