@@ -108,7 +108,7 @@ exports.bulkAdd = function(req, res) {
 
     // If we have the correct number of fields, validate each field otherwise
     // set member as invalid
-    // 0 namn, 1 ort, 2 student, 3 yrke, 4 epost, 5 telefon, 6 slutdatum
+    // 0 namn, 1 ort, 2 student, 3 yrke, 4 epost, 5 telefon, 6 langd
     if (info.length === Member.schema._requiredpaths.length) {
       member.name = info[0].trim();
       member.location = info[1].trim();
@@ -129,10 +129,10 @@ exports.bulkAdd = function(req, res) {
 
       member.telephone = info[5].replace(/ /g, '');
 
-      if (validateExpirationDate(info[6])) {
-        member.expirationDate = info[6];
+      if (parseInt(info[6].trim(), 10) > 0) {
+          member.expirationDate = moment().add(parseInt(info[6].trim(), 10), 'days');
       } else {
-        member.invalid = true;
+          member.invalid = true;
       }
 
       member.invalid = _.some(info, function(field) {
@@ -143,7 +143,7 @@ exports.bulkAdd = function(req, res) {
     }
   });
 
-  var validMembers = _.filter(members, function(member) {
+  var maybeNewMembers = _.filter(members, function(member) {
     return !member.invalid;
   });
 
@@ -151,28 +151,49 @@ exports.bulkAdd = function(req, res) {
     return member.invalid;
   });
 
-  Member.find({ email: { $in: _.map(validMembers, 'email') } }, function(err, members) {
+  Member.find({ email: { $in: _.map(maybeNewMembers, 'email') } }, function(err, members) {
     if (err) {
       return handleError(res, err);
     }
 
+    var updatedMembers = [];
+
     if (members.length) {
       var matchingEmails = _.map(members, 'email');
-      _.remove(validMembers, function(member) {
+      var existingMembers = _.remove(maybeNewMembers, function (member) {
         return _.contains(matchingEmails, member.email);
+      });
+
+      _.each(members, function(member) {
+        // Should always return, at least, 1 object. Use the first
+        var newMemberData = _.where(existingMembers, { email: member.email })[0];
+
+        // Update everything but email
+        member.name = newMemberData.name;
+        member.location = newMemberData.location;
+        member.student = newMemberData.student;
+        member.profession = newMemberData.profession;
+        member.telephone = newMemberData.telephone;
+
+        // Never reduce a membership length
+        if (moment(member.expirationDate) < newMemberData.expirationDate) {
+            member.expirationDate = newMemberData.expirationDate;
+        }
+        member.save();
+        updatedMembers.push(member);
       });
     }
 
-    if (validMembers.length) {
-      Member.create(validMembers, function(err, members) {
+    if (maybeNewMembers.length) {
+      Member.create(maybeNewMembers, function(err, members) {
         if (err) {
           return handleError(res, err);
         }
 
-        return res.status(200).json({ valid: members, invalid: invalidMembers });
+        return res.status(200).json({ valid: members, invalid: invalidMembers, updated: updatedMembers });
       });
     } else {
-      return res.status(202).json({ valid: [], invalid: invalidMembers });
+      return res.status(202).json({ valid: [], invalid: invalidMembers, updated: updatedMembers });
     }
   });
 };
@@ -205,12 +226,4 @@ function validateType(text) {
   }
 
   return text.toLowerCase() === 'student' || text.toLowerCase() === 'yrkesverksam';
-}
-
-function validateExpirationDate(expirationDate) {
-  if (!expirationDate) {
-    return false;
-  }
-
-  return moment(expirationDate).isValid();
 }
