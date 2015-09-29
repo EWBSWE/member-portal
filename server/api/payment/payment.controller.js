@@ -7,6 +7,7 @@ var moment = require('moment');
 var Payment = require('../../models/payment.model');
 var Member = require('../../models/member.model');
 var OutgoingMessage = require('../../models/outgoing-message.model');
+var iugMail = require('../../components/iug-mail');
 
 // Get list of payments
 exports.index = function(req, res) {
@@ -183,13 +184,21 @@ exports.confirmPayment = function(req, res) {
     if (err === null) {
       chargeSuccessful = true;
 
-      // TODO better text
-      var data = {
-        from: 'kvitto@ingenjorerutangranser.se',
-        to: req.body.email,
-        subject: 'Bekräftelse på betalning',
-        text: 'Tack för ditt stöd!',
-      };
+      if (process.env.NODE_ENV === 'production') {
+          var data = {
+            from: iugMail.sender(),
+            to: req.body.email,
+            subject: iugMail.getSubject('renewal'),
+            text: iugMail.getBody('renewal'),
+          };
+      } else {
+          var data = {
+            from: iugMail.sender(),
+            to: 'ict@ingenjorerutangranser.se',
+            subject: iugMail.getSubject('renewal'),
+            text: iugMail.getBody('renewal'),
+          };
+      }
 
       OutgoingMessage.create(data, function(err, outgoingMessage) {
         if (err) {
