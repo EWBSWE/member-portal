@@ -17,8 +17,8 @@ OutgoingMessage.find().remove(function() {
   OutgoingMessage.create({
     from: iugMail.sender(),
     to: 'dan.albin.johansson@gmail.com', 
-    subject: iugMail.getSubject('expired'),
-    text: iugMail.getBody('expired'),
+    subject: iugMail.getSubject('expiring'),
+    text: iugMail.getBody('expiring'),
   }, {
     from: iugMail.sender(),
     to: 'dan.albin.johansson@gmail.com', 
