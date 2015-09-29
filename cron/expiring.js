@@ -8,6 +8,7 @@ var config = require(path.join(__dirname, '../server/config/environment'));
 var Member = require(path.join(__dirname, '../server/models/member.model'));
 var OutgoingMessage = require(path.join(__dirname, '../server/models/outgoing-message.model'));
 var moment = require('moment');
+var iugMail = require(path.join(__dirname, '../server/components/iug-mail'));
 
 mongoose.connect(config.mongo.uri, config.mongo.options);
 
@@ -24,13 +25,22 @@ Member.find({ expirationDate: { $lt: moment().add(1, 'month'), $gt: moment() } }
         var outgoingMessages = [];
         for (var i = 0; i < members.length; i++) {
             var member = members[i];
-            // TODO fix text
-            var data = {
-                from: 'volontar@ingenjorerutangranser.se',
-                to: 'dan.albin.johansson@gmail.com',
-                subject: 'Ditt medlemskap går ut snart',
-                text: 'Test message ' + member.name,
-            };
+
+            if (process.env.NODE_ENV === 'production') {
+                var data = {
+                    from: iugMail.sender(),
+                    to: member.email,
+                    subject: iugMail.getSubject('expiring'),
+                    text: iugMail.getBody('expiring'),
+                };
+            } else {
+                var data = {
+                    from: iugMail.sender(),
+                    to: 'ict@ingenjorerutangranser.se',
+                    subject: iugMail.getSubject('expiring'),
+                    text: iugMail.getBody('expiring'),
+                };
+            }
 
             outgoingMessages.push(data);
         }

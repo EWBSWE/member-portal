@@ -12,7 +12,7 @@ module.exports = {
     getSubject: function(name) {
         return getContent(name + '-subject.txt');
     },
-    getMail: function(name) {
+    getBody: function(name) {
         return getContent(name + '.txt');
     },
 };

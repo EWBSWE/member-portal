@@ -18,12 +18,12 @@ OutgoingMessage.find().remove(function() {
     from: iugMail.sender(),
     to: 'dan.albin.johansson@gmail.com', 
     subject: iugMail.getSubject('expired'),
-    text: iugMail.getMail('expired'),
+    text: iugMail.getBody('expired'),
   }, {
     from: iugMail.sender(),
     to: 'dan.albin.johansson@gmail.com', 
     subject: iugMail.getSubject('renewal'),
-    text: iugMail.getMail('renewal'),
+    text: iugMail.getBody('renewal'),
     priority: 1,
   }, function() {
     console.log('Finished populating outgoing messages');
