@@ -1,15 +1,12 @@
 'use strict';
 
-// TODO set absolute path before cron
-
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 var mongoose = require('mongoose');
-var config = require('../server/config/environment');
-
-var Member = require('../server/models/member.model');
-var OutgoingMessage = require('../server/models/outgoing-message.model');
-
+var path = require('path');
+var config = require(path.join(__dirname, '../server/config/environment'));
+var Member = require(path.join(__dirname, '../server/models/member.model'));
+var OutgoingMessage = require(path.join(__dirname, '../server/models/outgoing-message.model'));
 var moment = require('moment');
 
 mongoose.connect(config.mongo.uri, config.mongo.options);
