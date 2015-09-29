@@ -5,7 +5,7 @@ angular.module('ewbMemberApp')
     $scope.newMember = {};
 
     var stripeHandler = StripeCheckout.configure({
-      key: 'pk_test_NkGJralO01ISbEWdNpaPkoWZ',
+      key: '***REMOVED***',
       token: function (token) {
         callback(token);
       }

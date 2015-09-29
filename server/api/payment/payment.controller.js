@@ -1,7 +1,7 @@
 'use strict';
 
 var _ = require('lodash');
-var stripe = require('stripe')('sk_test_XYJalXkc7mCuSxM2O5QBILf3');
+var stripe = require('stripe')('***REMOVED***');
 var moment = require('moment');
 
 var Payment = require('../../models/payment.model');
