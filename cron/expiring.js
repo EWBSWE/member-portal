@@ -29,7 +29,7 @@ Member.find({ expirationDate: { $lt: moment().add(1, 'month'), $gt: moment() } }
             var member = members[i];
             // TODO fix text
             var data = {
-                from: 'noreply@ingenjorerutangranser.se',
+                from: 'volontar@ingenjorerutangranser.se',
                 to: 'dan.albin.johansson@gmail.com',
                 subject: 'Ditt medlemskap går ut snart',
                 text: 'Test message ' + member.name,

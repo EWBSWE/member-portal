@@ -1,7 +1,6 @@
 'use strict';
 
 // TODO set absolute path before cron
-// TODO update mailgun apiKey and domain with live
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
@@ -10,6 +9,8 @@ var config = require('../server/config/environment');
 
 var Member = require('../server/models/member.model');
 var OutgoingMessage = require('../server/models/outgoing-message.model');
+
+var iugMail = require('../server/components/iug-mail');
 
 var moment = require('moment');
 var mailgun = require('mailgun-js')({apiKey: '***REMOVED***', domain: '***REMOVED***' });
