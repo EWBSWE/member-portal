@@ -4,6 +4,8 @@ angular.module('ewbMemberApp')
   .controller('MembershipCtrl', function ($scope, $http, $location) {
     $scope.newMember = {};
 
+    // TODO maybe fetch stripe key from api as well, would fix the problem of
+    // having both keys in client code
     var stripeHandler = StripeCheckout.configure({
       key: '***REMOVED***',
       token: function (token) {
@@ -32,6 +34,7 @@ angular.module('ewbMemberApp')
       });
     };
 
+    // TODO fetch payment options from api?
     $scope.paymentOptions = {
       student: {
         oneYear: {
