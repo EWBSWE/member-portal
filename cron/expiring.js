@@ -36,7 +36,7 @@ Member.find({ expirationDate: { $lt: moment().add(1, 'month'), $gt: moment() } }
             } else {
                 var data = {
                     from: iugMail.sender(),
-                    to: 'ict@ingenjorerutangranser.se',
+                    to: process.env.DEV_MAIL,
                     subject: iugMail.getSubject('expiring'),
                     text: iugMail.getBody('expiring'),
                 };

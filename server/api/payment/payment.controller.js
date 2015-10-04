@@ -194,7 +194,7 @@ exports.confirmPayment = function(req, res) {
       } else {
           var data = {
             from: iugMail.sender(),
-            to: 'ict@ingenjorerutangranser.se',
+            to: process.env.DEV_EMAIL,
             subject: iugMail.getSubject('renewal'),
             text: iugMail.getBody('renewal'),
           };
