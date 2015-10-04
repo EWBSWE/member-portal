@@ -1,7 +1,13 @@
 'use strict';
 
 var _ = require('lodash');
+
 var stripe = require('stripe')('***REMOVED***');
+// Uncomment after demo
+//if (process.env.NODE_ENV === 'production') {
+  //stripe = require('stripe')('sk_live_aRwKpgsqwq7rpsozBg43Clx5');
+//}
+
 var moment = require('moment');
 
 var Payment = require('../../models/payment.model');
@@ -283,5 +289,15 @@ exports.confirmPayment = function(req, res) {
       return res.status(400).json({ message: errorMessage });
     }
   });
+};
+
+exports.stripeCheckoutKey = function (req, res) {
+  var key = '***REMOVED***';
+  // Uncomment after demo
+  //if (process.env.NODE_ENV === 'production') {
+    //key = 'pk_live_ATJZnfiF1iDDCQvNK6IgEFA2';
+  //}
+  
+  return res.status(200).json({ key: key });
 };
 
