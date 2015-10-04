@@ -4,14 +4,21 @@ angular.module('ewbMemberApp')
   .controller('MembershipCtrl', function ($scope, $http, $location) {
     $scope.newMember = {};
 
+    var stripeHandler;
+
+    $http.get('/api/payments/stripe-checkout').success(function (data) {
+      stripeHandler = StripeCheckout.configure({
+        key: data.key,
+        token: function (token) {
+          callback(token);
+        }
+      });
+    }).error(function (data) {
+      console.log('error', data);
+    });
+
     // TODO maybe fetch stripe key from api as well, would fix the problem of
     // having both keys in client code
-    var stripeHandler = StripeCheckout.configure({
-      key: '***REMOVED***',
-      token: function (token) {
-        callback(token);
-      }
-    });
 
     var callback = function(token) {
       $http.post('/api/payments/confirm', {
@@ -84,13 +91,17 @@ angular.module('ewbMemberApp')
         paymentOption = paymentOption.threeYear;
       }
 
-      stripeHandler.open({
-        name: 'Ingejörer utan gränser',
-        description: paymentOption.description,
-        // image: 'bild.png', // TODO
-        currency: 'SEK',
-        amount: paymentOption.amount * 100,
-        email: $scope.newMember.email,
-      });
+      if (stripeHandler) {
+        stripeHandler.open({
+          name: 'Ingejörer utan gränser',
+          description: paymentOption.description,
+          // image: 'bild.png', // TODO
+          currency: 'SEK',
+          amount: paymentOption.amount * 100,
+          email: $scope.newMember.email,
+        });
+      } else {
+        console.error('stripeHandler not initiated');
+      }
     };
   });
