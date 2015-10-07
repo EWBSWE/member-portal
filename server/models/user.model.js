@@ -5,8 +5,6 @@ var Schema = mongoose.Schema;
 var crypto = require('crypto');
 
 var UserSchema = new Schema({
-  firstName: {type: String, required: true },
-  lastName: {type: String, required: true },
   email: { type: String, lowercase: true, required: true },
   role: {
     type: String,
@@ -14,14 +12,7 @@ var UserSchema = new Schema({
     required: true
   },
   hashedPassword: {type: String, required: true },
-  provider: String,
   salt: {type: String, required: true },
-  memberType: {type: String, required: true, default: 'student'}, //, match: /^student|working|retired/i
-  address: {type: String},
-  zipCode: {type: Number},
-  city: {type: String},
-  subOrganisation: {type: String},
-  newsLetter: {type: Boolean, required: true, default: true}
 });
 
 /**
@@ -69,20 +60,6 @@ UserSchema
   .validate(function(email) {
     return email.length;
   }, 'Email cannot be blank');
-
-// Validate empty first name
-UserSchema
-  .path('firstName')
-  .validate(function(firstName) {
-    return firstName.length;
-  }, 'First name cannot be blank');
-
-// Validate empty last name
-UserSchema
-  .path('lastName')
-  .validate(function(lastName) {
-    return lastName.length;
-  }, 'Last name cannot be blank');
 
 // Validate empty password
 UserSchema
