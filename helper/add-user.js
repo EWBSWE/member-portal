@@ -7,8 +7,6 @@ var User = require(path.join(__dirname, '../server/models/user.model'));
 
 mongoose.connect(config.mongo.uri, config.mongo.options);
 
-console.log(process.argv);
-
 var email = process.argv[2];
 var password = process.argv[3];
 var role = process.argv[4];
