@@ -17,9 +17,6 @@ angular.module('ewbMemberApp')
       console.log('error', data);
     });
 
-    // TODO maybe fetch stripe key from api as well, would fix the problem of
-    // having both keys in client code
-
     var callback = function(token) {
       $http.post('/api/payments/confirm', {
         stripeToken: token,
@@ -31,10 +28,10 @@ angular.module('ewbMemberApp')
         isStudent: $scope.newMember.isStudent === '1',
         subscriptionLength: $scope.newMember.subscriptionLength,
       }).success(function(data) {
-        console.log(data);
         $scope.successEmail = data.member.email;
         $('.js-confirmation').modal('show');
         $scope.newMember = {};
+        $scope.form.$setPristine();
       }).error(function(data) {
         // error with request, communicate accordingly
         alert('sadpanda.png');
@@ -66,18 +63,9 @@ angular.module('ewbMemberApp')
       },
     };
 
+
     $scope.initiatePayment = function() {
-      console.log($scope.newMember);
-      // todo check validate newMember details in a more centralized way instead
-      // of in the frontend
-      // maybe create newMember model?
-      if ($scope.newMember.email === '') {
-        return;
-      }
-      if ($scope.newMember.isStudent !== '0' && $scope.newMember.isStudent !== '1') {
-        return;
-      }
-      if ($scope.newMember.subscriptionLength !== '1' && $scope.newMember.subscriptionLength !== '3') {
+      if ($scope.form.$invalid) {
         return;
       }
 
