@@ -31,9 +31,10 @@ angular.module('ewbMemberApp')
         isStudent: $scope.newMember.isStudent === '1',
         subscriptionLength: $scope.newMember.subscriptionLength,
       }).success(function(data) {
-        // redirect to receipt/confirmation
-        console.log('success', data);
-        $location.path('/kvitto').search('id', data._id);
+        console.log(data);
+        $scope.successEmail = data.member.email;
+        $('.js-confirmation').modal('show');
+        $scope.newMember = {};
       }).error(function(data) {
         // error with request, communicate accordingly
         alert('sadpanda.png');

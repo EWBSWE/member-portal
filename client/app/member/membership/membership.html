@@ -68,8 +68,24 @@
         <div class="form-group">
           <button type="submit" class="btn btn-primary btn-lg" ng-click="initiatePayment()">Bli medlem</button>
         </div>
-
       </form>
+    </div>
+  </div>
+</div>
+
+<div class="js-confirmation modal fade" role="dialog" aria-labelledby="confirmation-label">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="confirmation-label">Tack for ditt stöd!</h4>
+      </div>
+      <div class="modal-body">
+        <p>En bekräftelse på din betalning och medlemskap skickas till <strong>{{successEmail}}<strong>.</p>
+        <p>Har du några frågor rörande medlemskap eller din betalning? Hör av dig till oss på <a href="mailto:volontar@ingenjorerutangranser.se">volontar@ingenjorerutangranser</a>.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Stäng</button>
+      </div>
     </div>
   </div>
 </div>
