@@ -11,7 +11,7 @@ var express = require('express');
 var mongoose = require('mongoose');
 var config = require('./config/environment');
 
-process.env.DEV_MAIL = process.env.DEV_MAIL || config.developerMail();
+process.env.DEV_MAIL = process.env.DEV_MAIL || config.developerMail;
 
 // Connect to database
 mongoose.connect(config.mongo.uri, config.mongo.options);
