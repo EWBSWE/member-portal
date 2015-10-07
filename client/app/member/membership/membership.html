@@ -52,12 +52,15 @@
         <div ng-class="{'form-group': true, 'has-error': !newMember.subscriptionLength && !form.subscriptionLength.$pristine, 'has-success': newMember.subscriptionLength}">
           <label class="radio-inline control-label">
             <input type="radio" name="subscriptionLength" value="1" ng-model="newMember.subscriptionLength" />
-            1 år, 100 kr (40 kr för student)
+            1 år
           </label>
           <label class="radio-inline control-label">
             <input type="radio" name="subscriptionLength" value="3" ng-model="newMember.subscriptionLength" />
-            3 år, 250 kr (90 kr för student)
+            3 år
           </label>
+          <p class="help-block" for="subscriptionLength">
+            Bli medlem i 1 år för 100 kr (40 kr för studerande) eller i 3 år för 250 kr (90 kr för studerande).
+          </p>
         </div>
 
         <p class="help-block">
