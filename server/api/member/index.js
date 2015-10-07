@@ -6,13 +6,13 @@ var auth = require('../../auth/auth.service');
 
 var router = express.Router();
 
-router.get('/', auth.hasRole('admin'), controller.index);
-router.get('/:id', auth.hasRole('admin'), controller.show);
-router.post('/', auth.hasRole('admin'), controller.create);
-router.put('/:id', auth.hasRole('admin'), controller.update);
-router.delete('/:id', auth.hasRole('admin'), controller.destroy);
+router.get('/', auth.isAuthenticated(), controller.index);
+router.get('/:id', auth.isAuthenticated(), controller.show);
+router.post('/', auth.isAuthenticated(), controller.create);
+router.put('/:id', auth.isAuthenticated(), controller.update);
+router.delete('/:id', auth.isAuthenticated(), controller.destroy);
 
-router.post('/bulk', auth.hasRole('admin'), controller.bulkAdd);
-router.get('/:id/payments', auth.hasRole('admin'), controller.getPayments);
+router.post('/bulk', auth.isAuthenticated(), controller.bulkAdd);
+router.get('/:id/payments', auth.isAuthenticated(), controller.getPayments);
 
 module.exports = router;
