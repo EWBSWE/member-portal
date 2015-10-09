@@ -8,8 +8,7 @@ angular.module('ewbMemberApp')
       $scope.menu.push({
         title: 'Payments',
         link: '/payments',
-      });
-      $scope.menu.push({
+      }, {
         title: 'Members',
         link: '/members',
       });
@@ -17,6 +16,9 @@ angular.module('ewbMemberApp')
 
     if (Auth.isAdmin()) {
       $scope.menu.push({
+        title: 'Errors',
+        link: '/errors',
+      }, {
         title: 'Admin',
         link: '/admin',
       });
