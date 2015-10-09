@@ -86,7 +86,7 @@
                         <td>Actions</td>
                     </tr>
                 </thead>
-                <tbody ng-repeat="member in members | orderBy:sortBy:sortReverse | filter:filterByEmail">
+                <tbody ng-repeat="member in members | orderBy:sortType:sortReverse | filter:filterByEmail">
                     <tr>
                         <td><a href="/member/{{member._id}}">{{member._id}}</a></td>
                         <td>{{member.name}}</td>
