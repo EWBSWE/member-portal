@@ -12,14 +12,38 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <td>Id</td>
-                        <td>Message</td>
-                        <td>Origin</td>
+                        <td>
+                            <a href="#" ng-click="sortType = 'id'; sortReverse = !sortReverse">
+                                Id
+                                <span ng-show="sortType == 'id' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
+                                <span ng-show="sortType == 'id' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="#" ng-click="sortType = 'message'; sortReverse = !sortReverse">
+                                Message
+                                <span ng-show="sortType == 'message' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
+                                <span ng-show="sortType == 'message' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="#" ng-click="sortType = 'origin'; sortReverse = !sortReverse">
+                                Origin
+                                <span ng-show="sortType == 'origin' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
+                                <span ng-show="sortType == 'origin' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
+                            </a>
+                        </td>
                         <td>Params</td>
-                        <td>Created at</td>
+                        <td>
+                            <a href="#" ng-click="sortType = 'createdAt'; sortReverse = !sortReverse">
+                                Created at
+                                <span ng-show="sortType == 'createdAt' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
+                                <span ng-show="sortType == 'createdAt' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
+                            </a>
+                        </td>
                     </tr>
                 </thead>
-                <tbody ng-repeat="ewbError in ewbErrors">
+                <tbody ng-repeat="ewbError in ewbErrors | orderBy:sortType:sortReverse">
                     <tr>
                         <td>{{ewbError._id}}</td>
                         <td>{{ewbError.message}}</td>
