@@ -5,8 +5,11 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 var mongoose = require('mongoose');
 var path = require('path');
 var config = require(path.join(__dirname, '../server/config/environment'));
+
 var Member = require(path.join(__dirname, '../server/models/member.model'));
 var OutgoingMessage = require(path.join(__dirname, '../server/models/outgoing-message.model'));
+var ewbError = require(path.join(__dirname, '../server/models/ewb-error.model'));
+
 var moment = require('moment');
 var mailgun = require('mailgun-js')({apiKey: '***REMOVED***', domain: '***REMOVED***' });
 
@@ -18,8 +21,9 @@ OutgoingMessage
     .limit(10)
     .exec(function(err, outgoingMessages) {
         if (err) {
-            console.log(err);
-            process.exit(1);
+            ewbError.create({ message: 'Fetch outgoing messages', origin: __filename, params: err }, function (err, data) {
+                process.exit(1);
+            });
         }
 
         if (outgoingMessages.length) {
@@ -42,11 +46,11 @@ OutgoingMessage
                 } else {
                     console.log('No messages left in queue');
                     clearInterval(mailInterval);
-                    process.exit();
+                    process.exit(0);
                 }
             }, 3000);
         } else {
             console.log('No messages in queue');
-            process.exit();
+            process.exit(0);
         }
     });
