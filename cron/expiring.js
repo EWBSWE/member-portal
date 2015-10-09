@@ -11,7 +11,7 @@ var OutgoingMessage = require(path.join(__dirname, '../server/models/outgoing-me
 var ewbError = require(path.join(__dirname, '../server/models/ewb-error.model'));
 
 var moment = require('moment');
-var iugMail = require(path.join(__dirname, '../server/components/iug-mail'));
+var ewbMail = require(path.join(__dirname, '../server/components/ewb-mail'));
 
 mongoose.connect(config.mongo.uri, config.mongo.options);
 
@@ -32,17 +32,17 @@ Member.find({ expirationDate: { $lt: moment().add(1, 'month'), $gt: moment() } }
 
             if (process.env.NODE_ENV === 'production') {
                 var data = {
-                    from: iugMail.sender(),
+                    from: ewbMail.sender(),
                     to: member.email,
-                    subject: iugMail.getSubject('expiring'),
-                    text: iugMail.getBody('expiring'),
+                    subject: ewbMail.getSubject('expiring'),
+                    text: ewbMail.getBody('expiring'),
                 };
             } else {
                 var data = {
-                    from: iugMail.sender(),
+                    from: ewbMail.sender(),
                     to: process.env.DEV_MAIL,
-                    subject: iugMail.getSubject('expiring'),
-                    text: iugMail.getBody('expiring'),
+                    subject: ewbMail.getSubject('expiring'),
+                    text: ewbMail.getBody('expiring'),
                 };
             }
 

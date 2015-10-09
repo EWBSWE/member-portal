@@ -13,7 +13,7 @@ var moment = require('moment');
 var Payment = require('../../models/payment.model');
 var Member = require('../../models/member.model');
 var OutgoingMessage = require('../../models/outgoing-message.model');
-var iugMail = require('../../components/iug-mail');
+var ewbMail = require('../../components/ewb-mail');
 
 // Get list of payments
 exports.index = function(req, res) {
@@ -192,17 +192,17 @@ exports.confirmPayment = function(req, res) {
 
       if (process.env.NODE_ENV === 'production') {
           var data = {
-            from: iugMail.sender(),
+            from: ewbMail.sender(),
             to: req.body.email,
-            subject: iugMail.getSubject('renewal'),
-            text: iugMail.getBody('renewal'),
+            subject: ewbMail.getSubject('renewal'),
+            text: ewbMail.getBody('renewal'),
           };
       } else {
           var data = {
-            from: iugMail.sender(),
+            from: ewbMail.sender(),
             to: process.env.DEV_EMAIL,
-            subject: iugMail.getSubject('renewal'),
-            text: iugMail.getBody('renewal'),
+            subject: ewbMail.getSubject('renewal'),
+            text: ewbMail.getBody('renewal'),
           };
       }
 

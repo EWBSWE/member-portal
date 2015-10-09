@@ -10,20 +10,20 @@ var Member = require('../models/member.model');
 var Payment = require('../models/payment.model');
 var OutgoingMessage = require('../models/outgoing-message.model');
 
-var iugMail = require('../components/iug-mail');
+var ewbMail = require('../components/ewb-mail');
 
 OutgoingMessage.find().remove(function() {
   console.log('Removing outgoing messages..');
   OutgoingMessage.create({
-    from: iugMail.sender(),
+    from: ewbMail.sender(),
     to: 'dan.albin.johansson@gmail.com', 
-    subject: iugMail.getSubject('expiring'),
-    text: iugMail.getBody('expiring'),
+    subject: ewbMail.getSubject('expiring'),
+    text: ewbMail.getBody('expiring'),
   }, {
-    from: iugMail.sender(),
+    from: ewbMail.sender(),
     to: 'dan.albin.johansson@gmail.com', 
-    subject: iugMail.getSubject('renewal'),
-    text: iugMail.getBody('renewal'),
+    subject: ewbMail.getSubject('renewal'),
+    text: ewbMail.getBody('renewal'),
     priority: 1,
   }, function() {
     console.log('Finished populating outgoing messages');
