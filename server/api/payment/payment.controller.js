@@ -13,6 +13,8 @@ var moment = require('moment');
 var Payment = require('../../models/payment.model');
 var Member = require('../../models/member.model');
 var OutgoingMessage = require('../../models/outgoing-message.model');
+var ewbError = require('../../models/ewb-error.model');
+
 var ewbMail = require('../../components/ewb-mail');
 
 // Get list of payments
@@ -208,11 +210,11 @@ exports.confirmPayment = function(req, res) {
 
       OutgoingMessage.create(data, function(err, outgoingMessage) {
         if (err) {
-          // TODO log error
+          ewbError.create({ message: 'Membership receipt mail', origin: __filename, params: err });
         }
       });
     } else {
-      console.log('err', err);
+      ewbError.create({ message: 'Membership Stripe', origin: __filename, params: err });
       // TODO act on errors
       if (err.type === 'StripeCardError') {
         // Card was declined
@@ -231,6 +233,7 @@ exports.confirmPayment = function(req, res) {
       var createPayment = function(member) {
         Payment.create({ member: member, amount: amount }, function(err, payment) {
           if (err) {
+            ewbError.create({ message: 'Successful charge create payment', origin: __filename, params: err });
             return handleError(res, err);
           }
           console.log('payment', err, payment);
@@ -240,6 +243,7 @@ exports.confirmPayment = function(req, res) {
 
       Member.findOne({ email: req.body.email }, function(err, member) {
         if (err) {
+          ewbError.create({ message: 'Successful charge find member', origin: __filename, params: err });
           // TODO what do on successful payment?
           console.log(err);
         }
@@ -277,6 +281,7 @@ exports.confirmPayment = function(req, res) {
             expirationDate: expirationDate
           }, function(err, member) {
             if (err) {
+              ewbError.create({ message: 'Successful charge create member', origin: __filename, params: err });
               // TODO successful payment but failed to add member
               // send mail to admins and customer?
               console.log(err);
