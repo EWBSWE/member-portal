@@ -1,9 +1,16 @@
 'use strict';
 
-var User = require('../../models/user.model');
 var passport = require('passport');
 var config = require('../../config/environment');
 var jwt = require('jsonwebtoken');
+var moment = require('moment');
+var crypto = require('crypto');
+
+var User = require('../../models/user.model');
+var OutgoingMessage = require('../../models/outgoing-message.model');
+var ewbError = require('../../models/ewb-error.model');
+
+var ewbMail = require('../../components/ewb-mail');
 
 var validationError = function(res, err) {
   return res.status(422).json(err);
@@ -98,4 +105,36 @@ exports.me = function(req, res, next) {
  */
 exports.authCallback = function(req, res, next) {
   res.redirect('/');
+};
+
+exports.resetPassword = function (req, res) {
+  User.findOne({ email: req.body.email.trim() }, function (err, user) {
+    if (err) {
+      return res.status(500);
+    }
+    if (user) {
+      user.resetValidity = moment().add('15 minutes');
+      user.resetToken = crypto.randomBytes(24).toString('hex');
+      user.save();
+
+      OutgoingMessage.create({
+        from: 'noreply@ingenjorerutangranser.se',
+        to: user.email,
+        subject: 'reset test',
+        text: 'reset text',
+      }, function (err, data) {
+        if (err) {
+          ewbError.create({ message: 'Reset password outgoing message', origin: __filename, params: err });
+        }
+        res.status(200).json();
+      });
+    } else {
+      ewbError.create({ message: 'Reset password', origin: __filename, params: { email: req.body.email } }, function (err, ewbError) {
+        if (err) {
+          return res.status(500);
+        }
+        res.status(200).json();
+      });
+    }
+  });
 };

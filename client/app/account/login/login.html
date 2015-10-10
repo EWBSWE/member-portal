@@ -11,7 +11,7 @@
         <div class="form-group">
           <label>Email</label>
 
-          <input type="email" name="email" class="form-control" ng-model="user.email" required>
+          <input type="text" name="email" class="form-control" ng-model="user.email" required>
         </div>
 
         <div class="form-group">
@@ -32,12 +32,44 @@
         </div>
 
         <div>
-          <button class="btn btn-default btn-lg btn-login" type="submit">
+          <button class="btn btn-default btn-login" type="submit">
             Login
           </button>
+          <button type="button" class="btn btn-default" data-toggle="modal" data-target="#reset-password-modal">
+              Forgot your password?
+          </button>
         </div>
-
       </form>
+    </div>
+  </div>
+</div>
+
+<div id="reset-password-modal" class="modal fade" role="dialog" aria-labelledby="reset-password-label">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="reset-password-label">Reset your password</h4>
+      </div>
+      <div class="modal-body">
+          <form name="reset" novalidate ng-submit="resetPassword(reset)">
+              <div class="" ng-show="resetSuccessful">
+                  Email sent to {{user.email}}.
+              </div>
+              <div class="form-group">
+                <label class="control-label" for="reset-email">Email</label>
+                <input class="form-control" type="text" name="reset-email" id="reset-email" ng-model="user.email" />
+                <p class="help-block">
+                  We will send you an email with instructions on how to reset your password.
+                </p>
+              </div>
+              <button type="submit" class="btn btn-default" data-toggle="modal">
+                  Reset password
+              </button>
+          </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
     </div>
   </div>
 </div>

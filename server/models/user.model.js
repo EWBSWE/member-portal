@@ -11,8 +11,10 @@ var UserSchema = new Schema({
     default: 'user',
     required: true
   },
-  hashedPassword: {type: String, required: true },
-  salt: {type: String, required: true },
+  hashedPassword: { type: String, required: true },
+  salt: { type: String, required: true },
+  resetValidity: { type: Date },
+  resetToken: { type: String },
 });
 
 /**
