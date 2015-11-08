@@ -113,15 +113,21 @@ exports.resetPassword = function (req, res) {
       return res.status(500);
     }
     if (user) {
-      user.resetValidity = moment().add('15 minutes');
+      user.resetValidity = moment().add(15, 'minutes');
       user.resetToken = crypto.randomBytes(24).toString('hex');
       user.save();
+
+      var url = 'http://localhost:9000/reset-password?token=' + user.resetToken;
+      if (process.env.NODE_ENV === 'production') {
+        // TODO: Fix this URL
+        url = 'https://medlem.ingenjorerutangranser.se/reset-password?token=' + user.resetToken;
+      }
 
       OutgoingMessage.create({
         from: 'noreply@ingenjorerutangranser.se',
         to: user.email,
-        subject: 'reset test',
-        text: 'reset text',
+        subject: ewbMail.getSubject('reset-password'),
+        text: ewbMail.getBody('reset-password', { url: url }),
       }, function (err, data) {
         if (err) {
           ewbError.create({ message: 'Reset password outgoing message', origin: __filename, params: err });
@@ -136,5 +142,26 @@ exports.resetPassword = function (req, res) {
         res.status(200).json();
       });
     }
+  });
+};
+
+exports.resetPasswordWithToken= function (req, res) {
+  User.findOne({ resetToken: req.body.token, resetValidity: { $gt: moment() } }, function (err, user) {
+    if (err) {
+      ewbError.create({ message: 'Reset password with token', origin: __filename, params: err });
+    }
+
+    if (user === null) {
+      return res.status(200).json();
+    }
+
+    user.resetToken = null;
+    user.password = req.body.newPassword;
+    user.save(function(err) {
+      if (err) {
+        return validationError(res, err);
+      }
+      return res.status(200).json();
+    });
   });
 };

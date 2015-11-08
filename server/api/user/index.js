@@ -15,5 +15,6 @@ router.get('/:id', auth.isAuthenticated(), controller.show);
 router.post('/', auth.hasRole('admin'), controller.create);
 
 router.post('/reset-password', controller.resetPassword);
+router.post('/reset-password-token', controller.resetPasswordWithToken);
 
 module.exports = router;
