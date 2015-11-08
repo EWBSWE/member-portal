@@ -1,0 +1,36 @@
+<div ng-include="'components/navbar/navbar.html'"></div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <h1>Reset password</h1>
+    </div>
+    <div class="col-sm-12">
+      <form class="form" name="form" ng-submit="reset(form)" novalidate>
+
+        <div class="form-group">
+          <label>New password</label>
+
+          <input type="password" name="password" class="form-control" ng-model="password" required>
+          <p class="help-block" ng-show="password.length < 8">
+            Password too short
+          </p>
+        </div>
+        <div class="form-group">
+          <label>Repeat password</label>
+
+          <input type="password" name="passwordagain" class="form-control" ng-model="passwordagain" required>
+          <p class="help-block" ng-show="password.length > 0 && password != passwordagain">
+            Passwords not equal
+          </p>
+        </div>
+
+        <div>
+            <button ng-class="{'btn btn-default': true, 'disabled': password.length < 8 || password != passwordagain }" type="submit">
+            Reset password
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

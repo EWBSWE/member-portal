@@ -11,5 +11,9 @@ angular.module('ewbMemberApp')
         templateUrl: 'app/account/settings/settings.html',
         controller: 'SettingsCtrl',
         authenticate: true
+      })
+      .when('/reset-password', {
+        templateUrl: 'app/account/reset/reset.html',
+        controller: 'ResetCtrl',
       });
   });
