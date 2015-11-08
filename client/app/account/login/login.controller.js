@@ -31,11 +31,11 @@ angular.module('ewbMemberApp')
 
     $scope.resetPassword = function () {
       if ($scope.user.email) {
-          $http.post('/api/users/reset-password', { 
-              email: $scope.user.email 
-          }).success(function (data) {
-              $scope.resetSuccessful = true;
-          });
+        $http.post('/api/users/reset-password', {
+          email: $scope.user.email
+        }).success(function (data) {
+          $scope.resetSuccessful = true;
+        });
       }
     };
 
