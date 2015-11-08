@@ -12,8 +12,19 @@ module.exports = {
     getSubject: function(name) {
         return getContent(name + '-subject.txt');
     },
-    getBody: function(name) {
-        return getContent(name + '.txt');
+    getBody: function(name, params) {
+        var content = getContent(name + '.txt');
+
+        if (params) {
+            for (var i = 0; i < Object.keys(params).length; i++) {
+                var key = Object.keys(params)[i];
+                var value = params[key];
+                var r = new RegExp('{' + key + '}', 'g');
+                content = content.replace(r, value);
+            }
+        }
+
+        return content;
     },
 };
 
