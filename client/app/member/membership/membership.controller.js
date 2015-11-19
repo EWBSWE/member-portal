@@ -82,7 +82,7 @@ angular.module('ewbMemberApp')
 
       if (stripeHandler) {
         stripeHandler.open({
-          name: 'Ingejörer utan gränser',
+          name: 'Ingenjörer utan gränser',
           description: paymentOption.description,
           // image: 'bild.png', // TODO
           currency: 'SEK',
