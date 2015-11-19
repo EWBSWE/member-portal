@@ -3,10 +3,9 @@
 var _ = require('lodash');
 
 var stripe = require('stripe')('***REMOVED***');
-// Uncomment once in Stripe is activated
-//if (process.env.NODE_ENV === 'production') {
-  //stripe = require('stripe')('sk_live_aRwKpgsqwq7rpsozBg43Clx5');
-//}
+if (process.env.NODE_ENV === 'production') {
+  stripe = require('stripe')('sk_live_aRwKpgsqwq7rpsozBg43Clx5');
+}
 
 var moment = require('moment');
 
@@ -298,10 +297,9 @@ exports.confirmPayment = function(req, res) {
 
 exports.stripeCheckoutKey = function (req, res) {
   var key = '***REMOVED***';
-  // Uncomment once Stripe is activated
-  //if (process.env.NODE_ENV === 'production') {
-    //key = 'pk_live_ATJZnfiF1iDDCQvNK6IgEFA2';
-  //}
+  if (process.env.NODE_ENV === 'production') {
+    key = 'pk_live_ATJZnfiF1iDDCQvNK6IgEFA2';
+  }
   
   return res.status(200).json({ key: key });
 };
