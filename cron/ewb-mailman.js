@@ -11,7 +11,19 @@ var OutgoingMessage = require(path.join(__dirname, '../server/models/outgoing-me
 var ewbError = require(path.join(__dirname, '../server/models/ewb-error.model'));
 
 var moment = require('moment');
-var mailgun = require('mailgun-js')({apiKey: '***REMOVED***', domain: '***REMOVED***' });
+
+var mailgun;
+if (process.env.NODE_ENV === 'production') {
+    mailgun = require('mailgun-js')({
+        apiKey: '***REMOVED***',
+        domain: 'blimedlem.ingenjorerutangranser.se',
+    });
+} else {
+    mailgun = require('mailgun-js')({
+        apiKey: '***REMOVED***',
+        domain: '***REMOVED***',
+    });
+}
 
 mongoose.connect(config.mongo.uri, config.mongo.options);
 
