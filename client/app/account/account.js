@@ -3,7 +3,7 @@
 angular.module('ewbMemberApp')
   .config(function ($routeProvider) {
     $routeProvider
-      .when('/', {
+      .when('/login', {
         templateUrl: 'app/account/login/login.html',
         controller: 'LoginCtrl'
       })

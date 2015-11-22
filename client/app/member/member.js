@@ -3,7 +3,7 @@
 angular.module('ewbMemberApp')
   .config(function ($routeProvider) {
     $routeProvider
-      .when('/bli-medlem', {
+      .when('/', {
         templateUrl: 'app/member/membership/membership.html',
         controller: 'MembershipCtrl'
       })
