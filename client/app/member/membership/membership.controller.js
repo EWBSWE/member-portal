@@ -33,9 +33,8 @@ angular.module('ewbMemberApp')
         $scope.newMember = {};
         $scope.form.$setPristine();
       }).error(function(data) {
-        // error with request, communicate accordingly
-        alert('sadpanda.png');
-        console.log('error', data);
+        $scope.errorMessage = data.message;
+        $('.js-payment-error').modal('show');
       });
     };
 
