@@ -55,11 +55,10 @@ angular.module('ewbMemberApp')
         expirationDate: expirationDate.format(),
       }).success(function(data, status) {
         $scope.showSuccess = true;
+        $scope.member = {};
       }).error(function(data, status) {
         $scope.showError = true;
       });
-
-      $scope.member = {};
     };
 
     var updateMember = function() {
