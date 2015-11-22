@@ -179,14 +179,14 @@ exports.confirmPayment = function(req, res) {
   var stripeAmount = amount * 100;
 
   var chargeSuccessful = false;
-  var errorMessage = 'Vi misslyckades med att genomföra din betalning';
+  var errorMessage = 'Vi misslyckades med att genomföra din betalning.';
 
-  // communicate with stripe
+  // Communicate with stripe
   stripe.charges.create({
     currency: "SEK",
     amount: stripeAmount,
     source: stripeToken.id,
-    description: "Membership test charge", // TODO this shows up in the stripe web interface
+    description: "Medlemsregistrering",
   }, function(err, charge) {
     if (err === null) {
       chargeSuccessful = true;
@@ -214,9 +214,10 @@ exports.confirmPayment = function(req, res) {
       });
     } else {
       ewbError.create({ message: 'Membership Stripe', origin: __filename, params: err });
-      // TODO act on errors
       if (err.type === 'StripeCardError') {
-        // Card was declined
+        errorMessage = 'Ditt kort medges ej. Ingen betalning genomförd.';
+      } else if (err.type === 'RateLimitError') {
+        // Too many requests made to the API too quickly
       } else if (err.type === 'StripeInvalidError') {
         // Invalid parameters were supplied to Stripe's API
       } else if (err.type === 'StripeAPIError') {
@@ -235,7 +236,6 @@ exports.confirmPayment = function(req, res) {
             ewbError.create({ message: 'Successful charge create payment', origin: __filename, params: err });
             return handleError(res, err);
           }
-          console.log('payment', err, payment);
           return res.status(201).json(payment);
         });
       };
