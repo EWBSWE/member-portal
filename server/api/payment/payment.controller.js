@@ -260,10 +260,10 @@ exports.confirmPayment = function(req, res) {
           } else {
             receiptMail = {
               from: ewbMail.sender(),
-              to: process.env.DEV_EMAIL,
+              to: process.env.DEV_MAIL,
               subject: ewbMail.getSubject('renewal'),
               text: ewbMail.getBody('renewal'),
-            }
+            };
           }
 
           OutgoingMessage.create(receiptMail, function(err, outgoingMessage) {
@@ -290,7 +290,7 @@ exports.confirmPayment = function(req, res) {
             }
             createPayment(member);
 
-            // Send renewal mail if old member
+            // Send welcome mail if new member
             if (process.env.NODE_ENV === 'production') {
               receiptMail = {
                 from: ewbMail.sender(),
@@ -301,10 +301,10 @@ exports.confirmPayment = function(req, res) {
             } else {
               receiptMail = {
                 from: ewbMail.sender(),
-                to: process.env.DEV_EMAIL,
+                to: process.env.DEV_MAIL,
                 subject: ewbMail.getSubject('new-member'),
                 text: ewbMail.getBody('new-member'),
-              }
+              };
             }
 
             OutgoingMessage.create(receiptMail, function(err, outgoingMessage) {
