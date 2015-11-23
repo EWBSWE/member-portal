@@ -120,7 +120,7 @@ exports.resetPassword = function (req, res) {
       var url = 'http://localhost:9000/reset-password?token=' + user.resetToken;
       if (process.env.NODE_ENV === 'production') {
         // TODO: Fix this URL
-        url = 'https://medlem.ingenjorerutangranser.se/reset-password?token=' + user.resetToken;
+        url = 'https://blimedlem.ingenjorerutangranser.se/reset-password?token=' + user.resetToken;
       }
 
       OutgoingMessage.create({
