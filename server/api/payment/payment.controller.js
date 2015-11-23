@@ -190,28 +190,6 @@ exports.confirmPayment = function(req, res) {
   }, function(err, charge) {
     if (err === null) {
       chargeSuccessful = true;
-
-      if (process.env.NODE_ENV === 'production') {
-          var data = {
-            from: ewbMail.sender(),
-            to: req.body.email,
-            subject: ewbMail.getSubject('renewal'),
-            text: ewbMail.getBody('renewal'),
-          };
-      } else {
-          var data = {
-            from: ewbMail.sender(),
-            to: process.env.DEV_EMAIL,
-            subject: ewbMail.getSubject('renewal'),
-            text: ewbMail.getBody('renewal'),
-          };
-      }
-
-      OutgoingMessage.create(data, function(err, outgoingMessage) {
-        if (err) {
-          ewbError.create({ message: 'Membership receipt mail', origin: __filename, params: err });
-        }
-      });
     } else {
       ewbError.create({ message: 'Membership Stripe', origin: __filename, params: err });
       if (err.type === 'StripeCardError') {
@@ -252,6 +230,8 @@ exports.confirmPayment = function(req, res) {
           expirationDate = moment().add(3, 'year');
         }
 
+        var receiptMail = {};
+
         if (member) {
           member.name = req.body.name.trim();
           member.location = req.body.location.trim();
@@ -267,6 +247,29 @@ exports.confirmPayment = function(req, res) {
 
           member.save(function() {
             createPayment(member);
+          });
+
+          // Send renewal mail if old member
+          if (process.env.NODE_ENV === 'production') {
+            receiptMail = {
+              from: ewbMail.sender(),
+              to: req.body.email,
+              subject: ewbMail.getSubject('renewal'),
+              text: ewbMail.getBody('renewal'),
+            };
+          } else {
+            receiptMail = {
+              from: ewbMail.sender(),
+              to: process.env.DEV_EMAIL,
+              subject: ewbMail.getSubject('renewal'),
+              text: ewbMail.getBody('renewal'),
+            }
+          }
+
+          OutgoingMessage.create(receiptMail, function(err, outgoingMessage) {
+            if (err) {
+              ewbError.create({ message: 'Membership receipt renewal mail', origin: __filename, params: err });
+            }
           });
         } else {
           // TODO let database take care of trimming the input
@@ -286,6 +289,29 @@ exports.confirmPayment = function(req, res) {
               console.log(err);
             }
             createPayment(member);
+
+            // Send renewal mail if old member
+            if (process.env.NODE_ENV === 'production') {
+              receiptMail = {
+                from: ewbMail.sender(),
+                to: req.body.email,
+                subject: ewbMail.getSubject('new-member'),
+                text: ewbMail.getBody('new-member'),
+              };
+            } else {
+              receiptMail = {
+                from: ewbMail.sender(),
+                to: process.env.DEV_EMAIL,
+                subject: ewbMail.getSubject('new-member'),
+                text: ewbMail.getBody('new-member'),
+              }
+            }
+
+            OutgoingMessage.create(receiptMail, function(err, outgoingMessage) {
+              if (err) {
+                ewbError.create({ message: 'Membership receipt new member mail', origin: __filename, params: err });
+              }
+            });
           });
         }
       });
