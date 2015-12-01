@@ -21,13 +21,6 @@
                 <thead>
                     <tr>
                         <td>
-                            <a href="#" ng-click="sortType = 'id'; sortReverse = !sortReverse">
-                                Id
-                                <span ng-show="sortType == 'id' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
-                                <span ng-show="sortType == 'id' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
-                            </a>
-                        </td>
-                        <td>
                             <a href="#" ng-click="sortType = 'name'; sortReverse = !sortReverse">
                                 Name
                                 <span ng-show="sortType == 'name' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
@@ -88,8 +81,7 @@
                 </thead>
                 <tbody ng-repeat="member in members | orderBy:sortType:sortReverse | filter:filterByEmail">
                     <tr>
-                        <td><a href="/member/{{member._id}}">{{member._id}}</a></td>
-                        <td>{{member.name}}</td>
+                        <td><a href="/member/{{member._id}}">{{member.name}}</a></td>
                         <td>{{member.email}}</td>
                         <td>{{member.location}}</td>
                         <td>{{member.profession}}</td>
