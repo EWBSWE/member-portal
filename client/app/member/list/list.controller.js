@@ -26,35 +26,58 @@ angular.module('ewbMemberApp')
         return;
       }
 
+      var membersToExport = $scope.members;
+      if ($scope.emailFilter || $scope.locationFilter) {
+        var tmp = [];
+
+        _.each($scope.members, function (member) {
+          if ($scope.emailFilter && $scope.filterByEmail(member)) {
+            tmp.push(member);
+          } else if ($scope.locationFilter && $scope.filterByLocation(member)) {
+            tmp.push(member);
+          }
+        });
+
+        membersToExport = tmp;
+      }
+
       var keysToIgnore = ['_id', '__v', '$$hashKey'];
       var csvContent = 'data:text/csv;charset=utf-8,';
 
       var memberKeys = Object.keys($scope.members[0]);
       _.remove(memberKeys, function(key) {
-          return _.contains(keysToIgnore, key);
+        return _.contains(keysToIgnore, key);
       });
 
       // Create headers of the member keys
       csvContent += memberKeys.join(',') + '\n';
 
-      _.each($scope.members, function(member, index) {
-          csvContent += _.map(memberKeys, function(key) {
-            return member[key];
-          }).join(',');
+      _.each(membersToExport, function(member, index) {
+        csvContent += _.map(memberKeys, function(key) {
+          return member[key];
+        }).join(',');
 
-          if (index < $scope.members.length) {
-            csvContent += '\n';
-          }
+        if (index < $scope.members.length) {
+          csvContent += '\n';
+        }
       });
 
       window.open(encodeURI(csvContent));
     };
 
     $scope.filterByEmail = function(member) {
-        if (!$scope.filter) {
-          return true;
-        }
+      if (!$scope.emailFilter) {
+        return true;
+      }
 
-        return member.email.match($scope.filter);
+      return member.email.match(new RegExp($scope.emailFilter, 'i'));
+    };
+
+    $scope.filterByLocation = function (member) {
+      if (!$scope.locationFilter) {
+        return true;
+      }
+
+      return member.location.match(new RegExp($scope.locationFilter, 'i'));
     };
   });
