@@ -5,6 +5,8 @@
 
 'use strict';
 
+var moment = require('moment');
+
 var User = require('../models/user.model');
 var Member = require('../models/member.model');
 var Payment = require('../models/payment.model');
@@ -58,14 +60,32 @@ Member.find({}).remove(function() {
     student: true,
     profession: 'Mapper',
     email: 'some-guy@test.com',
-    telephone: '+46123456789'
+    telephone: '+46123456789',
   }, {
     name: 'Arne Testman',
     location: 'Tensta',
     student: false,
     profession: 'President',
     email: 'arne_testman@test.com',
-    telephone: '+46123456790'
+    telephone: '+46123456790',
+  }, {
+    name: 'Old member 1',
+    location: 'Old Town',
+    student: false,
+    profession: 'President',
+    email: 'oldmember1@test.com',
+    telephone: '+46123456790',
+    createdAt: moment().subtract(3, 'month'),
+    expirationDate: moment().subtract(1, 'month'),
+  }, {
+    name: 'Old member 2',
+    location: 'Old Town',
+    student: false,
+    profession: 'President',
+    email: 'oldmember2@test.com',
+    telephone: '+46123456790',
+    createdAt: moment().subtract(3, 'month'),
+    expirationDate: moment().subtract(1, 'month'),
   });
 });
 
