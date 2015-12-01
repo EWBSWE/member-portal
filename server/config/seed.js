@@ -62,6 +62,13 @@ Member.find({}).remove(function() {
     email: 'some-guy@test.com',
     telephone: '+46123456789',
   }, {
+    name: 'Gunde Svan',
+    location: 'Mora',
+    student: false,
+    profession: 'President',
+    email: 'gundesvan@test.com',
+    telephone: '+46123456790',
+  }, {
     name: 'Arne Testman',
     location: 'Tensta',
     student: false,
