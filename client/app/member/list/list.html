@@ -76,7 +76,7 @@
                                 <span ng-show="sortType == 'expirationDate' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
                             </a>
                         </td>
-                        <td>Actions</td>
+                        <td></td>
                     </tr>
                 </thead>
                 <tbody ng-repeat="member in members | orderBy:sortType:sortReverse | filter:filterByEmail">
@@ -86,7 +86,7 @@
                         <td>{{member.location}}</td>
                         <td>{{member.profession}}</td>
                         <td>{{member.telephone}}</td>
-                        <td>{{member.student}}</td>
+                        <td>{{member.student ? 'Student' : 'Yrkesverksam/senior' }}</td>
                         <td>{{member.createdAt | amDateFormat: 'YYYY-MM-DD'}}</td>
                         <td>{{member.expirationDate | amDateFormat: 'YYYY-MM-DD'}}</td>
                         <td>
