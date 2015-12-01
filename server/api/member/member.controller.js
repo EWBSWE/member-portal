@@ -7,7 +7,8 @@ var Payment = require('../../models/payment.model');
 var moment = require('moment');
 
 exports.index = function(req, res) {
-  Member.find(function(err, members) {
+  // Only fetch active members
+  Member.find({ expirationDate: { $gt: moment() }}, function(err, members) {
     if (err) {
       return handleError(res, err);
     }
