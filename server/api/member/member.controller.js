@@ -122,8 +122,8 @@ exports.bulkAdd = function(req, res) {
 
       member.profession = info[3].trim();
 
-      if (validateEmail(info[4])) {
-        member.email = info[4];
+      if (validateEmail(info[4].trim())) {
+        member.email = info[4].trim();
       } else {
         member.invalid = true;
       }
