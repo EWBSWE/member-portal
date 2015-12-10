@@ -110,14 +110,12 @@ exports.bulkAdd = function(req, res) {
     // If we have the correct number of fields, validate each field otherwise
     // set member as invalid
     // 0 namn, 1 ort, 2 student, 3 yrke, 4 epost, 5 telefon, 6 langd
-    if (info.length === Member.schema._requiredpaths.length) {
+    if (info.length === 7) {
       member.name = info[0].trim();
       member.location = info[1].trim();
 
       if (validateType(info[2])) {
         member.student = info[2] === 'student';
-      } else {
-        member.invalid = true;
       }
 
       member.profession = info[3].trim();
@@ -135,11 +133,27 @@ exports.bulkAdd = function(req, res) {
       } else {
           member.invalid = true;
       }
-
-      member.invalid = _.some(info, function(field) {
-        return field.length === 0;
-      });
     } else {
+      member.invalid = true;
+    }
+  });
+
+  // Duplicate emails within collection?
+  var emails = {};
+  _.each(members, function (member) {
+    if (emails[member.email]) {
+      emails[member.email]++;
+    } else {
+      emails[member.email] = 1;
+    }
+  });
+
+  // Set each member that occurs more than once invalid
+  var duplicateEmails = Object.keys(_.pick(emails, function (v) { return v > 1; }));
+
+  // Find members with emails that appear more than once
+  _.each(members, function (member) {
+    if (_.contains(duplicateEmails, member.email)) {
       member.invalid = true;
     }
   });

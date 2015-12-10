@@ -6,16 +6,16 @@ var moment = require('moment');
 
 var MemberSchema = new Schema({
   name: { type: String, required: true },
-  location: { type: String, required: true },
-  profession: { type: String, required: true },
+  location: { type: String },
+  profession: { type: String },
   email: {
     type: String,
     lowercase: true,
     unique: true,
     required: true
   },
-  student: { type: Boolean, required: true, default: true },
-  telephone: { type: String, required: true },
+  student: { type: Boolean },
+  telephone: { type: String },
   createdAt: { type: Date, default: moment() },
   expirationDate: { type: Date, required: true, default: moment().add(1, 'year') },
 });

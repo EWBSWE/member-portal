@@ -4,7 +4,6 @@
 angular.module('ewbMemberApp')
   .controller('MemberBulkCtrl', function ($scope, $http) {
     $scope.addMembers = function() {
-        console.log($scope.csv);
       if ($scope.csv === '' || $scope.csv === undefined) {
         return;
       }
