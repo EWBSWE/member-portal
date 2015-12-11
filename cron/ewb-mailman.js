@@ -28,7 +28,7 @@ if (process.env.NODE_ENV === 'production') {
 mongoose.connect(config.mongo.uri, config.mongo.options);
 
 OutgoingMessage
-    .find({ sendAt: { $lt: moment() } })
+    .find({ sendAt: { $lt: moment() } }) //@warning: cannot index sendAt since not required and seemingly not always created -> O(n)
     .sort({ priority: 'descending' })
     .limit(10)
     .exec(function(err, outgoingMessages) {
