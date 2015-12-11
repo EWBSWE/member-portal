@@ -17,6 +17,8 @@ var UserSchema = new Schema({
   resetToken: { type: String },
 });
 
+UserSchema.index({email: 1});
+
 /**
  * Virtuals
  */
