@@ -75,7 +75,7 @@ exports.getMyPayments = function(req, res) {
 };
 
 function getPayments(userId, res){
-  Payment.find({user: userId}, function (err, payments) {
+  Payment.find({user: userId}, function (err, payments) { //@deprecated? no user field in payment, only member
     if (err) {
       return handleError(res, err);
     }
@@ -116,7 +116,7 @@ exports.update = function(req, res) {
   if (req.body._id) {
     delete req.body._id;
   }
-  Payment.findOne({_id: req.params.id, user: userId})
+  Payment.findOne({_id: req.params.id, user: userId}) //@deprecated? no user in Payment, only member. Also _id is unique so redudant with more
     .exec(function (err, payment) {
       if (err) {
         return handleError(res, err);
