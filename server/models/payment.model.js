@@ -10,4 +10,6 @@ var PaymentSchema = new Schema({
   createdAt: { type: Date, required: true, default: new Date() },
 });
 
+PaymentSchema.index({member: 1});
+
 module.exports = mongoose.model('Payment', PaymentSchema);
