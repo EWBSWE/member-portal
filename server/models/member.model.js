@@ -26,5 +26,7 @@ MemberSchema
     return email.length;
   }, 'Email cannot be blank');
 
+MemberSchema.index({expirationDate: 1});
+MemberSchema.index({email: 1});
 
 module.exports = mongoose.model('Member', MemberSchema);
