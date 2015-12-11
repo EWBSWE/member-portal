@@ -146,6 +146,7 @@ exports.resetPassword = function (req, res) {
 };
 
 exports.resetPasswordWithToken= function (req, res) {
+  //@warning: search by indexed variables instead? Query not indexable as resetToken and resetValidity are not required in model.
   User.findOne({ resetToken: req.body.token, resetValidity: { $gt: moment() } }, function (err, user) {
     if (err) {
       ewbError.create({ message: 'Reset password with token', origin: __filename, params: err });
