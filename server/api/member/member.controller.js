@@ -8,22 +8,44 @@ var moment = require('moment');
 
 exports.index = function(req, res) {
   // Only fetch active members
-  Member.find({ expirationDate: { $gt: moment() }}, function(err, members) {
-    if (err) {
-      return handleError(res, err);
-    }
-    return res.status(200).json(members);
-  });
+  return findMembers({ expirationDate: { $gt: moment() }}, res);
 };
 
 exports.show = function(req, res) {
-  Member.findOne({ _id: req.params.id }, function(err, member) {
+  Member.findOne({ _id: req.params.id }).lean().exec(function(err, member) {
     if (err) {
       return handleError(res, err);
     }
     return res.status(200).json(member);
   });
 };
+
+exports.getCount = function(req, res) {
+  return findMembersCount({}, res);
+};
+
+exports.getCountByStudent = function(req, res) {
+  var isStudent = req.params.student;
+  return findMembersCount({student: isStudent}, res);
+};
+
+function findMembers(query, res){
+  return Member.find(query).exec(function(err, members) {
+    if (err) {
+      return handleError(res, err);
+    }
+    return res.status(200).json(members);
+  });
+}
+
+function findMembersCount(query, res){
+  return Member.find(query).count().exec(function(err, count) {
+    if (err) {
+      return handleError(res, err);
+    }
+    return res.status(200).json(count);
+  });
+}
 
 exports.create = function(req, res) {
   Member.findOne({ email: req.body.email }, function(err, member) {

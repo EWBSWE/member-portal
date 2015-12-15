@@ -8,6 +8,8 @@ var router = express.Router();
 
 router.get('/', auth.isAuthenticated(), controller.index);
 router.get('/:id', auth.isAuthenticated(), controller.show);
+router.get('/count', auth.isAuthenticated(), controller.getCount);
+router.get('/count/students/:student', auth.isAuthenticated(), controller.getCountByStudent);
 router.post('/', auth.isAuthenticated(), controller.create);
 router.put('/:id', auth.isAuthenticated(), controller.update);
 router.delete('/:id', auth.isAuthenticated(), controller.destroy);
