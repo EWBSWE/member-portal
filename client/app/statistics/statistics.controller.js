@@ -47,6 +47,11 @@ angular.module('ewbMemberApp')
                 showLabels: false,
                 duration: 500,
                 labelThreshold: 0.01,
+                donut: true,
+                pie: {
+                    startAngle: function(d) { return d.startAngle/2 -Math.PI/2 },
+                    endAngle: function(d) { return d.endAngle/2 -Math.PI/2 }
+                },
                 valueFormat: function(d){
                     return d3.format(',.0f')(d)
                 },
