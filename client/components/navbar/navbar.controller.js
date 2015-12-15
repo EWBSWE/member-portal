@@ -21,6 +21,10 @@ angular.module('ewbMemberApp')
       }, {
         title: 'Admin',
         link: '/admin',
+      },
+      {
+        title: 'Statistics',
+        link: '/statistics'
       });
     }
 
