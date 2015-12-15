@@ -141,7 +141,7 @@ exports.destroy = function(req, res) {
       return handleError(res, err);
     }
     if (!payment) {
-      return res.send(404);
+      return res.sendStatus(404);
     }
     payment.remove(function(err) {
       if (err) {
