@@ -37,6 +37,10 @@ msgstr ""
 msgid "Email sent to {{user.email}}."
 msgstr ""
 
+#: client/app/member/membership/membership.controller.js:84
+msgid "Engineers without borders"
+msgstr ""
+
 #: client/app/member/membership/membership.html:34
 msgid "First and last name"
 msgstr ""

@@ -1,7 +1,7 @@
 'use strict';
 /* globals StripeCheckout, alert*/
 angular.module('ewbMemberApp')
-  .controller('MembershipCtrl', function ($scope, $http, $location, gettextCatalog, gettext) {
+  .controller('MembershipCtrl', function ($scope, $http, $location, gettextCatalog) {
     $scope.newMember = {};
 
     var stripeHandler;
@@ -38,39 +38,37 @@ angular.module('ewbMemberApp')
       });
     };
 
-    // TODO fetch payment options from api?
-    $scope.paymentOptions = {
-      student: {
-        oneYear: {
-          description: gettext('Membership, student, 1 year'),
-          amount: 40,
-        },
-        threeYear: {
-          description: gettext('Membership, student, 3 years'),
-          amount: 90,
-        },
-      },
-      worker: {
-        oneYear: {
-          description: gettext('Membership, working/senior, 1 year'),
-          amount: 100,
-        },
-        threeYear: {
-          description: gettext('Membership, working/senior, 3 years'),
-          amount: 250,
-        },
-      },
-    };
-
-
     $scope.initiatePayment = function() {
       if ($scope.form.$invalid) {
         return;
       }
 
-      var paymentOption = $scope.paymentOptions.worker;
+      var paymentOptions = {
+        student: {
+          oneYear: {
+            description: gettextCatalog.getString('Membership, student, 1 year'),
+            amount: 40,
+          },
+          threeYear: {
+            description: gettextCatalog.getString('Membership, student, 3 years'),
+            amount: 90,
+          },
+        },
+        worker: {
+          oneYear: {
+            description: gettextCatalog.getString('Membership, working/senior, 1 year'),
+            amount: 100,
+          },
+          threeYear: {
+            description: gettextCatalog.getString('Membership, working/senior, 3 years'),
+            amount: 250,
+          },
+        },
+      };
+
+      var paymentOption = paymentOptions.worker;
       if ($scope.newMember.isStudent === '1') {
-        paymentOption = $scope.paymentOptions.student;
+        paymentOption = paymentOptions.student;
       }
 
       if ($scope.newMember.subscriptionLength === '1') {
@@ -81,7 +79,7 @@ angular.module('ewbMemberApp')
 
       if (stripeHandler) {
         stripeHandler.open({
-          name: 'Ingenjörer utan gränser',
+          name: gettextCatalog.getString('Engineers without borders'),
           description: paymentOption.description,
           // image: 'bild.png', // TODO
           currency: 'SEK',
