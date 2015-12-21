@@ -4,11 +4,32 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Project-Id-Version: \n"
 
+#: client/app/member/membership/membership.html:75
+msgid "1 year"
+msgstr ""
+
+#: client/app/member/membership/membership.html:79
+msgid "3 year"
+msgstr ""
+
+#: client/app/member/membership/membership.html:107
+msgid "A confirmation of your payment and your membership is sent to <strong>{{successEmail}}</strong>."
+msgstr ""
+
 #: client/app/account/login/login.html:71
+#: client/app/member/membership/membership.html:111
+#: client/app/member/membership/membership.html:128
 msgid "Close"
 msgstr ""
 
+#: client/app/member/membership/membership.html:108
+#: client/app/member/membership/membership.html:125
+#: client/app/member/membership/membership.html:23
+msgid "Do you any questions regarding your membership or anything payment related? Reach out to us at <a href=\"mailto:volontar@ingenjorerutangranser.se\">volontar@ingenjorerutangranser.se</a>."
+msgstr ""
+
 #: client/app/account/login/login.html:12
+#: client/app/member/membership/membership.html:49
 msgid "Email"
 msgstr ""
 
@@ -16,8 +37,20 @@ msgstr ""
 msgid "Email sent to {{user.email}}."
 msgstr ""
 
+#: client/app/member/membership/membership.html:34
+msgid "First and last name"
+msgstr ""
+
 #: client/app/account/login/login.html:38
 msgid "Forgot your password?"
+msgstr ""
+
+#: client/app/member/membership/membership.html:19
+msgid "If you want to get involved we recommend that you contact your local group that you can find over at <a target=\"_blank\" href=\"http://ingenjorerutangranser.se/organisation\">ingenjorerutangranser.se/organisation</a>. You can also find available positions for current projects at <a target=\"_blank\" href=\"http://volontar.ingenjorerutangranser.se\">volontar.ingenjorerutangranser.se</a>. If you have any other questions that can't be answered by one of the local groups, feel free to contact us at <a href=\"mailto:info@ingenjorerutangranser.se\">info@ingenjorerutangranser.se</a>."
+msgstr ""
+
+#: client/app/member/membership/membership.html:39
+msgid "Location"
 msgstr ""
 
 #: client/app/account/login/login.html:35
@@ -29,6 +62,10 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
+#: client/app/member/membership/membership.html:51
+msgid "Please enter a valid email address."
+msgstr ""
+
 #: client/app/account/login/login.html:27
 msgid "Please enter a valid email."
 msgstr ""
@@ -37,10 +74,55 @@ msgstr ""
 msgid "Please enter your email and password."
 msgstr ""
 
+#: client/app/member/membership/membership.html:86
+msgid "Please fill out all required fields before clicking <strong>Sign up</strong>."
+msgstr ""
+
+#: client/app/member/membership/membership.html:44
+msgid "Profession/Education"
+msgstr ""
+
 #: client/app/account/login/login.html:65
 msgid "Reset password"
 msgstr ""
 
+#: client/app/member/membership/membership.html:4
+#: client/app/member/membership/membership.html:90
+msgid "Sign up"
+msgstr ""
+
+#: client/app/member/membership/membership.html:81
+msgid "Sign up for 1 year starting at 40 SEK for students or join 3 years for 90 SEK (costs for non-students are 100 SEK and 250 SEK, respectively)."
+msgstr ""
+
+#: client/app/member/membership/membership.html:64
+msgid "Student"
+msgstr ""
+
+#: client/app/member/membership/membership.html:57
+msgid "Telephone"
+msgstr ""
+
+#: client/app/member/membership/membership.html:104
+msgid "Thank you for the support!"
+msgstr ""
+
+#: client/app/member/membership/membership.html:121
+msgid "The transaction was unsuccessful"
+msgstr ""
+
 #: client/app/account/login/login.html:61
 msgid "We will send you an email with instructions on how to reset your password."
+msgstr ""
+
+#: client/app/member/membership/membership.html:15
+msgid "We would love to see you join our community. Being a part of Engineers without borders gives you the possibility to get involved and influence our work for a better world. Your membership also supports our organization greatly and we need both active and supporting members. There is no requirement for an engineering degree, everyone is needed and all are welcome."
+msgstr ""
+
+#: client/app/member/membership/membership.html:92
+msgid "When you click <strong>Sign up</strong> your transaction is managed securely by <a href=\"https://stripe.com/se\" target=\"_blank\">Stripe</a>. When the transaction is completed we send you a confirmation to the email address specified above."
+msgstr ""
+
+#: client/app/member/membership/membership.html:68
+msgid "Working or senior"
 msgstr ""

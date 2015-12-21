@@ -1,7 +1,7 @@
 'use strict';
 /* globals StripeCheckout, alert*/
 angular.module('ewbMemberApp')
-  .controller('MembershipCtrl', function ($scope, $http, $location) {
+  .controller('MembershipCtrl', function ($scope, $http, $location, gettextCatalog) {
     $scope.newMember = {};
 
     var stripeHandler;
@@ -91,5 +91,9 @@ angular.module('ewbMemberApp')
       } else {
         console.error('stripeHandler not initiated');
       }
+    };
+
+    $scope.setCurrentLanguage = function (lang) {
+      gettextCatalog.setCurrentLanguage(lang);
     };
   });

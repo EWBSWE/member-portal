@@ -1,21 +1,27 @@
 <div class="container membership">
   <div class="row">
     <div class="col-xs-12 col-md-6">
-      <h1>Bli medlem</h1>
+      <h1 translate>Sign up</h1>
     </div>
   </div>
   <div class="row">
     <div class="col-xs-12 col-md-6">
-      <p><strong>
-        Vi vill gärna se dig i vår medlemsgemenskap. Att vara medlem i Ingenjörer utan gränser ger dig möjlighet att engagera dig och påverka vårt arbete för en bättre värld. Ditt medlemskap innebär också ett stort stöd för vår verksamhet och vi behöver både aktiva och stödjande medlemmar. Du behöver inte vara ingenjör, alla behövs och alla är välkomna!
+      <a href="" ng-click="setCurrentLanguage('en')">English</a>
+      <a href="" ng-click="setCurrentLanguage('sv')">Svenska</a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 col-md-6">
+      <p><strong translate>
+        We would love to see you join our community. Being a part of Engineers without borders gives you the possibility to get involved and influence our work for a better world. Your membership also supports our organization greatly and we need both active and supporting members. There is no requirement for an engineering degree, everyone is needed and all are welcome.
       </strong></p>
 
-      <p class="help-block">
-        Vill du dessutom engagera dig aktivt rekommenderar vi dig att direkt kontakta din lokala gruppledare som du hittar på <a target="_blank" href="http://ingenjorerutangranser.se/content/organisation">ingenjorerutangranser.se/content/organisation</a>. Du kan också leta lediga, specifika behov på vår rekryteringshemsida <a target="_blank" href="http://volontar.ingenjorerutangranser.se">volontar.ingenjorerutangranser.se</a>. Har du andra frågor, som inte kan besvaras av en av våra befintliga grupper, kontaktar du oss med fördel på <a href="mailto:info@ingenjorerutangranser.se">info@ingenjorerutangranser.se</a>.
+      <p class="help-block" translate>
+        If you want to get involved we recommend that you contact your local group that you can find over at <a target="_blank" href="http://ingenjorerutangranser.se/organisation">ingenjorerutangranser.se/organisation</a>. You can also find available positions for current projects at <a target="_blank" href="http://volontar.ingenjorerutangranser.se">volontar.ingenjorerutangranser.se</a>. If you have any other questions that can't be answered by one of the local groups, feel free to contact us at <a href="mailto:info@ingenjorerutangranser.se">info@ingenjorerutangranser.se</a>.
       </p>
 
-      <p class="help-block">
-      Har du några frågor rörande medlemskap eller din betalning? Hör av dig till oss på <a href="mailto:volontar@ingenjorerutangranser.se">volontar@ingenjorerutangranser.se</a>.
+      <p class="help-block" translate>
+        Do you any questions regarding your membership or anything payment related? Reach out to us at <a href="mailto:volontar@ingenjorerutangranser.se">volontar@ingenjorerutangranser.se</a>.
       </p>
 
       <a href="http://www.ingenjorerutangranser.se">
@@ -25,66 +31,66 @@
     <div class="col-xs-12 col-md-6">
       <form novalidate name="form" class="payment-form">
         <div ng-class="{'form-group': true, 'has-error': form.inputName.$invalid && !form.inputName.$pristine, 'has-success': form.inputName.$valid}">
-          <label class="control-label" for="inputName">Förnamn och efternamn</label>
+          <label class="control-label" for="inputName" translate>First and last name</label>
           <input class="form-control" type="text" name="inputName" id="inputName" ng-model="newMember.name" required/>
         </div>
 
         <div ng-class="{'form-group': true, 'has-error': form.inputLocation.$invalid && !form.inputLocation.$pristine, 'has-success': form.inputLocation.$valid}">
-          <label class="control-label" for="inputLocation">Ort</label>
+          <label class="control-label" for="inputLocation" translate>Location</label>
           <input class="form-control" type="text" name="inputLocation" id="inputLocation" ng-model="newMember.location" required/>
         </div>
 
         <div ng-class="{'form-group': true, 'has-error': form.inputProfession.$invalid && !form.inputProfession.$pristine, 'has-success': form.inputProfession.$valid}">
-          <label class="control-label" for="inputProfession">Yrke/Utbildning</label>
+          <label class="control-label" for="inputProfession" translate>Profession/Education</label>
           <input class="form-control" type="text" name="inputProfession" id="inputProfession" ng-model="newMember.profession" required/>
         </div>
 
         <div ng-class="{'form-group': true, 'has-error': form.inputEmail.$error.email, 'has-success': form.inputEmail.$valid}">
-          <label class="control-label" for="inputEmail">E-postadress</label>
+          <label class="control-label" for="inputEmail" translate>Email</label>
           <input class="form-control" type="email" name="inputEmail" id="inputEmail" ng-model="newMember.email" required/>
-          <p class="help-block" ng-show="form.inputEmail.$error.email">
-            Fyll i en riktig e-postadress.
+          <p class="help-block" ng-show="form.inputEmail.$error.email" translate>
+            Please enter a valid email address.
           </p>
         </div>
 
         <div ng-class="{'form-group': true, 'has-error': form.inputTelephone.$invalid && !form.inputTelephone.$pristine, 'has-success': form.inputTelephone.$valid}">
-          <label class="control-label" for="inputTelephone">Telefon</label>
+          <label class="control-label" for="inputTelephone" translate>Telephone</label>
           <input class="form-control" type="text" name="inputTelephone" id="inputTelephone" ng-model="newMember.telephone" required/>
         </div>
 
-        <div ng-class="{'form-group': true, 'has-error': !newMember.isStudent && !form.isStudent.$pristine, 'has-success': newMember.isStudent}">
+        <div ng-class="{'form-group': true, 'has-error': !newMember.isStudent && !form.$pristine, 'has-success': newMember.isStudent}">
           <label class="radio-inline control-label">
             <input type="radio" name="isStudent" value="1" ng-model="newMember.isStudent"/>
-            Student
+            <span translate>Student</span>
           </label>
           <label class="radio-inline control-label">
             <input type="radio" name="isStudent" value="0" ng-model="newMember.isStudent" />
-            Yrkesverksam eller senior
+            <span translate>Working or senior</span>
           </label>
         </div>
 
-        <div ng-class="{'form-group': true, 'has-error': !newMember.subscriptionLength && !form.subscriptionLength.$pristine, 'has-success': newMember.subscriptionLength}">
+        <div ng-class="{'form-group': true, 'has-error': !newMember.subscriptionLength && !form.$pristine, 'has-success': newMember.subscriptionLength}">
           <label class="radio-inline control-label">
             <input type="radio" name="subscriptionLength" value="1" ng-model="newMember.subscriptionLength" />
-            1 år
+            <span translate>1 year</span>
           </label>
           <label class="radio-inline control-label">
             <input type="radio" name="subscriptionLength" value="3" ng-model="newMember.subscriptionLength" />
-            3 år
+            <span translate>3 year</span>
           </label>
-          <p class="help-block" for="subscriptionLength">
-            Bli medlem i 1 år för 100 kr (40 kr för studerande) eller i 3 år för 250 kr (90 kr för studerande).
+          <p class="help-block" for="subscriptionLength" translate>
+            Sign up for 1 year starting at 40 SEK for students or join 3 years for 90 SEK (costs for non-students are 100 SEK and 250 SEK, respectively).
           </p>
         </div>
 
-        <p class="text-warning" ng-show="form.$invalid || !newMember.isStudent || !newMember.subscriptionLength">
-          Var vänlig fyll i alla fälten innan du klickar på <strong>Bli medlem</strong>.
+        <p class="text-warning" ng-show="form.$invalid || !newMember.isStudent || !newMember.subscriptionLength" translate>
+          Please fill out all required fields before clicking <strong>Sign up</strong>.
         </p>
         <div class="form-group">
-          <button type="submit" class="btn btn-primary btn-lg" ng-click="initiatePayment()">Bli medlem</button>
+          <button type="submit" class="btn btn-primary btn-lg" ng-click="initiatePayment()" translate>Sign up</button>
         </div>
-        <p class="help-block">
-          När du klickar på <strong>Bli medlem</strong> hanteras din betalning av <a href="https://stripe.com/se" target="_blank">Stripe</a> varpå dina uppgifter behandlas säkert. När betalningen är färdig skickar vi en bekräftelse till den e-postadress som angavs ovan.
+        <p class="help-block" translate>
+          When you click <strong>Sign up</strong> your transaction is managed securely by <a href="https://stripe.com/se" target="_blank">Stripe</a>. When the transaction is completed we send you a confirmation to the email address specified above.
         </p>
       </form>
     </div>
@@ -95,14 +101,14 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title" id="confirmation-label">Tack för ditt stöd!</h4>
+        <h4 class="modal-title" id="confirmation-label" translate>Thank you for the support!</h4>
       </div>
       <div class="modal-body">
-        <p>En bekräftelse på din betalning och medlemskap skickas till <strong>{{successEmail}}<strong>.</p>
-        <p>Har du några frågor rörande medlemskap eller din betalning? Hör av dig till oss på <a href="mailto:volontar@ingenjorerutangranser.se">volontar@ingenjorerutangranser.se</a>.</p>
+        <p translate>A confirmation of your payment and your membership is sent to <strong>{{successEmail}}</strong>.</p>
+        <p translate>Do you any questions regarding your membership or anything payment related? Reach out to us at <a href="mailto:volontar@ingenjorerutangranser.se">volontar@ingenjorerutangranser.se</a>.</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Stäng</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" translate>Close</button>
       </div>
     </div>
   </div>
@@ -112,14 +118,14 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title" id="confirmation-label">Betalningen misslyckades</h4>
+        <h4 class="modal-title" id="confirmation-label" translate>The transaction was unsuccessful</h4>
       </div>
       <div class="modal-body">
         <p>{{errorMessage}}</p>
-        <p>Har du några frågor rörande medlemskap eller din betalning? Hör av dig till oss på <a href="mailto:volontar@ingenjorerutangranser.se">volontar@ingenjorerutangranser.se</a>.</p>
+        <p translate>Do you any questions regarding your membership or anything payment related? Reach out to us at <a href="mailto:volontar@ingenjorerutangranser.se">volontar@ingenjorerutangranser.se</a>.</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Stäng</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" translate>Close</button>
       </div>
     </div>
   </div>

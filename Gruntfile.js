@@ -550,6 +550,13 @@ module.exports = function (grunt) {
             },
         },
     },
+    nggettext_compile: {
+        all: {
+            files: {
+                '<%= yeoman.client %>/components/translations/translations.js': [ 'translations/po/*.po' ],
+            },
+        },
+    },
   });
 
   grunt.loadNpmTasks('grunt-angular-gettext');
