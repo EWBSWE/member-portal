@@ -1,0 +1,46 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: \n"
+
+#: client/app/account/login/login.html:71
+msgid "Close"
+msgstr ""
+
+#: client/app/account/login/login.html:12
+msgid "Email"
+msgstr ""
+
+#: client/app/account/login/login.html:55
+msgid "Email sent to {{user.email}}."
+msgstr ""
+
+#: client/app/account/login/login.html:38
+msgid "Forgot your password?"
+msgstr ""
+
+#: client/app/account/login/login.html:35
+#: client/app/account/login/login.html:6
+msgid "Login"
+msgstr ""
+
+#: client/app/account/login/login.html:18
+msgid "Password"
+msgstr ""
+
+#: client/app/account/login/login.html:27
+msgid "Please enter a valid email."
+msgstr ""
+
+#: client/app/account/login/login.html:24
+msgid "Please enter your email and password."
+msgstr ""
+
+#: client/app/account/login/login.html:65
+msgid "Reset password"
+msgstr ""
+
+#: client/app/account/login/login.html:61
+msgid "We will send you an email with instructions on how to reset your password."
+msgstr ""
