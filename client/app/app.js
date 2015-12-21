@@ -8,7 +8,8 @@ angular.module('ewbMemberApp', [
   'btford.socket-io',
   'ui.bootstrap',
   'angularMoment',
-  'nvd3'
+  'nvd3',
+  'gettext',
 ])
   .config(function ($routeProvider, $locationProvider, $httpProvider) {
     $routeProvider
