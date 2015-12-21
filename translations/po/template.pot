@@ -58,6 +58,22 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
+#: client/app/member/membership/membership.controller.js:45
+msgid "Membership, student, 1 year"
+msgstr ""
+
+#: client/app/member/membership/membership.controller.js:49
+msgid "Membership, student, 3 years"
+msgstr ""
+
+#: client/app/member/membership/membership.controller.js:55
+msgid "Membership, working/senior, 1 year"
+msgstr ""
+
+#: client/app/member/membership/membership.controller.js:59
+msgid "Membership, working/senior, 3 years"
+msgstr ""
+
 #: client/app/account/login/login.html:18
 msgid "Password"
 msgstr ""

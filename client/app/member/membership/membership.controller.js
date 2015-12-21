@@ -1,7 +1,7 @@
 'use strict';
 /* globals StripeCheckout, alert*/
 angular.module('ewbMemberApp')
-  .controller('MembershipCtrl', function ($scope, $http, $location, gettextCatalog) {
+  .controller('MembershipCtrl', function ($scope, $http, $location, gettextCatalog, gettext) {
     $scope.newMember = {};
 
     var stripeHandler;
@@ -42,21 +42,21 @@ angular.module('ewbMemberApp')
     $scope.paymentOptions = {
       student: {
         oneYear: {
-          description: 'Medlemskap som student ett år',
+          description: gettext('Membership, student, 1 year'),
           amount: 40,
         },
         threeYear: {
-          description: 'Medlemskap som student tre år',
+          description: gettext('Membership, student, 3 years'),
           amount: 90,
         },
       },
       worker: {
         oneYear: {
-          description: 'Medlemskap som yrkesverksam ett år',
+          description: gettext('Membership, working/senior, 1 year'),
           amount: 100,
         },
         threeYear: {
-          description: 'Medlemskap som yrkesverksam tre år',
+          description: gettext('Membership, working/senior, 3 years'),
           amount: 250,
         },
       },
