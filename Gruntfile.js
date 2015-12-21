@@ -17,7 +17,7 @@ module.exports = function (grunt) {
     cdnify: 'grunt-google-cdn',
     protractor: 'grunt-protractor-runner',
     injector: 'grunt-asset-injector',
-    buildcontrol: 'grunt-build-control'
+    buildcontrol: 'grunt-build-control',
   });
 
   // Time how long tasks take. Can help when optimizing build times
@@ -542,7 +542,17 @@ module.exports = function (grunt) {
         }
       }
     },
+
+    nggettext_extract: {
+        pot: {
+            files: {
+                'translations/po/template.pot': [ '<%= yeoman.client %>/app/**/*.html' ],
+            },
+        },
+    },
   });
+
+  grunt.loadNpmTasks('grunt-angular-gettext');
 
   // Used for delaying livereload until after server has restarted
   grunt.registerTask('wait', function () {
@@ -664,4 +674,5 @@ module.exports = function (grunt) {
     'test',
     'build'
   ]);
+
 };
