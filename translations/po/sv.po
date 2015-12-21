@@ -1,0 +1,53 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"X-Generator: Poedit 1.8.6\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: sv\n"
+
+#: client/app/account/login/login.html:71
+msgid "Close"
+msgstr "Stäng\t"
+
+#: client/app/account/login/login.html:12
+msgid "Email"
+msgstr "E-post"
+
+#: client/app/account/login/login.html:55
+msgid "Email sent to {{user.email}}."
+msgstr "E-post skickat till {{user.email}}."
+
+#: client/app/account/login/login.html:38
+msgid "Forgot your password?"
+msgstr "Glömt ditt lösenord?"
+
+#: client/app/account/login/login.html:35 client/app/account/login/login.html:6
+msgid "Login"
+msgstr "Logga in"
+
+#: client/app/account/login/login.html:18
+msgid "Password"
+msgstr "Lösenord"
+
+#: client/app/account/login/login.html:27
+msgid "Please enter a valid email."
+msgstr "Skriv en giltig e-postadress."
+
+#: client/app/account/login/login.html:24
+msgid "Please enter your email and password."
+msgstr "Skriv in e-post och lösenord."
+
+#: client/app/account/login/login.html:65
+msgid "Reset password"
+msgstr "Återställ lösenord"
+
+#: client/app/account/login/login.html:61
+msgid "We will send you an email with instructions on how to reset your password."
+msgstr "Vi skickar ett mail med instruktioner om hur du återställer ditt lösenord."
