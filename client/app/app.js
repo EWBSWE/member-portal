@@ -10,6 +10,7 @@ angular.module('ewbMemberApp', [
   'angularMoment',
   'nvd3',
   'gettext',
+  'angularUtils.directives.dirPagination',
 ])
   .config(function ($routeProvider, $locationProvider, $httpProvider) {
     $routeProvider
