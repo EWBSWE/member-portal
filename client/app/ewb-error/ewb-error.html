@@ -9,6 +9,7 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-12">
+            <dir-pagination-controls></dir-pagination-controls>
             <table class="table table-hover">
                 <thead>
                     <tr>
@@ -43,8 +44,8 @@
                         </td>
                     </tr>
                 </thead>
-                <tbody ng-repeat="ewbError in ewbErrors | orderBy:sortType:sortReverse">
-                    <tr>
+                <tbody>
+                    <tr dir-paginate="ewbError in ewbErrors | orderBy:sortType:sortReverse | itemsPerPage: 10">
                         <td>{{ewbError._id}}</td>
                         <td>{{ewbError.message}}</td>
                         <td>{{ewbError.origin}}</td>
@@ -53,6 +54,7 @@
                     </tr>
                 </tbody>
             </table>
+            <dir-pagination-controls></dir-pagination-controls>
         </div>
     </div>
 </div>
