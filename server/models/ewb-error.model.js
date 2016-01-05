@@ -7,7 +7,7 @@ var ewbError = new Schema({
   message: { type: String, required: true },
   origin: { type: String, required: true },
   params: { type: Object, required: true, default: {} },
-  createdAt: { type: Date, required: true, default: new Date() },
+  createdAt: { type: Date, required: true, default: Date.now },
 });
 
 module.exports = mongoose.model('ewbError', ewbError);
