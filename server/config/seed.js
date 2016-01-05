@@ -94,6 +94,21 @@ Member.find({}).remove(function() {
     createdAt: moment().subtract(3, 'month'),
     expirationDate: moment().subtract(1, 'month'),
   });
+
+
+  var lotsOfMembers = [];
+  for (var i = 0; i < 10000; i++) {
+    lotsOfMembers.push({
+      name: 'Name ' + i,
+      location: 'Location',
+      student: true,
+      profession: 'Profession',
+      email: 'name' + i + '@example.com',
+      telephone: '+46123456790',
+      createdAt: moment().subtract(3, 'month'),
+    });
+  }
+  Member.create(lotsOfMembers);
 });
 
 function createPayments() {
