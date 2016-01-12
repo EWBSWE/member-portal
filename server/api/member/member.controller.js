@@ -7,8 +7,14 @@ var Payment = require('../../models/payment.model');
 var moment = require('moment');
 
 exports.index = function(req, res) {
-  // Only fetch active members
-  return findMembers({ expirationDate: { $gt: moment() }}, res);
+  if (req.query) {
+    // Currently only email
+    var params = { email: req.query.email };
+    return findMembers(params, res);
+  } else {
+    // Only fetch active members
+    return findMembers({ expirationDate: { $gt: moment() }}, res);
+  }
 };
 
 exports.show = function(req, res) {
