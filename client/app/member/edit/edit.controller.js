@@ -9,10 +9,7 @@ angular.module('ewbMemberApp')
 
     if ($routeParams.id) {
       $http.get('/api/members/' + $routeParams.id).success(function(member) {
-        // TODO
-        // Should preferably convert the expiration date in a better way using 
-        // some more angulary way
-        member.expirationDate = new Date(moment(member.expirationDate).format('YYYY-MM-DD'));
+        member.expirationDate = new Date(member.expirationDate);
         $scope.member = member;
       });
     }
@@ -62,7 +59,7 @@ angular.module('ewbMemberApp')
     };
 
     var updateMember = function() {
-      $http.put('/api/members/' + $routeParams.id, {
+      $http.put('/api/members/' + $scope.member._id, {
         name: $scope.member.name,
         location: $scope.member.location,
         profession: $scope.member.profession,
@@ -77,8 +74,27 @@ angular.module('ewbMemberApp')
       });
     };
 
-    $scope.submit = addMember;
-    if ($routeParams.id) {
-      $scope.submit = updateMember;
-    }
+    $scope.submit = function() {
+      if ($scope.editMember) {
+        updateMember();
+      } else {
+        addMember();
+      }
+    };
+
+    $scope.findByEmail = function(email) {
+      if (!email) {
+        return;
+      }
+      $http.get('/api/members', { params: { email: email.trim() } }).success(function(members) {
+        if (members.length) {
+          var member = members[0];
+          member.expirationDate = new Date(member.expirationDate);
+          $scope.member = member;
+          $scope.editMember = true;
+        } else {
+          alert('Hittar ingen med epost: "' + email + '"');
+        }
+      });
+    };
   });
