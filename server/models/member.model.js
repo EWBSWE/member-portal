@@ -4,18 +4,24 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var moment = require('moment');
 
+var genders = [ 'female', 'male', 'other' ];
+var types = [ 'student', 'working', 'senior' ];
+
 var MemberSchema = new Schema({
-  name: { type: String, required: true },
-  location: { type: String },
-  profession: { type: String },
+  name: { type: String, trim: true, required: true },
+  location: { type: String, trim: true },
+  education: { type: String, trim: true },
+  profession: { type: String, trim: true },
   email: {
     type: String,
     lowercase: true,
     unique: true,
-    required: true
+    required: true,
+    trim: true,
   },
-  student: { type: Boolean },
-  telephone: { type: String },
+  type: { type: String, enum: types },
+  gender: { type: String, enum: genders },
+  birthyear: { type: Number, min: 0 },
   createdAt: { type: Date, default: Date.now },
   expirationDate: { type: Date, required: true, default: function () { return moment().add(1, 'year') } },
 });
