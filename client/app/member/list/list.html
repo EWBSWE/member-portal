@@ -65,17 +65,17 @@
                             </a>
                         </td>
                         <td>
-                            <a href="#" ng-click="sortType = 'telephone'; sortReverse = !sortReverse">
-                                Telefon
-                                <span ng-show="sortType == 'telephone' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
-                                <span ng-show="sortType == 'telephone' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
+                            <a href="#" ng-click="sortType = 'education'; sortReverse = !sortReverse">
+                                Utbildning
+                                <span ng-show="sortType == 'education' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
+                                <span ng-show="sortType == 'education' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
                             </a>
                         </td>
                         <td>
-                            <a href="#" ng-click="sortType = 'student'; sortReverse = !sortReverse">
+                            <a href="#" ng-click="sortType = 'type'; sortReverse = !sortReverse">
                                 Typ
-                                <span ng-show="sortType == 'student' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
-                                <span ng-show="sortType == 'student' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
+                                <span ng-show="sortType == 'type' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
+                                <span ng-show="sortType == 'type' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
                             </a>
                         </td>
                         <td>
@@ -101,8 +101,8 @@
                         <td>{{member.email}}</td>
                         <td>{{member.location}}</td>
                         <td>{{member.profession}}</td>
-                        <td>{{member.telephone}}</td>
-                        <td>{{member.student ? 'Student' : 'Yrkesverksam/senior' }}</td>
+                        <td>{{member.education}}</td>
+                        <td>{{member.type}}</td>
                         <td>{{member.createdAt | amDateFormat: 'YYYY-MM-DD'}}</td>
                         <td>{{member.expirationDate | amDateFormat: 'YYYY-MM-DD'}}</td>
                         <td>

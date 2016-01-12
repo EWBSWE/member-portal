@@ -28,8 +28,8 @@ angular.module('ewbMemberApp')
         authenticate: true, 
       })
       .when('/member/:id', {
-        templateUrl: 'app/member/detail/detail.html',
-        controller: 'MemberDetailCtrl',
+        templateUrl: 'app/member/details/details.html',
+        controller: 'MemberDetailsCtrl',
         authenticate: true, 
       });
   });

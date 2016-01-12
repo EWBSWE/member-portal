@@ -12,11 +12,13 @@
       <p>{{member.name}}</p>
       <p>{{member.location}}</p>
       <p>{{member.profession}}</p>
+      <p>{{member.education}}</p>
       <p>{{member.email}}</p>
-      <p>{{member.telephone}}</p>
+      <p>{{member.yearOfBirth}}</p>
+      <p>{{member.gender}}</p>
     </div>
     <div class="col-xs-12 col-sm-6">
-      <p>{{memberTypeText()}} till och med {{member.expirationDate | amDateFormat: 'YYYY-MM-DD'}}.</p>
+      <p>{{member.type}}-medlem till och med {{member.expirationDate | amDateFormat: 'YYYY-MM-DD'}}.</p>
       <p ng-show="isExpired()" class="text-warning">Medlemskap utgånget!</p>
     </div>
   </div>
