@@ -7,7 +7,7 @@ var Payment = require('../../models/payment.model');
 var moment = require('moment');
 
 exports.index = function(req, res) {
-  if (req.query) {
+  if (req.query && Object.keys(req.query).length) {
     // Currently only email
     var params = { email: req.query.email };
     return findMembers(params, res);
