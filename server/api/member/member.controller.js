@@ -141,27 +141,36 @@ exports.bulkAdd = function(req, res) {
 
     // If we have the correct number of fields, validate each field otherwise
     // set member as invalid
-    // 0 namn, 1 ort, 2 student, 3 yrke, 4 epost, 5 telefon, 6 langd
-    if (info.length === 7) {
-      member.name = info[0].trim();
-      member.location = info[1].trim();
+    // 0 name, 1 email, 2 location, 3 profession, 4 education, 5 type, 6 gender, 7 yearOfBirth, 8 expiration
+    if (info.length === 9) {
+      member.name = info[0];
 
-      if (validateType(info[2])) {
-        member.student = info[2] === 'student';
-      }
-
-      member.profession = info[3].trim();
-
-      if (validateEmail(info[4].trim())) {
-        member.email = info[4].trim();
+      if (validateEmail(info[1].trim())) {
+        member.email = info[1].trim();
       } else {
         member.invalid = true;
       }
 
-      member.telephone = info[5].replace(/ /g, '');
+      member.location = info[2];
+      member.profession = info[3];
+      member.education = info[4];
 
-      if (parseInt(info[6].trim(), 10) > 0) {
-          member.expirationDate = moment().add(parseInt(info[6].trim(), 10), 'days');
+      if (_.contains(['student', 'working', 'senior'], info[5].trim())) {
+          member.type = info[5].trim();
+      } else {
+          member.invalid = true;
+      }
+
+      if (_.contains(['male', 'female', 'other'], info[6].trim())) {
+          member.gender = info[6].trim();
+      } else {
+          member.invalid = true;
+      }
+
+      member.yearOfBirth = info[7];
+
+      if (parseInt(info[8].trim(), 10) > 0) {
+          member.expirationDate = moment().add(parseInt(info[8].trim(), 10), 'days');
       } else {
           member.invalid = true;
       }
@@ -218,9 +227,11 @@ exports.bulkAdd = function(req, res) {
         // Update everything but email
         member.name = newMemberData.name;
         member.location = newMemberData.location;
-        member.student = newMemberData.student;
         member.profession = newMemberData.profession;
-        member.telephone = newMemberData.telephone;
+        member.education = newMemberData.education;
+        member.type = newMemberData.type;
+        member.gender = newMemberData.gender;
+        member.yearOfBirth = newMemberData.yearOfBirth;
 
         // Never reduce a membership length
         if (moment(member.expirationDate) < newMemberData.expirationDate) {
@@ -265,12 +276,4 @@ function validateEmail(email) {
 
   var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
   return re.test(email);
-}
-
-function validateType(text) {
-  if (!text) {
-    return false;
-  }
-
-  return text.toLowerCase() === 'student' || text.toLowerCase() === 'yrkesverksam';
 }

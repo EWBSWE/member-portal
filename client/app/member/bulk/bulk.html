@@ -19,8 +19,10 @@
               <td>Epost</td>
               <td>Ort</td>
               <td>Yrke</td>
-              <td>Telefon</td>
-              <td>Student</td>
+              <td>Utbildning</td>
+              <td>Typ</td>
+              <td>Kön</td>
+              <td>Födelseår</td>
               <td>Created at</td>
               <td>Member until</td>
             </tr>
@@ -32,8 +34,10 @@
               <td>{{member.email}}</td>
               <td>{{member.location}}</td>
               <td>{{member.profession}}</td>
-              <td>{{member.telephone}}</td>
-              <td>{{member.student}}</td>
+              <td>{{member.education}}</td>
+              <td>{{member.type}}</td>
+              <td>{{member.gender}}</td>
+              <td>{{member.yearOfBirth}}</td>
               <td>{{member.createdAt | amDateFormat: 'YYYY-MM-DD'}}</td>
               <td>{{member.expirationDate | amDateFormat: 'YYYY-MM-DD'}}</td>
             </tr>
@@ -50,8 +54,10 @@
               <td>Epost</td>
               <td>Ort</td>
               <td>Yrke</td>
-              <td>Telefon</td>
-              <td>Student</td>
+              <td>Utbildning</td>
+              <td>Typ</td>
+              <td>Kön</td>
+              <td>Födelseår</td>
               <td>Created at</td>
               <td>Member until</td>
             </tr>
@@ -63,8 +69,10 @@
               <td>{{member.email}}</td>
               <td>{{member.location}}</td>
               <td>{{member.profession}}</td>
-              <td>{{member.telephone}}</td>
-              <td>{{member.student}}</td>
+              <td>{{member.education}}</td>
+              <td>{{member.type}}</td>
+              <td>{{member.gender}}</td>
+              <td>{{member.yearOfBirth}}</td>
               <td>{{member.createdAt | amDateFormat: 'YYYY-MM-DD'}}</td>
               <td>{{member.expirationDate | amDateFormat: 'YYYY-MM-DD'}}</td>
             </tr>
@@ -94,16 +102,17 @@
       Längd är det antal dagar som medlemskapet anses vara aktiv och skrivs med positiva heltal. 365 = 1 år, 1095 = 3 år.
     </p>
     <pre>
-      namn,ort,student,yrke/utbildning,epost,telefon,längd
-      namn,ort,yrkesverksam,yrke/utbildning,epost,telefon,längd
+      namn, epost, ort, yrke, utbildning, student, male, födelseår, längd
+      namn, epost, ort, yrke, utbildning, working, female, födelseår, längd
+      namn, epost, ort, yrke, utbildning, senior, other, födelseår, längd
       ...
     </pre>
     <p>
       Till exempel
     </p>
     <pre>
-      Glenn Hysen,Göteborg,yrkesverksam,Legend,glenn@hysen.com,+46123456789,365
-      Tobias Hysen,Kina,student,Fotbollsproffs,tobias@hysen.com,0730000000,1095
+      Glenn Hysen, glenn@hysen.com, Göteborg, Dansgubbe, Fotbollsskola, senior, male, 1959, 365
+      Tobias Hysen, tobias@hysen.com, Kina, Fotbollsproffs, Fotbollsskola, working, male, 1982, 1095
     </pre>
     <div class="form-group">
       <label for="inputEmail">Medlemmar</label>
