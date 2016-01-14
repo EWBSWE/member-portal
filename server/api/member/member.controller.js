@@ -65,11 +65,13 @@ exports.create = function(req, res) {
       Member.create({
         name: req.body.name,
         location: req.body.location,
-        telephone: req.body.telephone,
         profession: req.body.profession,
+        education: req.body.education,
         email: req.body.email,
-        student: req.body.student,
-        expirationDate: req.body.expirationDate
+        type: req.body.type,
+        gender: req.body.gender,
+        yearOfBirth: req.body.yearOfBirth,
+        expirationDate: req.body.expirationDate,
       }, function(err, member) {
         if (err) {
           return handleError(res, err);
@@ -89,10 +91,12 @@ exports.update = function(req, res) {
 
     member.name = req.body.name;
     member.location = req.body.location;
-    member.telephone = req.body.telephone;
     member.profession = req.body.profession;
+    member.education = req.body.education;
     member.email = req.body.email;
-    member.student = req.body.student;
+    member.type = req.body.type;
+    member.gender = req.body.gender;
+    member.yearOfBirth = req.body.yearOfBirth;
     member.expirationDate = req.body.expirationDate;
 
     member.save(function(err) {

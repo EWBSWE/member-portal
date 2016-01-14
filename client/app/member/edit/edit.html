@@ -25,7 +25,7 @@
 
     <div class="form-group">
       <label for="inputName">Namn</label>
-      <input type="text" name="inputName" id="inputName" class="form-control" ng-model="member.name"/>
+      <input type="text" name="inputName" id="inputName" class="form-control" ng-model="member.name" required/>
     </div>
 
     <div class="form-group">
@@ -35,28 +35,52 @@
 
     <div class="radio">
       <label class="radio-inline">
-        <input type="radio" name="isStudent" value="1" ng-model="member.student"/>
+        <input type="radio" name="type" value="student" ng-model="member.type" />
         Student
       </label>
       <label class="radio-inline">
-        <input type="radio" name="isStudent" value="0" ng-model="member.student" />
-        Yrkesverksam/Senior
+        <input type="radio" name="type" value="working" ng-model="member.type" />
+        Yrkesverksam
+      </label>
+      <label class="radio-inline">
+        <input type="radio" name="type" value="senior" ng-model="member.type" />
+        Senior
+      </label>
+    </div>
+
+    <div class="radio">
+      <label class="radio-inline">
+        <input type="radio" name="gender" value="male" ng-model="member.gender" />
+        Man
+      </label>
+      <label class="radio-inline">
+        <input type="radio" name="gender" value="female" ng-model="member.gender" />
+        Kvinna
+      </label>
+      <label class="radio-inline">
+        <input type="radio" name="gender" value="other" ng-model="member.gender" />
+        Annat
       </label>
     </div>
 
     <div class="form-group">
-      <label for="inputProfession">Yrke/Utbildning</label>
+      <label for="inputProfession">Yrke</label>
       <input type="text" name="inputProfession" id="inputProfession" class="form-control" ng-model="member.profession"/>
     </div>
 
     <div class="form-group">
-      <label for="inputEmail">E-postadress</label>
-      <input type="text" name="inputEmail" id="inputEmail" class="form-control" ng-model="member.email"/>
+      <label for="inputProfession">Utbildning</label>
+      <input type="text" name="inputEducation" id="inputEducation" class="form-control" ng-model="member.education"/>
     </div>
 
     <div class="form-group">
-      <label for="inputTelephone">Telefon</label>
-      <input type="text" name="inputTelephone" id="inputTelephone" class="form-control" ng-model="member.telephone"/>
+      <label for="inputEmail">E-postadress</label>
+      <input type="text" name="inputEmail" id="inputEmail" class="form-control" ng-model="member.email" required/>
+    </div>
+
+    <div class="form-group">
+      <label for="inputTelephone">Födelseår</label>
+      <input type="number" name="inputYearOfBirth" id="inputYearOfBirth" class="form-control" min="1900" max="3000" ng-model="member.yearOfBirth"/>
     </div>
 
 

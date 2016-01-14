@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var moment = require('moment');
 
-var genders = [ 'female', 'male', 'other' ];
+var genders = [ 'male', 'female', 'other' ];
 var types = [ 'student', 'working', 'senior' ];
 
 var MemberSchema = new Schema({
@@ -19,8 +19,8 @@ var MemberSchema = new Schema({
     required: true,
     trim: true,
   },
-  type: { type: String, enum: types },
-  gender: { type: String, enum: genders },
+  type: { type: String, enum: types, default: types[0] },
+  gender: { type: String, enum: genders, default: genders[2] },
   yearOfBirth: { type: Number, min: 0 },
   createdAt: { type: Date, default: Date.now },
   expirationDate: { type: Date, required: true, default: function () { return moment().add(1, 'year') } },

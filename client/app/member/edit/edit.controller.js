@@ -19,17 +19,7 @@ angular.module('ewbMemberApp')
 
       if (!$scope.member.name) {
         return;
-      } else if (!$scope.member.location) {
-        return;
-      } else if (!$scope.member.profession) {
-        return;
       } else if (!$scope.member.email) {
-        return;
-      } else if (!$scope.member.telephone) {
-        return;
-      } else if (!$scope.member.student) {
-        return;
-      } else if (!$scope.member.expirationDate && !$scope.member.subscriptionLength) {
         return;
       }
 
@@ -46,9 +36,11 @@ angular.module('ewbMemberApp')
         name: $scope.member.name,
         location: $scope.member.location,
         profession: $scope.member.profession,
-        telephone: $scope.member.telephone,
+        education: $scope.member.education,
         email: $scope.member.email, 
-        student: $scope.member.student,
+        type: $scope.member.type,
+        gender: $scope.member.gender,
+        yearOfBirth: $scope.member.yearOfBirth,
         expirationDate: expirationDate.format(),
       }).success(function(data, status) {
         $scope.showSuccess = true;
@@ -63,9 +55,11 @@ angular.module('ewbMemberApp')
         name: $scope.member.name,
         location: $scope.member.location,
         profession: $scope.member.profession,
-        telephone: $scope.member.telephone,
         email: $scope.member.email, 
-        student: $scope.member.student,
+        education: $scope.member.education,
+        type: $scope.member.type,
+        gender: $scope.member.gender,
+        yearOfBirth: $scope.member.yearOfBirth,
         expirationDate: moment($scope.member.expirationDate).format(),
       }).success(function(data, status) {
         $scope.showSuccess = true;
