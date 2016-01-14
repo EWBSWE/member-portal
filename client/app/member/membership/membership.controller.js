@@ -3,6 +3,7 @@
 angular.module('ewbMemberApp')
   .controller('MembershipCtrl', function ($scope, $http, $location, gettextCatalog) {
     $scope.newMember = {};
+    gettextCatalog.setCurrentLanguage('sv');
 
     var stripeHandler;
 
