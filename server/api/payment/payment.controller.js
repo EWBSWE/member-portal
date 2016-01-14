@@ -159,14 +159,14 @@ function handleError(res, err) {
 exports.confirmPayment = function(req, res) {
   var stripeToken = req.body.stripeToken;
   var subscriptionLength = req.body.subscriptionLength;
-  var isStudent = req.body.isStudent;
+  var type = req.body.type.trim();
 
   // TODO refactor this into model or something, currently duplicated between frontend
   // and backend
   var amount = 0;
-  if (isStudent && subscriptionLength === '1') {
+  if (type === 'student' && subscriptionLength === '1') {
       amount = 40;
-  } else if (isStudent && subscriptionLength === '3') {
+  } else if (type === 'student' && subscriptionLength === '3') {
       amount = 100;
   } else if (subscriptionLength === '1') {
       amount = 90;
@@ -179,6 +179,7 @@ exports.confirmPayment = function(req, res) {
   var stripeAmount = amount * 100;
 
   var chargeSuccessful = false;
+  // TODO Translate
   var errorMessage = 'Vi misslyckades med att genomföra din betalning.';
 
   // Communicate with stripe
@@ -193,6 +194,7 @@ exports.confirmPayment = function(req, res) {
     } else {
       ewbError.create({ message: 'Membership Stripe', origin: __filename, params: err });
       if (err.type === 'StripeCardError') {
+        // TODO Translate
         errorMessage = 'Ditt kort medges ej. Ingen betalning genomförd.';
       } else if (err.type === 'RateLimitError') {
         // Too many requests made to the API too quickly
@@ -218,7 +220,7 @@ exports.confirmPayment = function(req, res) {
         });
       };
 
-      Member.findOne({ email: req.body.email }, function(err, member) {
+      Member.findOne({ email: req.body.email.trim() }, function(err, member) {
         if (err) {
           ewbError.create({ message: 'Successful charge find member', origin: __filename, params: err });
           // TODO what do on successful payment?
@@ -233,11 +235,13 @@ exports.confirmPayment = function(req, res) {
         var receiptMail = {};
 
         if (member) {
-          member.name = req.body.name.trim();
-          member.location = req.body.location.trim();
-          member.profession = req.body.profession.trim();
-          member.telephone = req.body.telephone.replace(/ /g, '');
-          member.student = isStudent;
+          member.name = req.body.name;
+          member.location = req.body.location;
+          member.profession = req.body.profession;
+          member.education = req.body.education;
+          member.type = type;
+          member.gender = req.body.gender;
+          member.yearOfBirth = req.body.yearOfBirth;
 
           if (subscriptionLength === '1') {
               member.expirationDate = moment(member.expirationDate).add(1, 'year');
@@ -272,15 +276,16 @@ exports.confirmPayment = function(req, res) {
             }
           });
         } else {
-          // TODO let database take care of trimming the input
           Member.create({
-            name: req.body.name.trim(),
-            location: req.body.location.trim(),
-            profession: req.body.profession.trim(),
+            name: req.body.name,
+            location: req.body.location,
+            profession: req.body.profession,
+            education: req.body.education,
             email: req.body.email,
-            telephone: req.body.telephone.replace(/ /g, ''),
-            student: isStudent,
-            expirationDate: expirationDate
+            type: type,
+            gender: req.body.gender,
+            yearOfBirth: req.body.yearOfBirth,
+            expirationDate: expirationDate,
           }, function(err, member) {
             if (err) {
               ewbError.create({ message: 'Successful charge create member', origin: __filename, params: err });

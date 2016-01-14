@@ -24,9 +24,11 @@ angular.module('ewbMemberApp')
         name: $scope.newMember.name,
         location: $scope.newMember.location,
         profession: $scope.newMember.profession,
+        education: $scope.newMember.education,
         email: $scope.newMember.email,
-        telephone: $scope.newMember.telephone,
-        isStudent: $scope.newMember.isStudent === '1',
+        gender: $scope.newMember.gender,
+        type: $scope.newMember.type,
+        yearOfBirth: $scope.newMember.yearOfBirth,
         subscriptionLength: $scope.newMember.subscriptionLength,
       }).success(function(data) {
         $scope.successEmail = data.member.email;
@@ -68,11 +70,11 @@ angular.module('ewbMemberApp')
       };
 
       var paymentOption = paymentOptions.worker;
-      if ($scope.newMember.isStudent === '1') {
+      if ($scope.newMember.type === 'student') {
         paymentOption = paymentOptions.student;
       }
 
-      if ($scope.newMember.subscriptionLength === '1') {
+      if ($scope.newMember.type === 'student') {
         paymentOption = paymentOption.oneYear;
       } else {
         paymentOption = paymentOption.threeYear;

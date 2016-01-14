@@ -35,16 +35,6 @@
           <input class="form-control" type="text" name="inputName" id="inputName" ng-model="newMember.name" required/>
         </div>
 
-        <div ng-class="{'form-group': true, 'has-error': form.inputLocation.$invalid && !form.inputLocation.$pristine, 'has-success': form.inputLocation.$valid}">
-          <label class="control-label" for="inputLocation" translate>Location</label>
-          <input class="form-control" type="text" name="inputLocation" id="inputLocation" ng-model="newMember.location" required/>
-        </div>
-
-        <div ng-class="{'form-group': true, 'has-error': form.inputProfession.$invalid && !form.inputProfession.$pristine, 'has-success': form.inputProfession.$valid}">
-          <label class="control-label" for="inputProfession" translate>Profession/Education</label>
-          <input class="form-control" type="text" name="inputProfession" id="inputProfession" ng-model="newMember.profession" required/>
-        </div>
-
         <div ng-class="{'form-group': true, 'has-error': form.inputEmail.$error.email, 'has-success': form.inputEmail.$valid}">
           <label class="control-label" for="inputEmail" translate>Email</label>
           <input class="form-control" type="email" name="inputEmail" id="inputEmail" ng-model="newMember.email" required/>
@@ -53,37 +43,99 @@
           </p>
         </div>
 
-        <div ng-class="{'form-group': true, 'has-error': form.inputTelephone.$invalid && !form.inputTelephone.$pristine, 'has-success': form.inputTelephone.$valid}">
-          <label class="control-label" for="inputTelephone" translate>Telephone</label>
-          <input class="form-control" type="text" name="inputTelephone" id="inputTelephone" ng-model="newMember.telephone" required/>
+        <div class="row">
+          <div class="col-xs-12 col-md-6">
+            <div ng-class="{'form-group': true, 'has-error': form.inputYearOfBirth.$invalid && !form.inputYearOfBirth.$pristine, 'has-success': form.inputYearOfBirth.$valid}">
+              <label class="control-label" for="inputYearOfBirth" translate>Year of birth</label>
+              <input class="form-control" type="number" name="inputYearOfBirth" id="inputYearOfBirth" min="1900" ng-model="newMember.yearOfBirth" ng-init="newMember.yearOfBirth = 19"required/>
+              <p class="help-block" translate>
+                4 digits, for instance 1988
+              </p>
+            </div>
+          </div>
+          <div class="col-xs-12 col-md-6">
+            <div ng-class="{'form-group': true, 'has-error': !newMember.gender && !form.$pristine, 'has-success': newMember.gender }">
+              <div>
+                <label translate>Gender</label>
+              </div>
+              <label class="radio-inline control-label">
+                <input type="radio" name="gender" value="male" ng-model="newMember.gender"/>
+                <span translate>Male</span>
+              </label>
+              <label class="radio-inline control-label">
+                <input type="radio" name="gender" value="female" ng-model="newMember.gender" />
+                <span translate>Female</span>
+              </label>
+              <label class="radio-inline control-label">
+                <input type="radio" name="gender" value="other" ng-model="newMember.gender" />
+                <span translate>Other</span>
+              </label>
+            </div>
+          </div>
         </div>
 
-        <div ng-class="{'form-group': true, 'has-error': !newMember.isStudent && !form.$pristine, 'has-success': newMember.isStudent}">
-          <label class="radio-inline control-label">
-            <input type="radio" name="isStudent" value="1" ng-model="newMember.isStudent"/>
-            <span translate>Student</span>
-          </label>
-          <label class="radio-inline control-label">
-            <input type="radio" name="isStudent" value="0" ng-model="newMember.isStudent" />
-            <span translate>Working or senior</span>
-          </label>
+        <div ng-class="{'form-group': true }">
+          <label class="control-label" for="inputLocation" translate>Location</label>
+          <input class="form-control" type="text" name="inputLocation" id="inputLocation" ng-model="newMember.location" required/>
         </div>
 
-        <div ng-class="{'form-group': true, 'has-error': !newMember.subscriptionLength && !form.$pristine, 'has-success': newMember.subscriptionLength}">
-          <label class="radio-inline control-label">
-            <input type="radio" name="subscriptionLength" value="1" ng-model="newMember.subscriptionLength" />
-            <span translate>1 year</span>
-          </label>
-          <label class="radio-inline control-label">
-            <input type="radio" name="subscriptionLength" value="3" ng-model="newMember.subscriptionLength" />
-            <span translate>3 year</span>
-          </label>
-          <p class="help-block" for="subscriptionLength" translate>
-            Sign up for 1 year starting at 40 SEK for students or join 3 years for 90 SEK (costs for non-students are 100 SEK and 250 SEK, respectively).
-          </p>
+        <div class="row">
+          <div class="col-xs-12 col-md-6">
+            <div ng-class="{'form-group': true }">
+              <label class="control-label" for="inputProfession" translate>Profession</label>
+              <input class="form-control" type="text" name="inputProfession" id="inputProfession" ng-model="newMember.profession"/>
+            </div>
+          </div>
+          <div class="col-xs-12 col-md-6">
+            <div ng-class="{'form-group': true }">
+              <label class="control-label" for="inputEducation" translate>Education</label>
+              <input class="form-control" type="text" name="inputEducation" id="inputEducation" ng-model="newMember.education"/>
+            </div>
+          </div>
         </div>
 
-        <p class="text-warning" ng-show="form.$invalid || !newMember.isStudent || !newMember.subscriptionLength" translate>
+        
+        <div class="row">
+          <div class="col-xs-12 col-md-6">
+            <div>
+                <label translate>Status</label>
+            </div>
+            <div ng-class="{'form-group': true, 'has-error': !newMember.type && !form.$pristine, 'has-success': newMember.type }">
+              <label class="radio-inline control-label">
+                <input type="radio" name="type" value="student" ng-model="newMember.type"/>
+                <span translate>Student</span>
+              </label>
+              <label class="radio-inline control-label">
+                <input type="radio" name="type" value="working" ng-model="newMember.type" />
+                <span translate>Working</span>
+              </label>
+              <label class="radio-inline control-label">
+                <input type="radio" name="type" value="senior" ng-model="newMember.type" />
+                <span translate>Senior</span>
+              </label>
+            </div>
+          </div>
+          <div class="col-xs-12 col-md-6">
+            <div>
+                <label translate>Membership length</label>
+            </div>
+            <div ng-class="{'form-group': true, 'has-error': !newMember.subscriptionLength && !form.$pristine, 'has-success': newMember.subscriptionLength}">
+              <label class="radio-inline control-label">
+                <input type="radio" name="subscriptionLength" value="1" ng-model="newMember.subscriptionLength" />
+                <span translate>1 year</span>
+              </label>
+              <label class="radio-inline control-label">
+                <input type="radio" name="subscriptionLength" value="3" ng-model="newMember.subscriptionLength" />
+                <span translate>3 year</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <p class="help-block" for="subscriptionLength" translate>
+          Sign up for 1 year starting at 40 SEK for students or join 3 years for 90 SEK (costs for non-students are 100 SEK and 250 SEK, respectively).
+        </p>
+
+        <p class="text-warning" ng-show="form.$invalid || !newMember.type || !newMember.subscriptionLength" translate>
           Please fill out all required fields before clicking <strong>Sign up</strong>.
         </p>
         <div class="form-group">
