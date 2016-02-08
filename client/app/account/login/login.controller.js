@@ -22,7 +22,6 @@ angular.module('ewbMemberApp')
         })
         .then( function() {
           $location.path(landingPage);
-          $scope.$emit('navbar:reload');
         })
         .catch( function(err) {
           $scope.errors.other = err.message;

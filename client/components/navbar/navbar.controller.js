@@ -2,37 +2,24 @@
 
 angular.module('ewbMemberApp')
   .controller('NavbarCtrl', function ($scope, $location, Auth) {
-    $scope.menu = [];
-
-    var populateMenu = function() {
-      if (Auth.isLoggedIn()) {
-        $scope.menu.push({
-          title: 'Payments',
-          link: '/payments',
-        }, {
-          title: 'Members',
-          link: '/members',
-        });
+    $scope.menu = [
+      {
+        title: 'Payments',
+        link: '/payments',
+      }, {
+        title: 'Members',
+        link: '/members',
+      }, {
+        title: 'Errors',
+        link: '/errors',
+      }, {
+        title: 'Admin',
+        link: '/admin',
+      }, {
+        title: 'Statistics',
+        link: '/statistics'
       }
-
-      if (Auth.isAdmin()) {
-        $scope.menu.push({
-          title: 'Errors',
-          link: '/errors',
-        }, {
-          title: 'Admin',
-          link: '/admin',
-        },
-        {
-          title: 'Statistics',
-          link: '/statistics'
-        });
-      }
-    };
-
-    populateMenu();
-
-    $scope.$on('navbar:reload', populateMenu);
+    ];
 
     $scope.isCollapsed = true;
     $scope.isLoggedIn = Auth.isLoggedIn;
