@@ -14,11 +14,11 @@ exports.index = function(req, res) {
 };
 
 exports.show = function(req, res) {
-  Payment.findOne({ _id: req.params.id }, function(err, ewbError) {
+  ewbError.findOne({ _id: req.params.id }, function(err, ewbe) {
     if (err) {
       return handleError(res, err);
     } else {
-      return res.status(200).json(ewbError);
+      return res.status(200).json(ewbe);
     }
   });
 };

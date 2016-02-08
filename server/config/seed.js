@@ -11,6 +11,7 @@ var User = require('../models/user.model');
 var Member = require('../models/member.model');
 var Payment = require('../models/payment.model');
 var OutgoingMessage = require('../models/outgoing-message.model');
+var Event = require('../models/event.model');
 
 var ewbMail = require('../components/ewb-mail');
 
@@ -149,3 +150,21 @@ function createPayments() {
     });
   };
 }
+
+Event.find({}).remove(function () {
+    Event.create({
+        name: 'Event 1',
+        description: 'Lorem ipsum',
+        price: '100',
+        active: true,
+        participants: [],
+    });
+
+    Event.create({
+        name: 'Event 2',
+        description: 'Lorem ipsum',
+        price: '300',
+        active: true,
+        participants: [],
+    });
+});
