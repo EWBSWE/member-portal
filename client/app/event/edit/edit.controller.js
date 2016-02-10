@@ -10,7 +10,6 @@ angular.module('ewbMemberApp')
     if ($routeParams.id) {
         $http.get('/api/events/' + $routeParams.id).success(function(ev) {
             $scope.ev = ev;
-            console.log(ev);
         });
     }
 
@@ -30,6 +29,10 @@ angular.module('ewbMemberApp')
 
     var updateEvent = function() {
         $http.put('/api/events/' + $scope.ev._id, {
+            name: $scope.ev.name,
+            description: $scope.ev.description,
+            price: $scope.ev.price,
+            active: $scope.ev.active,
         }).success(function(data, status) {
             $scope.showSuccess = true;
         }).error(function(data, status) {

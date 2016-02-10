@@ -32,7 +32,7 @@ exports.create = function (req, res) {
         name: req.body.name,
         description: req.body.description,
         price: req.body.price,
-        active: req.body.active ? true : false,
+        active: req.body.active == 1,
     }, function(err, ewbEvent) {
         if (err) {
             return handleError(res, err);
@@ -47,13 +47,18 @@ exports.update = function (req, res) {
         if (err) {
             return handleError(res, err);
         }
-        
-        // TODO 
-        Member.findOne({email: 'some-guy@test.com'}, function (err, m) {
-            console.log(m, m._id);
-            Event.update({ _id: ewbEvent._id }, { $addToSet: { participants: m._id } }, function (err, ewbEvent) {
-                console.log('heyoooooo', ewbEvent);
-            });
+
+        ewbEvent.name = req.body.name;
+        ewbEvent.description = req.body.description;
+        ewbEvent.price = req.body.price;
+        ewbEvent.active = req.body.active == 1;
+
+        ewbEvent.save(function(err) {
+            if (err) {
+                return handleError(res, err);
+            }
+
+            return res.status(202).json(ewbEvent);
         });
     });
 };
