@@ -57,7 +57,7 @@ angular.module('ewbMemberApp')
             amount: 90,
           },
         },
-        worker: {
+        working: {
           oneYear: {
             description: gettextCatalog.getString('Membership, working/senior, 1 year'),
             amount: 100,
@@ -69,12 +69,12 @@ angular.module('ewbMemberApp')
         },
       };
 
-      var paymentOption = paymentOptions.worker;
+      var paymentOption = paymentOptions.working;
       if ($scope.newMember.type === 'student') {
         paymentOption = paymentOptions.student;
       }
 
-      if ($scope.newMember.type === 'student') {
+      if ($scope.newMember.subscriptionLength === '1') {
         paymentOption = paymentOption.oneYear;
       } else {
         paymentOption = paymentOption.threeYear;
