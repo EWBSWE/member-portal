@@ -1,100 +1,50 @@
 <div ng-include="'components/navbar/navbar.html'"></div>
 
 <header class="hero-unit" id="banner">
-  <div class="container">
-    <h1>{{ editEvent ? 'Edit event' : 'New event' }}</h1>
-  </div>
+    <div class="container">
+        <h1>{{ editEvent ? 'Edit event' : 'New event' }}</h1>
+    </div>
 </header>
 
 <div class="container">
-  <form class="ev-form">
-    <div class="bg-success" ng-show="showSuccess">
-      <div ng-message="eventCreated">Event sparat</div>
-    </div>
+    <form class="ev-form">
+        <div class="bg-success" ng-show="showSuccess">
+            <div ng-message="eventCreated">Event sparat</div>
+        </div>
 
-    <div class="form-group">
-      <label for="inputName">Namn</label>
-      <input type="text" name="inputName" id="inputName" class="form-control" ng-model="ev.name" />
-    </div>
+        <div class="form-group">
+            <label for="inputName">Namn</label>
+            <input type="text" name="inputName" id="inputName" class="form-control" ng-model="ev.name" />
+        </div>
 
-    <div class="form-group">
-      <label for="inputLocation" class="control-label">Ort</label>
-      <input type="text" name="inputLocation" id="inputLocation" class="form-control" ng-model="ev.location"/>
-    </div>
+        <div class="form-group">
+            <label for="inputDescription" class="control-label">Beskrivning</label>
+            <input type="text" name="inputDescription" id="inputDescription" class="form-control" ng-model="ev.description"/>
+        </div>
 
-    <div class="radio">
-      <label class="radio-inline">
-        <input type="radio" name="type" value="student" ng-model="ev.type" />
-        Student
-      </label>
-      <label class="radio-inline">
-        <input type="radio" name="type" value="working" ng-model="ev.type" />
-        Yrkesverksam
-      </label>
-      <label class="radio-inline">
-        <input type="radio" name="type" value="senior" ng-model="ev.type" />
-        Senior
-      </label>
-    </div>
+        <div class="form-group">
+            <label for="inputProfession">Pris</label>
+            <input type="text" name="inputPrice" id="inputPrice" class="form-control" ng-model="ev.price"/>
+        </div>
 
-    <div class="radio">
-      <label class="radio-inline">
-        <input type="radio" name="gender" value="male" ng-model="ev.gender" />
-        Man
-      </label>
-      <label class="radio-inline">
-        <input type="radio" name="gender" value="female" ng-model="ev.gender" />
-        Kvinna
-      </label>
-      <label class="radio-inline">
-        <input type="radio" name="gender" value="other" ng-model="ev.gender" />
-        Annat
-      </label>
-    </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" value="1" ng-model="ev.active"> Aktivt
+            </label>
+        </div>
 
-    <div class="form-group">
-      <label for="inputProfession">Yrke</label>
-      <input type="text" name="inputProfession" id="inputProfession" class="form-control" ng-model="ev.profession"/>
-    </div>
+        <span class="input-group">
+            <button type="submit" class="btn btn-primary" ng-click="submit()">Spara event</button>
+        </span>
+    </form>
 
-    <div class="form-group">
-      <label for="inputProfession">Utbildning</label>
-      <input type="text" name="inputEducation" id="inputEducation" class="form-control" ng-model="ev.education"/>
-    </div>
-
-    <div class="form-group">
-      <label for="inputEmail">E-postadress</label>
-      <input type="text" name="inputEmail" id="inputEmail" class="form-control" ng-model="ev.email"/>
-    </div>
-
-    <div class="form-group">
-      <label for="inputTelephone">Födelseår</label>
-      <input type="number" name="inputYearOfBirth" id="inputYearOfBirth" class="form-control" min="1900" max="3000" ng-model="ev.yearOfBirth"/>
-    </div>
-
-
-    <div class="form-group">
-      <p>Nedan kan du välja att ge ett exakt slutdatum för medlemmen eller välja en fördefinierad längd</p>
-      <label for="inputDate">Medlem till och med</label>
-      <input type="date" id="inputDate" ng-model="ev.expirationDate" aria-describedBy="helpBlock"/>
-      <span id="helpBlock" class="help-block">
-        Skriv ett datum enligt formen YYYY-MM-DD, till exempel 2016-09-01.
-      </span>
-    </div>
-
-    <div class="radio" ng-show="!editev">
-      <label class="radio-inline">
-        <input type="radio" name="subscriptionLength" value="1" ng-model="ev.subscriptionLength"/>
-        1 år
-      </label>
-      <label class="radio-inline">
-        <input type="radio" name="subscriptionLength" value="3" ng-model="ev.subscriptionLength" />
-        3 år
-      </label>
-    </div>
-
-    <span class="input-group-btn">
-      <button type="submit" class="btn btn-primary" ng-click="submit()">Spara event</button>
-    </span>
-  </form>
+    <form class="debug-form" style="margin-top:40px; padding:20px; background-color: #eee;">
+        <div class="form-group">
+            <label for="">DEBUG ADD PARTICIPANTS</label>
+            <input type="text" name="inputEventParticipant" ng-model="debugEventParticipant" id="inputEventParticipant" />
+        </div>
+        <span class="input-group">
+            <button type="submit" class="btn btn-primary" ng-click="addEventParticipant()">ADD PARTICIPANT</button>
+        </span>
+    </form>
 </div>

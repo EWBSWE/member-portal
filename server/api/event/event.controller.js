@@ -81,16 +81,16 @@ exports.addParticipant = function (req, res) {
         };
 
         // If participant exists, find otherwise create
-        EventParticipant.findOne({ email: req.params.email }, function(err, participant) {
+        EventParticipant.findOne({ email: req.body.email }, function(err, participant) {
             if (err) {
-                return handleError(404);
+                return handleError(res, err);
             }
 
             if (!participant) {
                 // Create participant
-                EventParticipant.create({ email: req.params.email }, function(err, newEventParticipant) {
+                EventParticipant.create({ email: req.body.email }, function(err, newEventParticipant) {
                     if (err) {
-                        return handleError(404);
+                        return handleError(res, err);
                     }
 
                     addToEvent(ewbEvent._id, newEventParticipant._id);
