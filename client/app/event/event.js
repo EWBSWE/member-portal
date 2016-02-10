@@ -3,6 +3,10 @@
 angular.module('ewbMemberApp')
   .config(function ($routeProvider) {
     $routeProvider
+      .when('/e/:url', {
+        templateUrl: 'app/event/public/public.html',
+        controller: 'EventPublicCtrl'
+      })
       .when('/events', {
         templateUrl: 'app/event/list/list.html',
         controller: 'EventListCtrl',

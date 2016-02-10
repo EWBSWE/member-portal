@@ -15,6 +15,20 @@ exports.index = function (req, res) {
     });
 };
 
+exports.showPublic = function(req, res) {
+    return Event.findOne({ identifier: req.body.url, active: true }, '-participants', function(err, ewbEvent) {
+        if (err) {
+            return handleError(res, err);
+        }
+
+        if (!ewbEvent) {
+            return res.sendStatus(404);
+        }
+
+        return res.status(200).json(ewbEvent);
+    });
+}
+
 exports.show = function (req, res) {
     Event.findById(req.params.id, function(err, ewbEvent) {
         if (err) {
