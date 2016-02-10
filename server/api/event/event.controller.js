@@ -30,10 +30,8 @@ exports.showPublic = function(req, res) {
 
         ewbEvent.remaining = ewbEvent.maxParticipants - ewbEvent.participants.length;
 
-        // Don't send list of participants
+        // Don't send list of participant ids
         delete ewbEvent.participants;
-
-        console.log(ewbEvent);
 
         return res.status(200).json(ewbEvent);
     });
