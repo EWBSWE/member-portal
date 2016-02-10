@@ -16,7 +16,7 @@ exports.index = function (req, res) {
 };
 
 exports.showPublic = function(req, res) {
-    return Event.findOne({ identifier: req.body.url, active: true }, '-participants', function(err, ewbEvent) {
+    return Event.findOne({ identifier: req.query.url, active: true }, '-participants', function(err, ewbEvent) {
         if (err) {
             return handleError(res, err);
         }

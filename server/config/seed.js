@@ -157,6 +157,9 @@ Event.find({}).remove(function () {
         description: 'Lorem ipsum',
         price: '100',
         active: true,
+        maxParticipants: 2,
+        dueDate: moment().add(1, 'month'),
+        contact: 'owner@example.com',
     });
 
     Event.create({
@@ -164,6 +167,9 @@ Event.find({}).remove(function () {
         description: 'Lorem ipsum',
         price: '300',
         active: true,
+        maxParticipants: 20,
+        dueDate: moment().add(1, 'month'),
+        contact: 'owner@example.com',
     });
 
     console.log('Events done');
