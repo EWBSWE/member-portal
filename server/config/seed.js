@@ -157,7 +157,6 @@ Event.find({}).remove(function () {
         description: 'Lorem ipsum',
         price: '100',
         active: true,
-        participants: [],
     });
 
     Event.create({
@@ -165,6 +164,7 @@ Event.find({}).remove(function () {
         description: 'Lorem ipsum',
         price: '300',
         active: true,
-        participants: [],
     });
+
+    console.log('Events done');
 });
