@@ -76,16 +76,13 @@ exports.confirmMembershipPayment = function(req, res) {
         expirationDate: expirationDate,
     };
 
-    console.log('initial member data', memberData);
-
-    function step1() {
+    function fetchOrCreateMember() {
         MemberHelper.fetchMember(memberData.email, function(err, maybeMember) {
             if (err) {
                 return handleError(res, err);
             }
             if (maybeMember) {
-                // Member exists, go to next step
-                return step2(maybeMember);
+                return updateMemberData(maybeMember);
             } else {
                 // Member doesn't exist, we need to create the member before we
                 // proceed
@@ -94,13 +91,15 @@ exports.confirmMembershipPayment = function(req, res) {
                         return handleError(res, err);
                     }
 
-                    return step3(member);
+                    return addPayment(member);
                 });
             }
         });
     };
 
-    function step2(member) {
+    function updateMemberData(member) {
+        // If days remain on current membership we want to extend the
+        // membership instead of overwriting it
         if (moment(member.expirationDate) > moment()) {
             // Default to 1 day
             var daysDiff = moment(member.expirationDate).diff(moment(), 'days') || 1;
@@ -112,22 +111,21 @@ exports.confirmMembershipPayment = function(req, res) {
                 return handleError(res, err);
             }
 
-            return step3(updatedMember);
+            return addPayment(updatedMember);
         });
     };
 
-    function step3(member) {
-        // Add payment to member
+    function addPayment(member) {
         Payment.create({ member: member, amount: amount }, function(err, payment) {
           if (err) {
             return handleError(res, err);
           }
 
-          return step4(member);
+          return sendConfirmation(member);
         });
     };
 
-    function step4(member) {
+    function sendConfirmation(member) {
         var receiptMail = {
             from: ewbMail.sender(),
             to: process.env.NODE_ENV === 'production' ? req.body.email : process.env.DEV_MAIL,
@@ -154,7 +152,7 @@ exports.confirmMembershipPayment = function(req, res) {
         currency: 'SEK',
         amount: amount,
         description: 'Medlemsregistrering',
-    }, stripeToken, step1, function(err) {
+    }, stripeToken, fetchOrCreateMember, function(err) {
         var error = handleStripeError(err);
         return res.status(400).json(error);
     });
@@ -196,12 +194,12 @@ exports.confirmEventPayment = function(req, res) {
 };
 
 exports.stripeCheckoutKey = function (req, res) {
-  var key = '***REMOVED***';
-  if (process.env.NODE_ENV === 'production') {
-    key = 'pk_live_ATJZnfiF1iDDCQvNK6IgEFA2';
-  }
-  
-  return res.status(200).json({ key: key });
+    var key = '***REMOVED***';
+    if (process.env.NODE_ENV === 'production') {
+        key = 'pk_live_ATJZnfiF1iDDCQvNK6IgEFA2';
+    }
+
+    return res.status(200).json({ key: key });
 };
 
 function processCharge(chargeAttributes, stripeToken, successCallback, errorCallback) {
