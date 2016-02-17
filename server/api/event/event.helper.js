@@ -40,9 +40,11 @@ function addToEvent(ewbEvent, participant, callback) {
     }, {
         $addToSet: { participants: participant._id },
     }, function(err, result) {
-        console.log('err:', err);
-        console.log('result:', result);
-        return callback(err, result);
+        if (err) {
+            return callback(err);
+        }
+
+        return callback(err, { email: participant.email });
     });
 };
 

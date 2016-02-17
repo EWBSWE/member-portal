@@ -210,18 +210,36 @@ exports.confirmMembershipPayment = function(req, res) {
 exports.confirmEventPayment = function(req, res) {
     function step1(err, ewbEvent) {
         if (err) {
-            handleError(req, res);
+            handleError(res, err);
         }
-        return processCharge(ewbEvent, req.body.stripeToken, function() {
+        return processCharge({
+            currency: 'SEK',
+            amount: ewbEvent.price,
+            description: ewbEvent.name,
+        }, req.body.stripeToken, function() {
+            // Successful charge
             return step2(ewbEvent);
-        }, handleStripeError);
+        }, function(stripeError) {
+            // Failed charge
+            var error = handleStripeError(stripeError);
+            return res.status(400).json(error);
+        });
     };
 
     function step2(ewbEvent) {
-        return EventHelper.addParticipant(ewbEvent, req.body.email);
+        return EventHelper.addParticipant(ewbEvent, req.body.email, step3);
     };
 
-    return EventHelper.fetchEvent(req.body.identifier, step1);
+    function step3(err, result) {
+        // Stripe payment successful at this stage
+        if (err) {
+            return handleError(res, err);
+        }
+
+        return res.status(200).json(result);
+    };
+
+    EventHelper.fetchEvent(req.body.identifier, step1);
 };
 
 exports.stripeCheckoutKey = function (req, res) {
@@ -249,11 +267,11 @@ function processCharge(chargeAttributes, stripeToken, successCallback, errorCall
     });
 };
 
-function handleStripeError(stripeError) {
+function handleStripeError(err) {
     // TODO translate
     var errorMessage = 'Vi misslyckades med att genomföra din betalning.';
 
-    ewbError.create({ message: 'Stripe charge error', origin: __filename, params: err });
+    ewbError.create({ message: 'Stripe charge error', origin: __filename, params: err});
 
     if (err.type === 'StripeCardError') {
         // TODO Translate
@@ -270,9 +288,9 @@ function handleStripeError(stripeError) {
         // Probably used incorrect API key
     }
 
-    return res.status(400).json({ message: errorMessage });
+    return { message: errorMessage };
 };
 
 function handleError(res, err) {
-  return res.status(500).send(err);
+    return res.status(500).send(err);
 };
