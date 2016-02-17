@@ -23,8 +23,23 @@
         </div>
 
         <div class="form-group">
-            <label for="inputProfession">Pris</label>
-            <input type="text" name="inputPrice" id="inputPrice" class="form-control" ng-model="ev.price"/>
+            <label for="inputPrice">Pris</label>
+            <input type="number" name="inputPrice" id="inputPrice" class="form-control" ng-model="ev.price"/>
+        </div>
+
+        <div class="form-group">
+            <label for="inputMaxParticipants">Max antal deltagare</label>
+            <input type="number" name="inputMaxParticipants" id="inputMaxParticipants" class="form-control" ng-model="ev.maxParticipants"/>
+        </div>
+
+        <div class="form-group">
+            <label for="inputDueDate">Betald senast</label>
+            <input type="text" name="inputDueDate" id="inputDueDate" class="form-control" ng-model="ev.dueDate"/>
+        </div>
+
+        <div class="form-group">
+            <label for="inputContact">Contact</label>
+            <input type="text" name="inputContact" id="inputContact" class="form-control" ng-model="ev.contact"/>
         </div>
 
         <div class="checkbox">

@@ -11,7 +11,19 @@ angular.module('ewbMemberApp')
         $http.get('/api/events/' + $routeParams.id).success(function(ev) {
             $scope.ev = ev;
         });
+    } else if ($routeParams.test) {
+        $scope.ev = {
+            name: 'Event Foo',
+            description: 'Lorem Ipsum',
+            price: 50,
+            active: true,
+            maxParticipants: 70,
+            dueDate: '2016-08-11',
+            contact: 'test@example.com',
+        };
     }
+
+    console.log($routeParams);
 
     var addEvent = function() {
         $http.post('/api/events', {
@@ -19,6 +31,9 @@ angular.module('ewbMemberApp')
             description: $scope.ev.description,
             price: $scope.ev.price,
             active: $scope.ev.active,
+            maxParticipants: $scope.ev.maxParticipants,
+            dueDate: $scope.ev.dueDate,
+            contact: $scope.ev.contact,
         }).success(function(data, status) {
             $scope.showSuccess = true;
             $scope.ev = {};
@@ -33,6 +48,9 @@ angular.module('ewbMemberApp')
             description: $scope.ev.description,
             price: $scope.ev.price,
             active: $scope.ev.active,
+            maxParticipants: $scope.ev.maxParticipants,
+            dueDate: $scope.ev.dueDate,
+            contact: $scope.ev.contact,
         }).success(function(data, status) {
             $scope.showSuccess = true;
         }).error(function(data, status) {

@@ -6,6 +6,8 @@ var Event = require('../../models/event.model');
 var EventParticipant = require('../../models/event-participant.model');
 var Member = require('../../models/member.model');
 
+var EventHelper = require('./event.helper');
+
 exports.index = function (req, res) {
     return Event.find().exec(function(err, events) {
         if (err) {
@@ -55,6 +57,9 @@ exports.create = function (req, res) {
         description: req.body.description,
         price: req.body.price,
         active: req.body.active == 1,
+        maxParticipants: req.body.maxParticipants,
+        contact: req.body.contact,
+        dueDate: req.body.dueDate,
     }, function(err, ewbEvent) {
         if (err) {
             return handleError(res, err);
@@ -74,6 +79,9 @@ exports.update = function (req, res) {
         ewbEvent.description = req.body.description;
         ewbEvent.price = req.body.price;
         ewbEvent.active = req.body.active == 1;
+        ewbEvent.maxParticipants = req.body.maxParticipants;
+        ewbEvent.contact = req.body.contact;
+        ewbEvent.dueDate = req.body.dueDate;
 
         ewbEvent.save(function(err) {
             if (err) {
@@ -86,46 +94,21 @@ exports.update = function (req, res) {
 };
 
 exports.addParticipant = function (req, res) {
-    Event.findById(req.params.id, function(err, ewbEvent) {
+    EventHelper.fetchEvent(req.body.identifier, function (err, ewbEvent) {
         if (err) {
             return handleError(res, err);
         }
-
         if (!ewbEvent) {
             return res.sendStatus(404);
-        }
+        } else {
+            EventHelper.addParticipant(ewbEvent, req.body.email, function (err, result) {
+                if (err) {
+                    return handleError(res, err);
+                }
 
-        var addToEvent = function(eventId, participantId) {
-            Event.update({
-                _id: ewbEvent._id,
-            }, {
-                $addToSet: { participants: participantId },
-            }, function(err, result) {
-                // If successfully added
-                console.log('add to event', result);
                 return res.status(200).json(result);
             });
-        };
-
-        // If participant exists, find otherwise create
-        EventParticipant.findOne({ email: req.body.email }, function(err, participant) {
-            if (err) {
-                return handleError(res, err);
-            }
-
-            if (!participant) {
-                // Create participant
-                EventParticipant.create({ email: req.body.email }, function(err, newEventParticipant) {
-                    if (err) {
-                        return handleError(res, err);
-                    }
-
-                    addToEvent(ewbEvent._id, newEventParticipant._id);
-                });
-            } else {
-                addToEvent(ewbEvent._id, participant._id);
-            }
-        });
+        }
     });
 };
 
@@ -149,4 +132,5 @@ exports.destroy = function (req, res) {
 
 function handleError(res, err) {
     return res.status(500).send(err);
-}
+};
+
