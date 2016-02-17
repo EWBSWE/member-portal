@@ -15,12 +15,12 @@ function fetchEvent(identifier, callback) {
 };
 
 function addParticipant(ewbEvent, maybeParticipant, callback) {
-    EventParticipant.findOne({ email: maybeParticipant }, function(err, maybeParticipant) {
+    EventParticipant.findOne({ email: maybeParticipant }, function(err, participant) {
         if (err) {
             return callback(err);
         }
 
-        if (!maybeParticipant) {
+        if (!participant) {
             EventParticipant.create({ email: maybeParticipant }, function(err, participant) {
                 if (err) {
                     return callback(err);
@@ -29,7 +29,7 @@ function addParticipant(ewbEvent, maybeParticipant, callback) {
                 return addToEvent(ewbEvent, participant, callback);
             });
         } else {
-            return addToEvent(ewbEvent, maybeParticipant, callback);
+            return addToEvent(ewbEvent, participant, callback);
         }
     });
 };

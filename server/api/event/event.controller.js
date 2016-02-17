@@ -94,7 +94,7 @@ exports.update = function (req, res) {
 };
 
 exports.addParticipant = function (req, res) {
-    EventHelper.fetchEvent(req.body.identifier, function (err, ewbEvent) {
+    Event.findById(req.params.id, function (err, ewbEvent) {
         if (err) {
             return handleError(res, err);
         }
