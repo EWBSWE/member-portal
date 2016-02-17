@@ -31,7 +31,7 @@ angular.module('ewbMemberApp')
         yearOfBirth: $scope.newMember.yearOfBirth,
         subscriptionLength: $scope.newMember.subscriptionLength,
       }).success(function(data) {
-        $scope.successEmail = data.member.email;
+        $scope.successEmail = data.email;
         $('.js-confirmation').modal('show');
         $scope.newMember = {};
         $scope.form.$setPristine();

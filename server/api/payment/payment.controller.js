@@ -16,6 +16,7 @@ var ewbError = require('../../models/ewb-error.model');
 var ewbMail = require('../../components/ewb-mail');
 
 var EventHelper = require('../event/event.helper');
+var MemberHelper = require('../member/member.helper');
 
 // Get list of payments
 exports.index = function(req, res) {
@@ -38,173 +39,125 @@ exports.show = function(req, res) {
 };
 
 exports.confirmMembershipPayment = function(req, res) {
-  var stripeToken = req.body.stripeToken;
-  var subscriptionLength = req.body.subscriptionLength;
-  var type = req.body.type.trim();
+    var stripeToken = req.body.stripeToken;
+    var subscriptionLength = req.body.subscriptionLength;
+    var type = req.body.type.trim();
 
-  // TODO refactor this into model or something, currently duplicated between frontend
-  // and backend
-  var amount = 0;
-  if (type === 'student' && subscriptionLength === '1') {
-      amount = 40;
-  } else if (type === 'student' && subscriptionLength === '3') {
-      amount = 100;
-  } else if (subscriptionLength === '1') {
-      amount = 90;
-  } else if (subscriptionLength === '3') {
-      amount = 250;
-  }
-
-  // Set Stripe lowest monetary value. 1 USD should be sent as 100 cents and so
-  // forth.
-  var stripeAmount = amount * 100;
-
-  var chargeSuccessful = false;
-  // TODO Translate
-  var errorMessage = 'Vi misslyckades med att genomföra din betalning.';
-
-  // Communicate with stripe
-  stripe.charges.create({
-    currency: "SEK",
-    amount: stripeAmount,
-    source: stripeToken.id,
-    description: "Medlemsregistrering",
-  }, function(err, charge) {
-    if (err === null) {
-      chargeSuccessful = true;
-    } else {
-      ewbError.create({ message: 'Membership Stripe', origin: __filename, params: err });
-      if (err.type === 'StripeCardError') {
-        // TODO Translate
-        errorMessage = 'Ditt kort medges ej. Ingen betalning genomförd.';
-      } else if (err.type === 'RateLimitError') {
-        // Too many requests made to the API too quickly
-      } else if (err.type === 'StripeInvalidError') {
-        // Invalid parameters were supplied to Stripe's API
-      } else if (err.type === 'StripeAPIError') {
-        // An error occurred internally with Stripe's API
-      } else if (err.type === 'StripeConnectionError') {
-        // Some kind of error occurred during the HTTPS communication
-      } else if (err.type === 'StripeAuthenticationError') {
-        // Probably used incorrect API key
-      }
+    // TODO refactor this into model or something, currently duplicated between frontend
+    // and backend
+    var amount = 0;
+    if (type === 'student' && subscriptionLength === '1') {
+        amount = 40;
+    } else if (type === 'student' && subscriptionLength === '3') {
+        amount = 100;
+    } else if (subscriptionLength === '1') {
+        amount = 90;
+    } else if (subscriptionLength === '3') {
+        amount = 250;
     }
 
-    if (chargeSuccessful) {
-      var createPayment = function(member) {
+    var expirationDate = moment().add(1, 'year');
+    if (subscriptionLength === '3') {
+        expirationDate = moment().add(3, 'years');
+    }
+
+    // Only trimming the email attribute since we are doing a lookup on that
+    // email. The other attributes will be handled when inserted into the
+    // database
+    var memberData = {
+        email: req.body.email.trim(),
+        name: req.body.name,
+        location: req.body.location,
+        profession: req.body.profession,
+        education: req.body.education,
+        type: type,
+        gender: req.body.gender,
+        yearOfBirth: req.body.yearOfBirth,
+        expirationDate: expirationDate,
+    };
+
+    console.log('initial member data', memberData);
+
+    function step1() {
+        MemberHelper.fetchMember(memberData.email, function(err, maybeMember) {
+            if (err) {
+                return handleError(res, err);
+            }
+            if (maybeMember) {
+                // Member exists, go to next step
+                return step2(maybeMember);
+            } else {
+                // Member doesn't exist, we need to create the member before we
+                // proceed
+                MemberHelper.createMember(memberData, function(err, member) {
+                    if (err) {
+                        return handleError(res, err);
+                    }
+
+                    return step3(member);
+                });
+            }
+        });
+    };
+
+    function step2(member) {
+        if (moment(member.expirationDate) > moment()) {
+            // Default to 1 day
+            var daysDiff = moment(member.expirationDate).diff(moment(), 'days') || 1;
+            memberData.expirationDate.add(daysDiff, 'days');
+        }
+
+        MemberHelper.updateMember(member, memberData, function(err, updatedMember) {
+            if (err) {
+                return handleError(res, err);
+            }
+
+            return step3(updatedMember);
+        });
+    };
+
+    function step3(member) {
+        // Add payment to member
         Payment.create({ member: member, amount: amount }, function(err, payment) {
           if (err) {
-            ewbError.create({ message: 'Successful charge create payment', origin: __filename, params: err });
             return handleError(res, err);
           }
-          return res.status(201).json(payment);
+
+          return step4(member);
         });
-      };
+    };
 
-      Member.findOne({ email: req.body.email.trim() }, function(err, member) {
-        if (err) {
-          ewbError.create({ message: 'Successful charge find member', origin: __filename, params: err });
-          // TODO what do on successful payment?
-          console.log(err);
-        }
+    function step4(member) {
+        var receiptMail = {
+            from: ewbMail.sender(),
+            to: process.env.NODE_ENV === 'production' ? req.body.email : process.env.DEV_MAIL,
+        };
 
-        var expirationDate = moment().add(1, 'year');
-        if (subscriptionLength === '3') {
-          expirationDate = moment().add(3, 'year');
-        }
-
-        var receiptMail = {};
-
-        if (member) {
-          member.name = req.body.name;
-          member.location = req.body.location;
-          member.profession = req.body.profession;
-          member.education = req.body.education;
-          member.type = type;
-          member.gender = req.body.gender;
-          member.yearOfBirth = req.body.yearOfBirth;
-
-          if (subscriptionLength === '1') {
-              member.expirationDate = moment(member.expirationDate).add(1, 'year');
-          } else if (subscriptionLength === '3') {
-              member.expirationDate = moment(member.expirationDate).add(3, 'years');
-          }
-
-          member.save(function() {
-            createPayment(member);
-          });
-
-          // Send renewal mail if old member
-          if (process.env.NODE_ENV === 'production') {
-            receiptMail = {
-              from: ewbMail.sender(),
-              to: req.body.email,
-              subject: ewbMail.getSubject('renewal'),
-              text: ewbMail.getBody('renewal'),
-            };
-          } else {
-            receiptMail = {
-              from: ewbMail.sender(),
-              to: process.env.DEV_MAIL,
-              subject: ewbMail.getSubject('renewal'),
-              text: ewbMail.getBody('renewal'),
-            };
-          }
-
-          OutgoingMessage.create(receiptMail, function(err, outgoingMessage) {
-            if (err) {
-              ewbError.create({ message: 'Membership receipt renewal mail', origin: __filename, params: err });
-            }
-          });
+        if (member.isNew) {
+            receiptMail.subject = ewbMail.getSubject('new-member');
+            receiptMail.text = ewbMail.getBody('new-member');
         } else {
-          Member.create({
-            name: req.body.name,
-            location: req.body.location,
-            profession: req.body.profession,
-            education: req.body.education,
-            email: req.body.email,
-            type: type,
-            gender: req.body.gender,
-            yearOfBirth: req.body.yearOfBirth,
-            expirationDate: expirationDate,
-          }, function(err, member) {
-            if (err) {
-              ewbError.create({ message: 'Successful charge create member', origin: __filename, params: err });
-              // TODO successful payment but failed to add member
-              // send mail to admins and customer?
-              console.log(err);
-            }
-            createPayment(member);
-
-            // Send welcome mail if new member
-            if (process.env.NODE_ENV === 'production') {
-              receiptMail = {
-                from: ewbMail.sender(),
-                to: req.body.email,
-                subject: ewbMail.getSubject('new-member'),
-                text: ewbMail.getBody('new-member'),
-              };
-            } else {
-              receiptMail = {
-                from: ewbMail.sender(),
-                to: process.env.DEV_MAIL,
-                subject: ewbMail.getSubject('new-member'),
-                text: ewbMail.getBody('new-member'),
-              };
-            }
-
-            OutgoingMessage.create(receiptMail, function(err, outgoingMessage) {
-              if (err) {
-                ewbError.create({ message: 'Membership receipt new member mail', origin: __filename, params: err });
-              }
-            });
-          });
+            receiptMail.subject = ewbMail.getSubject('renewal');
+            receiptMail.text = ewbMail.getBody('renewal');
         }
-      });
-    } else {
-      return res.status(400).json({ message: errorMessage });
-    }
-  });
+
+        OutgoingMessage.create(receiptMail, function(err, outgoingMessage) {
+            if (err) {
+                ewbError.create({ message: 'Membership receipt mail', origin: __filename, params: err });
+            }
+        });
+
+        return res.status(201).json(member);
+    };
+
+    processCharge({
+        currency: 'SEK',
+        amount: amount,
+        description: 'Medlemsregistrering',
+    }, stripeToken, step1, function(err) {
+        var error = handleStripeError(err);
+        return res.status(400).json(error);
+    });
 };
 
 exports.confirmEventPayment = function(req, res) {
