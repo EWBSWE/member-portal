@@ -6,22 +6,11 @@ var auth = require('../../auth/auth.service');
 
 var router = express.Router();
 
-router.post('/confirm', controller.confirmPayment);
+router.post('/confirm', controller.confirmMembershipPayment);
+router.post('/confirm-event', controller.confirmEventPayment);
 router.get('/stripe-checkout', controller.stripeCheckoutKey);
 
 router.get('/', auth.isAuthenticated(), controller.index);
 router.get('/:id', auth.isAuthenticated(), controller.show);
-
-router.get('/user/:user', auth.isAuthenticated(), controller.getUsersPayments);
-router.get('/my', auth.isAuthenticated(), controller.getMyPayments);
-
-router.get('/:id/user/:user', auth.isAuthenticated(), controller.getUsersPayment);
-router.get('/:id', auth.isAuthenticated(), controller.getMyPayment);
-
-router.post('/user/:user', auth.isAuthenticated(), controller.createUsersPayment);
-router.post('/', auth.isAuthenticated(), controller.createMyPayment);
-
-router.put('/:id', auth.isAuthenticated(), controller.update);
-router.delete('/:id', auth.isAuthenticated(), controller.destroy);
 
 module.exports = router;
