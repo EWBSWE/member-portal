@@ -216,7 +216,7 @@ exports.confirmEventPayment = function(req, res) {
             currency: 'SEK',
             amount: ewbEvent.price,
             description: ewbEvent.name,
-        }, req.body.stripeToken, function() {
+        }, req.body.stripeToken, function(charge) {
             // Successful charge
             return step2(ewbEvent);
         }, function(stripeError) {

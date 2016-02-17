@@ -1,0 +1,70 @@
+<div class="container event">
+  <div class="row">
+    <div class="col-xs-12 col-md-6">
+      <h1>{{ ev.name }}</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 col-md-6">
+      <p>Antal platser: {{ ev.maxParticipants }}</p>
+      <p>Platser kvar: {{ ev.remaining }}</p>
+      <p>{{ ev.description }}</p>
+
+      <a href="http://www.ingenjorerutangranser.se">
+        <img class="logo" src="/assets/images/ewb-logo.png" alt="Logo" />
+      </a>
+    </div>
+    <div class="col-xs-12 col-md-6">
+      <form novalidate name="form" class="payment-form">
+        <div ng-class="{'form-group': true, 'has-error': form.inputEmail.$error.email, 'has-success': form.inputEmail.$valid}">
+          <label class="control-label" for="inputEmail" translate>Email</label>
+          <input class="form-control" type="email" name="inputEmail" id="inputEmail" ng-model="participant.email" ng-disabled="ev.remaining === 0" required/>
+          <p class="help-block" ng-show="form.inputEmail.$error.email" translate>
+            Please enter a valid email address.
+          </p>
+        </div>
+        
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary btn-lg" ng-click="initiatePayment()" ng-disabled="ev.remaining === 0" translate>Submit</button>
+        </div>
+        <p class="help-block" translate>
+          When you click <strong>Sign up</strong> your transaction is managed securely by <a href="https://stripe.com/se" target="_blank">Stripe</a>. When the transaction is completed we send you a confirmation to the email address specified above.
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="js-confirmation modal fade" role="dialog" aria-labelledby="confirmation-label">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="confirmation-label" translate>Thank you for the support!</h4>
+      </div>
+      <div class="modal-body">
+        <p translate>A confirmation of your payment and your membership is sent to <strong>{{successEmail}}</strong>.</p>
+        <p translate>Do you any questions regarding your membership or anything payment related? Reach out to us at <a href="mailto:volontar@ingenjorerutangranser.se">volontar@ingenjorerutangranser.se</a>.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" translate>Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="js-payment-error modal fade" role="dialog" aria-labelledby="confirmation-label">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="confirmation-label" translate>The transaction was unsuccessful</h4>
+      </div>
+      <div class="modal-body">
+        <p>{{errorMessage}}</p>
+        <p translate>Do you any questions regarding your membership or anything payment related? Reach out to us at <a href="mailto:volontar@ingenjorerutangranser.se">volontar@ingenjorerutangranser.se</a>.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" translate>Close</button>
+      </div>
+    </div>
+  </div>
+</div>
