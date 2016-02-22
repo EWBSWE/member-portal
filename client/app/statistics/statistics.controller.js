@@ -2,9 +2,64 @@
 
 angular.module('ewbMemberApp')
   .controller('StatisticsCtrl', function ($scope, $http, Auth, User) {
+    $scope.members = [];
+
+    $scope.genderCounts = {
+        male: 0,
+        female: 0,
+        other: 0,
+    };
+
+    $scope.birthYears = {};
+    $scope.locations = {};
+
     $scope.studentCount = 0;
     $scope.workingCount = 0;
+    $scope.seniorCount = 0;
     $scope.totalMemberCount = 0;
+
+    $http.get('/api/members').success(function(members) {
+        $scope.members = members;
+
+        _.each(members, function(member) {
+            if (member.type === 'student') {
+                $scope.studentCount++;
+            } else if (member.type === 'working') {
+                $scope.workingCount++;
+            } else if (member.type === 'senior') {
+                $scope.seniorCount++;
+            }
+
+            if (member.gender === 'male') {
+                $scope.genderCounts.male++;
+            } else if (member.gender === 'female') {
+                $scope.genderCounts.female++;
+            } else {
+                $scope.genderCounts.other++;
+            }
+
+            if ($scope.birthYears[member.yearOfBirth] === undefined) {
+                $scope.birthYears[member.yearOfBirth] = 1;
+            } else {
+                $scope.birthYears[member.yearOfBirth]++;
+            }
+
+            if ($scope.locations[member.location] === undefined) {
+                $scope.locations[member.location] = 1;
+            } else {
+                $scope.locations[member.location]++;
+            }
+        });
+
+        // Convert to array to make use of ordering utilities
+        $scope.locations = _.map($scope.locations, function(count, name) {
+            return { name: name, count: count };
+        });
+        $scope.birthYears = _.map($scope.birthYears, function(count, name) {
+            return { name: name, count: count };
+        });
+    });
+
     $scope.data = [];
     $scope.options = {};
     $scope.options.chart = {};
