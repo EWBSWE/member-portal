@@ -18,6 +18,7 @@ var EventSchema = new Schema({
     maxParticipants: { type: Number, required: true },
     dueDate: { type: Date, required: true },
     contact: { type: String, required: true},
+    addons: [{ type: mongoose.Schema.Types.ObjectId, ref: 'EventAddon' }],
 });
 
 // Generate an identifier based on the name of the event. Will collide with
