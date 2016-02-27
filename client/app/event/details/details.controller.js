@@ -2,10 +2,10 @@
 
 angular.module('ewbMemberApp')
   .controller('EventDetailsCtrl', function ($scope, $http, $routeParams) {
-    $scope.event = {};
+    $scope.ev = {};
 
-    $http.get('/api/events/' + $routeParams.id).success(function(event) {
-      $scope.event = member;
+    $http.get('/api/events/' + $routeParams.id).success(function(ev) {
+      $scope.ev = ev;
     });
 
   });
