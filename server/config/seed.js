@@ -12,6 +12,7 @@ var Member = require('../models/member.model');
 var Payment = require('../models/payment.model');
 var OutgoingMessage = require('../models/outgoing-message.model');
 var Event = require('../models/event.model');
+var EventAddon = require('../models/event-addon.model');
 
 var ewbMail = require('../components/ewb-mail');
 
@@ -151,6 +152,8 @@ function createPayments() {
   };
 }
 
+EventAddon.find({}).remove();
+
 Event.find({}).remove(function () {
     Event.create({
         name: 'Event 1',
@@ -160,6 +163,17 @@ Event.find({}).remove(function () {
         maxParticipants: 2,
         dueDate: moment().add(1, 'month'),
         contact: 'owner@example.com',
+    }, function(err, ev) {
+        EventAddon.create({
+            event: ev,
+            name: 'Event Addon 1',
+            description: 'Some crazy event addon 1',
+            price: 99,
+        }, function(er, eva) {
+            ev.addons.push(eva);
+            ev.save();
+            console.log('added addon');
+        });
     });
 
     Event.create({
