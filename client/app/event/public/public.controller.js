@@ -23,6 +23,7 @@ angular.module('ewbMemberApp')
         $http.post('/api/payments/confirm-event', {
             stripeToken: token,
             email: $scope.participant.email,
+            selectedVariantId: $scope.participant.selectedVariantId,
         }).success(function(data) {
             fetchEvent();
             $scope.successEmail = data.email;
@@ -53,9 +54,11 @@ angular.module('ewbMemberApp')
             return;
         }
 
-        console.log($scope.participant, $scope.ev);
+        var variant = _.find($scope.ev.variants, { _id: $scope.participant.selectedVariantId });
 
-        if (stripeHandler) {
+        if (variant.price === 0) {
+            callback(null);
+        } else if (stripeHandler) {
             stripeHandler.open({
                 name: gettextCatalog.getString('Engineers without borders'),
                 description: $scope.ev.name,

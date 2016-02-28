@@ -18,7 +18,7 @@
             <form novalidate name="form" class="payment-form">
                 <div ng-show="ev.variants.length" ng-repeat="variant in ev.variants">
                     <label class="radio-inline control-label">
-                        <input type="radio" name="type" ng-value="variant._id" ng-model="selectedVariantId"/>
+                        <input type="radio" name="type" ng-value="variant._id" ng-model="participant.selectedVariantId"/>
                         <span>{{variant.name}} +{{variant.price}}kr</span>
                         <p class="help-block">{{variant.description}}</p>
                     </label>
