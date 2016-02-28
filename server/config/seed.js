@@ -13,6 +13,7 @@ var Payment = require('../models/payment.model');
 var OutgoingMessage = require('../models/outgoing-message.model');
 var Event = require('../models/event.model');
 var EventVariant = require('../models/event-variant.model');
+var EventParticipant = require('../models/event-participant.model');
 
 var ewbMail = require('../components/ewb-mail');
 
@@ -156,6 +157,10 @@ EventVariant.find({}).remove(function() {
     console.log('Removed Event Variants');
 });
 
+EventParticipant.find({}).remove(function() {
+    console.log('Removed Event Participants');
+});
+
 Event.find({}).remove(function () {
     Event.create({
         name: 'Event 1',
@@ -194,11 +199,17 @@ Event.find({}).remove(function () {
         maxParticipants: 20,
         dueDate: moment().add(1, 'month'),
         contact: 'owner@example.com',
-        variants: [{
+    }, function(err, ev) {
+        EventVariant.create({
             name: 'Some other variant',
             price: 99,
             description: 'Yes',
-        }],
+        }, function(err, evv) {
+            ev.variants.push(evv);
+            ev.save(function(err, saved) {
+                console.log('Also saved');
+            });
+        });
     });
 
     console.log('Events done');
