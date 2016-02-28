@@ -21,7 +21,7 @@ exports.showPublic = function(req, res) {
     return Event.findOne({ 
         identifier: req.query.url, 
         active: true 
-    }).lean().exec(function(err, ewbEvent) {
+    }).populate('variants').lean().exec(function(err, ewbEvent) {
         if (err) {
             return handleError(res, err);
         }
