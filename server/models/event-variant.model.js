@@ -3,7 +3,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var EventAddonSchema = new Schema({
+var EventVariantSchema = new Schema({
     event: { type: mongoose.Schema.Types.ObjectId, ref: 'Event', required: true },
     name: { type: String, required: true, trim: true },
     description: { type: String, required: true }, 
@@ -11,4 +11,4 @@ var EventAddonSchema = new Schema({
     createdAt: { type: Date, required: true, default: Date.now },
 });
 
-module.exports = mongoose.model('EventAddon', EventAddonSchema);
+module.exports = mongoose.model('EventVariant', EventVariantSchema);

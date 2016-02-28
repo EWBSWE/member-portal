@@ -12,7 +12,7 @@ var Member = require('../models/member.model');
 var Payment = require('../models/payment.model');
 var OutgoingMessage = require('../models/outgoing-message.model');
 var Event = require('../models/event.model');
-var EventAddon = require('../models/event-addon.model');
+var EventVariant = require('../models/event-variant.model');
 
 var ewbMail = require('../components/ewb-mail');
 
@@ -152,38 +152,53 @@ function createPayments() {
   };
 }
 
-EventAddon.find({}).remove();
+EventVariant.find({}).remove(function() {
+    console.log('Removed Event Variants');
+});
 
 Event.find({}).remove(function () {
     Event.create({
         name: 'Event 1',
         description: 'Lorem ipsum',
-        price: '100',
         active: true,
         maxParticipants: 2,
         dueDate: moment().add(1, 'month'),
         contact: 'owner@example.com',
     }, function(err, ev) {
-        EventAddon.create({
-            event: ev,
-            name: 'Event Addon 1',
-            description: 'Some crazy event addon 1',
-            price: 99,
-        }, function(er, eva) {
-            ev.addons.push(eva);
-            ev.save();
-            console.log('added addon');
+        EventVariant.create({
+            event: ev._id,
+            name: 'Event variant 1',
+            price: 0,
+            description: 'Base',
+        }, function(err, evv1) {
+            EventVariant.create({
+                event: ev._id,
+                name: 'Event variant 2',
+                price: 150,
+                description: 'Improved',
+            }, function(err, evv2) {
+                ev.variants.push(evv1);
+                ev.variants.push(evv2);
+                ev.save(function(err, evSaved) {
+                    console.log('Added event with variants');
+                    console.log(evSaved.variants);
+                });
+            });
         });
     });
 
     Event.create({
         name: 'Event 2',
         description: 'Lorem ipsum',
-        price: '300',
         active: true,
         maxParticipants: 20,
         dueDate: moment().add(1, 'month'),
         contact: 'owner@example.com',
+        variants: [{
+            name: 'Some other variant',
+            price: 99,
+            description: 'Yes',
+        }],
     });
 
     console.log('Events done');

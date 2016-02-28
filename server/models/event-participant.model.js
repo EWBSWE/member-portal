@@ -2,7 +2,6 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var moment = require('moment');
 
 var EventParticipantSchema = new Schema({
     email: { 
@@ -12,6 +11,7 @@ var EventParticipantSchema = new Schema({
         unique: true, 
         lowercase: true,
     },
+    events: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Event' }],
 });
 
 module.exports = mongoose.model('EventParticipant', EventParticipantSchema);

@@ -11,14 +11,13 @@ var EventSchema = new Schema({
     name: { type: String, required: true, trim: true },
     identifier: { type: String, lowercase: true, unique: true },
     description: { type: String, required: true }, 
-    price: { type: Number, required: true },
     active: { type: Boolean, required: true, default: true },
     createdAt: { type: Date, required: true, default: Date.now },
     participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'EventParticipant' }],
     maxParticipants: { type: Number, required: true },
     dueDate: { type: Date, required: true },
     contact: { type: String, required: true},
-    addons: [{ type: mongoose.Schema.Types.ObjectId, ref: 'EventAddon' }],
+    variants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'EventVariant' }],
 });
 
 // Generate an identifier based on the name of the event. Will collide with
