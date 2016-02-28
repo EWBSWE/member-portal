@@ -153,10 +153,6 @@ function createPayments() {
   };
 }
 
-EventVariant.find({}).remove(function() {
-    console.log('Removed Event Variants');
-});
-
 EventParticipant.find({}).remove(function() {
     console.log('Removed Event Participants');
 });
