@@ -8,6 +8,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 var moment = require('moment');
+var mongoose = require('mongoose');
 
 var Payment = require('../../models/payment.model');
 var Member = require('../../models/member.model');
@@ -159,17 +160,14 @@ exports.confirmMembershipPayment = function(req, res) {
 };
 
 exports.confirmEventPayment = function(req, res) {
-    function step1(err, ewbEvent) {
-        if (err) {
-            handleError(res, err);
-        }
+    function processEventPayments(ewbEvent, email, variant) {
         return processCharge({
             currency: 'SEK',
-            amount: ewbEvent.price,
+            amount: variant.price,
             description: ewbEvent.name,
         }, req.body.stripeToken, function(charge) {
             // Successful charge
-            return step2(ewbEvent);
+            return findEventParticipant(ewbEvent, email, variant);
         }, function(stripeError) {
             // Failed charge
             var error = handleStripeError(stripeError);
@@ -177,20 +175,92 @@ exports.confirmEventPayment = function(req, res) {
         });
     };
 
-    function step2(ewbEvent) {
-        return EventHelper.addParticipant(ewbEvent, req.body.email, step3);
+    function findEventParticipant(ewbEvent, email, variant) {
+        EventHelper.fetchOrCreateEventParticipant(email, function(err, eventParticipant) {
+            if (err) {
+                ewbError.create({ message: 'Error fetching event participant', origin: __filename, params: err });
+                return handleError(res, err);
+            }
+
+            return addPaymentToParticipant(ewbEvent, variant, eventParticipant);
+        });
     };
 
-    function step3(err, result) {
-        // Stripe payment successful at this stage
+    function addPaymentToParticipant(ewbEvent, variant, eventParticipant) {
+        Payment.create({ eventParticipant: eventParticipant, amount: variant.price }, function(err, payment) {
+            if (err) {
+                ewbError.create({ message: 'Error creating payment event', origin: __filename, params: err });
+                return handleError(res, err);
+            }
+
+            return updateEventParticipant(ewbEvent, variant, eventParticipant, payment);
+        });
+    };
+
+    function updateEventParticipant(ewbEvent, variant, eventParticipant, payment) {
+        // Add payment to eventParticipant
+        eventParticipant.payments.push(payment);
+        // Keep track of the selected event variant
+        eventParticipant.eventVariants.push(variant._id);
+
+        eventParticipant.save(function(err, updatedParticipant) {
+            if (err) {
+                ewbError.create({ message: 'Failed to update event participant', origin: __filename, params: err });
+                return handleError(res, err);
+            }
+
+            return addToEvent(ewbEvent, updatedParticipant);
+        });
+    }
+
+    function addToEvent(ewbEvent, eventParticipant) {
+        return EventHelper.addParticipantToEvent(ewbEvent, eventParticipant, function(err, result) {
+            if (err) {
+                ewbError.create({ message: 'Failed to add participant to event', origin: __filename, params: err });
+                return handleError(res, err);
+            }
+
+            return sendConfirmationEmail(ewbEvent, eventParticipant);
+        });
+    };
+
+    function sendConfirmationEmail(ewbEvent, eventParticipant) {
+        var receiptMail = {
+            from: ewbMail.sender(),
+            to: process.env.NODE_ENV === 'production' ? eventParticipant.email : process.env.DEV_MAIL,
+            subject: ewbEvent.emailSubject || 'DUMMY SUBJECT', 
+            text: ewbEvent.emailBody || 'DUMMY BODY',
+        };
+
+        OutgoingMessage.create(receiptMail, function(err, outgoingMessage) {
+            if (err) {
+                ewbError.create({ message: 'Event confirmation mail', origin: __filename, params: err });
+            }
+        });
+        
+        return res.status(200).json(ewbEvent);
+    }
+
+    EventHelper.fetchEvent(req.body.identifier, function(err, ewbEvent) {
         if (err) {
             return handleError(res, err);
         }
 
-        return res.status(200).json(result);
-    };
+        var variant = _.find(ewbEvent.variants, { _id: new mongoose.Types.ObjectId(req.body.selectedVariantId) });
 
-    EventHelper.fetchEvent(req.body.identifier, step1);
+        if (!variant) {
+            // Selected variant id was not found among the event variants
+            ewbError.create({ message: 'Event variant not found among event variants', origin: __filename, params: err });
+            return res.status(400).json({ message: 'Event variant not found' });
+        }
+
+        if (variant.price === 0) {
+            // Skip payment step
+            return findEventParticipant(ewbEvent, req.body.email, variant);
+        } else {
+            return processEventPayments(ewbEvent, req.body.email, variant);
+        }
+    });
 };
 
 exports.stripeCheckoutKey = function (req, res) {

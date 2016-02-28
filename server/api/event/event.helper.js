@@ -6,35 +6,19 @@ var Event = require('../../models/event.model');
 var EventParticipant = require('../../models/event-participant.model');
 
 exports.fetchEvent = fetchEvent;
-exports.addParticipant = addParticipant;
+exports.addParticipantToEvent = addParticipantToEvent;
+exports.fetchOrCreateEventParticipant = fetchOrCreateEventParticipant;
 
 function fetchEvent(identifier, callback) {
-    Event.findOne({ identifier: identifier, active: true }, function(err, ewbEvent) {
+    Event.findOne({
+        identifier: identifier,
+        active: true
+    }).populate('variants').exec(function(err, ewbEvent) {
         return callback(err, ewbEvent);
     });
 };
 
-function addParticipant(ewbEvent, maybeParticipant, callback) {
-    EventParticipant.findOne({ email: maybeParticipant }, function(err, participant) {
-        if (err) {
-            return callback(err);
-        }
-
-        if (!participant) {
-            EventParticipant.create({ email: maybeParticipant }, function(err, participant) {
-                if (err) {
-                    return callback(err);
-                }
-
-                return addToEvent(ewbEvent, participant, callback);
-            });
-        } else {
-            return addToEvent(ewbEvent, participant, callback);
-        }
-    });
-};
-
-function addToEvent(ewbEvent, participant, callback) {
+function addParticipantToEvent(ewbEvent, participant, callback) {
     Event.update({
         _id: ewbEvent._id,
     }, {
@@ -48,3 +32,23 @@ function addToEvent(ewbEvent, participant, callback) {
     });
 };
 
+function fetchOrCreateEventParticipant(email, callback) {
+    EventParticipant.findOne({ email: email }, function(err, maybeParticipant) {
+        if (err) {
+            return callback(err);
+        }
+
+        // Participant found
+        if (maybeParticipant) {
+            return callback(err, maybeParticipant);
+        }
+
+        EventParticipant.create({ email: email }, function(err, participant) {
+            if (err) {
+                return callback(err);
+            }
+
+            return callback(err, participant);
+        });
+    });
+};
