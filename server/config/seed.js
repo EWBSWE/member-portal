@@ -17,32 +17,75 @@ var EventVariant = require('../models/event-variant.model');
 var EventParticipant = require('../models/event-participant.model');
 
 var Product = require('../models/product.model');
+var ProductType = require('../models/product-type.model');
 var Buyer = require('../models/buyer.model');
 
 var ewbMail = require('../components/ewb-mail');
 
-Product.find({}).remove(function() {
-    console.log('Removed: Products');
-    Product.create([{
-        name: 'Medlemskap 1 år student',
-        price: 40,
+ProductType.find({}).remove(function() {
+    console.log('Removed: Product types');
+
+    ProductType.create([{
+        identifier: 'Membership',
     }, {
-        name: 'Medlemskap 3 år student',
-        price: 90,
-    }, {
-        name: 'Medlemskap 1 år yrkesverksam',
-        price: 100,
-    }, {
-        name: 'Medlemskap 3 år yrkesverksam',
-        price: 250,
-    }, {
-        name: 'Medlemskap 1 år senior',
-        price: 100,
-    }, {
-        name: 'Medlemskap 3 år senior',
-        price: 250,
-    }], function(err, products) {
-        console.log('Created: Products');
+        identifier: 'Event',
+    }], function(err, types) {
+        console.log('Created: Product types');
+        
+        Product.find({}).remove(function() {
+            console.log('Removed: Products');
+            Product.create([{
+                name: 'Medlemskap 1 år student',
+                type: types[0]._id,
+                typeAttributes: {
+                    memberType: 'student',
+                    durationDays: 365,
+                },
+                price: 40,
+            }, {
+                name: 'Medlemskap 3 år student',
+                type: types[0]._id,
+                typeAttributes: {
+                    memberType: 'student',
+                    durationDays: 365 * 3,
+                },
+                price: 90,
+            }, {
+                name: 'Medlemskap 1 år yrkesverksam',
+                type: types[0]._id,
+                typeAttributes: {
+                    memberType: 'working',
+                    durationDays: 365,
+                },
+                price: 100,
+            }, {
+                name: 'Medlemskap 3 år yrkesverksam',
+                type: types[0]._id,
+                typeAttributes: {
+                    memberType: 'working',
+                    durationDays: 365 * 3,
+                },
+                price: 250,
+            }, {
+                name: 'Medlemskap 1 år senior',
+                type: types[0]._id,
+                typeAttributes: {
+                    memberType: 'senior',
+                    durationDays: 365,
+                },
+                price: 100,
+            }, {
+                name: 'Medlemskap 3 år senior',
+                type: types[0]._id,
+                typeAttributes: {
+                    memberType: 'senior',
+                    durationDays: 365 * 3,
+                },
+                price: 250,
+            }], function(err, products) {
+                console.log('Created: Products');
+            });
+        });
     });
 });
 
