@@ -10,14 +10,17 @@ if (process.env.NODE_ENV === 'production') {
 var moment = require('moment');
 var mongoose = require('mongoose');
 
-var Payment = require('../../models/payment.model');
+var Buyer = require('../../models/buyer.model');
+var ewbError = require('../../models/ewb-error.model');
 var Member = require('../../models/member.model');
 var OutgoingMessage = require('../../models/outgoing-message.model');
-var ewbError = require('../../models/ewb-error.model');
-var ewbMail = require('../../components/ewb-mail');
+var Payment = require('../../models/payment.model');
+var Product = require('../../models/product.model');
 
 var EventHelper = require('../event/event.helper');
 var MemberHelper = require('../member/member.helper');
+
+var ewbMail = require('../../components/ewb-mail');
 
 // Get list of payments
 exports.index = function(req, res) {
@@ -41,49 +44,28 @@ exports.show = function(req, res) {
 
 exports.confirmMembershipPayment = function(req, res) {
     var stripeToken = req.body.stripeToken;
-    var subscriptionLength = req.body.subscriptionLength;
-    var type = req.body.type.trim();
 
-    // TODO refactor this into model or something, currently duplicated between frontend
-    // and backend
-    var amount = 0;
-    if (type === 'student' && subscriptionLength === '1') {
-        amount = 40;
-    } else if (type === 'student' && subscriptionLength === '3') {
-        amount = 100;
-    } else if (subscriptionLength === '1') {
-        amount = 90;
-    } else if (subscriptionLength === '3') {
-        amount = 250;
-    }
-
-    var expirationDate = moment().add(1, 'year');
-    if (subscriptionLength === '3') {
-        expirationDate = moment().add(3, 'years');
-    }
-
-    // Only trimming the email attribute since we are doing a lookup on that
-    // email. The other attributes will be handled when inserted into the
-    // database
-    var memberData = {
-        email: req.body.email.trim(),
-        name: req.body.name,
-        location: req.body.location,
-        profession: req.body.profession,
-        education: req.body.education,
-        type: type,
-        gender: req.body.gender,
-        yearOfBirth: req.body.yearOfBirth,
-        expirationDate: expirationDate,
+    function handlePayment(product, memberData) {
+        console.log('handle payment', product, memberData);
+        processCharge({
+            currency: 'SEK',
+            amount: product.price,
+            description: product.name,
+        }, stripeToken, function() {
+            return fetchOrCreateMember(product, memberData);
+        }, function(err) {
+            var error = handleStripeError(err);
+            return res.status(400).json(error);
+        });
     };
 
-    function fetchOrCreateMember() {
+    function fetchOrCreateMember(product, memberData) {
         MemberHelper.fetchMember(memberData.email, function(err, maybeMember) {
             if (err) {
                 return handleError(res, err);
             }
             if (maybeMember) {
-                return updateMemberData(maybeMember);
+                return updateMemberData(product, maybeMember);
             } else {
                 // Member doesn't exist, we need to create the member before we
                 // proceed
@@ -92,13 +74,13 @@ exports.confirmMembershipPayment = function(req, res) {
                         return handleError(res, err);
                     }
 
-                    return addPayment(member);
+                    return fetchBuyer(product, member);
                 });
             }
         });
     };
 
-    function updateMemberData(member) {
+    function updateMemberData(product, member) {
         // If days remain on current membership we want to extend the
         // membership instead of overwriting it
         if (moment(member.expirationDate) > moment()) {
@@ -112,17 +94,41 @@ exports.confirmMembershipPayment = function(req, res) {
                 return handleError(res, err);
             }
 
-            return addPayment(updatedMember);
+            return fetchBuyer(product, updatedMember);
         });
     };
 
-    function addPayment(member) {
-        Payment.create({ member: member, amount: amount }, function(err, payment) {
-          if (err) {
-            return handleError(res, err);
-          }
+    function fetchBuyer(product, member) {
+        Buyer.findOne({ type: 'Member', documentId: member._id }, function(err, buyer) {
+            if (err) {
+                return handleError(res, err);
+            }
 
-          return sendConfirmation(member);
+            if (buyer) {
+                return addPayment(product, member, buyer);
+            } else {
+                Buyer.create({ type: 'Member', documentId: member._id }, function(err, buyer) {
+                    if (err) {
+                        return handleError(res, err);
+                    }
+
+                    return addPayment(product, member, buyer);
+                });
+            }
+        });
+    }
+
+    function addPayment(product, member, buyer) {
+        Payment.create({
+            buyer: buyer._id,
+            amount: product.price,
+            products: [ product._id ],
+        }, function(err, payment) {
+            if (err) {
+                return handleError(res, err);
+            }
+
+            return sendConfirmation(member);
         });
     };
 
@@ -149,14 +155,33 @@ exports.confirmMembershipPayment = function(req, res) {
         return res.status(201).json(member);
     };
 
-    processCharge({
-        currency: 'SEK',
-        amount: amount,
-        description: 'Medlemsregistrering',
-    }, stripeToken, fetchOrCreateMember, function(err) {
-        var error = handleStripeError(err);
-        return res.status(400).json(error);
+    Product.findOne({ _id: new mongoose.Types.ObjectId(req.body.productId) }, function(err, product) {
+        if (err) {
+            return handleError(res, err);
+        }
+
+        console.log('product', product);
+
+        if (product) {
+            // Important to trim email since we use it for lookups
+            var memberData = {
+                email: req.body.email.trim(),
+                name: req.body.name,
+                location: req.body.location,
+                profession: req.body.profession,
+                education: req.body.education,
+                type: req.body.type,
+                gender: req.body.gender,
+                yearOfBirth: req.body.yearOfBirth,
+                expirationDate: moment().add(product.typeAttributes.durationDays, 'days'),
+            };
+
+            return handlePayment(product, memberData);
+        } else {
+            return res.sendStatus(400);
+        }
     });
+
 };
 
 exports.confirmEventPayment = function(req, res) {
@@ -273,12 +298,14 @@ exports.stripeCheckoutKey = function (req, res) {
 };
 
 function processCharge(chargeAttributes, stripeToken, successCallback, errorCallback) {
+    console.log('procuess charge');
     stripe.charges.create({
         currency: chargeAttributes.currency,
         amount: chargeAttributes.amount * 100,
         source: stripeToken.id,
         description: chargeAttributes.description,
     }, function(err, charge) {
+        console.log('post charge', err, charge);
         if (err === null) {
             successCallback(charge);
         } else {
