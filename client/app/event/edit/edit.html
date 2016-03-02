@@ -7,59 +7,106 @@
 </header>
 
 <div class="container">
-    <form class="ev-form">
-        <div class="bg-success" ng-show="showSuccess">
-            <div ng-message="eventCreated">Event sparat</div>
-        </div>
+    <div class="row">
+        <form name="eventform" class="ev-form">
+            <div class="col-xs-12 col-sm-6">
+                event
+                <div class="bg-success" ng-show="showSuccess">
+                    <div ng-message="eventCreated">Event sparat</div>
+                </div>
 
-        <div class="form-group">
-            <label for="inputName">Namn</label>
-            <input type="text" name="inputName" id="inputName" class="form-control" ng-model="ev.name" />
-        </div>
+                <div ng-class="{'form-group': true, 'has-error': eventform.inputName.$error.name, 'has-success': eventform.inputName.$valid}">
+                    <label for="inputName">Namn</label>
+                    <input type="text" name="inputName" id="inputName" class="form-control" ng-model="ev.name" required/>
+                    <p class="help-block">
+                    Namn
+                    </p>
+                </div>
 
-        <div class="form-group">
-            <label for="inputDescription" class="control-label">Beskrivning</label>
-            <input type="text" name="inputDescription" id="inputDescription" class="form-control" ng-model="ev.description"/>
-        </div>
+                <div ng-class="{'form-group': true, 'has-error': eventform.inputIdentifier.$error.identifier, 'has-success': eventform.inputIdentifier.$valid}">
+                    <label for="inputName">Identifierare</label>
+                    <input type="text" name="inputIdentifier" id="inputIdentifier" class="form-control" ng-model="ev.identifier" required/>
+                    <p class="help-block">
+                    Identifierare ar en text som sedan anvands for att anmala sig till eventet. Giltiga tecken ar a-z, 0-9 samt bindestreck.
+                    Eftersom att det anvands for att identifiera event maste det vara unikt.
+                    </p>
+                </div>
 
-        <div class="form-group">
-            <label for="inputPrice">Pris</label>
-            <input type="number" name="inputPrice" id="inputPrice" class="form-control" ng-model="ev.price"/>
-        </div>
+                <div ng-class="{'form-group': true, 'has-error': eventform.inputDescription.$error.description, 'has-success': eventform.inputDescription.$valid}">
+                    <label for="inputDescription" class="control-label">Beskrivning</label>
+                    <textarea rows="5" name="inputDescription" id="inputDescription" class="form-control" ng-model="ev.description" required></textarea>
+                    <p class="help-block">
+                    Beskrivning om eventet
+                    </p>
+                </div>
 
-        <div class="form-group">
-            <label for="inputMaxParticipants">Max antal deltagare</label>
-            <input type="number" name="inputMaxParticipants" id="inputMaxParticipants" class="form-control" ng-model="ev.maxParticipants"/>
-        </div>
+                <div class="form-group">
+                    <label for="inputDueDate">Anmäld senast</label>
+                    <input type="text" name="inputDueDate" id="inputDueDate" class="form-control" ng-model="ev.dueDate"/>
+                    <p class="help-block">
+                    Datum pa form YYYY-MM-DD.
+                    </p>
+                </div>
 
-        <div class="form-group">
-            <label for="inputDueDate">Betald senast</label>
-            <input type="text" name="inputDueDate" id="inputDueDate" class="form-control" ng-model="ev.dueDate"/>
-        </div>
+                <div ng-class="{'form-group': true, 'has-error': eventform.inputContact.$error.email, 'has-success': eventform.inputContact.$valid}">
+                    <label for="inputContact">Epost kontaktperson</label>
+                    <input type="email" name="inputContact" id="inputContact" class="form-control" ng-model="ev.contact" required/>
+                    <p class="help-block">
+                    Giltig epost till kontaktperson.
+                    </p>
+                </div>
 
-        <div class="form-group">
-            <label for="inputContact">Contact</label>
-            <input type="text" name="inputContact" id="inputContact" class="form-control" ng-model="ev.contact"/>
-        </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" value="1" ng-model="ev.active"> Aktivt
+                    </label>
+                </div>
 
-        <div class="checkbox">
-            <label>
-                <input type="checkbox" value="1" ng-model="ev.active"> Aktivt
-            </label>
-        </div>
+                <span class="input-group">
+                    <button type="submit" class="btn btn-primary" ng-click="submit()">Spara event</button>
+                </span>
+            </div>
 
-        <span class="input-group">
-            <button type="submit" class="btn btn-primary" ng-click="submit()">Spara event</button>
-        </span>
-    </form>
+            <div class="col-xs-12 col-sm-6">
+                Har skapar du tillagg. Det kravs atminstone 1 tillagg, for att kunna skapa eventet. Det ar default-fallet.
+                <div class="addons form-inline" ng-repeat="n in ev.addons">
+                    {{$index}}
+                    <div class="form-group">
+                        <label for="addonName">Namn</label>
+                        <input type="text" name="addonName" id="addonName" class="form-control" ng-model="ev.addons[$index].name"/>
+                        <p class="help-block">
+                        T-Shirt Vit
+                        </p>
+                    </div>
+                    <div class="form-group">
+                        <label for="addonPrice">Kostnad</label>
+                        <input type="number" name="addonPrice" id="addonPrice" class="form-control" ng-model="ev.addons[$index].price"/>
+                        <p class="help-block">
+                        90 kr
+                        </p>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputContact">Kapacitet</label>
+                        <input type="number" name="addonCapacity" id="addonCapacity" class="form-control" ng-model="ev.addons[$index].capacity"/>
+                        <p class="help-block">
+                        20
+                        </p>
+                    </div>
 
-    <form class="debug-form" style="margin-top:40px; padding:20px; background-color: #eee;">
-        <div class="form-group">
-            <label for="">DEBUG ADD PARTICIPANTS</label>
-            <input type="text" name="inputEventParticipant" ng-model="debugEventParticipant" id="inputEventParticipant" />
-        </div>
-        <span class="input-group">
-            <button type="submit" class="btn btn-primary" ng-click="addEventParticipant()">ADD PARTICIPANT</button>
-        </span>
-    </form>
+                    <div ng-show="editEvent" class="actions">
+                        {{ev.addons[$index]}}
+                        <button type="submit" class="btn btn-primary" ng-click="updateAddon(ev.addons[$index])">save</button>
+                    </div>
+
+                    <div ng-show="addonIndices.length > 1" style="margin-top: 20px;"></div>
+                </div>
+
+                <span class="input-group">
+                    <button type="submit" class="btn btn-primary" ng-click="increaseAddons()">+1 addon</button>
+                    <button type="submit" class="btn btn-primary" ng-click="decreaseAddons()">-1 addon</button>
+                </span>
+
+            </div>
+    </div>
+        </form>
 </div>

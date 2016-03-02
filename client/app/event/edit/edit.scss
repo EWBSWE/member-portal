@@ -6,3 +6,10 @@
     text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
     background: #4393B9;
 }
+
+.addons.form-inline {
+    .form-group { width: 100%; }
+    .form-group label { text-align: right; width: 20%; margin-right: 5px; }
+    .form-group input { width: 70%; }
+    .form-group .help-block { margin-left: 22%; }
+}
