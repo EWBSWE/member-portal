@@ -19,14 +19,6 @@ var EventSchema = new Schema({
     addons: [{ type: mongoose.Schema.Types.ObjectId, ref: 'EventAddon' }],
 });
 
-// Generate an identifier based on the name of the event. Will collide with
-// other events in the future since it is rather basic at the moment.
-EventSchema.pre('save', function(next) {
-    this.identifier = this.name.replace(/\s+/g,'-').replace(/[^a-zA-Z0-9\-]/g, '');
-
-    next();
-});
-
 EventSchema.index({ identifier: 1 });
 
 module.exports = mongoose.model('Event', EventSchema);

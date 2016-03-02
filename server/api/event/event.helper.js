@@ -5,12 +5,16 @@ var _ = require('lodash');
 var Event = require('../../models/event.model');
 var EventAddon = require('../../models/event-addon.model');
 var EventParticipant = require('../../models/event-participant.model');
+var Product = require('../../models/product.model');
+var ProductType = require('../../models/product-type.model');
 
 exports.fetchEvent = fetchEvent;
 exports.addParticipantToEvent = addParticipantToEvent;
 exports.fetchOrCreateEventParticipant = fetchOrCreateEventParticipant;
 exports.updateAddons = updateAddons;
 exports.sumAddons = sumAddons;
+exports.removeAddons = removeAddons;
+exports.createAddons = createAddons;
 
 function fetchEvent(identifier, callback) {
     Event.findOne({
@@ -94,3 +98,71 @@ function updateAddons(addonIds, callback) {
         });
     });
 };
+
+function removeAddons(addons, callback) {
+    var productsToRemove = _.map(addons, 'product');
+    var addonsToRemove = _.map(addons, '_id');
+
+    Product.remove({
+        _id: {
+            $in: productsToRemove,
+        },
+    }, function(err, result) {
+        if (err) {
+            return callback(err);
+        }
+
+        EventAddon.remove({
+            _id: {
+                $in: addonsToRemove
+            },
+        }, function(err, result) {
+            if (err) {
+                return callback(err);
+            }
+
+            return callback(err, result);
+        });
+    });
+};
+
+function createAddons(ewbEvent, data, callback) {
+    ProductType.findOne({ identifier: 'Event' }, function(err, productType) {
+        if (err) {
+            return callback(err);
+        }
+
+        Product.create(_.map(data, function(d) {
+            return {
+                name: d.name,
+                price: d.price,
+                type: productType._id
+            };
+        }), function(err, products) {
+            if (err) {
+                return callback(err);
+            }
+
+            var as = [];
+            for (var i = 0; i < products.length; i++) {
+                as.push({ capacity: data[i].capacity, product: products[i]._id });
+            }
+
+            EventAddon.create(as, function(err, addons) {
+                if (err) {
+                    return callback(err);
+                }
+
+                ewbEvent.addons = ewbEvent.addons.concat(addons);
+                ewbEvent.save(function(err, updatedEvent) {
+                    return callback(err, updatedEvent);
+                });
+            });
+        });
+    });
+};
+
+
+
+
+

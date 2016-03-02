@@ -263,6 +263,7 @@ function createEvents(callback) {
                 ProductType.findOne({ identifier: 'Event' }, function(err, productType) {
                     Event.create({
                         name: 'Event 1',
+                        identifier: 'event-1',
                         description: 'Lorem ipsum',
                         active: true,
                         dueDate: moment().add(1, 'month'),
@@ -297,6 +298,7 @@ function createEvents(callback) {
 
                     Event.create({
                         name: 'Event 2',
+                        identifier: 'event-2',
                         description: 'Lorem ipsum here as well',
                         active: true,
                         dueDate: moment().subtract(1, 'days'),
