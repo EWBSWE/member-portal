@@ -12,7 +12,6 @@ var EventParticipantSchema = new Schema({
         unique: true,
         lowercase: true,
     },
-    eventVariants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'EventVariant' }],
     payments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Payment' }],
     member: { type: mongoose.Schema.Types.ObjectId, ref: 'Member' },
 });

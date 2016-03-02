@@ -16,11 +16,11 @@
         </div>
         <div class="col-xs-12 col-md-6">
             <form novalidate name="form" class="payment-form">
-                <div ng-show="ev.variants.length" ng-repeat="variant in ev.variants">
+                <div ng-show="ev.addons.length" ng-repeat="addon in ev.addons">
                     <label class="radio-inline control-label">
-                        <input type="radio" name="type" ng-value="variant._id" ng-model="participant.selectedVariantId"/>
-                        <span>{{variant.name}} +{{variant.price}}kr</span>
-                        <p class="help-block">{{variant.description}}</p>
+                        <input type="checkbox" name="type" ng-value="addon._id" ng-model="participant.addons[addon._id]"/>
+                        <span>{{addon.product.name}} +{{addon.product.price}}kr {{addon.capacity}}</span>
+                        <p class="help-block">{{addon.product.description}}</p>
                     </label>
                 </div>
                 <div ng-class="{'form-group': true, 'has-error': form.inputEmail.$error.email, 'has-success': form.inputEmail.$valid}">

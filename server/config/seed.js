@@ -192,24 +192,24 @@ function createMembers(callback) {
             callback(err, members);
         });
 
-        var lotsOfMembers = [];
-        for (var i = 0; i < 10000; i++) {
-            lotsOfMembers.push({
-                name: 'Name ' + i,
-                location: 'Location',
-                type: 'working',
-                yearOfBirth: 1900,
-                gender: 'other',
-                education: 'Maybe',
-                profession: 'Profession',
-                email: 'name' + i + '@example.com',
-                createdAt: moment().subtract(3, 'month'),
-            });
-        }
+        //var lotsOfMembers = [];
+        //for (var i = 0; i < 10000; i++) {
+            //lotsOfMembers.push({
+                //name: 'Name ' + i,
+                //location: 'Location',
+                //type: 'working',
+                //yearOfBirth: 1900,
+                //gender: 'other',
+                //education: 'Maybe',
+                //profession: 'Profession',
+                //email: 'name' + i + '@example.com',
+                //createdAt: moment().subtract(3, 'month'),
+            //});
+        //}
 
-        Member.create(lotsOfMembers, function(err, members) {
-            console.log('Created: Dummy members');
-        });
+        //Member.create(lotsOfMembers, function(err, members) {
+            //console.log('Created: Dummy members');
+        //});
     });
 
 };

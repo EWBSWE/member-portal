@@ -19,6 +19,7 @@ var Product = require('../../models/product.model');
 
 var EventHelper = require('../event/event.helper');
 var MemberHelper = require('../member/member.helper');
+var PaymentHelper = require('../payment/payment.helper');
 
 var ewbMail = require('../../components/ewb-mail');
 
@@ -46,7 +47,6 @@ exports.confirmMembershipPayment = function(req, res) {
     var stripeToken = req.body.stripeToken;
 
     function handlePayment(product, memberData) {
-        console.log('handle payment', product, memberData);
         processCharge({
             currency: 'SEK',
             amount: product.price,
@@ -160,8 +160,6 @@ exports.confirmMembershipPayment = function(req, res) {
             return handleError(res, err);
         }
 
-        console.log('product', product);
-
         if (product) {
             // Important to trim email since we use it for lookups
             var memberData = {
@@ -185,14 +183,16 @@ exports.confirmMembershipPayment = function(req, res) {
 };
 
 exports.confirmEventPayment = function(req, res) {
-    function processEventPayments(ewbEvent, email, variant) {
+    function processEventPayments(ewbEvent, email, selectedAddons) {
+        var sum = EventHelper.sumAddons(selectedAddons);
+
         return processCharge({
             currency: 'SEK',
-            amount: variant.price,
+            amount: sum,
             description: ewbEvent.name,
         }, req.body.stripeToken, function(charge) {
             // Successful charge
-            return findEventParticipant(ewbEvent, email, variant);
+            return findEventParticipant(ewbEvent, email, selectedAddons);
         }, function(stripeError) {
             // Failed charge
             var error = handleStripeError(stripeError);
@@ -200,33 +200,46 @@ exports.confirmEventPayment = function(req, res) {
         });
     };
 
-    function findEventParticipant(ewbEvent, email, variant) {
+    function findEventParticipant(ewbEvent, email, selectedAddons) {
         EventHelper.fetchOrCreateEventParticipant(email, function(err, eventParticipant) {
             if (err) {
                 ewbError.create({ message: 'Error fetching event participant', origin: __filename, params: err });
                 return handleError(res, err);
             }
 
-            return addPaymentToParticipant(ewbEvent, variant, eventParticipant);
+            return addPaymentToParticipant(ewbEvent, selectedAddons, eventParticipant);
         });
     };
 
-    function addPaymentToParticipant(ewbEvent, variant, eventParticipant) {
-        Payment.create({ eventParticipant: eventParticipant, amount: variant.price }, function(err, payment) {
+    function addPaymentToParticipant(ewbEvent, selectedAddons, eventParticipant) {
+        var sum = EventHelper.sumAddons(selectedAddons);
+        var productIds = _.map(selectedAddons, function(a) {
+            return a.product._id;
+        });
+
+        PaymentHelper.fetchOrCreateBuyer('EventParticipant', eventParticipant._id, function(err, buyer) {
             if (err) {
-                ewbError.create({ message: 'Error creating payment event', origin: __filename, params: err });
+                ewbError.create({ message: 'Error fetching buyer', origin: __filename, params: err });
                 return handleError(res, err);
             }
 
-            return updateEventParticipant(ewbEvent, variant, eventParticipant, payment);
+            Payment.create({
+                buyer: buyer._id,
+                amount: sum,
+                products: productIds
+            }, function(err, payment) {
+                if (err) {
+                    ewbError.create({ message: 'Error creating payment event', origin: __filename, params: err });
+                    return handleError(res, err);
+                }
+
+                return updateEventParticipant(ewbEvent, selectedAddons, eventParticipant, payment);
+            });
         });
     };
 
-    function updateEventParticipant(ewbEvent, variant, eventParticipant, payment) {
-        // Add payment to eventParticipant
+    function updateEventParticipant(ewbEvent, selectedAddons, eventParticipant, payment) {
         eventParticipant.payments.push(payment);
-        // Keep track of the selected event variant
-        eventParticipant.eventVariants.push(variant._id);
 
         eventParticipant.save(function(err, updatedParticipant) {
             if (err) {
@@ -234,14 +247,27 @@ exports.confirmEventPayment = function(req, res) {
                 return handleError(res, err);
             }
 
-            return addToEvent(ewbEvent, updatedParticipant);
+            return addToEvent(ewbEvent, selectedAddons, updatedParticipant);
         });
-    }
+    };
 
-    function addToEvent(ewbEvent, eventParticipant) {
+    function addToEvent(ewbEvent, selectedAddons, eventParticipant) {
         return EventHelper.addParticipantToEvent(ewbEvent, eventParticipant, function(err, result) {
             if (err) {
                 ewbError.create({ message: 'Failed to add participant to event', origin: __filename, params: err });
+                return handleError(res, err);
+            }
+
+            return updateEventAddons(ewbEvent, selectedAddons, eventParticipant);
+        });
+    };
+
+    function updateEventAddons(ewbEvent, selectedAddons, eventParticipant) {
+        var addonIds = _.map(selectedAddons, '_id');
+
+        EventHelper.updateAddons(addonIds, function(err, updatedAddons) {
+            if (err) {
+                ewbError.create({ message: 'Failed to update event addon', origin: __filename, params: err });
                 return handleError(res, err);
             }
 
@@ -271,19 +297,31 @@ exports.confirmEventPayment = function(req, res) {
             return handleError(res, err);
         }
 
-        var variant = _.find(ewbEvent.variants, { _id: new mongoose.Types.ObjectId(req.body.selectedVariantId) });
-
-        if (!variant) {
-            // Selected variant id was not found among the event variants
-            ewbError.create({ message: 'Event variant not found among event variants', origin: __filename, params: err });
-            return res.status(400).json({ message: 'Event variant not found' });
+        if (!ewbEvent) {
+            ewbError.create({ message: 'Event not found', origin: __filename, params: err });
+            return res.status(400).json({ message: 'Event not found' });
         }
 
-        if (variant.price === 0) {
+        var selectedAddonIds = _.map(req.body.addonIds, function(addonId) {
+            return new mongoose.Types.ObjectId(addonId);
+        });
+
+        var selectedAddons = _.filter(ewbEvent.addons, function(addon) {
+            for (var i = 0; i < selectedAddonIds.length; i++) {
+                if (selectedAddonIds[i].equals(addon._id)) {
+                    return true;
+                }
+            }
+            return false;
+        });
+
+        var sum = EventHelper.sumAddons(selectedAddons);
+
+        if (sum === 0) {
             // Skip payment step
-            return findEventParticipant(ewbEvent, req.body.email, variant);
+            return findEventParticipant(ewbEvent, req.body.email, selectedAddons);
         } else {
-            return processEventPayments(ewbEvent, req.body.email, variant);
+            return processEventPayments(ewbEvent, req.body.email, selectedAddons);
         }
     });
 };
@@ -298,14 +336,12 @@ exports.stripeCheckoutKey = function (req, res) {
 };
 
 function processCharge(chargeAttributes, stripeToken, successCallback, errorCallback) {
-    console.log('procuess charge');
     stripe.charges.create({
         currency: chargeAttributes.currency,
         amount: chargeAttributes.amount * 100,
         source: stripeToken.id,
         description: chargeAttributes.description,
     }, function(err, charge) {
-        console.log('post charge', err, charge);
         if (err === null) {
             successCallback(charge);
         } else {

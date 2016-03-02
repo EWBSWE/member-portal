@@ -23,7 +23,8 @@ angular.module('ewbMemberApp')
         $http.post('/api/payments/confirm-event', {
             stripeToken: token,
             email: $scope.participant.email,
-            selectedVariantId: $scope.participant.selectedVariantId,
+            identifier: $scope.ev.identifier,
+            addonIds: Object.keys($scope.participant.addons),
         }).success(function(data) {
             fetchEvent();
             $scope.successEmail = data.email;
@@ -54,9 +55,18 @@ angular.module('ewbMemberApp')
             return;
         }
 
-        var variant = _.find($scope.ev.variants, { _id: $scope.participant.selectedVariantId });
+        var addonIds = Object.keys($scope.participant.addons);
 
-        if (variant.price === 0) {
+        var selectedAddons = _.filter($scope.ev.addons, function(addon) {
+            return _.include(addonIds, addon._id);
+        });
+
+        var sum = 0;
+        for (var i = 0; i < selectedAddons.length; i++) {
+            sum += selectedAddons[i].product.price;
+        }
+
+        if (sum === 0) {
             callback(null);
         } else if (stripeHandler) {
             stripeHandler.open({
@@ -64,7 +74,7 @@ angular.module('ewbMemberApp')
                 description: $scope.ev.name,
                 // image: 'bild.png', // TODO
                 currency: 'SEK',
-                amount: $scope.ev.price * 100,
+                amount: sum * 100,
                 email: $scope.participant.email,
             });
         } else {

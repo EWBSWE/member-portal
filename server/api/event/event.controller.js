@@ -18,10 +18,15 @@ exports.index = function (req, res) {
 };
 
 exports.showPublic = function(req, res) {
-    return Event.findOne({ 
-        identifier: req.query.url, 
-        active: true 
-    }).populate('variants').lean().exec(function(err, ewbEvent) {
+    return Event.findOne({
+        identifier: req.query.url,
+        active: true
+    }).populate({
+        path: 'addons',
+        populate: {
+            path: 'product',
+        },
+    }).exec(function(err, ewbEvent) {
         if (err) {
             return handleError(res, err);
         }
