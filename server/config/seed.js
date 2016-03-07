@@ -13,6 +13,7 @@ var Event = require('../models/event.model');
 var EventAddon = require('../models/event-addon.model');
 var EventParticipant = require('../models/event-participant.model');
 var Member = require('../models/member.model');
+var Option = require('../models/option.model');
 var OutgoingMessage = require('../models/outgoing-message.model');
 var Payment = require('../models/payment.model');
 var Product = require('../models/product.model');
@@ -326,6 +327,24 @@ function createEvents(callback) {
     });
 };
 
+function createOptions(callback) {
+    Option.find({}).remove(function() {
+        console.log('Removed: Options');
+        Option.create([{
+            key: 'StripeTransferDate',
+            value: '22',
+            description: 'Day in month that money is transferred from Stripe to EWB. Eg. if value is 22 then that counts as YYYY-MM-22 00:00:00.'
+        }, {
+            key: 'Foo',
+            value: 'Bar',
+            description: 'Baz',
+        }], function(err, options) {
+            console.log('Created: Options');
+            callback(options);
+        });
+    });
+};
+
 
 function seed() {
     // This function acts as a dummy function. To be used with callbacks
@@ -333,6 +352,7 @@ function seed() {
 
     createUsers(pass);
     createOutgoingMessages(pass);
+    createOptions(pass);
 
     createMembers(function(err, members) {
         createProducts(function(err, products) {
