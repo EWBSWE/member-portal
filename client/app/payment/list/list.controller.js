@@ -8,8 +8,7 @@ angular.module('ewbMemberApp')
         periodEnd: moment().add(1, 'day').format('YYYY-MM-DD'),
         recipient: null,
     };
-
-    console.log($scope.report);
+    $scope.validParams = {};
 
     $http.get('/api/payments').success(function(payments) {
         $scope.payments = payments;
@@ -25,9 +24,11 @@ angular.module('ewbMemberApp')
             periodEnd: $scope.report.periodEnd.trim(),
             recipient: $scope.report.recipient.trim(),
         }).success(function(response) {
-            console.log('success', response);
+            $scope.success = $scope.report.recipient;
+            $scope.report.recipient = null;
+            $scope.validParams = {};
         }).error(function(response) {
-            console.log('fail', response);
+            $scope.validParams = response;
         });
     };
 });
