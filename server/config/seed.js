@@ -333,7 +333,19 @@ function createOptions(callback) {
         Option.create([{
             key: 'StripeTransferDate',
             value: '22',
-            description: 'Day in month that money is transferred from Stripe to EWB. Eg. if value is 22 then that counts as YYYY-MM-22 00:00:00.'
+            description: 'Day in month that money is transferred from Stripe to EWB. If value is 22 then that counts as YYYY-MM-22 00:00:00.'
+        }, {
+            key: 'StripeTransferEmails',
+            value: 'ict@ingenjorerutangranser.se,dan.albin.johansson@gmail.com',
+            description: 'A list of comma separated email addresses formatted as "foo@bar.se,bar@baz.com". This list of people will receive a copy of the monthly transactions',
+        }, {
+            key: 'StripeTransactionFeePercent',
+            value: '3.0',
+            description: 'Stripe transaction fee, in percent. For instance, Stripe charges 3% of each transaction.',
+        }, {
+            key: 'StripeTransactionFlatFee',
+            value: '0.0',
+            description: 'Stripe flat fee per transaction, in SEK. For instance, Stripe charge 3 SEK per transaction.',
         }, {
             key: 'Foo',
             value: 'Bar',
