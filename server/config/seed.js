@@ -292,8 +292,7 @@ function createEvents(callback) {
                                     console.log('Created: Event with 2 addons');
                                     callback(err, ev);
                                 });
-                            })
-
+                            });
                         });
                     });
 
@@ -340,10 +339,10 @@ function createSettings(callback) {
             description: 'A list of comma separated email addresses formatted as "foo@bar.se,bar@baz.com". This list of people will receive a copy of the monthly transactions',
         }, {
             key: 'StripeTransactionFeePercent',
-            value: '3.0',
-            description: 'Stripe transaction fee, in percent. For instance, Stripe charges 3% of each transaction.',
+            value: '0.03',
+            description: 'Stripe transaction fee, as a floating point number. For instance 0.03 is equivalent to 3% of each transaction.',
         }, {
-            key: 'StripeTransactionFlatFee',
+            key: 'StripeTransactionFeeFlat',
             value: '0.0',
             description: 'Stripe flat fee per transaction, in SEK. For instance, Stripe charge 3 SEK per transaction.',
         }, {
