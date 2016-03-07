@@ -13,11 +13,11 @@ var Event = require('../models/event.model');
 var EventAddon = require('../models/event-addon.model');
 var EventParticipant = require('../models/event-participant.model');
 var Member = require('../models/member.model');
-var Option = require('../models/option.model');
 var OutgoingMessage = require('../models/outgoing-message.model');
 var Payment = require('../models/payment.model');
 var Product = require('../models/product.model');
 var ProductType = require('../models/product-type.model');
+var Setting = require('../models/setting.model');
 var User = require('../models/user.model');
 
 var ewbMail = require('../components/ewb-mail');
@@ -327,10 +327,10 @@ function createEvents(callback) {
     });
 };
 
-function createOptions(callback) {
-    Option.find({}).remove(function() {
-        console.log('Removed: Options');
-        Option.create([{
+function createSettings(callback) {
+    Setting.find({}).remove(function() {
+        console.log('Removed: Settings');
+        Setting.create([{
             key: 'StripeTransferDate',
             value: '22',
             description: 'Day in month that money is transferred from Stripe to EWB. If value is 22 then that counts as YYYY-MM-22 00:00:00.'
@@ -350,9 +350,9 @@ function createOptions(callback) {
             key: 'Foo',
             value: 'Bar',
             description: 'Baz',
-        }], function(err, options) {
-            console.log('Created: Options');
-            callback(options);
+        }], function(err, settings) {
+            console.log('Created: Settings');
+            callback(settings);
         });
     });
 };
@@ -364,7 +364,7 @@ function seed() {
 
     createUsers(pass);
     createOutgoingMessages(pass);
-    createOptions(pass);
+    createSettings(pass);
 
     createMembers(function(err, members) {
         createProducts(function(err, products) {

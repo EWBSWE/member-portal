@@ -16,6 +16,9 @@ angular.module('ewbMemberApp')
         title: 'Errors',
         link: '/errors',
       }, {
+        title: 'Settings',
+        link: '/settings',
+      }, {
         title: 'Admin',
         link: '/admin',
       }, {
