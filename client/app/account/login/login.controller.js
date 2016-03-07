@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ewbMemberApp')
-  .controller('LoginCtrl', function ($scope, Auth, $location, $http) {
+.controller('LoginCtrl', function ($scope, Auth, $location, $http) {
     $scope.user = {};
     $scope.errors = {};
     $scope.resetSuccessful = false;
@@ -9,34 +9,44 @@ angular.module('ewbMemberApp')
     var landingPage = '/members';
 
     if (Auth.isLoggedIn()) {
-      $location.path(landingPage);
+        if ($location.search().redirect) {
+            $location.path($location.search().redirect);
+            $location.search('');
+        } else {
+            console.log('no');
+            $location.path(landingPage);
+        }
     }
 
     $scope.login = function(form) {
-      $scope.submitted = true;
+        $scope.submitted = true;
 
-      if(form.$valid) {
-        Auth.login({
-          email: $scope.user.email,
-          password: $scope.user.password
-        })
-        .then( function() {
-          $location.path(landingPage);
-        })
-        .catch( function(err) {
-          $scope.errors.other = err.message;
-        });
-      }
+        if(form.$valid) {
+            Auth.login({
+                email: $scope.user.email,
+                password: $scope.user.password
+            })
+            .then( function() {
+                if ($location.search().redirect) {
+                    $location.path($location.search().redirect);
+                    $location.search('');
+                } else {
+                    $location.path(landingPage);
+                }
+            })
+            .catch( function(err) {
+                $scope.errors.other = err.message;
+            });
+        }
     };
 
     $scope.resetPassword = function () {
-      if ($scope.user.email) {
-        $http.post('/api/users/reset-password', {
-          email: $scope.user.email
-        }).success(function (data) {
-          $scope.resetSuccessful = true;
-        });
-      }
+        if ($scope.user.email) {
+            $http.post('/api/users/reset-password', {
+                email: $scope.user.email
+            }).success(function (data) {
+                $scope.resetSuccessful = true;
+            });
+        }
     };
-
-  });
+});
