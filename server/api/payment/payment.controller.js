@@ -25,7 +25,7 @@ var ewbMail = require('../../components/ewb-mail');
 
 // Get list of payments
 exports.index = function(req, res) {
-  Payment.find(function (err, payments) {
+  Payment.find().populate('buyer').lean().exec(function (err, payments) {
     if (err) {
       return handleError(res, err);
     }
@@ -333,6 +333,10 @@ exports.stripeCheckoutKey = function (req, res) {
     }
 
     return res.status(200).json({ key: key });
+};
+
+exports.generateReport = function (req, res) {
+    return res.sendStatus(501);
 };
 
 function processCharge(chargeAttributes, stripeToken, successCallback, errorCallback) {

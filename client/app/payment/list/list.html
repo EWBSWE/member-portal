@@ -7,6 +7,23 @@
 </header>
 
 <div class="container">
+    <div class="row member-actions">
+        <div class="col-xs-12 col-sm-3 form-group">
+            <input type="text" class="form-control" ng-model="from" placeholder="Från">
+            <p class="help-block">Rapport från YYYY-MM-DD 00:00:00</p>
+        </div>
+        <div class="col-xs-12 col-sm-3 form-group">
+            <input type="text" class="form-control" ng-model="to" placeholder="Till">
+            <p class="help-block">Till och med YYYY-MM-DD 23:59:59</p>
+        </div>
+        <div class="col-xs-12 col-sm-3 form-group">
+            <input type="text" class="form-control" ng-model="email" placeholder="Epost">
+            <p class="help-block">Epost-adress att skicka rapporten till.</p>
+        </div>
+        <div class="col-xs-12 col-sm-3 form-group">
+            <button ng-click="generateReport()" class="btn btn-default">Generera rapport</button>
+        </div>
+    </div>
   <div class="row">
     <div class="col-lg-12">
       <dir-pagination-controls></dir-pagination-controls>
