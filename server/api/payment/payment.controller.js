@@ -17,30 +17,30 @@ var OutgoingMessage = require('../../models/outgoing-message.model');
 var Payment = require('../../models/payment.model');
 var Product = require('../../models/product.model');
 
+var EmailHelper = require('../../helpers/email.helper');
 var EventHelper = require('../event/event.helper');
 var MemberHelper = require('../member/member.helper');
 var PaymentHelper = require('../payment/payment.helper');
 
 var ewbMail = require('../../components/ewb-mail');
 
-// Get list of payments
 exports.index = function(req, res) {
-  Payment.find().populate('buyer').lean().exec(function (err, payments) {
-    if (err) {
-      return handleError(res, err);
-    }
-    return res.status(200).json(payments);
-  });
+    Payment.find().populate('buyer').lean().exec(function (err, payments) {
+        if (err) {
+            return handleError(res, err);
+        }
+        return res.status(200).json(payments);
+    });
 };
 
 exports.show = function(req, res) {
-  Payment.findOne({ _id: req.params.id }, function(err, payment) {
-    if (err) {
-      return handleError(res, err);
-    } else {
-      return res.status(200).json(payment);
-    }
-  });
+    Payment.findOne({ _id: req.params.id }, function(err, payment) {
+        if (err) {
+            return handleError(res, err);
+        } else {
+            return res.status(200).json(payment);
+        }
+    });
 };
 
 exports.confirmMembershipPayment = function(req, res) {
@@ -336,7 +336,36 @@ exports.stripeCheckoutKey = function (req, res) {
 };
 
 exports.generateReport = function (req, res) {
-    return res.sendStatus(501);
+    var periodStart = moment(req.body.periodStart);
+    var periodEnd = moment(req.body.periodEnd);
+    var recipient = req.body.recipient;
+
+    var validParams = {
+        periodStart: periodStart.isValid(),
+        periodEnd: periodEnd.isValid(),
+        recipient: EmailHelper.isValid(recipient),
+    };
+
+    var anyError = !_.values(validParams).reduce(function(a, b) {
+        return a && b;
+    }, true);
+
+    if (anyError) {
+        return res.status(400).json(validParams);
+    } else {
+        PaymentHelper.generateReport({
+            periodStart: periodStart.format('YYYY-MM-DD'),
+            periodEnd: periodEnd.format('YYYY-MM-DD'),
+            recipient: recipient,
+        }, function(err, result) {
+            if (err) {
+                ewbError.create({ message: 'Failed to generate report', origin: __filename, params: err });
+                return handleError(res, err);
+            }
+
+            return res.status(200).json(result);
+        });
+    }
 };
 
 function processCharge(chargeAttributes, stripeToken, successCallback, errorCallback) {
