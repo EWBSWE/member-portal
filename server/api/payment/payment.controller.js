@@ -356,7 +356,6 @@ exports.generateReport = function (req, res) {
         PaymentHelper.generateReport({
             periodStart: periodStart.format('YYYY-MM-DD'),
             periodEnd: periodEnd.format('YYYY-MM-DD'),
-            recipient: recipient,
         }, function(err, data) {
             if (err) {
                 ewbError.create({ message: 'Failed to generate report', origin: __filename, params: err });
@@ -367,7 +366,7 @@ exports.generateReport = function (req, res) {
 
             var mail = {
                 from: ewbMail.sender(),
-                to: process.env.NODE_ENV === 'production' ? recipient.email : process.env.DEV_MAIL,
+                to: process.env.NODE_ENV === 'production' ? recipient : process.env.DEV_MAIL,
                 subject: 'EWB Report: ' + periodStart.format('YYYY-MM-DD') + ' - ' + periodEnd.format('YYYY-MM-DD'),
                 text: text,
             };
