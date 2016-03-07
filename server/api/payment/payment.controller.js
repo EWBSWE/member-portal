@@ -357,13 +357,28 @@ exports.generateReport = function (req, res) {
             periodStart: periodStart.format('YYYY-MM-DD'),
             periodEnd: periodEnd.format('YYYY-MM-DD'),
             recipient: recipient,
-        }, function(err, result) {
+        }, function(err, data) {
             if (err) {
                 ewbError.create({ message: 'Failed to generate report', origin: __filename, params: err });
                 return handleError(res, err);
             }
 
-            return res.status(200).json(result);
+            var text = PaymentHelper.formatReport(data);
+
+            var mail = {
+                from: ewbMail.sender(),
+                to: process.env.NODE_ENV === 'production' ? recipient.email : process.env.DEV_MAIL,
+                subject: 'EWB Report: ' + periodStart.format('YYYY-MM-DD') + ' - ' + periodEnd.format('YYYY-MM-DD'),
+                text: text,
+            };
+
+            OutgoingMessage.create(mail, function(err, outgoingMessage) {
+                if (err) {
+                    ewbError.create({ message: 'Failed to create report mail', origin: __filename, params: err });
+                }
+            });
+
+            return res.status(200).json(data);
         });
     }
 };

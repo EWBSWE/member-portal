@@ -5,7 +5,7 @@ angular.module('ewbMemberApp')
     $scope.payments = [];
     $scope.report = {
         periodStart: moment().subtract(1, 'month').format('YYYY-MM-DD'),
-        periodEnd: moment().subtract(1, 'day').format('YYYY-MM-DD'),
+        periodEnd: moment().add(1, 'day').format('YYYY-MM-DD'),
         recipient: null,
     };
 
@@ -21,7 +21,7 @@ angular.module('ewbMemberApp')
         }
 
         $http.post('/api/payments/generate-report', {
-            periodStart: $scope.report.periodEnd.trim(),
+            periodStart: $scope.report.periodStart.trim(),
             periodEnd: $scope.report.periodEnd.trim(),
             recipient: $scope.report.recipient.trim(),
         }).success(function(response) {
