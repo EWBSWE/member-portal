@@ -3,6 +3,8 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+var ProductType = require('./product-type.model');
+
 var ProductSchema = new Schema({
     name: { type: String, required: true },
     price: { type: Number, min: 0, required: true },

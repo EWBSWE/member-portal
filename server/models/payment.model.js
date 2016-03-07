@@ -3,6 +3,9 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+var Buyer = require('./buyer.model');
+var Product = require('./product.model');
+
 var PaymentSchema = new Schema({
     buyer: { type: mongoose.Schema.Types.ObjectId, ref: 'Buyer', required: true },
     products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
