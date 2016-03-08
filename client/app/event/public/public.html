@@ -8,11 +8,16 @@
         <div class="col-xs-12 col-md-6">
             <p style="white-space: pre-wrap;">{{ev.description}}</p>
 
+            <p>Sista anmälningsdag: <strong>{{ev.dueDate | amDateFormat: 'YYYY-MM-DD'}}</strong></p>
+
+            <p>Kontakt: {{ev.contact}}</p>
+
             <a href="http://www.ingenjorerutangranser.se">
                 <img class="logo" src="/assets/images/ewb-logo.png" alt="Logo" />
             </a>
         </div>
         <div class="col-xs-12 col-md-6">
+            <p class="bg-warning" ng-show="ev.isPast" style="padding: 20px; border-radius: 5px;">Sista anmälningsdag för det här evenemanget har passerat.</p>
             <form novalidate name="form" class="payment-form">
                 <p>
                     Delta i <strong>{{ev.addons[0].product.name}}</strong> för en kostnad på <strong>{{ev.addons[0].product.price}} kr</strong></span>.
