@@ -1,14 +1,12 @@
 <div class="container event">
     <div class="row">
-        <div class="col-xs-12 col-md-6">
+        <div class="col-xs-12">
             <h1>{{ ev.name }}</h1>
         </div>
     </div>
     <div class="row">
         <div class="col-xs-12 col-md-6">
-            <p>Antal platser: {{ ev.maxParticipants }}</p>
-            <p>Platser kvar: {{ ev.remaining }}</p>
-            <p>{{ ev.description }}</p>
+            <p>{{ev.description}}</p>
 
             <a href="http://www.ingenjorerutangranser.se">
                 <img class="logo" src="/assets/images/ewb-logo.png" alt="Logo" />
@@ -16,26 +14,40 @@
         </div>
         <div class="col-xs-12 col-md-6">
             <form novalidate name="form" class="payment-form">
-                <div ng-show="ev.addons.length" ng-repeat="addon in ev.addons">
+                <p>
+                    Delta i <strong>{{ev.addons[0].product.name}}</strong> för en kostnad på <strong>{{ev.addons[0].product.price}} kr</strong></span>.
+                </p>
+
+                <div ng-show="ev.addons.length" ng-repeat="addon in ev.addons" ng-if="$index > 0">
+                    <p><strong>Välj till</strong></p>
                     <label class="radio-inline control-label">
-                        <input type="checkbox" name="type" ng-value="addon._id" ng-model="participant.addons[addon._id]"/>
-                        <span>{{addon.product.name}} +{{addon.product.price}}kr {{addon.capacity}}</span>
-                        <p class="help-block">{{addon.product.description}}</p>
+                        <input type="checkbox" name="type" ng-value="addon._id" ng-model="participant.addons[addon._id]" ng-disabled="addon.capacity <= 0"/>
+                        <span>{{addon.product.name}} för <strong>{{addon.product.price}} kr</strong></span>. <span ng-show="addon.capacity <= 0">Fullbokad!</span>
+                        <p class="help-block" ng-show="addon.product.description">{{addon.product.description}}</p>
                     </label>
                 </div>
+
+                <div ng-show="ev.addons[0].capacity <= 0">
+                    <p>
+                        Vi kan inte ta emot fler anmälningar då antalet platser är begränsat. Tack för visat intresse!
+                    </p>
+                </div>
+
+                <hr />
+
                 <div ng-class="{'form-group': true, 'has-error': form.inputEmail.$error.email, 'has-success': form.inputEmail.$valid}">
                     <label class="control-label" for="inputEmail" translate>Email</label>
-                    <input class="form-control" type="email" name="inputEmail" id="inputEmail" ng-model="participant.email" ng-disabled="ev.remaining === 0" required/>
+                    <input class="form-control" type="email" name="inputEmail" id="inputEmail" ng-model="participant.email" ng-disabled="ev.addons[0].capacity <= 0" required/>
                     <p class="help-block" ng-show="form.inputEmail.$error.email" translate>
                     Please enter a valid email address.
                     </p>
                 </div>
 
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary btn-lg" ng-click="initiatePayment()" ng-disabled="ev.remaining === 0" translate>Submit</button>
+                    <button type="submit" class="btn btn-primary btn-lg" ng-click="initiatePayment()" ng-disabled="ev.addons[0].capacity <= 0" translate>Submit</button>
                 </div>
                 <p class="help-block" translate>
-                When you click <strong>Sign up</strong> your transaction is managed securely by <a href="https://stripe.com/se" target="_blank">Stripe</a>. When the transaction is completed we send you a confirmation to the email address specified above.
+                When you click <strong>Submit</strong> your transaction is managed securely by <a href="https://stripe.com/se" target="_blank">Stripe</a>. When the transaction is completed we send you a confirmation to the email address specified above.
                 </p>
             </form>
         </div>

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ewbMemberApp')
-.controller('EventPublicCtrl', function ($scope, $http, $routeParams, gettextCatalog) {
+.controller('EventPublicCtrl', function ($scope, $http, $routeParams, gettextCatalog, $location) {
     $scope.ev = {};
     $scope.participant = {};
     gettextCatalog.setCurrentLanguage('sv');
@@ -43,8 +43,7 @@ angular.module('ewbMemberApp')
         }).success(function(ev) {
             $scope.ev = ev;
         }).error(function() {
-            console.log('NO SUCH EVENT');
-            // TODO redirect to missing event
+            $location.path('/');
         });
     };
 
@@ -55,6 +54,11 @@ angular.module('ewbMemberApp')
             return;
         }
 
+        // Make sure the default addon is selected
+        if (!$scope.participant.addons) {
+            $scope.participant.addons = {};
+        }
+        $scope.participant.addons[$scope.ev.addons[0]._id] = true;
         var addonIds = Object.keys($scope.participant.addons);
 
         var selectedAddons = _.filter($scope.ev.addons, function(addon) {

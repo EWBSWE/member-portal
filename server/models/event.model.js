@@ -4,9 +4,6 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var moment = require('moment');
 
-
-// TODO add missing attributes
-
 var EventSchema = new Schema({
     name: { type: String, required: true, trim: true },
     identifier: { type: String, lowercase: true, unique: true },
