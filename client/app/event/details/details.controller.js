@@ -7,6 +7,7 @@ angular.module('ewbMemberApp')
     $http.get('/api/events/' + $routeParams.id).success(function(ev) {
         $scope.ev = ev;
         $scope.separatedParticipants = _.map(ev.participants, 'email').join(',');
+        $scope.subscribers = ev.subscribers.join(',');
     });
 
     var separateWith = function(sep) {
