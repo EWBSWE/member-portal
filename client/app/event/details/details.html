@@ -1,24 +1,55 @@
 <div ng-include="'components/navbar/navbar.html'"></div>
 
 <header class="hero-unit" id="banner">
-  <div class="container">
-    <h1>Event details</h1>
-  </div>
+    <div class="container">
+        <h1>{{ev.name}}</h1>
+    </div>
 </header>
 
 <div class="container">
-  <div class="row">
-    <div class="col-xs-12 col-sm-6">
-      <p>{{ev.name}}</p>
-      <p>{{ev.identifier}}</p>
-      <p>{{ev.description}}</p>
-      <p>{{ev.price}}</p>
-      <p>{{ev.active}}</p>
-      <p>{{ev.createdAt | amDateFormat: 'YYYY-MM-DD HH:mm:ss'}}</p>
-      <p>{{ev.participants}}</p>
-      <p>{{ev.maxParticipants}}</p>
-      <p>{{ev.dueDate}}</p>
-      <p>{{ev.contact}}</p>
+    <div class="row">
+        <div class="col-xs-12 col-sm-6">
+            <p><strong>{{ev.name}}</strong> <a href="/e/{{ev.identifier}}">/e/{{ev.identifier}}</a></p>
+            <p>{{ev.description}}</p>
+        </div>
+        <div class="col-xs-12 col-sm-6">
+            <p>Skapat: {{ev.createdAt | amDateFormat: 'YYYY-MM-DD HH:mm:ss'}}</p>
+            <p>Aktivt: {{ev.active ? 'Ja' : 'Nej' }}</p>
+            <p>Sista anmälningsdag: {{ev.dueDate | amDateFormat: 'YYYY-MM-DD'}}</p>
+            <p>Kontaktperson: {{ev.contact}}</p>
+        </div>
     </div>
-  </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <label>Alternativ</label>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <td></td>
+                        <td>Namn</td>
+                        <td>Pris</td>
+                        <td>Platser kvar</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="addon in ev.addons">
+                        <td><span ng-show="$first">Default</span></td>
+                        <td>{{addon.product.name}}</td>
+                        <td>{{addon.product.price}} kr</td>
+                        <td>{{addon.capacity}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="form-group">
+                <label>Deltagare ({{ev.participants.length}} st)</label>
+                <p>Separera med <a href="#" ng-click="commaSep()">komma</a> eller <a href="#" ng-click="lineSep()">ny rad</a></p>
+                <textarea class="form-control" rows="5">{{separatedParticipants}}</textarea>
+            </div>
+        </div>
+    </div>
 </div>

@@ -48,12 +48,14 @@ exports.showPublic = function(req, res) {
 }
 
 exports.show = function (req, res) {
-    Event.findById(req.params.id).populate({
+    Event.findById(req.params.id).populate([{
         path: 'addons',
         populate: {
             path: 'product',
         },
-    }).lean().exec(function(err, ewbEvent) {
+    }, {
+        path: 'participants',
+    }]).lean().exec(function(err, ewbEvent) {
         if (err) {
             return handleError(res, err);
         }
