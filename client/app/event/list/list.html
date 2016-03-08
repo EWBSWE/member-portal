@@ -9,7 +9,7 @@
 <div class="container">
     <div class="row member-actions">
         <div class="col-xs-12">
-            <a href="/event/new" class="btn btn-default">Lägg till/redigera event</a>
+            <a href="/event/new" class="btn btn-default">Skapa event</a>
         </div>
     </div>
     <div class="row">
@@ -20,37 +20,30 @@
                     <tr>
                         <td>
                             <a href="#" ng-click="sortType = 'name'; sortReverse = !sortReverse">
-                                Name
+                                Namn
                                 <span ng-show="sortType == 'name' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
                                 <span ng-show="sortType == 'name' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
                             </a>
                         </td>
                         <td>
                             <a href="#" ng-click="sortType = 'description'; sortReverse = !sortReverse">
-                                Beskrivning
+                                Länk
                                 <span ng-show="sortType == 'description' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
                                 <span ng-show="sortType == 'description' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
                             </a>
                         </td>
                         <td>
-                            <a href="#" ng-click="sortType = 'price'; sortReverse = !sortReverse">
-                                Pris
-                                <span ng-show="sortType == 'price' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
-                                <span ng-show="sortType == 'price' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
-                            </a>
-                        </td>
-                        <td>
-                            <a href="#" ng-click="sortType = 'active'; sortReverse = !sortReverse">
-                                Aktivt
-                                <span ng-show="sortType == 'active' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
-                                <span ng-show="sortType == 'active' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
-                            </a>
-                        </td>
-                        <td>
                             <a href="#" ng-click="sortType = 'createdAt'; sortReverse = !sortReverse">
-                                Skapad den
+                                Skapad
                                 <span ng-show="sortType == 'createdAt' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
                                 <span ng-show="sortType == 'createdAt' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="#" ng-click="sortType = 'dueDate'; sortReverse = !sortReverse">
+                                Sista anmälning
+                                <span ng-show="sortType == 'dueDate' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
+                                <span ng-show="sortType == 'dueDate' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
                             </a>
                         </td>
                         <td>
@@ -60,19 +53,27 @@
                                 <span ng-show="sortType == 'participants' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
                             </a>
                         </td>
+                        <td>
+                            <a href="#" ng-click="sortType = 'active'; sortReverse = !sortReverse">
+                                Aktiv
+                                <span ng-show="sortType == 'active' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
+                                <span ng-show="sortType == 'active' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
+                            </a>
+                        </td>
                         <td></td>
                     </tr>
                 </thead>
                 <tbody>
                     <tr dir-paginate="event in events | orderBy:sortType:sortReverse | filter:filterByEmail | filter:filterByLocation | itemsPerPage: 50">
                         <td><a href="/event/{{event._id}}">{{event.name}}</a></td>
-                        <td>{{event.description}}</td>
-                        <td>{{event.price}}</td>
-                        <td>{{event.active}}</td>
+                        <td><a href="/e/{{event.identifier}}">/e/{{event.identifier}}</td>
                         <td>{{event.createdAt | amDateFormat: 'YYYY-MM-DD'}}</td>
+                        <td>{{event.dueDate | amDateFormat: 'YYYY-MM-DD'}}</td>
                         <td>{{event.participants.length}}</td>
+                        <td ng-class="{ 'bg-success': event.active, 'bg-warning': !event.active }"></td>
                         <td>
                             <a href="/event/{{event._id}}/edit" class="btn btn-default btn-xs">Redigera</a>
+                            <a href="#" ng-click="deleteEvent(event._id)" class="btn btn-danger btn-xs">Ta bort</a>
                         </td>
                     </tr>
                 </tbody>
