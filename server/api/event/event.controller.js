@@ -314,7 +314,6 @@ exports.update = function (req, res) {
                 return handleError(res, err);
             }
 
-            //return res.status(202).json(ewbEvent);
             return determineChangeInProducts(updatedEvent, addonData)
         });
     });

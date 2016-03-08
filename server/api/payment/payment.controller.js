@@ -279,8 +279,8 @@ exports.confirmEventPayment = function(req, res) {
         var receiptMail = {
             from: ewbMail.sender(),
             to: process.env.NODE_ENV === 'production' ? eventParticipant.email : process.env.DEV_MAIL,
-            subject: ewbEvent.emailSubject || 'DUMMY SUBJECT', 
-            text: ewbEvent.emailBody || 'DUMMY BODY',
+            subject: ewbEvent.confirmationEmail.subject,
+            text: ewbEvent.confirmationEmail.body,
         };
 
         OutgoingMessage.create(receiptMail, function(err, outgoingMessage) {
