@@ -16,6 +16,7 @@ angular.module('ewbMemberApp')
             });
             
             $scope.ev = ev;
+            $scope.ev.dueDate = moment($scope.ev.dueDate).format('YYYY-MM-DD');
         });
     }
 

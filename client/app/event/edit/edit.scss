@@ -8,8 +8,17 @@
 }
 
 .addons.form-inline {
-    .form-group { width: 100%; }
+    .form-group { width: 100%; margin-bottom: 10px; }
     .form-group label { text-align: right; width: 20%; margin-right: 5px; }
     .form-group input { width: 70%; }
     .form-group .help-block { margin-left: 22%; }
+}
+
+.ev-form .addons,
+.ev-form .actions,
+.ev-form .attributes,
+.ev-form .confirmation-email {
+    background-color: #eee;
+    padding: 20px;
+    margin-top: 20px;
 }
