@@ -10,7 +10,7 @@
     <div class="row">
         <div class="col-xs-12 col-sm-6">
             <p><strong>{{ev.name}}</strong> <a href="/e/{{ev.identifier}}">/e/{{ev.identifier}}</a></p>
-            <p>{{ev.description}}</p>
+            <p style="white-space: pre-wrap;">{{ev.description}}</p>
         </div>
         <div class="col-xs-12 col-sm-6">
             <p>Skapat: {{ev.createdAt | amDateFormat: 'YYYY-MM-DD HH:mm:ss'}}</p>

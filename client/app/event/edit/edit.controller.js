@@ -5,6 +5,8 @@ angular.module('ewbMemberApp')
     $scope.ev = { addons: [{}] };
 
     $scope.showError = false;
+    $scope.eventErrors = {};
+
     $scope.showSuccess = false;
     $scope.editEvent = $routeParams.id;
 
@@ -32,8 +34,11 @@ angular.module('ewbMemberApp')
             confirmationEmail: $scope.ev.confirmationEmail,
         }).success(function(data, status) {
             $scope.showSuccess = true;
+            $scope.showError = false;
         }).error(function(data, status) {
             $scope.showError = true;
+            $scope.showSuccess = false;
+            $scope.eventErrors = data;
         });
     };
 
@@ -50,8 +55,11 @@ angular.module('ewbMemberApp')
             confirmationEmail: $scope.ev.confirmationEmail,
         }).success(function(data, status) {
             $scope.showSuccess = true;
+            $scope.showError = false;
         }).error(function(data, status) {
             $scope.showError = true;
+            $scope.showSuccess = false;
+            $scope.eventErrors = data;
         });
     };
 

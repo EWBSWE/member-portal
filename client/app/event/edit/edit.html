@@ -12,6 +12,10 @@
             <div class="bg-success" ng-show="showSuccess" style="padding: 20px; margin-top: 20px;">
                 <div ng-message="eventCreated">Event sparat</div>
             </div>
+
+            <div class="bg-danger" ng-show="showError" style="padding: 20px; margin-top: 20px;">
+                <div ng-show="eventErrors.identifier">Identifieraren används för ett annat event.</div>
+            </div>
         </div>
     </div>
     <div class="row">

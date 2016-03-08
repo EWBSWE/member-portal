@@ -97,6 +97,7 @@ exports.create = function (req, res) {
             return {
                 name: addon.name,
                 price: addon.price,
+                description: addon.description,
                 type: productType._id,
             };
         });
@@ -132,12 +133,23 @@ exports.create = function (req, res) {
         });
     };
 
-    ProductType.findOne({ identifier: 'Event' }, function(err, productType) {
+    Event.findOne({ identifier: eventData.identifier }, function(err, maybeEvent) {
         if (err) {
             return handleError(res, err);
         }
 
-        return createEvent(eventData, productType, req.body.addons);
+        // If we found an event, then we need to use a different identifier
+        if (maybeEvent) {
+            return res.status(400).json({ identifier: true });
+        }
+
+        ProductType.findOne({ identifier: 'Event' }, function(err, productType) {
+            if (err) {
+                return handleError(res, err);
+            }
+
+            return createEvent(eventData, productType, req.body.addons);
+        });
     });
 };
 
@@ -161,6 +173,7 @@ exports.update = function (req, res) {
             _id: addon._id,
             capacity: addon.capacity,
             name: addon.name,
+            description: addon.description,
             price: addon.price,
         };
     });
@@ -288,67 +301,47 @@ exports.update = function (req, res) {
         recursiveSaveAddons(0);
     };
 
-    Event.findOne({
-        _id: eventData._id
-    }).populate({
-        path: 'addons',
-        populate: {
-            path: 'product',
-        },
-    }).exec(function(err, ewbEvent) {
+    Event.findOne({ identifier: eventData.identifier }, function(err, maybeEvent) {
         if (err) {
             return handleError(res, err);
         }
 
-        if (!ewbEvent) {
-            return res.sendStatus(404);
+        // If we find an event with the new identifier but the IDs of the
+        // events don't match then that means that we already have an event
+        // using that identifier
+        if (maybeEvent && !maybeEvent._id.equals(new mongoose.Types.ObjectId(eventData._id))) {
+            return res.status(400).json({ identifier: true });
         }
 
-        ewbEvent.name = eventData.name;
-        ewbEvent.identifier = eventData.identifier;
-        ewbEvent.description = eventData.description;
-        ewbEvent.active = req.body.active == 1;
-        ewbEvent.contact = req.body.contact;
-        ewbEvent.dueDate = req.body.dueDate;
-
-        ewbEvent.save(function(err, updatedEvent) {
+        Event.findOne({
+            _id: eventData._id
+        }).populate({
+            path: 'addons',
+            populate: {
+                path: 'product',
+            },
+        }).exec(function(err, ewbEvent) {
             if (err) {
                 return handleError(res, err);
             }
 
-            return determineChangeInProducts(updatedEvent, addonData)
-        });
-    });
-};
-
-exports.updateAddon = function(req, res) {
-    function updateProduct(addon, data) {
-        Product.update({
-            _id: addon.product,
-        }, data, function(err, result) {
-            if (err) {
-                return handleError(res, err);
+            if (!ewbEvent) {
+                return res.sendStatus(404);
             }
 
-            return res.status(202).json(result);
-        });
-    };
+            ewbEvent.name = eventData.name;
+            ewbEvent.identifier = eventData.identifier;
+            ewbEvent.description = eventData.description;
+            ewbEvent.active = req.body.active == 1;
+            ewbEvent.contact = req.body.contact;
+            ewbEvent.dueDate = req.body.dueDate;
 
-    EventAddon.findOne({ _id: req.params.addonId }, function(err, addon) {
-        if (err) {
-            return handleError(res, err);
-        }
+            ewbEvent.save(function(err, updatedEvent) {
+                if (err) {
+                    return handleError(res, err);
+                }
 
-        if (!addon) {
-            return res.sendStatus(404);
-        }
-
-        addon.capacity = req.body.capacity;
-
-        addon.save(function(err, updatedAddon) {
-            updateProduct(updatedAddon, {
-                name: req.body.name,
-                price: req.body.price,
+                return determineChangeInProducts(updatedEvent, addonData)
             });
         });
     });
