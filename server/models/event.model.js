@@ -12,12 +12,14 @@ var EventSchema = new Schema({
     createdAt: { type: Date, required: true, default: Date.now },
     participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'EventParticipant' }],
     dueDate: { type: Date, required: true },
-    contact: { type: String, required: true},
+    contact: { type: String, required: true },
     addons: [{ type: mongoose.Schema.Types.ObjectId, ref: 'EventAddon' }],
     confirmationEmail: {
         subject: { type: String, required: true },
         body: { type: String, required: true },
     },
+    notificationOpen: { type: Boolean, required: true, default: true },
+    subscribers: [{ type: String, trim: true, lowercase: true }],
 });
 
 EventSchema.index({ identifier: 1 });

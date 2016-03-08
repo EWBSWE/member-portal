@@ -78,12 +78,30 @@
                     </div>
                 </div>
 
+                <div class="confirmation-email">
+                    <div ng-class="{'form-group': true, 'has-error': eventform.inputSubscribers.$error.subscribers, 'has-success': eventform.inputSubscribers.$valid}">
+                        <label for="inputSubscribers">Värdar</label>
+                        <textarea rows="5" name="inputSubscribers" id="inputSubscribers" class="form-control" ng-list ng-model="ev.subscribers"></textarea>
+                        <p class="help-block">
+                        En kommaseparerad lista av epostadresser på folk som vill ha regelbundna uppdateringar rörande eventet i fråga. För att underlätta planeringen och dylikt.
+                        </p>
+                    </div>
+                </div>
+
                 <div class="actions">
                     <div class="checkbox">
                         <label>
-                            <input type="checkbox" value="1" ng-model="ev.active"> Aktivt
+                            <input type="checkbox" value="1" ng-model="ev.active"> Publicera
                             <p class="help-block">
-                            Om ett event är aktivt kan användare utifrån besöka och anmäla sig till eventet. Det går inte om eventet skulle vara inaktivt. Många gånger vill man antagligen inaktivera ett event efter det att eventet faktiskt har ägt rum för att utvärdera osv.
+                            Om ett event är publicerat kan användare utifrån besöka och anmäla sig till eventet.
+                            </p>
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" value="1" ng-model="ev.notificationOpen"> Anmälan öppen
+                            <p class="help-block">
+                            Tillåt att anmälningar görs eller inte.
                             </p>
                         </label>
                     </div>

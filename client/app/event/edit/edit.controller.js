@@ -15,6 +15,7 @@ angular.module('ewbMemberApp')
             _.each(ev.addons, function(a) {
                 a.name = a.product.name;
                 a.price = a.product.price;
+                a.description = a.product.description;
             });
             
             $scope.ev = ev;
@@ -32,6 +33,8 @@ angular.module('ewbMemberApp')
             contact: $scope.ev.contact,
             addons: $scope.ev.addons,
             confirmationEmail: $scope.ev.confirmationEmail,
+            notificationOpen: $scope.ev.notificationOpen,
+            subscribers: $scope.ev.subscribers,
         }).success(function(data, status) {
             $scope.showSuccess = true;
             $scope.showError = false;
@@ -53,6 +56,8 @@ angular.module('ewbMemberApp')
             contact: $scope.ev.contact,
             addons: $scope.ev.addons,
             confirmationEmail: $scope.ev.confirmationEmail,
+            notificationOpen: $scope.ev.notificationOpen,
+            subscribers: $scope.ev.subscribers,
         }).success(function(data, status) {
             $scope.showSuccess = true;
             $scope.showError = false;

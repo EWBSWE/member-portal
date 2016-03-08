@@ -80,6 +80,8 @@ exports.create = function (req, res) {
             subject: req.body.confirmationEmail.subject,
             body: req.body.confirmationEmail.body,
         },
+        notificationOpen: req.body.notificationOpen == 1,
+        subscribers: req.body.subscribers,
     };
 
     function createEvent(eventData, productType, addonData) {
@@ -166,6 +168,8 @@ exports.update = function (req, res) {
             subject: req.body.confirmationEmail.subject,
             body: req.body.confirmationEmail.body,
         },
+        notificationOpen: req.body.notificationOpen == 1,
+        subscribers: req.body.subscribers,
     };
 
     var addonData = _.map(req.body.addons, function(addon) {
@@ -246,6 +250,7 @@ exports.update = function (req, res) {
                 }, {
                     name: productData.name,
                     price: productData.price,
+                    description: productData.description,
                 }, function(err, result) {
                     if (err) {
                         return handleError(res, err);
@@ -332,9 +337,11 @@ exports.update = function (req, res) {
             ewbEvent.name = eventData.name;
             ewbEvent.identifier = eventData.identifier;
             ewbEvent.description = eventData.description;
-            ewbEvent.active = req.body.active == 1;
-            ewbEvent.contact = req.body.contact;
-            ewbEvent.dueDate = req.body.dueDate;
+            ewbEvent.active = eventData.active;
+            ewbEvent.contact = eventData.contact;
+            ewbEvent.dueDate = eventData.dueDate;
+            ewbEvent.notificationOpen = eventData.notificationOpen;
+            ewbEvent.subscribers = eventData.subscribers;
 
             ewbEvent.save(function(err, updatedEvent) {
                 if (err) {

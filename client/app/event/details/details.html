@@ -14,7 +14,8 @@
         </div>
         <div class="col-xs-12 col-sm-6">
             <p>Skapat: {{ev.createdAt | amDateFormat: 'YYYY-MM-DD HH:mm:ss'}}</p>
-            <p>Aktivt: {{ev.active ? 'Ja' : 'Nej' }}</p>
+            <p>Publicerat: {{ev.active ? 'Ja' : 'Nej' }}</p>
+            <p>Anmälan öppen: {{ev.notificationOpen ? 'Ja' : 'Nej'}}</p>
             <p>Sista anmälningsdag: {{ev.dueDate | amDateFormat: 'YYYY-MM-DD'}}</p>
             <p>Kontaktperson: {{ev.contact}}</p>
         </div>
@@ -43,6 +44,17 @@
             </table>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="form-group">
+                <label>Värdar som prenumererar på uppdateringar ({{ev.subscribers.length}} st)</label>
+                <p>Separera med <a href="#" ng-click="asd = ev.subscribers.join(',')">komma</a> eller <a href="#" ng-click="asd = ev.subscribers.join('\n')">ny rad</a></p>
+                <textarea class="form-control" rows="5">{{asd}}</textarea>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-xs-12">
             <div class="form-group">
