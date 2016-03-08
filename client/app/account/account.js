@@ -7,7 +7,7 @@ angular.module('ewbMemberApp')
         templateUrl: 'app/account/login/login.html',
         controller: 'LoginCtrl'
       })
-      .when('/settings', {
+      .when('/account', {
         templateUrl: 'app/account/settings/settings.html',
         controller: 'SettingsCtrl',
         authenticate: true
