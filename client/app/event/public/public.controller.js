@@ -27,7 +27,7 @@ angular.module('ewbMemberApp')
             addonIds: Object.keys($scope.participant.addons),
         }).success(function(data) {
             fetchEvent();
-            $scope.successEmail = data.email;
+            $scope.successEmail = $scope.participant.email;
             $('.js-confirmation').modal('show');
             $scope.participant = {};
             $scope.form.$setPristine();
@@ -43,7 +43,6 @@ angular.module('ewbMemberApp')
         }).success(function(ev) {
             $scope.ev = ev;
             $scope.ev.isPast = moment(ev.dueDate).endOf('day') < moment();
-            console.log($scope.ev);
         }).error(function() {
             $location.path('/');
         });

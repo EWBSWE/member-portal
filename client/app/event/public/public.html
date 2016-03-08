@@ -64,11 +64,11 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="confirmation-label" translate>Thank you for the support!</h4>
+                <h4 class="modal-title" id="confirmation-label" translate>Thank you for participating!</h4>
             </div>
             <div class="modal-body">
-                <p translate>A confirmation of your payment and your membership is sent to <strong>{{successEmail}}</strong>.</p>
-                <p translate>Do you any questions regarding your membership or anything payment related? Reach out to us at <a href="mailto:volontar@ingenjorerutangranser.se">volontar@ingenjorerutangranser.se</a>.</p>
+                <p translate>A confirmation of your participation is sent to <strong>{{successEmail}}</strong>.</p>
+                <p translate>Do you any questions regarding the event or anything payment related? Reach out to us at <a href="mailto:{{ev.contact}}">{{ev.contact}}</a> for questions regarding this event and <a href="mailto:ict@ingenjorerutangranser.se">ict@ingenjorerutangranser.se</a> for payment or technical questions.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal" translate>Close</button>
@@ -85,7 +85,7 @@
             </div>
             <div class="modal-body">
                 <p>{{errorMessage}}</p>
-                <p translate>Do you any questions regarding your membership or anything payment related? Reach out to us at <a href="mailto:volontar@ingenjorerutangranser.se">volontar@ingenjorerutangranser.se</a>.</p>
+                <p translate>Do you any questions regarding the event or anything payment related? Reach out to us at <a href="mailto:{{ev.contact}}">{{ev.contact}}</a> for questions regarding this event and <a href="mailto:ict@ingenjorerutangranser.se">ict@ingenjorerutangranser.se</a> for payment or technical questions.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal" translate>Close</button>
