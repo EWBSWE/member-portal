@@ -56,6 +56,22 @@
                     </p>
                 </div>
 
+                <div ng-class="{'form-group': true, 'has-error': eventform.inputConfirmationEmailSubject.$error.confirmationEmail.subject, 'has-success': eventform.inputConfirmationEmailSubject.$valid}">
+                    <label for="inputConfirmationEmailSubject">Bekraftelse amnesrad</label>
+                    <input type="text" name="inputConfirmationEmailSubject" id="inputConfirmationEmailSubject" class="form-control" ng-model="ev.confirmationEmail.subject" required/>
+                    <p class="help-block">
+                    epost titel
+                    </p>
+                </div>
+
+                <div ng-class="{'form-group': true, 'has-error': eventform.inputConfirmationEmailBody.$error.confirmationEmail.body, 'has-success': eventform.inputConfirmationEmailBody.$valid}">
+                    <label for="inputConfirmationEmailBody">Bekraftelse epost</label>
+                    <textarea rows="5" name="inputConfirmationEmailBody" id="inputConfirmationEmailBody" class="form-control" ng-model="ev.confirmationEmail.body" required></textarea>
+                    <p class="help-block">
+                    epost body
+                    </p>
+                </div>
+
                 <div class="checkbox">
                     <label>
                         <input type="checkbox" value="1" ng-model="ev.active"> Aktivt

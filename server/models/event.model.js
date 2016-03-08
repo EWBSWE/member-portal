@@ -17,6 +17,10 @@ var EventSchema = new Schema({
     dueDate: { type: Date, required: true },
     contact: { type: String, required: true},
     addons: [{ type: mongoose.Schema.Types.ObjectId, ref: 'EventAddon' }],
+    confirmationEmail: {
+        subject: { type: String, required: true },
+        body: { type: String, required: true },
+    },
 });
 
 EventSchema.index({ identifier: 1 });

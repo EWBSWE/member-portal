@@ -269,6 +269,10 @@ function createEvents(callback) {
                         active: true,
                         dueDate: moment().add(1, 'month'),
                         contact: 'owner@example.com',
+                        confirmationEmail: {
+                            subject: 'EVENT 1 HEYOOOO~~~',
+                            body: 'THIS IS BODY',
+                        },
                     }, function(err, ev) {
                         Product.create([{
                             name: 'Årsmöte',
@@ -303,6 +307,10 @@ function createEvents(callback) {
                         active: true,
                         dueDate: moment().subtract(1, 'days'),
                         contact: 'owner@example.com',
+                        confirmationEmail: {
+                            subject: 'EVENT 2 HEYOOOO~~~',
+                            body: 'THIS IS BODY',
+                        },
                     }, function(err, ev) {
                         Product.create({
                             name: 'Foo',

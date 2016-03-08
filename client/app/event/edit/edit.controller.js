@@ -28,6 +28,7 @@ angular.module('ewbMemberApp')
             dueDate: $scope.ev.dueDate,
             contact: $scope.ev.contact,
             addons: $scope.ev.addons,
+            confirmationEmail: $scope.ev.confirmationEmail,
         }).success(function(data, status) {
             $scope.showSuccess = true;
         }).error(function(data, status) {
@@ -45,6 +46,7 @@ angular.module('ewbMemberApp')
             dueDate: $scope.ev.dueDate,
             contact: $scope.ev.contact,
             addons: $scope.ev.addons,
+            confirmationEmail: $scope.ev.confirmationEmail,
         }).success(function(data, status) {
             $scope.showSuccess = true;
         }).error(function(data, status) {
@@ -53,7 +55,6 @@ angular.module('ewbMemberApp')
     };
 
     $scope.updateAddon = function(addon) {
-        console.log(addon);
         $http.put('/api/events/' + $scope.ev._id + '/addon/' + addon._id, {
             name: addon.name,
             price: addon.price,

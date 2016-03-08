@@ -74,6 +74,10 @@ exports.create = function (req, res) {
         active: req.body.active == 1,
         contact: req.body.contact,
         dueDate: req.body.dueDate,
+        confirmationEmail: {
+            subject: req.body.confirmationEmail.subject,
+            body: req.body.confirmationEmail.body,
+        },
     };
 
     function createEvent(eventData, productType, addonData) {
@@ -87,7 +91,7 @@ exports.create = function (req, res) {
     };
 
     function createProducts(ewbEvent, productType, addonData) {
-        var products = _.map(addons, function(addon) {
+        var products = _.map(addonData, function(addon) {
             return {
                 name: addon.name,
                 price: addon.price,
@@ -100,7 +104,7 @@ exports.create = function (req, res) {
                 return handleError(res, err);
             }
 
-            return createAddons(ewbEvent, addons, newProducts);
+            return createAddons(ewbEvent, addonData, newProducts);
         });
     };
 
@@ -144,6 +148,10 @@ exports.update = function (req, res) {
         active: req.body.active == 1,
         contact: req.body.contact,
         dueDate: req.body.dueDate,
+        confirmationEmail: {
+            subject: req.body.confirmationEmail.subject,
+            body: req.body.confirmationEmail.body,
+        },
     };
 
     var addonData = _.map(req.body.addons, function(addon) {
