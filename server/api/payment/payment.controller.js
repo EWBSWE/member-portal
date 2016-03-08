@@ -99,24 +99,14 @@ exports.confirmMembershipPayment = function(req, res) {
     };
 
     function fetchBuyer(product, member) {
-        Buyer.findOne({ type: 'Member', documentId: member._id }, function(err, buyer) {
+        PaymentHelper.fetchOrCreateBuyer('Member', member._id, function(err, buyer) {
             if (err) {
                 return handleError(res, err);
             }
 
-            if (buyer) {
-                return addPayment(product, member, buyer);
-            } else {
-                Buyer.create({ type: 'Member', documentId: member._id }, function(err, buyer) {
-                    if (err) {
-                        return handleError(res, err);
-                    }
-
-                    return addPayment(product, member, buyer);
-                });
-            }
+            return addPayment(product, member, buyer);
         });
-    }
+    };
 
     function addPayment(product, member, buyer) {
         Payment.create({
