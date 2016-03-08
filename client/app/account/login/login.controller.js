@@ -13,7 +13,6 @@ angular.module('ewbMemberApp')
             $location.path($location.search().redirect);
             $location.search('');
         } else {
-            console.log('no');
             $location.path(landingPage);
         }
     }
