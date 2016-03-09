@@ -125,7 +125,7 @@ function generateReport(params, callback) {
         var data = {};
 
         _.each(payments, function(payment) {
-            // Amount processed by Stripe. May include products and a donation sum.
+            // Amount left after processed by Stripe. May include products and a donation sum.
             var paymentTotal = computeTransaction(payment.amount);
 
             // The sum of product prices. This is equivalent to what the user
