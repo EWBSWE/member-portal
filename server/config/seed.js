@@ -221,7 +221,7 @@ function purchaseProducts(members, callback) {
         var bs = _.map(members, function(m) {
             return {
                 type: 'Member',
-                documentId: m._id,
+                document: m._id,
             };
         });
 
