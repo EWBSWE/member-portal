@@ -25,7 +25,9 @@ var PaymentHelper = require('../payment/payment.helper');
 var ewbMail = require('../../components/ewb-mail');
 
 exports.index = function(req, res) {
-    Payment.find().populate('buyer').lean().exec(function (err, payments) {
+    Payment.find().populate({
+        path: 'buyer',
+    }).lean().exec(function (err, payments) {
         if (err) {
             return handleError(res, err);
         }

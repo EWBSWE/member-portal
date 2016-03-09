@@ -47,7 +47,10 @@
                 <tbody>
                     <tr dir-paginate="payment in payments | itemsPerPage: 50">
                         <td>{{payment._id}}</td>
-                        <td><a href="/member/{{payment.member}}">{{payment.member}}</a></td>
+                        <td>
+                            <a href="/member/{{payment.buyer.document}}" ng-show="payment.buyer.type == 'Member'">{{payment.buyer.document}}</a>
+                            <span ng-show="payment.buyer.type == 'EventParticipant'">{{payment.buyer.document}}</span>
+                        </td>
                         <td>{{payment.amount}}</td>
                         <td>{{payment.currency}}</td>
                         <td>{{payment.createdAt | amDateFormat: 'YYYY-MM-DD HH:mm:ss'}}</td>
