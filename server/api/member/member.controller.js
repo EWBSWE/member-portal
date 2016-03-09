@@ -2,9 +2,11 @@
 
 var _ = require('lodash');
 var mongoose = require('mongoose');
+var moment = require('moment');
+
+var Buyer = require('../../models/buyer.model');
 var Member = require('../../models/member.model');
 var Payment = require('../../models/payment.model');
-var moment = require('moment');
 
 exports.index = function(req, res) {
   if (req.query && Object.keys(req.query).length) {
@@ -257,12 +259,22 @@ exports.bulkAdd = function(req, res) {
 };
 
 exports.getPayments = function(req, res) {
-  Payment.find({ member: new mongoose.Types.ObjectId(req.params.id) }, function(err, payments) {
-    if (err) {
-      return handleError(res, err);
-    }
-    return res.status(200).json(payments);
-  });
+    Buyer.findOne({ type: 'Member', document: req.params.id }, function(err, buyer) {
+        if (err) {
+            return handleError(res, err);
+        }
+
+        if (!buyer) {
+            return res.sendStatus(404);
+        }
+
+        Payment.find({ buyer: buyer._id }, function(err, payments) {
+            if (err) {
+                return handleError(res, err);
+            }
+            return res.status(200).json(payments);
+        });
+    });
 };
 
 function handleError(res, err) {
