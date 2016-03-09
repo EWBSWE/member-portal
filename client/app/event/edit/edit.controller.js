@@ -24,18 +24,7 @@ angular.module('ewbMemberApp')
     }
 
     var addEvent = function() {
-        $http.post('/api/events', {
-            identifier: $scope.ev.identifier,
-            name: $scope.ev.name,
-            description: $scope.ev.description,
-            active: $scope.ev.active,
-            dueDate: $scope.ev.dueDate,
-            contact: $scope.ev.contact,
-            addons: $scope.ev.addons,
-            confirmationEmail: $scope.ev.confirmationEmail,
-            notificationOpen: $scope.ev.notificationOpen,
-            subscribers: $scope.ev.subscribers,
-        }).success(function(data, status) {
+        $http.post('/api/events', data).success(function(data, status) {
             $scope.showSuccess = true;
             $scope.showError = false;
         }).error(function(data, status) {
@@ -45,20 +34,8 @@ angular.module('ewbMemberApp')
         });
     };
 
-    var updateEvent = function() {
-        console.log($scope.ev);
-        $http.put('/api/events/' + $scope.ev._id, {
-            identifier: $scope.ev.identifier,
-            name: $scope.ev.name,
-            description: $scope.ev.description,
-            active: $scope.ev.active,
-            dueDate: $scope.ev.dueDate,
-            contact: $scope.ev.contact,
-            addons: $scope.ev.addons,
-            confirmationEmail: $scope.ev.confirmationEmail,
-            notificationOpen: $scope.ev.notificationOpen,
-            subscribers: $scope.ev.subscribers,
-        }).success(function(data, status) {
+    var updateEvent = function(data) {
+        $http.put('/api/events/' + $scope.ev._id, data).success(function(data, status) {
             $scope.showSuccess = true;
             $scope.showError = false;
         }).error(function(data, status) {
@@ -85,10 +62,34 @@ angular.module('ewbMemberApp')
             return;
         }
 
+        var data = {
+            identifier: $scope.ev.identifier,
+            name: $scope.ev.name,
+            description: $scope.ev.description,
+            active: $scope.ev.active,
+            dueDate: $scope.ev.dueDate,
+            contact: $scope.ev.contact,
+            addons: $scope.ev.addons,
+            confirmationEmail: $scope.ev.confirmationEmail,
+            notificationOpen: $scope.ev.notificationOpen,
+            subscribers: $scope.ev.subscribers,
+        };
+
+        // Make sure addons has data
+        var addonsValid = true;
+        for (var i = 0; i < data.addons.length; i++) {
+            var addon = data.addons[i];
+            addonsValid = addon.name != undefined && addon.name.length > 0 && addon.price >= 0 && addon.capacity >= 0;
+        }
+
+        if (!addonsValid) {
+            return;
+        }
+
         if ($scope.editEvent) {
-            updateEvent();
+            updateEvent(data);
         } else {
-            addEvent();
+            addEvent(data);
         }
     };
 

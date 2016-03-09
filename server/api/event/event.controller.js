@@ -93,6 +93,11 @@ exports.create = function (req, res) {
         subscribers: req.body.subscribers,
     };
 
+    // Validate addons
+    if (req.body.addons.length === 0) {
+        return res.status(400).json({ addons: true });
+    }
+
     function createEvent(eventData, productType, addonData) {
         Event.create(eventData, function(err, ewbEvent) {
             if (err) {
