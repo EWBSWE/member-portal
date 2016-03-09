@@ -21,4 +21,14 @@ angular.module('ewbMemberApp')
     $scope.lineSep = function() {
         separateWith('\n');
     };
+
+    $scope.joinProducts = function(products) {
+        var matchingAddons = _.filter($scope.ev.addons, function(addon) {
+            return _.include(products, addon.product._id);
+        });
+
+        return _.map(matchingAddons, function(a) {
+            return a.product.name;
+        }).join(', ');
+    };
 });
