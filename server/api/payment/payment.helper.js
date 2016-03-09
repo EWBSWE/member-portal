@@ -122,9 +122,15 @@ function generateReport(params, callback) {
             return price * (1 - stripeFeePercent) - stripeFeeFlat;
         };
 
+        // We only care about the payments processed by Stripe. And we only use
+        // Stripe if the amount paid is greater than 0.
+        var processedPayments = _.filter(payments, function(payment) {
+            return payment.amount > 0;
+        });
+
         var data = {};
 
-        _.each(payments, function(payment) {
+        _.each(processedPayments, function(payment) {
             // Amount left after processed by Stripe. May include products and a donation sum.
             var paymentTotal = computeTransaction(payment.amount);
 
