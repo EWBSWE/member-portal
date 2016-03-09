@@ -119,7 +119,7 @@ function generateReport(params, callback) {
         }).value);
 
         var computeTransaction = function(price) {
-            return price * (1 - stripeFeePercent) + stripeFeeFlat;
+            return price * (1 - stripeFeePercent) - stripeFeeFlat;
         };
 
         var data = {};
