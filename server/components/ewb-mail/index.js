@@ -4,6 +4,9 @@ var fs = require('fs');
 var path = require('path');
 
 module.exports = {
+    noreply: function() {
+        return 'noreply@ingenjorerutangranser.se';
+    },
     sender: function() {
         // Should perhaps be set from a config file instead of directly in the
         // code like this.
