@@ -15,6 +15,8 @@ exports.updateAddons = updateAddons;
 exports.sumAddons = sumAddons;
 exports.removeAddons = removeAddons;
 exports.createAddons = createAddons;
+exports.generateSummary = generateSummary;
+exports.formatSummary = formatSummary;
 
 function fetchEvent(identifier, callback) {
     Event.findOne({
@@ -162,6 +164,44 @@ function createAddons(ewbEvent, data, callback) {
     });
 };
 
+function generateSummary(ewbEvent) {
+    var summary = [];
+
+    _.each(ewbEvent.payments, function(payment) {
+        var matchingAddons = [];
+        for (var i = 0; i < ewbEvent.addons.length; i++) {
+            var product = ewbEvent.addons[i].product;
+            for (var j = 0; j < payment.products.length; j++) {
+                if (product._id.equals(payment.products[j])) {
+                    matchingAddons.push(ewbEvent.addons[i]);
+                }
+            }
+        }
+
+        summary.push({
+            email: payment.buyer.document.email,
+            amount: payment.amount,
+            addons: _.map(matchingAddons, function(a) {
+                return a.product.name;
+            }).join(', '),
+        });
+    });
+
+    return summary;
+};
+
+function formatSummary(summary) {
+    var text = 'Antal anmälningar: ' + summary.length + '\n\n' +
+        'Epost\t\t\t Betalt\t\t Val\n' + 
+        '-----\t\t\t ------\t\t ---\n';
+
+    for (var i = 0; i < summary.length; i++) {
+        var entry = summary[i];
+        text += entry.email + '\t ' + entry.amount + '\t\t ' + entry.addons + '\n';
+    }
+
+    return text;
+};
 
 
 

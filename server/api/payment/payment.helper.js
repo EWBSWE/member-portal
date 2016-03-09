@@ -15,10 +15,10 @@ exports.fetchOrCreateBuyer = fetchOrCreateBuyer;
 exports.generateReport = generateReport;
 exports.formatReport = formatReport;
 
-function fetchOrCreateBuyer(type, documentId, callback) {
+function fetchOrCreateBuyer(type, documentRef, callback) {
     Buyer.findOne({
         type: type,
-        documentId: documentId
+        document: documentRef
     }, function(err, maybeBuyer) {
         if (err) {
             return callback(err);
@@ -31,7 +31,7 @@ function fetchOrCreateBuyer(type, documentId, callback) {
 
         Buyer.create({
             type: type,
-            documentId: documentId
+            document: documentRef
         }, function(err, buyer) {
             if (err) {
                return callback(err);

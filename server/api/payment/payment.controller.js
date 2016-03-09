@@ -237,7 +237,19 @@ exports.confirmEventPayment = function(req, res) {
                 return handleError(res, err);
             }
 
-            return addToEvent(ewbEvent, selectedAddons, updatedParticipant);
+            return addPaymentToEvent(ewbEvent, selectedAddons, updatedParticipant, payment);
+        });
+    };
+    
+    function addPaymentToEvent(ewbEvent, selectedAddons, eventParticipant, payment) {
+        ewbEvent.payments.push(payment);
+        ewbEvent.save(function(err, updatedEvent) {
+            if (err) {
+                ewbError.create({ message: 'Failed to update event participant', origin: __filename, params: err });
+                return handleError(res, err);
+            }
+
+            return addToEvent(updatedEvent, selectedAddons, eventParticipant);
         });
     };
 

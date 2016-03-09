@@ -4,6 +4,10 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var moment = require('moment');
 
+var EventAddon = require('./event-addon.model');
+var EventParticipant = require('./event-participant.model');
+var Payment = require('./payment.model');
+
 var EventSchema = new Schema({
     name: { type: String, required: true, trim: true },
     identifier: { type: String, lowercase: true, unique: true },
@@ -20,6 +24,7 @@ var EventSchema = new Schema({
     },
     notificationOpen: { type: Boolean, required: true, default: true },
     subscribers: [{ type: String, trim: true, lowercase: true }],
+    payments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Payment' }],
 });
 
 EventSchema.index({ identifier: 1 });

@@ -55,6 +55,15 @@ exports.show = function (req, res) {
         },
     }, {
         path: 'participants',
+    }, {
+        path: 'payments',
+        populate: {
+            path: 'buyer',
+            populate: {
+                path: 'document',
+                model: 'EventParticipant',
+            },
+        },
     }]).lean().exec(function(err, ewbEvent) {
         if (err) {
             return handleError(res, err);
