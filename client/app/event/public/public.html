@@ -18,6 +18,7 @@
         </div>
         <div class="col-xs-12 col-md-6">
             <p class="bg-warning" ng-show="ev.isPast" style="padding: 20px; border-radius: 5px;">Sista anmälningsdag för det här evenemanget har passerat.</p>
+            <p class="bg-warning" ng-show="!ev.notificationOpen" style="padding: 20px; border-radius: 5px;">Anmälan är stängd.</p>
             <form novalidate name="form" class="payment-form">
                 <p>
                     Delta i <strong>{{ev.addons[0].product.name}}</strong> för en kostnad på <strong>{{ev.addons[0].product.price}} kr</strong></span>.
@@ -43,14 +44,14 @@
 
                 <div ng-class="{'form-group': true, 'has-error': form.inputEmail.$error.email, 'has-success': form.inputEmail.$valid}">
                     <label class="control-label" for="inputEmail" translate>Email</label>
-                    <input class="form-control" type="email" name="inputEmail" id="inputEmail" ng-model="participant.email" ng-disabled="ev.addons[0].capacity <= 0" required/>
+                    <input class="form-control" type="email" name="inputEmail" id="inputEmail" ng-model="participant.email" ng-disabled="ev.addons[0].capacity <= 0 || !ev.notificationOpen" required/>
                     <p class="help-block" ng-show="form.inputEmail.$error.email" translate>
                     Please enter a valid email address.
                     </p>
                 </div>
 
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary btn-lg" ng-click="initiatePayment()" ng-disabled="ev.addons[0].capacity <= 0" translate>Submit</button>
+                    <button type="submit" class="btn btn-primary btn-lg" ng-click="initiatePayment()" ng-disabled="ev.addons[0].capacity <= 0 || !ev.notificationOpen" translate>Submit</button>
                 </div>
                 <p class="help-block" translate>
                 When you click <strong>Submit</strong> your transaction is managed securely by <a href="https://stripe.com/se" target="_blank">Stripe</a>. When the transaction is completed we send you a confirmation to the email address specified above.
