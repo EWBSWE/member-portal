@@ -16,14 +16,25 @@ msgstr ""
 msgid "4 digits, for instance 1988"
 msgstr ""
 
+#: client/app/event/public/public.html:70
+msgid "A confirmation of your participation is sent to <strong>{{successEmail}}</strong>."
+msgstr ""
+
 #: client/app/member/membership/membership.html:161
 msgid "A confirmation of your payment and your membership is sent to <strong>{{successEmail}}</strong>."
 msgstr ""
 
 #: client/app/account/login/login.html:71
+#: client/app/event/public/public.html:74
+#: client/app/event/public/public.html:91
 #: client/app/member/membership/membership.html:165
 #: client/app/member/membership/membership.html:182
 msgid "Close"
+msgstr ""
+
+#: client/app/event/public/public.html:71
+#: client/app/event/public/public.html:88
+msgid "Do you any questions regarding the event or anything payment related? Reach out to us at <a href=\"mailto:{{ev.contact}}\">{{ev.contact}}</a> for questions regarding this event and <a href=\"mailto:ict@ingenjorerutangranser.se\">ict@ingenjorerutangranser.se</a> for payment or technical questions."
 msgstr ""
 
 #: client/app/member/membership/membership.html:162
@@ -37,6 +48,7 @@ msgid "Education"
 msgstr ""
 
 #: client/app/account/login/login.html:12
+#: client/app/event/public/public.html:45
 #: client/app/member/membership/membership.html:39
 msgid "Email"
 msgstr ""
@@ -45,7 +57,8 @@ msgstr ""
 msgid "Email sent to {{user.email}}."
 msgstr ""
 
-#: client/app/member/membership/membership.controller.js:85
+#: client/app/event/public/public.controller.js:78
+#: client/app/member/membership/membership.controller.js:65
 msgid "Engineers without borders"
 msgstr ""
 
@@ -82,24 +95,12 @@ msgstr ""
 msgid "Male"
 msgstr ""
 
+#: client/app/member/membership/membership.controller.js:66
+msgid "Membership"
+msgstr ""
+
 #: client/app/member/membership/membership.html:122
 msgid "Membership duration"
-msgstr ""
-
-#: client/app/member/membership/membership.controller.js:52
-msgid "Membership, student, 1 year"
-msgstr ""
-
-#: client/app/member/membership/membership.controller.js:56
-msgid "Membership, student, 3 years"
-msgstr ""
-
-#: client/app/member/membership/membership.controller.js:62
-msgid "Membership, working/senior, 1 year"
-msgstr ""
-
-#: client/app/member/membership/membership.controller.js:66
-msgid "Membership, working/senior, 3 years"
 msgstr ""
 
 #: client/app/member/membership/membership.html:71
@@ -110,6 +111,7 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
+#: client/app/event/public/public.html:47
 #: client/app/member/membership/membership.html:41
 msgid "Please enter a valid email address."
 msgstr ""
@@ -151,10 +153,19 @@ msgstr ""
 msgid "Student"
 msgstr ""
 
+#: client/app/event/public/public.html:53
+msgid "Submit"
+msgstr ""
+
+#: client/app/event/public/public.html:67
+msgid "Thank you for participating!"
+msgstr ""
+
 #: client/app/member/membership/membership.html:158
 msgid "Thank you for the support!"
 msgstr ""
 
+#: client/app/event/public/public.html:84
 #: client/app/member/membership/membership.html:175
 msgid "The transaction was unsuccessful"
 msgstr ""
@@ -173,6 +184,10 @@ msgstr ""
 
 #: client/app/member/membership/membership.html:146
 msgid "When you click <strong>Sign up</strong> your transaction is managed securely by <a href=\"https://stripe.com/se\" target=\"_blank\">Stripe</a>. When the transaction is completed we send you a confirmation to the email address specified above."
+msgstr ""
+
+#: client/app/event/public/public.html:55
+msgid "When you click <strong>Submit</strong> your transaction is managed securely by <a href=\"https://stripe.com/se\" target=\"_blank\">Stripe</a>. When the transaction is completed we send you a confirmation to the email address specified above."
 msgstr ""
 
 #: client/app/member/membership/membership.html:110
