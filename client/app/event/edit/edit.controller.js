@@ -23,7 +23,7 @@ angular.module('ewbMemberApp')
         });
     }
 
-    var addEvent = function() {
+    var addEvent = function(data) {
         $http.post('/api/events', data).success(function(data, status) {
             $scope.showSuccess = true;
             $scope.showError = false;
@@ -91,14 +91,6 @@ angular.module('ewbMemberApp')
         } else {
             addEvent(data);
         }
-    };
-
-    $scope.addEventParticipant = function () {
-        $http.post('/api/events/' + $scope.ev._id + '/add-participant', {
-            email: $scope.debugEventParticipant,
-        }).success(function(data, status) {
-            $scope.debugEventParticipant = "";
-        });
     };
 
     $scope.increaseAddons = function() {
