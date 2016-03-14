@@ -1,0 +1,3 @@
+A user has been created.
+
+Go to {url} and click 'Forgot your password?' and follow the instructions to create a new password.

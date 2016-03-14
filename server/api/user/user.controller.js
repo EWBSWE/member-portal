@@ -16,29 +16,64 @@ var validationError = function(res, err) {
   return res.status(422).json(err);
 };
 
-/**
- * Get list of users
- * restriction: 'admin'
- */
 exports.index = function(req, res) {
-  User.find({}, '-salt -hashedPassword', function (err, users) {
-    if(err) return res.send(500, err);
-    res.status(200).json(users);
-  });
+    User.find({}, '-salt -hashedPassword', function (err, users) {
+        if(err) return res.send(500, err);
+        res.status(200).json(users);
+    });
 };
 
-/**
- * Creates a new user
- */
 exports.create = function (req, res, next) {
-  var newUser = new User(req.body);
-  newUser.provider = 'local';
-  newUser.role = 'user';
-  newUser.save(function(err, user) {
-    if (err) return validationError(res, err);
-    var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresInMinutes: 60*5 });
-    res.json({ token: token });
-  });
+    if (!req.body.email) {
+        return res.status().json({
+            email: true,
+        });
+    }
+
+    function createUser(email) {
+        User.create({
+            email: email,
+            role: 'user',
+            password: crypto.randomBytes(24).toString('hex'),
+        }, function(err, user) {
+            if (err) {
+                return res.status(500).send(err);
+            }
+
+            return notifyUser(user);
+        });
+    };
+
+    function notifyUser(user) {
+        // TODO fix this url
+        var url = 'https://blimedlem.ingenjorerutangranser.se/login';
+        OutgoingMessage.create({
+            from: ewbMail.noreply(),
+            to: user.email,
+            subject: ewbMail.getSubject('create-user'),
+            text: ewbMail.getBody('create-user', { url: url }),
+        }, function(err, message) {
+            if (err) {
+                return res.status(500).send(err);
+            }
+
+            return res.status(200).json(user);
+        });
+    }
+
+    User.findOne({ email: req.body.email.trim() }, function(err, maybeUser) {
+        if (err) {
+            return res.status(500).send(err);
+        }
+
+        if (maybeUser) {
+            return res.status(400).json({
+                email: true,
+            });
+        }
+
+        return createUser(req.body.email.trim());
+    });
 };
 
 /**
@@ -54,15 +89,11 @@ exports.show = function (req, res, next) {
   });
 };
 
-/**
- * Deletes a user
- * restriction: 'admin'
- */
 exports.destroy = function(req, res) {
-  User.findByIdAndRemove(req.params.id, function(err, user) {
-    if(err) return res.send(500, err);
-    return res.send(204);
-  });
+    User.findByIdAndRemove(req.params.id, function(err, user) {
+        if(err) return res.send(500, err);
+        return res.send(204);
+    });
 };
 
 /**

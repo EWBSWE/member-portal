@@ -1,13 +1,50 @@
 <div ng-include="'components/navbar/navbar.html'"></div>
 
+<header class="hero-unit" id="banner">
+    <div class="container">
+        <h1>Admins</h1>
+    </div>
+</header>
+
 <div class="container">
-  <p>The delete user and user index api routes are restricted to users with the 'admin' role.</p>
-  <ul class="list-group">
-    <li class="list-group-item" ng-repeat="user in users">
-        <strong>{{user.firstName}}</strong>
-        <strong>{{user.lastName}}</strong><br>
-        <span class="text-muted">{{user.email}}</span>
-        <a ng-click="delete(user)" class="trash"><span class="glyphicon glyphicon-trash pull-right"></span></a>
-    </li>
-  </ul>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="bg-success" ng-show="showSuccess" style="padding: 20px; margin-top: 20px;">
+                <div>Användare skapad</div>
+            </div>
+
+            <div class="bg-danger" ng-show="showError" style="padding: 20px; margin-top: 20px;">
+                <div ng-show="errors.email">Den här epost-adressen används redan.</div>
+                <div ng-show="errors.removal">Misslyckades med borttagning.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row actions">
+        <div class="col-xs-12">
+            <input type="email" name="" id="" value="" ng-model="email"/>
+            <button type="submit" class="btn btn-default" ng-click="createUser()">Skapa</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <td>E-post</td>
+                        <td>Roll</td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="user in users">
+                        <td>{{user.email}}</td>
+                        <td>{{user.role}}</td>
+                        <td><button type="submit" class="btn btn-xs btn-danger" ng-click="deleteUser(user._id)">Ta bort</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
