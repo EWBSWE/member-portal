@@ -24,7 +24,7 @@ msgstr "3 år"
 msgid "4 digits, for instance 1988"
 msgstr "4 siffror, till exempel 1988"
 
-#: client/app/event/public/public.html:70
+#: client/app/event/public/public.html:84
 msgid ""
 "A confirmation of your participation is sent to <strong>{{successEmail}}</"
 "strong>."
@@ -41,15 +41,19 @@ msgstr ""
 "<strong>{{successEmail}}<strong>."
 
 #: client/app/account/login/login.html:71
-#: client/app/event/public/public.html:74
-#: client/app/event/public/public.html:91
+#: client/app/event/public/public.html:105
+#: client/app/event/public/public.html:88
 #: client/app/member/membership/membership.html:165
 #: client/app/member/membership/membership.html:182
 msgid "Close"
 msgstr "Stäng\t"
 
-#: client/app/event/public/public.html:71
-#: client/app/event/public/public.html:88
+#: client/app/event/public/public.html:62
+msgid "Comment"
+msgstr "Kommentar"
+
+#: client/app/event/public/public.html:102
+#: client/app/event/public/public.html:85
 msgid ""
 "Do you any questions regarding the event or anything payment related? Reach "
 "out to us at <a href=\"mailto:{{ev.contact}}\">{{ev.contact}}</a> for "
@@ -80,7 +84,7 @@ msgid "Education"
 msgstr "Utbildning"
 
 #: client/app/account/login/login.html:12
-#: client/app/event/public/public.html:45
+#: client/app/event/public/public.html:54
 #: client/app/member/membership/membership.html:39
 msgid "Email"
 msgstr "E-post"
@@ -89,7 +93,7 @@ msgstr "E-post"
 msgid "Email sent to {{user.email}}."
 msgstr "E-post skickat till {{user.email}}."
 
-#: client/app/event/public/public.controller.js:78
+#: client/app/event/public/public.controller.js:82
 #: client/app/member/membership/membership.controller.js:65
 msgid "Engineers without borders"
 msgstr "Ingenjörer utan gränser"
@@ -152,6 +156,10 @@ msgstr "Medlemskap"
 msgid "Membership duration"
 msgstr "Varaktighet"
 
+#: client/app/event/public/public.html:46
+msgid "Name"
+msgstr "Namn"
+
 #: client/app/member/membership/membership.html:71
 msgid "Other"
 msgstr "Annat"
@@ -160,7 +168,11 @@ msgstr "Annat"
 msgid "Password"
 msgstr "Lösenord"
 
-#: client/app/event/public/public.html:47
+#: client/app/event/public/public.html:48
+msgid "Please enter a name."
+msgstr "Fyll i ett namn."
+
+#: client/app/event/public/public.html:56
 #: client/app/member/membership/membership.html:41
 msgid "Please enter a valid email address."
 msgstr "Fyll i en riktig e-postadress."
@@ -209,11 +221,11 @@ msgstr ""
 msgid "Student"
 msgstr "Student"
 
-#: client/app/event/public/public.html:53
+#: client/app/event/public/public.html:67
 msgid "Submit"
 msgstr "Delta"
 
-#: client/app/event/public/public.html:67
+#: client/app/event/public/public.html:81
 msgid "Thank you for participating!"
 msgstr "Tack för din medverkan!"
 
@@ -221,7 +233,7 @@ msgstr "Tack för din medverkan!"
 msgid "Thank you for the support!"
 msgstr "Tack för ditt stöd!"
 
-#: client/app/event/public/public.html:84
+#: client/app/event/public/public.html:98
 #: client/app/member/membership/membership.html:175
 msgid "The transaction was unsuccessful"
 msgstr "Betalningen misslyckades"
@@ -263,7 +275,7 @@ msgstr ""
 "uppgifter behandlas säkert. När betalningen är färdig skickar vi en "
 "bekräftelse till den e-postadress som angavs ovan."
 
-#: client/app/event/public/public.html:55
+#: client/app/event/public/public.html:69
 msgid ""
 "When you click <strong>Submit</strong> your transaction is managed securely "
 "by <a href=\"https://stripe.com/se\" target=\"_blank\">Stripe</a>. When the "
