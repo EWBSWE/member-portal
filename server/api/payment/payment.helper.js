@@ -11,35 +11,21 @@ var Payment = require('../../models/payment.model');
 
 var Setting = require('../../models/setting.model');
 
-exports.fetchOrCreateBuyer = fetchOrCreateBuyer;
+exports.createBuyer = createBuyer;
 exports.generateReport = generateReport;
 exports.formatReport = formatReport;
 
-function fetchOrCreateBuyer(type, documentRef, callback) {
-    Buyer.findOne({
+function createBuyer(type, documentRef, callback) {
+    Buyer.create({
         type: type,
         document: documentRef
-    }, function(err, maybeBuyer) {
+    }, function(err, buyer) {
         if (err) {
-            return callback(err);
+           return callback(err);
         }
 
-        // Buyer exists, return it
-        if (maybeBuyer) {
-            return callback(err, maybeBuyer);
-        }
-
-        Buyer.create({
-            type: type,
-            document: documentRef
-        }, function(err, buyer) {
-            if (err) {
-               return callback(err);
-            }
-
-            return callback(err, buyer);
-        })
-    })
+        return callback(err, buyer);
+    });
 };
 
 function generateReport(params, callback) {

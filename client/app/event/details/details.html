@@ -71,16 +71,20 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
+                        <td>Namn</td>
                         <td>Epost</td>
                         <td>Betalat</td>
                         <td>Val</td>
+                        <td>Kommentar</td>
                     </tr>
                 </thead>
                 <tbody>
                     <tr ng-repeat="payment in ev.payments">
+                        <td>{{payment.buyer.document.name}}</td>
                         <td>{{payment.buyer.document.email}}</td>
                         <td>{{payment.amount}} kr</td>
                         <td>{{joinProducts(payment.products)}}</td>
+                        <td>{{payment.buyer.document.comment}}</td>
                     </tr>
                 </tbody>
             </table>

@@ -9,8 +9,7 @@ var Product = require('../../models/product.model');
 var ProductType = require('../../models/product-type.model');
 
 exports.fetchEvent = fetchEvent;
-exports.addParticipantToEvent = addParticipantToEvent;
-exports.fetchOrCreateEventParticipant = fetchOrCreateEventParticipant;
+exports.createParticipant = createParticipant;
 exports.updateAddons = updateAddons;
 exports.sumAddons = sumAddons;
 exports.removeAddons = removeAddons;
@@ -32,38 +31,9 @@ function fetchEvent(identifier, callback) {
     });
 };
 
-function addParticipantToEvent(ewbEvent, participant, callback) {
-    Event.update({
-        _id: ewbEvent._id,
-    }, {
-        $addToSet: { participants: participant._id },
-    }, function(err, result) {
-        if (err) {
-            return callback(err);
-        }
-
-        return callback(err, { email: participant.email });
-    });
-};
-
-function fetchOrCreateEventParticipant(email, callback) {
-    EventParticipant.findOne({ email: email }, function(err, maybeParticipant) {
-        if (err) {
-            return callback(err);
-        }
-
-        // Participant found
-        if (maybeParticipant) {
-            return callback(err, maybeParticipant);
-        }
-
-        EventParticipant.create({ email: email }, function(err, participant) {
-            if (err) {
-                return callback(err);
-            }
-
-            return callback(err, participant);
-        });
+function createParticipant(data, callback) {
+    EventParticipant.create(data, function(err, participant) {
+        callback(err, participant);
     });
 };
 
@@ -179,7 +149,9 @@ function generateSummary(ewbEvent) {
         }
 
         summary.push({
+            name: payment.buyer.document.name,
             email: payment.buyer.document.email,
+            comment: payment.buyer.document.comment,
             amount: payment.amount,
             addons: _.map(matchingAddons, function(a) {
                 return a.product.name;
@@ -192,12 +164,12 @@ function generateSummary(ewbEvent) {
 
 function formatSummary(summary) {
     var text = 'Antal anmälningar: ' + summary.length + '\n\n' +
-        'Epost\t\t\t Betalt\t\t Val\n' + 
-        '-----\t\t\t ------\t\t ---\n';
+        'Namn\t\t\t Epost\t\t\t Betalt\t\t Val\t\t Kommentar\n' +
+        '----\t\t\t -----\t\t\t ------\t\t ---\t\t ---------\n';
 
     for (var i = 0; i < summary.length; i++) {
         var entry = summary[i];
-        text += entry.email + '\t ' + entry.amount + '\t\t ' + entry.addons + '\n';
+        text += entry.name + '\t ' + entry.email + '\t ' + entry.amount + '\t\t ' + entry.addons + '\t ' + (entry.comment || '') + '\n';
     }
 
     return text;

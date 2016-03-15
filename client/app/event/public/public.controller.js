@@ -22,7 +22,11 @@ angular.module('ewbMemberApp')
     var callback = function(token) {
         $http.post('/api/payments/confirm-event', {
             stripeToken: token,
-            email: $scope.participant.email,
+            participant: {
+                name: $scope.participant.name,
+                email: $scope.participant.email,
+                comment: $scope.participant.comment,
+            },
             identifier: $scope.ev.identifier,
             addonIds: Object.keys($scope.participant.addons),
         }).success(function(data) {

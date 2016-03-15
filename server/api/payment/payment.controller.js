@@ -175,7 +175,7 @@ exports.confirmMembershipPayment = function(req, res) {
 };
 
 exports.confirmEventPayment = function(req, res) {
-    function processEventPayments(ewbEvent, email, selectedAddons) {
+    function processEventPayments(ewbEvent, participantData, selectedAddons) {
         var sum = EventHelper.sumAddons(selectedAddons);
 
         return processCharge({
@@ -184,7 +184,7 @@ exports.confirmEventPayment = function(req, res) {
             description: ewbEvent.name,
         }, req.body.stripeToken, function(charge) {
             // Successful charge
-            return findEventParticipant(ewbEvent, email, selectedAddons);
+            return createEventParticipant(ewbEvent, participantData, selectedAddons);
         }, function(stripeError) {
             // Failed charge
             var error = handleStripeError(stripeError);
@@ -192,24 +192,29 @@ exports.confirmEventPayment = function(req, res) {
         });
     };
 
-    function findEventParticipant(ewbEvent, email, selectedAddons) {
-        EventHelper.fetchOrCreateEventParticipant(email, function(err, eventParticipant) {
+    function createEventParticipant(ewbEvent, participantData, selectedAddons) {
+        EventHelper.createParticipant({
+            name: participantData.name,
+            email: participantData.email,
+            eventId: ewbEvent._id,
+            comment: participantData.comment,
+        }, function(err, eventParticipant) {
             if (err) {
-                ewbError.create({ message: 'Error fetching event participant', origin: __filename, params: err });
+                ewbError.create({ message: 'Error creating event participant', origin: __filename, params: err });
                 return handleError(res, err);
             }
 
-            return addPaymentToParticipant(ewbEvent, selectedAddons, eventParticipant);
+            return createPayment(ewbEvent, selectedAddons, eventParticipant);
         });
     };
 
-    function addPaymentToParticipant(ewbEvent, selectedAddons, eventParticipant) {
+    function createPayment(ewbEvent, selectedAddons, eventParticipant) {
         var sum = EventHelper.sumAddons(selectedAddons);
         var productIds = _.map(selectedAddons, function(a) {
             return a.product._id;
         });
 
-        PaymentHelper.fetchOrCreateBuyer('EventParticipant', eventParticipant._id, function(err, buyer) {
+        PaymentHelper.createBuyer('EventParticipant', eventParticipant._id, function(err, buyer) {
             if (err) {
                 ewbError.create({ message: 'Error fetching buyer', origin: __filename, params: err });
                 return handleError(res, err);
@@ -225,44 +230,21 @@ exports.confirmEventPayment = function(req, res) {
                     return handleError(res, err);
                 }
 
-                return updateEventParticipant(ewbEvent, selectedAddons, eventParticipant, payment);
+                return addToEvent(ewbEvent, selectedAddons, eventParticipant, payment);
             });
         });
     };
 
-    function updateEventParticipant(ewbEvent, selectedAddons, eventParticipant, payment) {
-        eventParticipant.payments.push(payment);
-
-        eventParticipant.save(function(err, updatedParticipant) {
-            if (err) {
-                ewbError.create({ message: 'Failed to update event participant', origin: __filename, params: err });
-                return handleError(res, err);
-            }
-
-            return addPaymentToEvent(ewbEvent, selectedAddons, updatedParticipant, payment);
-        });
-    };
-    
-    function addPaymentToEvent(ewbEvent, selectedAddons, eventParticipant, payment) {
+    function addToEvent(ewbEvent, selectedAddons, eventParticipant, payment) {
         ewbEvent.payments.push(payment);
+        ewbEvent.participants.push(eventParticipant);
         ewbEvent.save(function(err, updatedEvent) {
             if (err) {
                 ewbError.create({ message: 'Failed to update event participant', origin: __filename, params: err });
                 return handleError(res, err);
             }
 
-            return addToEvent(updatedEvent, selectedAddons, eventParticipant);
-        });
-    };
-
-    function addToEvent(ewbEvent, selectedAddons, eventParticipant) {
-        return EventHelper.addParticipantToEvent(ewbEvent, eventParticipant, function(err, result) {
-            if (err) {
-                ewbError.create({ message: 'Failed to add participant to event', origin: __filename, params: err });
-                return handleError(res, err);
-            }
-
-            return updateEventAddons(ewbEvent, selectedAddons, eventParticipant);
+            return updateEventAddons(updatedEvent, selectedAddons, eventParticipant);
         });
     };
 
@@ -323,9 +305,9 @@ exports.confirmEventPayment = function(req, res) {
 
         if (sum === 0) {
             // Skip payment step
-            return findEventParticipant(ewbEvent, req.body.email, selectedAddons);
+            return createEventParticipant(ewbEvent, req.body.participant, selectedAddons);
         } else {
-            return processEventPayments(ewbEvent, req.body.email, selectedAddons);
+            return processEventPayments(ewbEvent, req.body.participant, selectedAddons);
         }
     });
 };
