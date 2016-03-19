@@ -67,7 +67,7 @@ exports.confirmMembershipPayment = function(req, res) {
                 return handleError(res, err);
             }
             if (maybeMember) {
-                return updateMemberData(product, maybeMember);
+                return updateMemberData(product, maybeMember, memberData);
             } else {
                 // Member doesn't exist, we need to create the member before we
                 // proceed
@@ -76,13 +76,13 @@ exports.confirmMembershipPayment = function(req, res) {
                         return handleError(res, err);
                     }
 
-                    return fetchBuyer(product, member);
+                    return createBuyer(product, member);
                 });
             }
         });
     };
 
-    function updateMemberData(product, member) {
+    function updateMemberData(product, member, memberData) {
         // If days remain on current membership we want to extend the
         // membership instead of overwriting it
         if (moment(member.expirationDate) > moment()) {
@@ -96,12 +96,12 @@ exports.confirmMembershipPayment = function(req, res) {
                 return handleError(res, err);
             }
 
-            return fetchBuyer(product, updatedMember);
+            return createBuyer(product, updatedMember);
         });
     };
 
-    function fetchBuyer(product, member) {
-        PaymentHelper.fetchOrCreateBuyer('Member', member._id, function(err, buyer) {
+    function createBuyer(product, member) {
+        PaymentHelper.createBuyer('Member', member._id, function(err, buyer) {
             if (err) {
                 return handleError(res, err);
             }
