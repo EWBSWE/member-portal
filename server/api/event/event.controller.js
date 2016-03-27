@@ -356,6 +356,7 @@ exports.update = function (req, res) {
             ewbEvent.dueDate = eventData.dueDate;
             ewbEvent.notificationOpen = eventData.notificationOpen;
             ewbEvent.subscribers = eventData.subscribers;
+            ewbEvent.confirmationEmail = eventData.confirmationEmail;
 
             ewbEvent.save(function(err, updatedEvent) {
                 if (err) {
