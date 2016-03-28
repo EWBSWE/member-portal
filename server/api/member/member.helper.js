@@ -21,18 +21,22 @@ function createMember(data, callback) {
 };
 
 function updateMember(member, data, callback) {
-    Member.findByIdAndUpdate(member._id, { 
-        $set: {
-            name: data.name,
-            location: data.location,
-            profession: data.profession,
-            education: data.education,
-            gender: data.gender,
-            yearOfBirth: data.yearOfBirth,
-            type: data.type,
-            expirationDate: data.expirationDate,
-        } 
-    }, function(err, updateMember) {
-        return callback(err, member);
+    Member.findById(member._id, function(err, m) {
+        if (err) {
+            return callback(err);
+        }
+
+        m.name = data.name;
+        m.location = data.location;
+        m.profession = data.profession;
+        m.education = data.education;
+        m.gender = data.gender;
+        m.yearOfBirth = data.yearOfBirth;
+        m.type = data.type;
+        m.expirationDate = data.expirationDate;
+
+        m.save(function(err, updatedMember) {
+            return callback(err, updatedMember);
+        });
     });
 };
