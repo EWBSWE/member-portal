@@ -76,7 +76,7 @@ exports.confirmMembershipPayment = function(req, res) {
                         return handleError(res, err);
                     }
 
-                    return createBuyer(product, member);
+                    return createBuyer(product, member, true);
                 });
             }
         });
@@ -96,21 +96,21 @@ exports.confirmMembershipPayment = function(req, res) {
                 return handleError(res, err);
             }
 
-            return createBuyer(product, updatedMember);
+            return createBuyer(product, updatedMember, false);
         });
     };
 
-    function createBuyer(product, member) {
+    function createBuyer(product, member, newMember) {
         PaymentHelper.createBuyer('Member', member._id, function(err, buyer) {
             if (err) {
                 return handleError(res, err);
             }
 
-            return addPayment(product, member, buyer);
+            return addPayment(product, member, newMember, buyer);
         });
     };
 
-    function addPayment(product, member, buyer) {
+    function addPayment(product, member, newMember, buyer) {
         Payment.create({
             buyer: buyer._id,
             amount: product.price,
@@ -120,17 +120,17 @@ exports.confirmMembershipPayment = function(req, res) {
                 return handleError(res, err);
             }
 
-            return sendConfirmation(member);
+            return sendConfirmation(member, newMember);
         });
     };
 
-    function sendConfirmation(member) {
+    function sendConfirmation(member, newMember) {
         var receiptMail = {
             from: ewbMail.sender(),
-            to: process.env.NODE_ENV === 'production' ? req.body.email : process.env.DEV_MAIL,
+            to: req.body.email,
         };
 
-        if (member.isNew) {
+        if (newMember) {
             receiptMail.subject = ewbMail.getSubject('new-member');
             receiptMail.text = ewbMail.getBody('new-member');
         } else {
@@ -264,7 +264,7 @@ exports.confirmEventPayment = function(req, res) {
     function sendConfirmationEmail(ewbEvent, eventParticipant) {
         var receiptMail = {
             from: ewbMail.sender(),
-            to: process.env.NODE_ENV === 'production' ? eventParticipant.email : process.env.DEV_MAIL,
+            to: eventParticipant.email,
             subject: ewbEvent.confirmationEmail.subject,
             text: ewbEvent.confirmationEmail.body,
         };
