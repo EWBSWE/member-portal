@@ -7,8 +7,6 @@ var User = require('./user.model');
 var user = new User({});
 var initUser = function() {
   user.provider = 'local';
-  /*user.firstName = 'Fake';
-  user.lastName = 'User';*/
   user.email = 'test@test.com';
   user.password = 'password';
 };
@@ -25,13 +23,6 @@ describe('User Model', function() {
   afterEach(function(done) {
     initUser();
     User.remove().exec().then(function() {
-      done();
-    });
-  });
-
-  it('should begin with no users', function(done) {
-    User.find({}, function(err, users) {
-      users.should.have.length(0);
       done();
     });
   });
@@ -53,22 +44,6 @@ describe('User Model', function() {
       done();
     });
   });
-
- /* it('should fail when saving without a firstName', function(done) {
-    user.firstName = '';
-    user.save(function(err) {
-      should.exist(err);
-      done();
-    });
-  });
-
-  it('should fail when saving without a last name', function(done) {
-    user.lastName = '';
-    user.save(function(err) {
-      should.exist(err);
-      done();
-    });
-  });*/
 
   it("should authenticate user if password is valid", function() {
     return user.authenticate('password').should.be.true;
