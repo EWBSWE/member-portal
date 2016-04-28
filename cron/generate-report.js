@@ -40,9 +40,14 @@ Setting.findOne({
         });
     }
 
+    // Example
+    // {
+    //   periodStart: 2016-04-14,
+    //   periodEnd:   2016-05-13
+    // }
     var params = {
         periodStart: moment().date(setting.value).subtract(1, 'month'),
-        periodEnd: moment().date(setting.value),
+        periodEnd: moment().date(setting.value).subtract(1, 'day'),
     };
 
     Setting.findOne({
@@ -64,7 +69,9 @@ Setting.findOne({
                 });
             }
 
-            var text = PaymentHelper.formatReport(data);
+            var period = 'Period: ' + params.periodStart.startOf('day').format('YYYY-MM-DD HH:mm:ss') + ' - ' + params.periodEnd.endOf('day').format('YYYY-MM-DD HH:mm:ss');
+            var formattedReport = PaymentHelper.formatReport(data);
+            var text = period + '\n\n' + formattedReport;
 
             var mails = _.map(emailSetting.value.split(/,/), function(recipient) {
                 return {
