@@ -41,10 +41,9 @@ Setting.findOne({
     }
 
     var params = {
-        periodStart: moment().date(setting).subtract(1, 'month'),
-        periodEnd: moment().date(setting),
+        periodStart: moment().date(setting.value).subtract(1, 'month'),
+        periodEnd: moment().date(setting.value),
     };
-
 
     Setting.findOne({
         key: 'StripeTransferEmails',
@@ -67,7 +66,7 @@ Setting.findOne({
 
             var text = PaymentHelper.formatReport(data);
 
-            var mails = _.map(emailSetting.split(/,/), function(recipient) {
+            var mails = _.map(emailSetting.value.split(/,/), function(recipient) {
                 return {
                     from: ewbMail.sender(),
                     to: recipient,
