@@ -206,9 +206,15 @@ function formatReport(data) {
     for (var i = 0; i < Object.keys(data).length; i++) {
         var key = Object.keys(data)[i];
         var keySpace = new Array(space.length - key.length).join(' ');
-        var row = key + keySpace + '\t' + data[key].products + '\n';
+        var row = key + keySpace + '\t' + data[key].products.toFixed(2) + '\n';
         text += row;
     }
+
+    var sum = _.map(data, 'products').reduce(function(a,b) {
+        return a + b;
+    }, 0);
+
+    text += '\n\nSum: ' + sum.toFixed(2);
 
     return text;
 };
