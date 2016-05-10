@@ -62,7 +62,7 @@ msgid "Email sent to {{user.email}}."
 msgstr ""
 
 #: client/app/event/public/public.controller.js:82
-#: client/app/member/membership/membership.controller.js:65
+#: client/app/member/membership/membership.controller.js:80
 msgid "Engineers without borders"
 msgstr ""
 
@@ -99,7 +99,7 @@ msgstr ""
 msgid "Male"
 msgstr ""
 
-#: client/app/member/membership/membership.controller.js:66
+#: client/app/member/membership/membership.controller.js:81
 msgid "Membership"
 msgstr ""
 
@@ -186,6 +186,10 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
+#: client/app/member/membership/membership.controller.js:48
+msgid "We failed to complete your transaction. No payment processed."
+msgstr ""
+
 #: client/app/account/login/login.html:61
 msgid "We will send you an email with instructions on how to reset your password."
 msgstr ""
@@ -208,4 +212,8 @@ msgstr ""
 
 #: client/app/member/membership/membership.html:49
 msgid "Year of birth"
+msgstr ""
+
+#: client/app/member/membership/membership.controller.js:50
+msgid "Your card was declined. No payment processed."
 msgstr ""

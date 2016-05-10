@@ -385,27 +385,9 @@ function processCharge(chargeAttributes, stripeToken, successCallback, errorCall
 };
 
 function handleStripeError(err) {
-    // TODO translate
-    var errorMessage = 'Vi misslyckades med att genomföra din betalning.';
-
     ewbError.create({ message: 'Stripe charge error', origin: __filename, params: err});
 
-    if (err.type === 'StripeCardError') {
-        // TODO Translate
-        errorMessage = 'Ditt kort medges ej. Ingen betalning genomförd.';
-    } else if (err.type === 'RateLimitError') {
-        // Too many requests made to the API too quickly
-    } else if (err.type === 'StripeInvalidError') {
-        // Invalid parameters were supplied to Stripe's API
-    } else if (err.type === 'StripeAPIError') {
-        // An error occurred internally with Stripe's API
-    } else if (err.type === 'StripeConnectionError') {
-        // Some kind of error occurred during the HTTPS communication
-    } else if (err.type === 'StripeAuthenticationError') {
-        // Probably used incorrect API key
-    }
-
-    return { message: errorMessage };
+    return { errorType: err.type };
 };
 
 function handleError(res, err) {

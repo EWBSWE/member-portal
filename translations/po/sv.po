@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.7\n"
+"X-Generator: Poedit 1.8.7.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: client/app/member/membership/membership.html:127
@@ -94,7 +94,7 @@ msgid "Email sent to {{user.email}}."
 msgstr "E-post skickat till {{user.email}}."
 
 #: client/app/event/public/public.controller.js:82
-#: client/app/member/membership/membership.controller.js:65
+#: client/app/member/membership/membership.controller.js:80
 msgid "Engineers without borders"
 msgstr "Ingenjörer utan gränser"
 
@@ -148,7 +148,7 @@ msgstr "Logga in"
 msgid "Male"
 msgstr "Man"
 
-#: client/app/member/membership/membership.controller.js:66
+#: client/app/member/membership/membership.controller.js:81
 msgid "Membership"
 msgstr "Medlemskap"
 
@@ -242,6 +242,10 @@ msgstr "Betalningen misslyckades"
 msgid "Type"
 msgstr "Typ"
 
+#: client/app/member/membership/membership.controller.js:48
+msgid "We failed to complete your transaction. No payment processed."
+msgstr "Vi misslyckades med att genomföra din betalning."
+
 #: client/app/account/login/login.html:61
 msgid ""
 "We will send you an email with instructions on how to reset your password."
@@ -294,6 +298,10 @@ msgstr "Yrkesverksam"
 #: client/app/member/membership/membership.html:49
 msgid "Year of birth"
 msgstr "Födelseår"
+
+#: client/app/member/membership/membership.controller.js:50
+msgid "Your card was declined. No payment processed."
+msgstr "Ditt kort medges ej. Ingen betalning genomförd."
 
 #~ msgid "Membership, student, 1 year"
 #~ msgstr "Medlemskap som student 1 år"

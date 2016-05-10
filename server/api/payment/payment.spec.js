@@ -452,8 +452,8 @@ describe('CONFIRM Membership payment process', function() {
                 })
                 .expect(400)
                 .expect(function(res) {
-                    if (!res.body.message) {
-                        throw new Error('Missing error message');
+                    if (!res.body.errorType) {
+                        throw new Error('Missing error type');
                     }
                 })
                 .end(function(err, res) {
@@ -558,8 +558,8 @@ describe('CONFIRM Membership payment process', function() {
                 })
                 .expect(400)
                 .expect(function(res) {
-                    if (!res.body.message) {
-                        throw new Error('Missing error message');
+                    if (!res.body.errorType) {
+                        throw new Error('Missing error type');
                     }
                 })
                 .end(function(err, res) {
@@ -1358,8 +1358,8 @@ describe('CONFIRM Event payment process', function() {
                 identifier: ewbEvent.identifier,
                 addonIds: _.map(ewbEvent.addons, '_id'),
             }).expect(400).expect(function(res) {
-                if (!res.body.message) {
-                    throw new Error('Missing error message');
+                if (!res.body.errorType) {
+                    throw new Error('Missing error type');
                 }
             }).end(function(err, res) {
                 if (err) {

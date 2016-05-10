@@ -45,7 +45,22 @@ angular.module('ewbMemberApp')
             $scope.newMember = {};
             $scope.form.$setPristine();
         }).error(function(data) {
-            $scope.errorMessage = data.message;
+            var errorMessage = gettextCatalog.getString('We failed to complete your transaction. No payment processed.');
+            if (data.errorType === 'StripeCardError') {
+                errorMessage = gettextCatalog.getString('Your card was declined. No payment processed.');
+            } else if (err.type === 'RateLimitError') {
+                // Too many requests made to the API too quickly
+            } else if (err.type === 'StripeInvalidError') {
+                // Invalid parameters were supplied to Stripe's API
+            } else if (err.type === 'StripeAPIError') {
+                // An error occurred internally with Stripe's API
+            } else if (err.type === 'StripeConnectionError') {
+                // Some kind of error occurred during the HTTPS communication
+            } else if (err.type === 'StripeAuthenticationError') {
+                // Probably used incorrect API key
+            }
+
+            $scope.errorMessage = errorMessage;
             $('.js-payment-error').modal('show');
         });
     };
