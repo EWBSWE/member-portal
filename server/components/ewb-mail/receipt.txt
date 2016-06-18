@@ -1,0 +1,14 @@
+Köpare: {buyer}
+Säljare: Ingenjörer utan gränser
+Datum: {date}
+
+---
+{list}
+---
+Totalt: {total}
+Momsbelopp: {tax}
+
+Vänliga hälsningar,
+Ingenjörer utan gränser
+www.ingenjorerutangranser.se
+volontar@ingenjorerutangranser.se
