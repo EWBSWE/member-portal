@@ -235,6 +235,11 @@ function formatProductList(products) {
 }
 
 function formatTotal(products) {
+    if (products.length === 0) {
+        // TODO add some default currency or let something decide currency
+        return '0 SEK';
+    }
+
     var total = products.reduce((total, product) => total + product.price, 0);
 
     return total + ' ' + products[0].currency;

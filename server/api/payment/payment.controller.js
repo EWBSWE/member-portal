@@ -280,19 +280,43 @@ exports.confirmEventPayment = function(req, res) {
                 return handleError(res, err);
             }
 
-            return sendConfirmationEmail(ewbEvent, eventParticipant);
+            return sendReceiptEmail(ewbEvent, eventParticipant, selectedAddons);
         });
     };
 
-    function sendConfirmationEmail(ewbEvent, eventParticipant) {
+    function sendReceiptEmail(ewbEvent, eventParticipant, selectedAddons) {
+        var products = _.map(selectedAddons, 'product');
         var receiptMail = {
+            from: ewbMail.sender(),
+            to: eventParticipant.email,
+            subject: ewbMail.getSubject('receipt', { name: ewbEvent.confirmationEmail.subject }),
+            text: ewbMail.getBody('receipt', {
+                buyer: eventParticipant.email,
+                date: moment().format('YYYY-MM-DD HH:mm'),
+                total: PaymentHelper.formatTotal(products),
+                tax: PaymentHelper.formatTax(products),
+                list: PaymentHelper.formatProductList(products),
+            }),
+        };
+
+        OutgoingMessage.create(receiptMail, function(err, outgoingMessage) {
+            if (err) {
+                ewbError.create({ message: 'Event receipt mail', origin: __filename, params: err });
+            }
+
+            return sendConfirmationEmail(ewbEvent, eventParticipant);
+        });
+    }
+
+    function sendConfirmationEmail(ewbEvent, eventParticipant) {
+        var confirmationMail = {
             from: ewbMail.sender(),
             to: eventParticipant.email,
             subject: ewbEvent.confirmationEmail.subject,
             text: ewbEvent.confirmationEmail.body,
         };
 
-        OutgoingMessage.create(receiptMail, function(err, outgoingMessage) {
+        OutgoingMessage.create(confirmationMail, function(err, outgoingMessage) {
             if (err) {
                 ewbError.create({ message: 'Event confirmation mail', origin: __filename, params: err });
             }

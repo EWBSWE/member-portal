@@ -762,17 +762,17 @@ describe('CONFIRM Event payment process', function() {
         });
 
         it('there should be a confirmation email', function(done) {
-            OutgoingMessage.findOne({ to: 'dan.johansson@ingenjorerutangranser.se' }, function(err, m) {
+            OutgoingMessage.findOne({
+                to: 'dan.johansson@ingenjorerutangranser.se',
+                subject: ewbEvent.confirmationEmail.subject,
+                text: ewbEvent.confirmationEmail.body,
+            }, function(err, m) {
                 if (err) {
                     return done(err);
                 }
 
                 if (!m) {
                     return done(new Error('Missing confirmation email'));
-                }
-
-                if (ewbEvent.confirmationEmail.subject != m.subject || ewbEvent.confirmationEmail.body != m.text) {
-                    return done(new Error('Subject or body wrong'));
                 }
 
                 done();
@@ -925,17 +925,17 @@ describe('CONFIRM Event payment process', function() {
         });
 
         it('there should be a confirmation email', function(done) {
-            OutgoingMessage.findOne({ to: 'dan.johansson@ingenjorerutangranser.se' }, function(err, m) {
+            OutgoingMessage.findOne({
+                to: 'dan.johansson@ingenjorerutangranser.se',
+                subject: ewbEvent.confirmationEmail.subject,
+                text: ewbEvent.confirmationEmail.body,
+            }, function(err, m) {
                 if (err) {
                     return done(err);
                 }
 
                 if (!m) {
                     return done(new Error('Missing confirmation email'));
-                }
-
-                if (ewbEvent.confirmationEmail.subject != m.subject || ewbEvent.confirmationEmail.body != m.text) {
-                    return done(new Error('Subject or body wrong'));
                 }
 
                 done();
@@ -1079,17 +1079,17 @@ describe('CONFIRM Event payment process', function() {
         });
 
         it('there should be a confirmation email', function(done) {
-            OutgoingMessage.findOne({ to: 'dan.johansson@ingenjorerutangranser.se' }, function(err, m) {
+            OutgoingMessage.findOne({
+                to: 'dan.johansson@ingenjorerutangranser.se',
+                subject: ewbEvent.confirmationEmail.subject,
+                text: ewbEvent.confirmationEmail.body,
+            }, function(err, m) {
                 if (err) {
                     return done(err);
                 }
 
                 if (!m) {
                     return done(new Error('Missing confirmation email'));
-                }
-
-                if (ewbEvent.confirmationEmail.subject != m.subject || ewbEvent.confirmationEmail.body != m.text) {
-                    return done(new Error('Subject or body wrong'));
                 }
 
                 done();
@@ -1250,18 +1250,59 @@ describe('CONFIRM Event payment process', function() {
             });
         });
 
+        it('should be exist a receipt email', function(done) {
+            OutgoingMessage.findOne({
+                to: 'dan.johansson@ingenjorerutangranser.se',
+                subject: ewbMail.getSubject('receipt', { name: ewbEvent.confirmationEmail.subject }),
+            }, function(err, m) {
+                if (err) {
+                    return done(err);
+                }
+
+                Event.findById(ewbEvent._id).populate({
+                    path: 'payments',
+                    populate: {
+                        path: 'products',
+                        model: 'Product',
+                    },
+                }).exec(function(err, someEvent) {
+                    if (err) {
+                        return done(err);
+                    }
+
+                    if (!m) {
+                        return done(new Error('Missing receipt email'));
+                    }
+
+                    var payment = someEvent.payments[0];
+
+                    var listIsOkay = m.text.indexOf(PaymentHelper.formatProductList(payment.products)) > -1;
+                    if (!listIsOkay) {
+                        return done(new Error('Product list is wrong'));
+                    }
+
+                    var totalIsOkay = m.text.indexOf(PaymentHelper.formatTotal(payment.products)) > -1;
+                    if (!totalIsOkay) {
+                        return done(new Error('Total is wrong'));
+                    }
+
+                    done();
+                });
+            });
+        });
+
         it('there should be a confirmation email', function(done) {
-            OutgoingMessage.findOne({ to: 'dan.johansson@ingenjorerutangranser.se' }, function(err, m) {
+            OutgoingMessage.findOne({
+                to: 'dan.johansson@ingenjorerutangranser.se',
+                subject: ewbEvent.confirmationEmail.subject,
+                text: ewbEvent.confirmationEmail.body,
+            }, function(err, m) {
                 if (err) {
                     return done(err);
                 }
 
                 if (!m) {
                     return done(new Error('Missing confirmation email'));
-                }
-
-                if (ewbEvent.confirmationEmail.subject != m.subject || ewbEvent.confirmationEmail.body != m.text) {
-                    return done(new Error('Subject or body wrong'));
                 }
 
                 done();
