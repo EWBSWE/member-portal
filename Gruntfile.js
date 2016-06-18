@@ -69,10 +69,6 @@ module.exports = function (grunt) {
         ],
         tasks: ['injector:css']
       },
-      mochaTest: {
-        files: ['server/**/*.spec.js'],
-        tasks: ['env:test', 'mochaTest']
-      },
       jsTest: {
         files: [
           '<%= yeoman.client %>/{app,components}/**/*.spec.js',
@@ -601,7 +597,6 @@ module.exports = function (grunt) {
 
     grunt.task.run([
       'clean:server',
-      'env:all',
       'injector:sass', 
       'concurrent:server',
       'injector',
@@ -682,6 +677,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('default', [
     'newer:jshint',
+    'test',
     'build'
   ]);
 
