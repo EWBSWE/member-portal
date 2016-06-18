@@ -240,7 +240,9 @@ function formatTotal(products) {
         return '0 SEK';
     }
 
-    var total = products.reduce((total, product) => total + product.price, 0);
+    var total = products.reduce(function(total, product) {
+        return total + product.price;
+    }, 0);
 
     return total + ' ' + products[0].currency;
 }
