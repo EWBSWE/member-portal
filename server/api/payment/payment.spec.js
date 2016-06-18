@@ -18,6 +18,7 @@ var Product = require('../../models/product.model');
 var ProductType = require('../../models/product-type.model');
 var User = require('../../models/user.model');
 
+var PaymentHelper = require('../payment/payment.helper');
 var ewbMail = require('../../components/ewb-mail');
 
 function createAdmin(callback) {
@@ -204,18 +205,46 @@ describe('CONFIRM Membership payment process', function() {
             });
         });
 
+        it('should exist a receipt mail with correct subject containing the product specification', function(done) {
+            OutgoingMessage.findOne({
+                to: member.email,
+                subject: ewbMail.getSubject('receipt', { name: product.name }),
+            }, function(err, m) {
+                if (err) {
+                    return done(err);
+                }
+
+                if (!m) {
+                    return done(new Error('No receipt message created'));
+                }
+
+                var listIsOkay = m.text.indexOf(PaymentHelper.formatProductList([product])) > -1;
+                if (!listIsOkay) {
+                    return done(new Error('Product list is wrong'));
+                }
+
+                var totalIsOkay = m.text.indexOf(PaymentHelper.formatTotal([product])) > -1;
+                if (!totalIsOkay) {
+                    return done(new Error('Total is wrong'));
+                }
+
+                done();
+
+            });
+        });
+
         it('should exist a confirmation mail with New Member subject and body', function(done) {
-            OutgoingMessage.findOne({ to: member.email }, function(err, m) {
+            OutgoingMessage.findOne({
+                to: member.email,
+                subject: ewbMail.getSubject('new-member'),
+                text: ewbMail.getBody('new-member'),
+            }, function(err, m) {
                 if (err) {
                     return done(err);
                 }
 
                 if (!m) {
                     return done(new Error('No message created'));
-                }
-
-                if (m.subject != ewbMail.getSubject('new-member') || m.text != ewbMail.getBody('new-member')) {
-                    return done(new Error('Subject or body content is wrong'));
                 }
 
                 done();
@@ -358,17 +387,17 @@ describe('CONFIRM Membership payment process', function() {
         });
 
         it('should exist a confirmation mail with Renewal subject and body', function(done) {
-            OutgoingMessage.findOne({ to: member.email }, function(err, m) {
+            OutgoingMessage.findOne({
+                to: member.email,
+                subject: ewbMail.getSubject('renewal'),
+                text: ewbMail.getBody('renewal'),
+            }, function(err, m) {
                 if (err) {
                     return done(err);
                 }
 
                 if (!m) {
                     return done(new Error('No message created'));
-                }
-
-                if (m.subject != ewbMail.getSubject('renewal') || m.text != ewbMail.getBody('renewal')) {
-                    return done(new Error('Subject or body content is wrong'));
                 }
 
                 done();

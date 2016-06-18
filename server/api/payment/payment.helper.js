@@ -15,6 +15,10 @@ exports.createBuyer = createBuyer;
 exports.generateReport = generateReport;
 exports.formatReport = formatReport;
 
+exports.formatProductList = formatProductList;
+exports.formatTotal = formatTotal;
+exports.formatTax = formatTax;
+
 function createBuyer(type, documentRef, callback) {
     Buyer.create({
         type: type,
@@ -218,3 +222,25 @@ function formatReport(data) {
 
     return text;
 };
+
+function formatProductList(products) {
+    var text = '';
+
+    for (var i = 0; i < products.length; i++) {
+        var product = products[i];
+        text += product.name + '  -  ' + product.price + ' ' + product.currency + '\n';
+    }
+
+    return text;
+}
+
+function formatTotal(products) {
+    var total = products.reduce((total, product) => total + product.price, 0);
+
+    return total + ' ' + products[0].currency;
+}
+
+function formatTax(products) {
+    // TODO When products include tax, fix this.
+    return '0 SEK';
+}

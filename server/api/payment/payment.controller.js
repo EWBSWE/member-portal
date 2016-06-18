@@ -4,7 +4,7 @@ var _ = require('lodash');
 
 var stripe = require('stripe')('***REMOVED***');
 if (process.env.NODE_ENV === 'production') {
-  stripe = require('stripe')('sk_live_aRwKpgsqwq7rpsozBg43Clx5');
+    stripe = require('stripe')('sk_live_aRwKpgsqwq7rpsozBg43Clx5');
 }
 
 var moment = require('moment');
@@ -120,27 +120,50 @@ exports.confirmMembershipPayment = function(req, res) {
                 return handleError(res, err);
             }
 
-            return sendConfirmation(member, newMember);
+            return sendReceipt(product, member, newMember);
         });
     };
 
-    function sendConfirmation(member, newMember) {
+    function sendReceipt(product, member, newMember) {
         var receiptMail = {
+            from: ewbMail.sender(),
+            to: member.email,
+            subject: ewbMail.getSubject('receipt', { name: product.name }),
+            text: ewbMail.getBody('receipt', {
+                buyer: member.email,
+                date: moment().format('YYYY-MM-DD HH:mm'),
+                total: PaymentHelper.formatTotal([product]),
+                tax: PaymentHelper.formatTax([product]),
+                list: PaymentHelper.formatProductList([product]),
+            }),
+        };
+
+        OutgoingMessage.create(receiptMail, function(err, outgoingMessage) {
+            if (err) {
+                ewbError.create({ message: 'Membership receipt mail', origin: __filename, params: err });
+            }
+
+            return sendConfirmation(member, newMember);
+        });
+    }
+
+    function sendConfirmation(member, newMember) {
+        var confirmationMail = {
             from: ewbMail.sender(),
             to: req.body.email,
         };
 
         if (newMember) {
-            receiptMail.subject = ewbMail.getSubject('new-member');
-            receiptMail.text = ewbMail.getBody('new-member');
+            confirmationMail.subject = ewbMail.getSubject('new-member');
+            confirmationMail.text = ewbMail.getBody('new-member');
         } else {
-            receiptMail.subject = ewbMail.getSubject('renewal');
-            receiptMail.text = ewbMail.getBody('renewal');
+            confirmationMail.subject = ewbMail.getSubject('renewal');
+            confirmationMail.text = ewbMail.getBody('renewal');
         }
 
-        OutgoingMessage.create(receiptMail, function(err, outgoingMessage) {
+        OutgoingMessage.create(confirmationMail, function(err, outgoingMessage) {
             if (err) {
-                ewbError.create({ message: 'Membership receipt mail', origin: __filename, params: err });
+                ewbError.create({ message: 'Membership confirmation mail', origin: __filename, params: err });
             }
         });
 
