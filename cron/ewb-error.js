@@ -35,11 +35,17 @@ ewbError.find({ createdAt: { $gt: moment().subtract(1, 'day') } }, function(err,
     }
 
     if (ewbErrors.length) {
+        var errorMessages = ewbErrors.map(function(e) {
+            return e.message;
+        });
+
+        var text = 'Since: ' + moment().subtract(1, 'day').format() + '\n\n' + errorMessages.join('\n');
+
         var data = {
-            from: 'ict@ingenjorerutangranser.se',
+            from: 'noreply@ingenjorerutangranser.se',
             to: 'ict@ingenjorerutangranser.se',
             subject: 'ewb-member: ' + ewbErrors.length + ' errors',
-            text: 'Since: ' + moment().subtract(1, 'day').format(),
+            text: text,
         };
 
         OutgoingMessage.create(data, function() {
