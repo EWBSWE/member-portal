@@ -92,4 +92,6 @@ angular.module('ewbMemberApp')
     $scope.setCurrentLanguage = function (lang) {
         gettextCatalog.setCurrentLanguage(lang);
     };
+
+    $scope.renewalMode = $location.path() === '/fornya-medlemskap';
 });

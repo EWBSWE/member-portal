@@ -1,7 +1,8 @@
 <div class="container membership">
   <div class="row">
     <div class="col-xs-12 col-md-6">
-      <h1 translate>Sign up</h1>
+      <h1 translate ng-show="renewalMode">Renew your membership</h1>
+      <h1 translate ng-show="!renewalMode">Sign up</h1>
     </div>
   </div>
   <div class="row">
@@ -12,13 +13,24 @@
   </div>
   <div class="row">
     <div class="col-xs-12 col-md-6">
-      <p><strong translate>
-        We would love to see you join our community. Being a part of Engineers without borders gives you the possibility to get involved and influence our work for a better world. Your membership also supports our organization greatly and we need both active and supporting members. There is no requirement for an engineering degree, everyone is needed and all are welcome.
-      </strong></p>
+      <div ng-show="renewalMode">
+        <p><strong translate>
+          We would love to see your continued support. Being a part of Engineers without borders gives you the possibility to get involved and influence our work for a better world. Your membership also supports our organization greatly and we need both active and supporting members. There is no requirement for an engineering degree, everyone is needed and all are welcome.
+        </strong></p>
 
-      <p class="help-block" translate>
-        If you want to get involved we recommend that you contact your local group that you can find over at <a target="_blank" href="http://ingenjorerutangranser.se/organisation">ingenjorerutangranser.se/organisation</a>. You can also find available positions for current projects at <a target="_blank" href="http://volontar.ingenjorerutangranser.se">volontar.ingenjorerutangranser.se</a>. If you have any other questions that can't be answered by one of the local groups, feel free to contact us at <a href="mailto:info@ingenjorerutangranser.se">info@ingenjorerutangranser.se</a>.
-      </p>
+        <p class="help-block" translate>
+          If you want to get involved we recommend that you contact your local group that you can find over at <a target="_blank" href="http://ingenjorerutangranser.se/organisation">ingenjorerutangranser.se/organisation</a>. You can also find available positions for current projects at <a target="_blank" href="http://volontar.ingenjorerutangranser.se">volontar.ingenjorerutangranser.se</a>. If you have any other questions that can't be answered by one of the local groups, feel free to contact us at <a href="mailto:info@ingenjorerutangranser.se">info@ingenjorerutangranser.se</a>.
+        </p>
+      </div>
+      <div ng-show="!renewalMode">
+        <p><strong translate>
+          We would love to see you join our community. Being a part of Engineers without borders gives you the possibility to get involved and influence our work for a better world. Your membership also supports our organization greatly and we need both active and supporting members. There is no requirement for an engineering degree, everyone is needed and all are welcome.
+        </strong></p>
+
+        <p class="help-block" translate>
+          If you want to get involved we recommend that you contact your local group that you can find over at <a target="_blank" href="http://ingenjorerutangranser.se/organisation">ingenjorerutangranser.se/organisation</a>. You can also find available positions for current projects at <a target="_blank" href="http://volontar.ingenjorerutangranser.se">volontar.ingenjorerutangranser.se</a>. If you have any other questions that can't be answered by one of the local groups, feel free to contact us at <a href="mailto:info@ingenjorerutangranser.se">info@ingenjorerutangranser.se</a>.
+        </p>
+      </div>
 
       <p class="help-block" translate>
         Do you any questions regarding your membership or anything payment related? Reach out to us at <a href="mailto:volontar@ingenjorerutangranser.se">volontar@ingenjorerutangranser.se</a>.
