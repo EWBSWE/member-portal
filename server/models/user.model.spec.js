@@ -1,55 +1,67 @@
 'use strict';
 
-var should = require('should');
-var app = require('../app');
+var expect = require('chai').expect;
+
+var db = require('../db').db;
 var User = require('./user.model');
 
-var user = new User({});
-var initUser = function() {
-  user.provider = 'local';
-  user.email = 'test@test.com';
-  user.password = 'password';
-};
-
-describe('User Model', function() {
-  before(function(done) {
-    initUser();
-    // Clear users before testing
-    User.remove().exec().then(function() {
-      done();
+describe('User', function() {
+    afterEach(function(done) {
+        db.any('DELETE FROM member').then(() => { done(); });
     });
-  });
 
-  afterEach(function(done) {
-    initUser();
-    User.remove().exec().then(function() {
-      done();
+    describe('Creation', function() {
+        it('should create user', function() {
+            return User.create('test@test.com', 'test1234', 'user');
+        });
+
+        it('should reject erroneous password', function(done) {
+            User.create('test@test.com', 'short', 'user').catch(err => {
+                expect(err).to.equal('Password too short');
+                done();
+            });
+        });
+
+        it('should reject erroneous email', function(done) {
+            User.create('fail', 'validpassword', 'user').catch(err => {
+                expect(err).to.equal('Invalid email');
+                done();
+            });
+        });
+
+        it('should reject erroneous role', function(done) {
+            User.create('valid@email.domain', 'validpassword', 'fool').catch(err => {
+                expect(err).to.equal('Invalid role');
+                done();
+            });
+        });
+
+        it('should fail to create user that is missing arguments', function(done) {
+            User.create().catch(err => { done(); });
+        });
+
+        it('should fail to create user with same email as other user', function(done) {
+            User.create('test@test.com', 'test1234', 'user').then(data => {
+                return User.create('test@test.com', 'test1234', 'user');
+            }).catch(err => {
+                done();
+            });
+        });
     });
-  });
 
-  it('should fail when saving a duplicate user', function(done) {
-    user.save(function() {
-      var userDup = new User(user);
-      userDup.save(function(err) {
-        should.exist(err);
-        done();
-      });
+    describe('Authentication', function() {
+        it("should authenticate user if password is valid", function(done) {
+            User.create('test@test.com', 'test1234', 'user').then(data => {
+                expect(User.authenticate('test1234', data.hashed_password, data.salt)).to.be.true;
+                done();
+            });
+        });
+
+        it("should not authenticate user if password is invalid", function(done) {
+            User.create('test@test.com', 'test1234', 'user').then(data => {
+                expect(User.authenticate('wrong password', data.hashed_password, data.salt)).to.be.false;
+                done();
+            });
+        });
     });
-  });
-
-  it('should fail when saving without an email', function(done) {
-    user.email = '';
-    user.save(function(err) {
-      should.exist(err);
-      done();
-    });
-  });
-
-  it("should authenticate user if password is valid", function() {
-    return user.authenticate('password').should.be.true;
-  });
-
-  it("should not authenticate user if password is invalid", function() {
-    return user.authenticate('blah').should.not.be.true;
-  });
 });

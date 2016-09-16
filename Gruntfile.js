@@ -422,31 +422,18 @@ module.exports = function (grunt) {
     },
 
     // Test settings
-    //karma: {
-      //unit: {
-        //configFile: 'karma.conf.js',
-        //singleRun: true
-      //}
-    //},
+    karma: {
+      unit: {
+        configFile: 'karma.conf.js',
+        singleRun: true
+      }
+    },
 
     mochaTest: {
       options: {
         reporter: 'spec'
       },
       src: ['server/**/*.spec.js']
-    },
-
-    protractor: {
-      options: {
-        configFile: 'protractor.conf.js'
-      },
-      chrome: {
-        options: {
-          args: {
-            browser: 'chrome'
-          }
-        }
-      }
     },
 
     env: {
@@ -609,16 +596,12 @@ module.exports = function (grunt) {
     ]);
   });
 
-  grunt.registerTask('server', function () {
-    grunt.log.warn('The `server` task has been deprecated. Use `grunt serve` to start a server.');
-    grunt.task.run(['serve']);
-  });
-
   grunt.registerTask('test', function(target) {
     if (target === 'server') {
       return grunt.task.run([
         'env:all',
         'env:test',
+        'seed-database',
         'mochaTest'
       ]);
     }
@@ -680,5 +663,20 @@ module.exports = function (grunt) {
     'test',
     'build'
   ]);
+
+    grunt.registerTask('seed-database', function() {
+        var done = this.async();
+        var seed = require('./server/db/seed');
+
+        seed.empty().then(() => {
+            return seed.populate();
+        }).then(() => {
+            console.log('Seed complete');
+            done();
+        }).catch(err => {
+            console.error('Error during seed', err);
+            done();
+        });
+    });
 
 };

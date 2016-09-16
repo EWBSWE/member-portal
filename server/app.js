@@ -7,15 +7,10 @@
 // Set default node environment to development
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
-
 var express = require('express');
-
 var environment = require('./config/environment');
 
 process.env.DEV_MAIL = process.env.DEV_MAIL || environment.developerMail;
-
-// Connect to the database with our environment config
-//var db = require('./db');
 
 // Setup server
 var app = express();

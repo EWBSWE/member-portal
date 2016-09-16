@@ -1,12 +1,34 @@
 'use strict';
 
 var crypto = require('crypto');
+var Promise = require('bluebird');
 
 var db = require('../db').db;
+var config = require('../config/environment');
 
 function create(email, password, role) {
+    return txCreate(email, password, role, db);
+}
+
+function txCreate(email, password, role, transaction) {
+    if (!validEmail(email)) {
+        return new Promise((_, reject) => {
+            reject('Invalid email');
+        });
+    }
+    if (!validPassword(password)) {
+        return new Promise((_, reject) => {
+            reject('Password too short');
+        });
+    }
+    if(!validRole(role)) {
+        return new Promise((_, reject) => {
+            reject('Invalid role')
+        });
+    }
+
     let salt = makeSalt();
-    let hashedPassword= hashPassword(password, salt);
+    let hashedPassword = hashPassword(password, salt);
 
     let data = {
         email: email,
@@ -15,13 +37,29 @@ function create(email, password, role) {
         salt: salt,
     };
 
-    return db.one(`
+    return transaction.one(`
         INSERT INTO member(email, hashed_password, salt, role)
         VALUES($[email], $[hashedPassword], $[salt], $[role])
-        RETURNING id
+        RETURNING id, email, hashed_password, salt, role
     `, data);
 }
 
+function validEmail(email) {
+    if (!email) {
+        return false;
+    }
+
+    var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+    return re.test(email);
+}
+
+function validRole(role) {
+    return role && config.userRoles.indexOf(role) > -1;
+}
+
+function validPassword(password) {
+    return password && password.length >= 8;
+}
 
 //var mongoose = require('mongoose');
 //var Schema = mongoose.Schema;
@@ -109,23 +147,6 @@ function create(email, password, role) {
     //});
 //}, 'The specified email address is already in use.');
 
-var validatePresenceOf = function(value) {
-  return value && value.length;
-};
-
-/**
- * Pre-save hook
- */
-//UserSchema
-  //.pre('save', function(next) {
-    //if (!this.isNew) return next();
-
-    //if (!validatePresenceOf(this.hashedPassword))
-      //next(new Error('Invalid password'));
-    //else
-      //next();
-  //});
-
 /**
  * Methods
  */
@@ -179,7 +200,6 @@ function createUserData(email, password, role) {
 }
 
 function authenticate(plainText, hashedPassword, salt) {
-    console.log(plainText, hashedPassword, salt);
     return hashPassword(plainText, salt) === hashedPassword;
 }
 
@@ -198,8 +218,7 @@ function hashPassword(plainText, salt) {
 }
 
 module.exports = {
+    create: create,
+    txCreate: txCreate,
     authenticate: authenticate,
-    makeSalt: makeSalt,
-    hashPassword: hashPassword,
-    create: create
 };

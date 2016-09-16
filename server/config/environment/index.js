@@ -1,8 +1,9 @@
 'use strict';
 
 var path = require('path');
+var _ = require('lodash');
 
-module.exports = {
+let defaultConfig = {
     env: process.env.NODE_ENV,
 
     // Root path of server
@@ -32,3 +33,5 @@ module.exports = {
 
     developerMail: 'ict@ingenjorerutangranser.se',
 };
+
+module.exports = _.merge(defaultConfig, require(`./${process.env.NODE_ENV}.js`) || {});

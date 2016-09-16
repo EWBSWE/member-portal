@@ -10,15 +10,15 @@ function create(message, origin, params) {
     };
 
     return db.one(`
-        INSERT INTO ewb_error (message, text, origin, params)
-        VALUES ($[message], $[text], $[origin], $[params])
+        INSERT INTO ewb_error (message, origin, params)
+        VALUES ($[message], $[origin], $[params])
         RETURNING id
     `, data);
 }
 
 function index() {
     return db.any(`
-        SELECT id, message, origin, text, params, created_at
+        SELECT id, message, origin, params, created_at
         FROM ewb_error
         ORDER BY created_at DESC
     `);
@@ -26,7 +26,7 @@ function index() {
 
 function get(id) {
     return db.oneOrNone(`
-        SELECT id, message, origin, text, params, created_at
+        SELECT id, message, origin, params, created_at
         FROM ewb_error
         WHERE id = $1
     `, id);
