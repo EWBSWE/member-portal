@@ -26,7 +26,7 @@ let defaultConfig = {
     db: {
         host: 'localhost',
         port: 5432,
-        database: 'ewb',
+        database: 'ewb_dev',
         user: 'dev',
         password: 'asdf',
     },

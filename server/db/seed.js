@@ -2,7 +2,7 @@
 
 let db = require('../db').db;
 
-let User = require('../models/user.model');
+let Member = require('../models/member.model');
 
 function deleteMembers(transaction) {
     return transaction.any(`DELETE FROM member`);
@@ -12,8 +12,8 @@ function deleteErrors(transaction) {
     return transaction.any(`DELETE FROM ewb_error`);
 }
 
-function insertMembers(transaction) {
-    return User.txCreate('admin@admin.se', 'Test1234', 'admin', transaction);
+function insertAuthenticatableMembers(transaction) {
+    return Member.txCreateAuthenticatable('admin@admin.se', 'Test1234', 'admin', transaction);
 }
 
 function empty() {
@@ -30,7 +30,7 @@ function empty() {
 function populate() {
     return db.tx(t => {
         let queries = [
-            insertMembers(t),
+            insertAuthenticatableMembers(t),
         ];
 
         return t.batch(queries);

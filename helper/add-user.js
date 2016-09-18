@@ -1,3 +1,5 @@
+'use strict';
+
 let path = require('path');
 
 let User = require(path.join(__dirname, '../server/models/user.model'));

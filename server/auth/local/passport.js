@@ -2,7 +2,7 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var db = require('../../db').db;
 
-exports.setup = (User, config) => {
+exports.setup = (Member, config) => {
     passport.use(new LocalStrategy({
             usernameField: 'email',
             passwordField: 'password' // this is the virtual field on the model
@@ -15,7 +15,7 @@ exports.setup = (User, config) => {
                 if (!data) {
                     return done(null, false, {message: 'Failed to sign in.'});
                 }
-                if (!User.authenticate(password, data.hashedpassword, data.salt)) {
+                if (!Member.authenticate(password, data.hashedpassword, data.salt)) {
                     return done(null, false, {message: 'Failed to sign in.'});
                 }
 

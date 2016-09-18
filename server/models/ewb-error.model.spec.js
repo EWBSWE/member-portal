@@ -2,9 +2,14 @@
 
 var expect = require('chai').expect;
 
+var db = require('../db').db;
 var ewbError = require('./ewb-error.model');
 
 describe('Error', function() {
+    afterEach(function(done) {
+        db.any('DELETE FROM ewb_error').then(() => { done(); });
+    });
+
     describe('Creation', function() {
         it('should create error with empty params', function() {
             return ewbError.create('some message', 'some origin', {});

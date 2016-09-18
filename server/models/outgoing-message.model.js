@@ -1,18 +1,44 @@
 'use strict';
 
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var moment = require('moment');
+var db = require('../db').db;
 
-var OutgoingMessageSchema = new Schema({
-    to: { type: String, required: true },
-    from: { type: String, required: true },
-    subject: { type: String, required: true },
-    text: { type: String, required: true },
-    createdAt: { type: Date, default: Date.now },
-    sendAt: { type: Date, default: Date.now },
-    priority: { type: Number, default: 0 },
-    failedAttempts: { type: Number, default: 0 },
-});
+function create(attributes) {
+    return db.one(`
+        INSERT INTO outgoing_message (recipient, sender, subject, body)
+        VALUES ($[recipient], $[sender], $[subject], $[body])
+        RETURNING id
+    `, attributes);
+}
 
-module.exports = mongoose.model('OutgoingMessage', OutgoingMessageSchema);
+function fetch(n) {
+    return db.any(`
+        SELECT id, recipient, sender, subject, body, failed_attempts
+        FROM outgoing_message
+        WHERE NOW() > send_at
+        ORDER BY priority DESC
+        LIMIT $1
+    `, n);
+}
+
+function remove(id) {
+    console.log('removing', id);
+    return db.none(`
+        DELETE FROM outgoing_message
+        WHERE id = $1
+    `, id);
+}
+
+function fail(id) {
+    return db.one(`
+        UPDATE outgoing_message
+        SET failed_attempts = failed_attempts + 1
+        WHERE id = $1
+    `, id);
+}
+
+module.exports = {
+    create: create,
+    fetch: fetch,
+    remove: remove,
+    fail: fail
+};
