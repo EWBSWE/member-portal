@@ -8,9 +8,9 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 var moment = require('moment');
-var mongoose = require('mongoose');
+//var mongoose = require('mongoose');
 
-var Buyer = require('../../models/buyer.model');
+//var Buyer = require('../../models/buyer.model');
 var ewbError = require('../../models/ewb-error.model');
 var Member = require('../../models/member.model');
 var OutgoingMessage = require('../../models/outgoing-message.model');

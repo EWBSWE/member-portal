@@ -2,9 +2,9 @@
 
 var _ = require('lodash');
 var moment = require('moment');
-var mongoose = require('mongoose');
+//var mongoose = require('mongoose');
 
-var Buyer = require('../../models/buyer.model');
+//var Buyer = require('../../models/buyer.model');
 var Event = require('../../models/event.model');
 var EventAddon = require('../../models/event-addon.model');
 var Payment = require('../../models/payment.model');
