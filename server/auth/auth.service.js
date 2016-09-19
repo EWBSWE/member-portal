@@ -30,8 +30,7 @@ function isAuthenticated() {
                 SELECT id, role
                 FROM member
                 WHERE id = $1
-            `, [req.user.id]).then(data => {
-                console.log(data);
+            `, req.user._id).then(data => {
                 if (!data) {
                     return res.sendStatus(401);
                 }
@@ -40,13 +39,6 @@ function isAuthenticated() {
             }).catch(err => {
                 next(err);
             });
-            //User.findById(req.user._id, function (err, user) {
-                //if (err) return next(err);
-                //if (!user) return res.sendStatus(401);
-
-                //req.user = user;
-                //next();
-            //});
         });
 }
 

@@ -142,7 +142,7 @@ function get(id) {
 }
 
 function destroy(id) {
-    throw 'Not implemented yet';
+    return db.none(`DELETE FROM member WHERE id = $1`, id);
 }
 
 function valid(member) {
@@ -170,7 +170,8 @@ function validEmail(email) {
         return false;
     }
 
-    var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+    var re = /.+@.+/i;
+
     return re.test(email);
 }
 

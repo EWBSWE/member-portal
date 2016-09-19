@@ -72,6 +72,30 @@ exports.bulkCreate = function(req, res) {
     throw 'Not implemented yet';
 };
 
+exports.changePassword = function(req, res) {
+    Member.initiatePasswordChange(req.user._id, req.body.oldPassword, req.body.newPassword).then(() => {
+        return res.sendStatus(200);
+    }).catch(err => {
+        return res.sendStatus(500);
+    });
+};
+
+exports.me = function(req, res) {
+    
+};
+
+exports.authCallback = function(req, res) {
+    
+};
+
+exports.resetPassword = function(req, res) {
+    
+};
+
+exports.resetPasswordWithToken = function(req, res) {
+    
+};
+
 
 //exports.bulkAdd = function(req, res) {
   //var csv = req.body.csv;

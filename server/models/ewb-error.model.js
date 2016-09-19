@@ -32,8 +32,13 @@ function get(id) {
     `, id);
 }
 
+function destroy(id) {
+    return db.none(`DELETE FROM ewb_error WHERE id = $1`, id);
+}
+
 module.exports = {
     create: create,
     index: index,
-    get: get
+    get: get,
+    destroy: destroy,
 };

@@ -2,21 +2,28 @@
 
 var ewbError = require('../../models/ewb-error.model');
 
-exports.index = function(req, res) {
+exports.index = function(req, res, next) {
     ewbError.index().then(data => {
-        return res.status(200).json(data);
+        res.status(200).json(data);
     }).catch(err => {
-        return res.sendStatus(500);
+        return next(err);
     });
 };
 
-exports.show = function(req, res) {
+exports.show = function(req, res, next) {
+    if (!Number.isInteger(parseInt(req.params.id))) {
+        let badRequest = new Error('Bad request.');
+        badRequest.status = 400;
+        return next(badRequest);
+    }
     ewbError.get(req.params.id).then(data => {
         if (!data) {
-            return res.sendStatus(404);
+            let notFound = new Error('No such EWB Error.');
+            notFound.status = 404;
+            return next(notFound);
         }
-        return res.status(200).json(data);
+        res.status(200).json(data);
     }).catch(err => {
-        return res.sendStatus(500);
+        return next(err);
     });
 };
