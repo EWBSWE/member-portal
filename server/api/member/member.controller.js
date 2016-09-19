@@ -8,34 +8,46 @@ var Member = require('../../models/member.model');
 var OutgoingMessage = require('../../models/outgoing-message.model');
 //var Payment = require('../../models/payment.model');
 
-exports.index = function(req, res) {
+exports.index = function(req, res, next) {
     Member.index().then(data => {
-        return res.status(200).json(data);
+        res.status(200).json(data);
     }).catch(err => {
-        return res.sendStatus(500);
+        next(err);
     });
 };
 
-exports.get = function(req, res) {
+exports.get = function(req, res, next) {
+    if (!Number.isInteger(parseInt(req.params.id))) {
+        let badRequest = new Error('Bad request.');
+        badRequest.status = 400;
+        return next(badRequest);
+    }
+
     Member.get(req.params.id).then(data => {
         if (!data) {
             return res.sendStatus(404);
         }
-        return res.status(200).json(data);
+        res.status(200).json(data);
     }).catch(err => {
-        return res.sendStatus(500);
+        next(err);
     });
 };
 
-exports.create = function(req, res) {
+exports.create = function(req, res, next) {
+    if (!req.body) {
+        let badRequest = new Error('Bad request.');
+        badRequest.status = 400;
+        return next(badRequest);
+    }
+
     Member.create(req.body).then(data => {
-        return res.status(201).json(data);
+        res.status(201).json(data);
     }).catch(err => {
-        return res.sendStatus(500);
+        next(err);
     });
 };
 
-exports.createAuthenticatable = function(req, res) {
+exports.createAuthenticatable = function(req, res, next) {
     let randomPassword = crypto.randomBytes(24).toString('hex');
     Member.createAuthenticatable(req.body, randomPassword, 'user').then(data => {
         let url = 'https://blimedlem.ingenjorerutangranser.se/login';
@@ -46,37 +58,55 @@ exports.createAuthenticatable = function(req, res) {
             body: ewbMail.getBody('create-user', { url: url })
         });
     }).then(() => {
-        return res.sendStatus(201);
+        res.sendStatus(201);
     }).catch(err => {
-        return res.sendStatus(500);
+        next(err);
     });
 };
 
-exports.update = function(req, res) {
+exports.update = function(req, res, next) {
+    if (!Number.isInteger(parseInt(req.params.id)) || !req.body) {
+        let badRequest = new Error('Bad request.');
+        badRequest.status = 400;
+        return next(badRequest);
+    }
+
     Member.update(req.params.id, req.body).then(data => {
-        return res.status(202).json(data);
+        res.status(202).json(data);
     }).catch(err => {
-        return res.sendStatus(500);
+        res.sendStatus(500);
     });
 };
 
-exports.destroy = function(req, res) {
+exports.destroy = function(req, res, next) {
+    if (!Number.isInteger(parseInt(req.params.id))) {
+        let badRequest = new Error('Bad request.');
+        badRequest.status = 400;
+        return next(badRequest);
+    }
+
     Member.destroy(req.params.id).then(data => {
-        return res.sendStatus(204);
+        res.sendStatus(204);
     }).catch(err => {
-        return res.sendStatus(500);
+        next(err);
     });
 };
 
-exports.bulkCreate = function(req, res) {
+exports.bulkCreate = function(req, res, next) {
     throw 'Not implemented yet';
 };
 
-exports.changePassword = function(req, res) {
+exports.changePassword = function(req, res, next) {
+    if (!req.body.oldPassword || !req.body.newPassword) {
+        let badRequest = new Error('Bad request.');
+        badRequest.status = 400;
+        return next(badRequest);
+    }
+
     Member.initiatePasswordChange(req.user._id, req.body.oldPassword, req.body.newPassword).then(() => {
-        return res.sendStatus(200);
+        res.sendStatus(200);
     }).catch(err => {
-        return res.sendStatus(500);
+        next(err);
     });
 };
 
