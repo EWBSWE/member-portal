@@ -53,4 +53,9 @@ describe('Error', function() {
             });
         });
     });
+
+    describe('Removal', function() {
+        xit('should remove error');
+        xit('should fail to remove missing error');
+    });
 });
