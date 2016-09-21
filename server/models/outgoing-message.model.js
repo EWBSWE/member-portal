@@ -21,7 +21,6 @@ function fetch(n) {
 }
 
 function remove(id) {
-    console.log('removing', id);
     return db.none(`
         DELETE FROM outgoing_message
         WHERE id = $1

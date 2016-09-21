@@ -5,13 +5,31 @@ var db = require('../db').db;
 function index() {
     return db.any(`
         SELECT id, member_id, amount, currency_code, created_at
-        FROM index
+        FROM payment
         ORDER BY id
     `);
 }
 
+function get(id) {
+    return db.any(`
+        SELECT id, member_id, amount, currency_code, created_at
+        FROM payment
+        WHERE id = $1
+    `, id);
+}
+
+function find(memberId) {
+    return db.any(`
+        SELECT id, member_id, amount, currency_code, created_at
+        FROM payment
+        WHERE member_id = $1
+    `, memberId);
+}
+
 module.exports = {
     index: index,
+    get: get,
+    find: find,
 }
 
 //var mongoose = require('mongoose');

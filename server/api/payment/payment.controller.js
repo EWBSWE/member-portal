@@ -2,6 +2,8 @@
 
 var _ = require('lodash');
 
+var Promise = require('bluebird');
+
 var stripe = require('stripe')('***REMOVED***');
 if (process.env.NODE_ENV === 'production') {
     stripe = require('stripe')('sk_live_aRwKpgsqwq7rpsozBg43Clx5');
@@ -24,28 +26,101 @@ var PaymentHelper = require('../payment/payment.helper');
 
 var ewbMail = require('../../components/ewb-mail');
 
-exports.index = function(req, res) {
-    Payment.find().populate({
-        path: 'buyer',
-    }).lean().exec(function (err, payments) {
-        if (err) {
-            return handleError(res, err);
-        }
-        return res.status(200).json(payments);
+
+var Purchase = require('../../helpers/purchase.helper');
+
+
+exports.index = function(req, res, next) {
+    Payment.index().then(data => {
+        res.status(200).json(data);
+    }).catch(err => {
+        next(err);
     });
 };
 
-exports.show = function(req, res) {
-    Payment.findOne({ _id: req.params.id }, function(err, payment) {
-        if (err) {
-            return handleError(res, err);
-        } else {
-            return res.status(200).json(payment);
-        }
+exports.get = function(req, res, next) {
+    Payment.get(req.params.id).then(data => {
+        res.status(200).json(data);
+    }).catch(err => {
+        next(err);
     });
 };
 
-exports.confirmMembershipPayment = function(req, res) {
+exports.confirmMembershipPayment = function(req, res, next) {
+    if (!req.body.stripeToken || !req.body.productId) {
+        let badRequest = new Error('Missing parameters');
+        badRequest.status = 404;
+        return next(badRequest);
+    }
+
+    let stripeToken = req.body.stripeToken;
+    let memberData = {
+        email: req.body.email.trim(),
+        name: req.body.name,
+        location: req.body.location,
+        profession: req.body.profession,
+        education: req.body.education,
+        type: req.body.type,
+        gender: req.body.gender,
+        yearOfBirth: req.body.yearOfBirth,
+        expirationDate: moment()
+    };
+
+    Product.get(req.body.productId).then(product => {
+        memberData.expirationDate.add(product.attribute.durationDays, 'days');
+
+        return new Promise((resolve, reject) => {
+            processCharge({
+                currency: product.currency_code,
+                amount: product.price,
+                description: product.name
+            }, stripeToken, () => {
+                resolve(product);
+            }, err => {
+                console.log('what err', err);
+                // TODO
+                // WHAT DO?
+                //reject(err);
+                next(handlerStripeError(err));
+            });
+        });
+    }).then(product => {
+        return Purchase.membership(product, memberData);
+    }).then(data => {
+        let member = data.member;
+        let product = data.product;
+
+        let receiptMail = {
+            sender: ewbMail.sender(),
+            recipient: member.email,
+            subject: ewbMail.getSubject('receipt', { name: product.name }),
+            body: ewbMail.getBody('receipt', {
+                buyer: member.email,
+                date: moment().format('YYYY-MM-DD HH:mm'),
+                total: PaymentHelper.formatTotal([product]),
+                tax: PaymentHelper.formatTax([product]),
+                list: PaymentHelper.formatProductList([product]),
+            }),
+        };
+
+        let confirmationMail = {
+            sender: ewbMail.sender(),
+            recipient: member.email,
+            subject: 'foo',
+            body: 'bar',
+        };
+
+        return OutgoingMessage.create(receiptMail).then(() => {
+            return OutgoingMessage.create(confirmationMail);
+        });
+    }).then(() => {
+        res.sendStatus(201);
+    }).catch(err => {
+        next(err);
+    });
+};
+
+exports.confirmPayment = function(req, res) {
     var stripeToken = req.body.stripeToken;
 
     function handlePayment(product, memberData) {
@@ -437,6 +512,3 @@ function handleStripeError(err) {
     return { errorType: err.type };
 };
 
-function handleError(res, err) {
-    return res.status(500).send(err);
-};

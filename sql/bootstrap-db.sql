@@ -93,13 +93,21 @@ CREATE TABLE product_type (
 
 CREATE TABLE product (
     id SERIAL PRIMARY KEY,
+    product_type_id INTEGER REFERENCES product_type(id) ON DELETE SET NULL ON UPDATE CASCADE,
     name TEXT NOT NULL,
     price NUMERIC NOT NULL CONSTRAINT positive_price CHECK (price > 0),
     description TEXT,
-    product_type_id INTEGER REFERENCES product_type(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    attribute JSONB DEFAULT NULL,
     currency_code TEXT NOT NULL DEFAULT 'SEK',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE product_attribute (
+    product_id INTEGER REFERENCES product (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    key TEXT NOT NULL,
+    value TEXT NOT NULL,
+    CONSTRAINT unique_id_key UNIQUE (product_id, key)
 );
 
 CREATE TRIGGER update_product
@@ -112,7 +120,7 @@ CREATE TABLE email_template (
     id SERIAL PRIMARY KEY,
     sender TEXT,
     subject TEXT NOT NULL,
-    body TEXT NOT NULL,
+    body TEXT NOT NULL
 );
 
 -- Event
@@ -131,7 +139,7 @@ CREATE TABLE event (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     due_date TIMESTAMPTZ NOT NULL,
     email_template_id INTEGER REFERENCES email_template(id) ON DELETE SET NULL ON UPDATE CASCADE,
-    notification_open BOOLEAN NOT NULL DEFAULT TRUE,
+    notification_open BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE event_subscribers (
@@ -141,7 +149,7 @@ CREATE TABLE event_subscribers (
 
 CREATE TABLE event_participants (
     event_id INTEGER REFERENCES event(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    member_id INTEGER REFERENCES member(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    member_id INTEGER REFERENCES member(id) ON DELETE CASCADE ON UPDATE CASCADE
     message TEXT
 );
 

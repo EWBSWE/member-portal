@@ -1,11 +1,63 @@
 'use strict';
 
+var db = require('../db').db;
+
 function index() {
-    
+    return db.any(`
+        SELECT
+            id,
+            name,
+            price,
+            description,
+            product_type_id,
+            currency_code,
+            created_at,
+            updated_at
+        FROM product
+        ORDER BY id
+    `);
+}
+
+function get(id) {
+    return db.oneOrNone(`
+        SELECT
+            id,
+            name,
+            price,
+            description,
+            attribute,
+            product_type_id,
+            currency_code
+        FROM product
+        WHERE id = $1
+    `, id);
+}
+
+function createProductType(identifier) {
+    return db.one(`
+        INSERT INTO product_type (identifier)
+        VALUES ($1)
+        RETURNING id
+    `, identifier);
+}
+
+function createProduct(productTypeId, attributes) {
+    let data = Object.assign(attributes, {productTypeId: productTypeId});
+    return db.one(`
+        INSERT INTO product (
+            product_type_id, name, price, description, attribute
+        ) VALUES (
+            $[productTypeId], $[name], $[price], $[description], $[attribute]
+        )
+        RETURNING id
+    `, data);
 }
 
 module.exports = {
     index: index,
+    get: get,
+    createProductType: createProductType,
+    createProduct: createProduct,
 };
 
 //var mongoose = require('mongoose');

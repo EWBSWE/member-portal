@@ -13,6 +13,6 @@ router.get('/stripe-checkout', controller.stripeCheckoutKey);
 router.post('/generate-report', auth.isAuthenticated(), controller.generateReport);
 
 router.get('/', auth.isAuthenticated(), controller.index);
-router.get('/:id', auth.isAuthenticated(), controller.show);
+router.get('/:id(\\d+)', auth.isAuthenticated(), controller.get);
 
 module.exports = router;

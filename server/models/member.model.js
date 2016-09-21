@@ -9,13 +9,15 @@ var config = require('../config/environment');
 var db = require('../db').db;
 
 function create(memberAttributes) {
+    return txCreate(memberAttributes, db);
+}
+
+function txCreate(memberAttributes, transaction) {
     if (!valid(memberAttributes)) {
-        return new Promise((_, reject) => {
-            reject(generateErrorMessages(memberAttributes));
-        });
+        return Promise.reject(generateErrorMessages(memberAttributes));
     }
 
-    return db.one(`
+    return transaction.one(`
         INSERT INTO member (
             email,
             location,
@@ -35,8 +37,8 @@ function create(memberAttributes) {
             $[yearOfBirth],
             $[expirationDate]
         )
-        RETURNING id
-        `, memberAttributes);
+        RETURNING id, email
+    `, memberAttributes);
 }
 
 function createAuthenticatable(email, password, role) {
@@ -45,19 +47,13 @@ function createAuthenticatable(email, password, role) {
 
 function txCreateAuthenticatable(email, password, role, transaction) {
     if (!validEmail(email)) {
-        return new Promise((_, reject) => {
-            reject('Invalid email');
-        });
+        return Promise.reject('Invalid email');
     }
     if (!validPassword(password)) {
-        return new Promise((_, reject) => {
-            reject('Password too short');
-        });
+        return Promise.reject('Password too short');
     }
     if(!validRole(role)) {
-        return new Promise((_, reject) => {
-            reject('Invalid role')
-        });
+        return Promise.reject('Invalid role');
     }
 
     let salt = makeSalt();
@@ -128,6 +124,7 @@ function index() {
 function get(id) {
     return db.oneOrNone(`
         SELECT
+            id,
             email,
             location,
             education,
@@ -139,6 +136,23 @@ function get(id) {
         FROM member
         WHERE id = $1
     `, id);
+}
+
+function find(email) {
+    return db.oneOrNone(`
+        SELECT
+            id,
+            email,
+            location,
+            education,
+            profession,
+            member_type_id,
+            gender,
+            year_of_birth,
+            expiration_date
+        FROM member
+        WHERE email = $1
+    `, email);
 }
 
 function destroy(id) {
@@ -203,12 +217,14 @@ function hashPassword(plainText, salt) {
 
 module.exports = {
     create: create,
+    txCreate: txCreate,
     createAuthenticatable: createAuthenticatable,
     txCreateAuthenticatable: txCreateAuthenticatable,
     authenticate: authenticate,
     update: update,
     index: index,
     get: get,
+    find: find,
     destroy: destroy,
 }
 
