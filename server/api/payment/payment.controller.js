@@ -74,11 +74,9 @@ exports.confirmMembershipPayment = function(req, res, next) {
             }, stripeToken, () => {
                 resolve(product);
             }, err => {
-                console.log('what err', err);
-                // TODO
-                // WHAT DO?
-                //reject(err);
-                next(handlerStripeError(err));
+                let badRequest = new Error('Stripe rejected');
+                badRequest.status = 400;
+                next(badRequest);
             });
         });
     }).then(product => {
@@ -349,15 +347,14 @@ function processCharge(chargeAttributes, stripeToken, successCallback, errorCall
         if (err === null) {
             successCallback(charge);
         } else {
-            ewbError.create({ message: 'Stripe process charge', origin: __filename, params: err });
+            ewbError.create('Stripe process charge', __filename, err);
             errorCallback(err);
         }
     });
 };
 
 function handleStripeError(err) {
-    ewbError.create({ message: 'Stripe charge error', origin: __filename, params: err});
-
+    ewbError.create('Stripe charge error', __filename, err);
     return { errorType: err.type };
 };
 

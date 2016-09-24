@@ -1,6 +1,29 @@
 'use strict';
 
+var db = require('../db').db;
+
+function create(attributes) {
+    return db.one(`
+        INSERT INTO event (
+            name,
+            identifier,
+            active,
+            due_date,
+            email_template_id,
+            notification_open
+        ) VALUES (
+            $[name],
+            $[identifier],
+            $[active],
+            $[dueDate],
+            $[emailTemplateId],
+            $[notificationOpen]
+        ) RETURNING id
+    `, attributes);
+}
+
 module.exports = {
+    create: create,
 };
 
 //var mongoose = require('mongoose');

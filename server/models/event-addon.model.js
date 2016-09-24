@@ -1,16 +1,21 @@
 'use strict';
 
+var db = require('../db').db;
 
+function create(attributes) {
+    return db.one(`
+        INSERT INTO event (
+            event_id,
+            capacity,
+            product_id
+        ) VALUES (
+            $[eventId],
+            $[capacity],
+            $[productId]
+        ) RETURNING id, capacity
+    `, attributes);
+}
 
 module.exports = {
+    create: create,
 };
-
-//var mongoose = require('mongoose');
-//var Schema = mongoose.Schema;
-
-//var EventAddonSchema = new Schema({
-    //capacity: { type: Number, required: true },
-    //product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
-//});
-
-//module.exports = mongoose.model('EventAddon', EventAddonSchema);

@@ -95,19 +95,12 @@ CREATE TABLE product (
     id SERIAL PRIMARY KEY,
     product_type_id INTEGER REFERENCES product_type(id) ON DELETE SET NULL ON UPDATE CASCADE,
     name TEXT NOT NULL,
-    price NUMERIC NOT NULL CONSTRAINT positive_price CHECK (price > 0),
+    price NUMERIC NOT NULL CONSTRAINT positive_price CHECK (price >= 0),
     description TEXT,
     attribute JSONB DEFAULT NULL,
     currency_code TEXT NOT NULL DEFAULT 'SEK',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE product_attribute (
-    product_id INTEGER REFERENCES product (id) ON DELETE CASCADE ON UPDATE CASCADE,
-    key TEXT NOT NULL,
-    value TEXT NOT NULL,
-    CONSTRAINT unique_id_key UNIQUE (product_id, key)
 );
 
 CREATE TRIGGER update_product
@@ -124,12 +117,6 @@ CREATE TABLE email_template (
 );
 
 -- Event
-CREATE TABLE event_addon (
-    id SERIAL PRIMARY KEY,
-    capacity INTEGER NOT NULL,
-    product_id INTEGER REFERENCES product (id) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
 CREATE TABLE event (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
@@ -142,18 +129,25 @@ CREATE TABLE event (
     notification_open BOOLEAN NOT NULL DEFAULT TRUE
 );
 
-CREATE TABLE event_subscribers (
+CREATE TABLE event_addon (
+    id SERIAL PRIMARY KEY,
+    event_id INTEGER REFERENCES event (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    capacity INTEGER NOT NULL,
+    product_id INTEGER REFERENCES product (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE event_subscriber (
     event_id INTEGER REFERENCES event(id) ON DELETE CASCADE ON UPDATE CASCADE,
     member_id INTEGER REFERENCES member(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE event_participants (
+CREATE TABLE event_participant (
     event_id INTEGER REFERENCES event(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    member_id INTEGER REFERENCES member(id) ON DELETE CASCADE ON UPDATE CASCADE
+    member_id INTEGER REFERENCES member(id) ON DELETE CASCADE ON UPDATE CASCADE,
     message TEXT
 );
 
-CREATE TABLE event_payments (
+CREATE TABLE event_payment (
     event_id INTEGER REFERENCES event(id) ON DELETE CASCADE ON UPDATE CASCADE,
     payment_id INTEGER REFERENCES payment(id) ON DELETE CASCADE ON UPDATE CASCADE
 );

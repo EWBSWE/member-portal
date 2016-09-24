@@ -14,6 +14,8 @@ var agent = request.agent(app);
 
 var db = require('../../db').db;
 
+var EmailTemplate = require('../../models/email-template.model');
+var Event = require('../../models/event.model');
 var Member = require('../../models/member.model');
 var OutgoingMessage = require('../../models/outgoing-message.model');
 var Payment = require('../../models/payment.model');
@@ -53,13 +55,27 @@ describe('Payment controller', function() {
         });
     });
 
-    describe('Fetching payments', function() {
+    afterEach(function(done) {
+        db.none(`DELETE FROM member`).then(() => {
+            return db.none(`DELETE FROM product`)
+        }).then(() => {
+            return db.none(`DELETE FROM product_type`);
+        }).then(() => {
+            return db.none(`DELETE FROM outgoing_message`);
+        }).then(() => {
+            return db.none(`DELETE FROM ewb_error`);
+        }).then(() => {
+            done();
+        });
+    });
+
+    xdescribe('Fetching payments', function() {
         it('should fetch all payments as admin');
         it('should fetch all payments as user');
         it('should fail to fetch all payments as unauthenticated');
     });
 
-    describe('Become a member', function() {
+    xdescribe('Become a member', function() {
         it('should create a Stripe token', function(done) {
             stripe.tokens.create({
                 card: {
@@ -141,7 +157,6 @@ describe('Payment controller', function() {
         });
 
         it('should update existing member', function(done) {
-            var member;
             var expirationDate = moment().add(1, 'year');
 
             this.timeout(4000);
@@ -206,415 +221,200 @@ describe('Payment controller', function() {
             }).catch(err => {
                 done(err);
             });
-            
+        });
+
+        it('should reject new member with erroneous payment', function(done) {
+            this.timeout(4000);
+
+            return new Promise((resolve, reject) => {
+                stripe.tokens.create({
+                    card: {
+                        number: '4000000000000002',
+                        exp_month: 12,
+                        exp_year: moment().add(1, 'year').format('YYYY'),
+                        cvc: 666,
+                    }
+                }, function(err, token) {
+                    if (err) {
+                        reject(err);
+                    }
+                    resolve(token);
+                });
+            }).then(stripeToken => {
+                agent.post('/api/payments/confirm')
+                    .send({
+                        stripeToken: stripeToken,
+                        productId: productId,
+                        name: 'Some name',
+                        location: 'Some location',
+                        profession: 'Some profession',
+                        education: 'Some education',
+                        email: 'ict@ingenjorerutangranser.se',
+                        gender: 'other',
+                        yearOfBirth: '1900',
+                    })
+                    .expect(400)
+                    .end((err, res) => {
+                        if (err) {
+                            return done(err);
+                        }
+
+                        done();
+                    });
+            });
+        });
+
+        it('should reject exisiting member with erroneous payment', function() {
+            this.timeout(400);
+
+            Member.create({
+                email: 'ict@ingenjorerutangranser.se',
+                name: 'Some name',
+                location: 'Some location',
+                profession: 'Some profession',
+                education: 'Some education',
+                gender: 'other',
+                yearOfBirth: '1900',
+                memberTypeId: 1,
+                expirationDate: moment().add(1, 'year')
+            }).then(() => { 
+                return new Promise((resolve, reject) => {
+                    stripe.tokens.create({
+                        card: {
+                            number: '4000000000000002',
+                            exp_month: 12,
+                            exp_year: moment().add(1, 'year').format('YYYY'),
+                            cvc: 666,
+                        }
+                    }, function(err, token) {
+                        if (err) {
+                            return reject(err);
+                        }
+
+                        resolve(token);
+                    });
+                });
+            }).then(stripeToken => {
+                return new Promise((resolve, reject) => {
+                    agent.post('/api/payments/confirm')
+                        .send({
+                            stripeToken: stripeToken,
+                            productId: productId,
+                            name: 'New name',
+                            location: 'New location',
+                            profession: 'New profession',
+                            education: 'New education',
+                            email: 'ict@ingenjorerutangranser.se',
+                            gender: 'other',
+                            yearOfBirth: '1900',
+                        })
+                        .expect(400)
+                        .end((err, res) => {
+                            if (err) {
+                                return reject(err);
+                            }
+
+                            resolve();
+                        });
+                });
+            });
         });
     });
 
-    afterEach(function(done) {
-        db.none(`DELETE FROM member`).then(() => {
-            return db.none(`DELETE FROM product`)
-        }).then(() => {
-            return db.none(`DELETE FROM product_type`);
-        }).then(() => {
-            return db.none(`DELETE FROM outgoing_message`);
-        }).then(() => {
-            return db.none(`DELETE FROM ewb_error`);
-        }).then(() => {
-            done();
+    describe('Event participation', function() {
+        var eventId;
+        var freeProductId;
+        var notFreeProductId;
+
+        beforeEach(function() {
+            return Product.createProductType('Event').then(pt => {
+                return Product.createProduct(pt.id, {
+                    name: 'Free Product',
+                    price: 0,
+                    description: 'This is a description',
+                    attribute: {}
+                });
+            }).then(product => {
+                freeProductId = product.id;
+
+                return Product.createProduct(product.product_type_id, {
+                    name: 'Not Free Product',
+                    price: 100,
+                    description: 'This is a description',
+                    attribute: {}
+                });
+            }).then(product => {
+                notFreeProductId = product.id;
+
+                return EmailTemplate.create({
+                    sender: 'noreply@ingenjorerutangranser.se',
+                    subject: 'subject',
+                    body: 'body',
+                });
+            }).then(template => {
+                return Event.create({
+                    name: 'Some event',
+                    active: true,
+                    notificationOpen: true,
+                    identifier: 'identifier',
+                    dueDate: moment().add(1, 'month'),
+                    emailTemplateId: template.id,
+                    addons: [{
+                        capacity: 100,
+                        productId: freeProductId,
+                    }, {
+                        capacity: 10,
+                        productId: notFreeProductId,
+                    }],
+                });
+            }).then(event => {
+                eventId = event.id;
+            }).catch(err => {
+                console.log(err);
+            });
         });
+
+        afterEach(function(done) {
+            db.none(`DELETE FROM event`).then(() => {
+                return db.none(`DELETE FROM event_addon`)
+            }).then(() => {
+                return db.none(`DELETE FROM event_participant`)
+            }).then(() => {
+                return db.none(`DELETE FROM event_payment`);
+            }).then(() => {
+                done();
+            }).catch(err => {
+                console.log(err);
+            });
+        });
+
+        it('should sign up for event with no fee', function() {
+            
+        });
+
+        it('should sign up for event with fee');
+
+        it('should sign up for event with no fee with free addon');
+
+        it('should sign up for event with no fee with addon');
+
+        it('should reject participants when payment fails');
     });
+
 });
 
 
 
 
-//var moment = require('moment');
-//var _ = require('lodash');
-
-//var stripe = require('stripe')('***REMOVED***');
-
 //var Event = require('../../models/event.model');
 //var EventAddon = require('../../models/event-addon.model');
 //var EventParticipant = require('../../models/event-participant.model');
 //var Member = require('../../models/member.model');
-//var OutgoingMessage = require('../../models/outgoing-message.model');
-//var Product = require('../../models/product.model');
-//var ProductType = require('../../models/product-type.model');
-//var User = require('../../models/user.model');
-
+//
 //var PaymentHelper = require('../payment/payment.helper');
 //var ewbMail = require('../../components/ewb-mail');
 
-    //describe('Existing member', function() {
-        //var product;
-        //var stripeToken;
-        //var member;
-        //var updatedMember;
-
-        //before(function(done) {
-            //Member.remove({}, function(err, res) {
-                //if (err) {
-                    //return done(err);
-                //}
-
-                //createProduct(function(err, p) {
-                    //if (err) {
-                        //return done(err);
-                    //}
-                    //product = p;
-
-                    //Member.create({
-                        //name: 'Some name',
-                        //location: 'Some location',
-                        //profession: 'Some profession',
-                        //education: 'Some education',
-                        //email: 'ict@ingenjorerutangranser.se',
-                        //gender: 'other',
-                        //type: product.typeAttributes.memberType,
-                        //yearOfBirth: '1900',
-                    //}, function(err, m) {
-                        //if (err) {
-                            //return done(err);
-                        //}
-
-                        //member = m;
-
-                        //done();
-                    //});
-                //});
-            //});
-        //});
-
-        //it('should create a Stripe token', function(done) {
-            //stripe.tokens.create({
-                //card: {
-                    //number: '4242424242424242',
-                    //exp_month: 12,
-                    //exp_year: moment().add(1, 'year').format('YYYY'),
-                    //cvc: 666,
-                //}
-            //}, function(err, token) {
-                //if (err) {
-                    //return done(err);
-                //}
-                //stripeToken = token;
-                //done();
-            //});
-        //});
-            
-        //it('should confirm payment', function(done) {
-            //agent
-                //.post('/api/payments/confirm')
-                //.send({
-                    //stripeToken: stripeToken,
-                    //productId: product._id,
-                    //name: 'New name',
-                    //location: 'New location',
-                    //profession: 'New profession',
-                    //education: 'New education',
-                    //email: 'ict@ingenjorerutangranser.se',
-                    //gender: 'male',
-                    //type: 'senior',
-                    //yearOfBirth: '2000',
-                //})
-                //.expect(201)
-                //.end(function(err, res) {
-                    //if (err) {
-                        //return done(err);
-                    //}
-
-                    //updatedMember = res.body;
-
-                    //done();
-                //});
-        //});
-
-        //it('member attributes should be updated', function(done) {
-            //var bs = [
-                //updatedMember.name === 'New name',
-                //updatedMember.location === 'New location',
-                //updatedMember.profession === 'New profession',
-                //updatedMember.education === 'New education',
-                //updatedMember.gender === 'male',
-                //updatedMember.type === 'senior',
-                //updatedMember.yearOfBirth === '2000',
-            //];
-
-            //if (!bs.reduce((a, b) => a || b)) {
-                //return done(new Error('Member fields not updated'));
-            //}
-
-            //done();
-        //});
-
-        //it('member expiration date should be extended', function(done) {
-            //var days = moment(updatedMember.expirationDate).diff(moment(member.expirationDate), 'days');
-
-            //// To account for leap years and stuff
-            //if (days <= product.typeAttributes.durationDays - 2) {
-                //return done(new Error('Member expiration date not extended'));
-            //}
-            
-            //done();
-        //});
-
-        //it('should exist a confirmation mail with Renewal subject and body', function(done) {
-            //OutgoingMessage.findOne({
-                //to: member.email,
-                //subject: ewbMail.getSubject('renewal'),
-                //text: ewbMail.getBody('renewal'),
-            //}, function(err, m) {
-                //if (err) {
-                    //return done(err);
-                //}
-
-                //if (!m) {
-                    //return done(new Error('No message created'));
-                //}
-
-                //done();
-            //});
-        //});
-
-        //after(function(done) {
-            //removeProduct(function(err, result) {
-                //if (err) {
-                    //return done(err);
-                //}
-                //Member.remove({ email: member.email }, function() {
-                    //if (err) {
-                        //return done(err);
-                    //}
-
-                    //OutgoingMessage.remove({}, function(err, res) {
-                        //if (err) {
-                            //return done(err);
-                        //}
-
-                        //done();
-                    //});
-                //});
-            //});
-        //});
-    //});
-
-    //describe('New member - Stripe reject', function() {
-        //var product;
-        //var stripeToken;
-        //var member;
-
-        //before(function(done) {
-            //Member.remove({}, function(err, res) {
-                //if (err) {
-                    //return done(err);
-                //}
-
-                //createProduct(function(err, p) {
-                    //if (err) {
-                        //return done(err);
-                    //}
-                    //product = p;
-                    //done();
-                //});
-            //});
-        //});
-
-        //it('should create a Stripe token', function(done) {
-            //stripe.tokens.create({
-                //card: {
-                    //number: '4000000000000002',
-                    //exp_month: 12,
-                    //exp_year: moment().add(1, 'year').format('YYYY'),
-                    //cvc: 666,
-                //}
-            //}, function(err, token) {
-                //if (err) {
-                    //return done(err);
-                //}
-                //stripeToken = token;
-                //done();
-            //});
-        //});
-
-        //it('should reject payment', function(done) {
-            //agent
-                //.post('/api/payments/confirm')
-                //.send({
-                    //stripeToken: stripeToken,
-                    //productId: product._id,
-                    //name: 'Some name',
-                    //location: 'Some location',
-                    //profession: 'Some profession',
-                    //education: 'Some education',
-                    //email: 'ict@ingenjorerutangranser.se',
-                    //gender: 'other',
-                    //type: product.typeAttributes.memberType,
-                    //yearOfBirth: '1900',
-                //})
-                //.expect(400)
-                //.expect(function(res) {
-                    //if (!res.body.errorType) {
-                        //throw new Error('Missing error type');
-                    //}
-                //})
-                //.end(function(err, res) {
-                    //if (err) {
-                        //return done(err);
-                    //}
-
-                    //member = res.body;
-
-                    //done();
-                //});
-        //});
-
-        //after(function(done) {
-            //removeProduct(function(err, result) {
-                //if (err) {
-                    //return done(err);
-                //}
-
-                //Member.remove({ email: member.email }, function() {
-                    //if (err) {
-                        //return done(err);
-                    //}
-
-                    //done();
-                //});
-            //});
-        //});
-    //});
-
-    //describe('Existing member - Stripe reject', function() {
-        //var product;
-        //var stripeToken;
-        //var member;
-        //var updatedMember;
-
-        //before(function(done) {
-            //Member.remove({}, function(err, res) {
-                //if (err) {
-                    //return done(err);
-                //}
-
-                //createProduct(function(err, p) {
-                    //if (err) {
-                        //return done(err);
-                    //}
-                    //product = p;
-
-                    //Member.create({
-                        //name: 'Some name',
-                        //location: 'Some location',
-                        //profession: 'Some profession',
-                        //education: 'Some education',
-                        //email: 'ict@ingenjorerutangranser.se',
-                        //gender: 'other',
-                        //type: product.typeAttributes.memberType,
-                        //yearOfBirth: '1900',
-                    //}, function(err, m) {
-                        //if (err) {
-                            //return done(err);
-                        //}
-
-                        //member = m;
-
-                        //done();
-                    //});
-                //});
-            //});
-        //});
-
-        //it('should create a Stripe token', function(done) {
-            //stripe.tokens.create({
-                //card: {
-                    //number: '4000000000000002',
-                    //exp_month: 12,
-                    //exp_year: moment().add(1, 'year').format('YYYY'),
-                    //cvc: 666,
-                //}
-            //}, function(err, token) {
-                //if (err) {
-                    //return done(err);
-                //}
-                //stripeToken = token;
-                //done();
-            //});
-        //});
-            
-        //it('should reject payment', function(done) {
-            //agent
-                //.post('/api/payments/confirm')
-                //.send({
-                    //stripeToken: stripeToken,
-                    //productId: product._id,
-                    //name: 'New name',
-                    //location: 'New location',
-                    //profession: 'New profession',
-                    //education: 'New education',
-                    //email: 'ict@ingenjorerutangranser.se',
-                    //gender: 'male',
-                    //type: 'senior',
-                    //yearOfBirth: '2000',
-                //})
-                //.expect(400)
-                //.expect(function(res) {
-                    //if (!res.body.errorType) {
-                        //throw new Error('Missing error type');
-                    //}
-                //})
-                //.end(function(err, res) {
-                    //if (err) {
-                        //return done(err);
-                    //}
-
-                    //updatedMember = res.body;
-
-                    //done();
-                //});
-        //});
-
-        //after(function(done) {
-            //removeProduct(function(err, result) {
-                //if (err) {
-                    //return done(err);
-                //}
-                //Member.remove({ email: member.email }, function() {
-                    //if (err) {
-                        //return done(err);
-                    //}
-
-                    //done();
-                //});
-            //});
-        //});
-    //});
-//});
-
 //describe('CONFIRM Event payment process', function() {
-
-    //function removeEvent(callback) {
-        //removeProduct(function() {
-            //EventParticipant.remove({}, function(err, res) {
-                //if (err) {
-                    //return callback(err);
-                //}
-                //EventAddon.remove({}, function(err, res) {
-                    //if (err) {
-                        //return callback(err);
-                    //}
-                    //Event.remove({}, function(err, res) {
-                        //if (err) {
-                            //return callback(err);
-                        //}
-                        //OutgoingMessage.remove({}, function(err, res) {
-                            //callback(err, res);
-                        //});
-                    //});
-                //});
-            //});
-        //});
-    //};
 
     //describe('Sign up for event with no cost', function() {
         //var ewbEvent;
