@@ -20,6 +20,7 @@ function txCreate(memberAttributes, transaction) {
     return transaction.one(`
         INSERT INTO member (
             email,
+            name,
             location,
             education,
             profession,
@@ -29,6 +30,7 @@ function txCreate(memberAttributes, transaction) {
             expiration_date
         ) VALUES (
             $[email],
+            $[name],
             $[location],
             $[education],
             $[profession],
@@ -37,7 +39,7 @@ function txCreate(memberAttributes, transaction) {
             $[yearOfBirth],
             $[expirationDate]
         )
-        RETURNING id, email
+        RETURNING id, email, expiration_date
     `, memberAttributes);
 }
 
@@ -75,34 +77,19 @@ function txCreateAuthenticatable(email, password, role, transaction) {
 
 function update(id, attributes) {
     return db.one(`
-        SELECT
-            email,
-            location,
-            education,
-            profession,
-            member_type_id,
-            gender,
-            year_of_birth,
-            expiration_date
-        FROM member
-        WHERE id = $1
-    `, id).then(data => {
-        delete attributes.id;
-        let updatedData = Object.assign(data, attributes);
-
-        return db.one(`
-            UPDATE member
-            SET
-                location = $[location],
-                education = $[education],
-                profession = $[profession],
-                member_type_id = $[member_type_id],
-                gender = $[gender],
-                year_of_birth = $[year_of_birth],
-                expiration_date = $[expiration_date],
-            WHERE id = $[id]
-        `, updatedData);
-    });
+        UPDATE member
+        SET
+            name = $[name],
+            location = $[location],
+            education = $[education],
+            profession = $[profession],
+            member_type_id = $[member_type_id],
+            gender = $[gender],
+            year_of_birth = $[year_of_birth],
+            expiration_date = $[expiration_date]
+        WHERE id = $[id]
+        RETURNING *
+    `, Object.assign(attributes, {id: id}));
 }
 
 function index() {
@@ -143,6 +130,7 @@ function find(email) {
         SELECT
             id,
             email,
+            name,
             location,
             education,
             profession,

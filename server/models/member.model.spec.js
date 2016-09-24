@@ -50,11 +50,12 @@ describe('Member', function() {
         });
 
         it('should create member without authenticateable attributes', function() {
-            db.one('SELECT id FROM member_type LIMIT 1').then(data => {
+            return db.one('SELECT id FROM member_type LIMIT 1').then(data => {
                 let memberTypeId = data.id;
 
                 return Member.create({
                     email: 'email@email.email',
+                    name: 'Some name',
                     location: 'location',
                     education: 'education',
                     profession: 'profession',

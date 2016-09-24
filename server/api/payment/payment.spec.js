@@ -15,6 +15,7 @@ var agent = request.agent(app);
 var db = require('../../db').db;
 
 var Member = require('../../models/member.model');
+var OutgoingMessage = require('../../models/outgoing-message.model');
 var Payment = require('../../models/payment.model');
 var Product = require('../../models/product.model');
 
@@ -23,7 +24,7 @@ describe('Payment controller', function() {
     var memberId;
     var token;
 
-    before(function(done) {
+    beforeEach(function(done) {
         Product.createProductType('Member').then(productType => {
             return Product.createProduct(productType.id, {
                 name: 'Foo',
@@ -79,7 +80,10 @@ describe('Payment controller', function() {
         });
 
         it('should confirm membership payment and create new member', function(done) {
+            var member;
+
             this.timeout(4000);
+
             return new Promise((resolve, reject) => {
                 stripe.tokens.create({
                     card: {
@@ -122,7 +126,12 @@ describe('Payment controller', function() {
                 return Member.find('ict@ingenjorerutangranser.se');
             }).then(maybeMember => {
                 expect(maybeMember).to.exist;
-                return Payment.find(maybeMember.id);
+                member = maybeMember;
+            }).then(() => {
+                return OutgoingMessage.find(member.email);
+            }).then(messages => {
+                expect(messages.length).to.eql(2);
+                return Payment.find(member.id);
             }).then(payments => {
                 expect(payments.length).to.eql(1);
                 done();
@@ -130,13 +139,86 @@ describe('Payment controller', function() {
                 done(err);
             });
         });
+
+        it('should update existing member', function(done) {
+            var member;
+            var expirationDate = moment().add(1, 'year');
+
+            this.timeout(4000);
+
+            Member.create({
+                email: 'ict@ingenjorerutangranser.se',
+                name: 'Some name',
+                location: 'Some location',
+                profession: 'Some profession',
+                education: 'Some education',
+                gender: 'other',
+                yearOfBirth: '1900',
+                memberTypeId: 1,
+                expirationDate: expirationDate,
+            }).then(() => { 
+                return new Promise((resolve, reject) => {
+                    stripe.tokens.create({
+                        card: {
+                            number: '4242424242424242',
+                            exp_month: 12,
+                            exp_year: moment().add(1, 'year').format('YYYY'),
+                            cvc: 666,
+                        }
+                    }, function(err, token) {
+                        if (err) {
+                            return reject(err);
+                        }
+
+                        resolve(token);
+                    });
+                });
+            }).then(stripeToken => {
+                return new Promise((resolve, reject) => {
+                    agent.post('/api/payments/confirm')
+                        .send({
+                            stripeToken: stripeToken,
+                            productId: productId,
+                            name: 'New name',
+                            location: 'New location',
+                            profession: 'New profession',
+                            education: 'New education',
+                            email: 'ict@ingenjorerutangranser.se',
+                            gender: 'other',
+                            yearOfBirth: '1900',
+                        })
+                        .expect(201)
+                        .end((err, res) => {
+                            if (err) {
+                                return reject(err);
+                            }
+
+                            resolve();
+                        });
+                });
+            }).then(() => {
+                return Member.find('ict@ingenjorerutangranser.se');
+            }).then(member => {
+                expect(member).to.exist;
+                expect(member.name).to.eql('New name');
+                expect(moment(member.expiration_date).diff(moment(expirationDate), 'days')).to.be.above(364);
+                done();
+            }).catch(err => {
+                done(err);
+            });
+            
+        });
     });
 
-    after(function(done) {
+    afterEach(function(done) {
         db.none(`DELETE FROM member`).then(() => {
             return db.none(`DELETE FROM product`)
         }).then(() => {
             return db.none(`DELETE FROM product_type`);
+        }).then(() => {
+            return db.none(`DELETE FROM outgoing_message`);
+        }).then(() => {
+            return db.none(`DELETE FROM ewb_error`);
         }).then(() => {
             done();
         });
@@ -162,258 +244,6 @@ describe('Payment controller', function() {
 
 //var PaymentHelper = require('../payment/payment.helper');
 //var ewbMail = require('../../components/ewb-mail');
-
-//function createAdmin(callback) {
-    //removeAdmin(function() {
-        //User.create({
-            //email: 'admin@admin.com',
-            //role: 'admin',
-            //password: 'admin',
-        //}, function(err, user) {
-            //callback(err, user);
-        //});
-    //});
-//};
-
-//function removeAdmin(callback) {
-    //User.remove({
-        //email: 'admin@admin.com',
-    //}, function(err, user) {
-        //callback(err, user);
-    //});
-//};
-
-//function createProduct(callback) {
-    //removeProduct(function() {
-        //ProductType.create({
-            //identifier: 'Member',
-        //}, function(err, type) {
-            //Product.create({
-                //name: 'Test product',
-                //type: type._id,
-                //typeAttributes: {
-                    //memberType: 'student',
-                    //durationDays: 365,
-                //},
-                //price: 100,
-            //}, function(err, p) {
-                //callback(err, p);
-            //});
-        //});
-    //});
-//};
-
-//function removeProduct(callback) {
-    //ProductType.remove({}, function(err, result) {
-        //Product.remove({}, function(err, result) {
-            //callback(err, result);
-        //});
-    //});
-//};
-
-//describe('GET /api/payments (as admin)', function() {
-    //var token;
-
-    //before(function(done) {
-        //createAdmin(function(err, user) {
-            //if (err) {
-                //return done(err);
-            //}
-            //done();
-        //});
-    //});
-
-    //it('should fetch admin access token', function(done) {
-        //agent
-            //.post('/auth/local')
-            //.send({ email: 'admin@admin.com', password: 'admin' })
-            //.expect(200)
-            //.end(function(err, res) {
-                //if (err) {
-                    //return done(err);
-                //}
-                //token = res.body.token;
-                //done();
-            //});
-    //});
-
-    //it('should fetch a list of payments', function(done) {
-        //agent
-            //.get('/api/payments')
-            //.query({ access_token: token })
-            //.expect(200)
-            //.end(function(err, res) {
-                //if (err) {
-                    //return done(err);
-                //}
-                //done();
-            //});
-    //});
-
-    //after(function(done) {
-        //removeAdmin(function() {
-            //done();
-        //});
-    //});
-//});
-
-//describe('GET /api/payments (not signed in)', function() {
-    //it('should not be authorized', function(done) {
-        //agent
-            //.get('/api/payments')
-            //.expect(401)
-            //.end(function(err, res) {
-                //if (err) {
-                    //return done(err);
-                //}
-                //done();
-            //});
-    //});
-//});
-
-//describe('CONFIRM Membership payment process', function() {
-    //describe('New member', function() {
-        //var product;
-        //var stripeToken;
-        //var member;
-
-        //before(function(done) {
-            //Member.remove({}, function(err, res) {
-                //if (err) {
-                    //return done(err);
-                //}
-
-                //createProduct(function(err, p) {
-                    //if (err) {
-                        //return done(err);
-                    //}
-                    //product = p;
-                    //done();
-                //});
-            //});
-        //});
-
-        //it('should create a Stripe token', function(done) {
-            //stripe.tokens.create({
-                //card: {
-                    //number: '4242424242424242',
-                    //exp_month: 12,
-                    //exp_year: moment().add(1, 'year').format('YYYY'),
-                    //cvc: 666,
-                //}
-            //}, function(err, token) {
-                //if (err) {
-                    //return done(err);
-                //}
-                //stripeToken = token;
-                //done();
-            //});
-        //});
-
-        //it('should confirm payment', function(done) {
-            //agent.post('/api/payments/confirm').send({
-                //stripeToken: stripeToken,
-                //productId: product._id,
-                //name: 'Some name',
-                //location: 'Some location',
-                //profession: 'Some profession',
-                //education: 'Some education',
-                //email: 'ict@ingenjorerutangranser.se',
-                //gender: 'other',
-                //type: product.typeAttributes.memberType,
-                //yearOfBirth: '1900',
-            //}).expect(201).end(function(err, res) {
-                //if (err) {
-                    //return done(err);
-                //}
-
-                //member = res.body;
-
-                //done();
-            //});
-        //});
-
-        //it('should find a newly created member', function(done) {
-            //Member.findOne({ email: member.email }, function(err, member) {
-                //if (err) {
-                    //return done(err);
-                //}
-                
-                //if (!member) {
-                    //return done(new Error('No such member'));
-                //}
-
-                //done();
-            //});
-        //});
-
-        //it('should exist a receipt mail with correct subject containing the product specification', function(done) {
-            //OutgoingMessage.findOne({
-                //to: member.email,
-                //subject: ewbMail.getSubject('receipt', { name: product.name }),
-            //}, function(err, m) {
-                //if (err) {
-                    //return done(err);
-                //}
-
-                //if (!m) {
-                    //return done(new Error('No receipt message created'));
-                //}
-
-                //var listIsOkay = m.text.indexOf(PaymentHelper.formatProductList([product])) > -1;
-                //if (!listIsOkay) {
-                    //return done(new Error('Product list is wrong'));
-                //}
-
-                //var totalIsOkay = m.text.indexOf(PaymentHelper.formatTotal([product])) > -1;
-                //if (!totalIsOkay) {
-                    //return done(new Error('Total is wrong'));
-                //}
-
-                //done();
-
-            //});
-        //});
-
-        //it('should exist a confirmation mail with New Member subject and body', function(done) {
-            //OutgoingMessage.findOne({
-                //to: member.email,
-                //subject: ewbMail.getSubject('new-member'),
-                //text: ewbMail.getBody('new-member'),
-            //}, function(err, m) {
-                //if (err) {
-                    //return done(err);
-                //}
-
-                //if (!m) {
-                    //return done(new Error('No message created'));
-                //}
-
-                //done();
-            //});
-        //});
-
-        //after(function(done) {
-            //removeProduct(function(err, result) {
-                //if (err) {
-                    //return done(err);
-                //}
-
-                //Member.remove({ email: member.email }, function() {
-                    //if (err) {
-                        //return done(err);
-                    //}
-
-                    //OutgoingMessage.remove({}, function(err, res) {
-                        //if (err) {
-                            //return done(err);
-                        //}
-                        //done();
-                    //});
-                //});
-            //});
-        //});
-    //});
 
     //describe('Existing member', function() {
         //var product;

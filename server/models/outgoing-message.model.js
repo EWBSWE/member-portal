@@ -35,9 +35,18 @@ function fail(id) {
     `, id);
 }
 
+function find(recipient) {
+    return db.any(`
+        SELECT id, recipient, sender, subject, body, failed_attempts
+        FROM outgoing_message
+        WHERE recipient = $1
+    `, recipient);
+}
+
 module.exports = {
     create: create,
     fetch: fetch,
     remove: remove,
-    fail: fail
+    fail: fail,
+    find: find
 };

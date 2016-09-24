@@ -62,13 +62,10 @@ exports.confirmMembershipPayment = function(req, res, next) {
         education: req.body.education,
         type: req.body.type,
         gender: req.body.gender,
-        yearOfBirth: req.body.yearOfBirth,
-        expirationDate: moment()
+        yearOfBirth: req.body.yearOfBirth
     };
 
     Product.get(req.body.productId).then(product => {
-        memberData.expirationDate.add(product.attribute.durationDays, 'days');
-
         return new Promise((resolve, reject) => {
             processCharge({
                 currency: product.currency_code,
@@ -106,8 +103,8 @@ exports.confirmMembershipPayment = function(req, res, next) {
         let confirmationMail = {
             sender: ewbMail.sender(),
             recipient: member.email,
-            subject: 'foo',
-            body: 'bar',
+            subject: 'foo', // TODO fix me
+            body: 'bar', // TODO fix me
         };
 
         return OutgoingMessage.create(receiptMail).then(() => {
@@ -120,156 +117,8 @@ exports.confirmMembershipPayment = function(req, res, next) {
     });
 };
 
-exports.confirmPayment = function(req, res) {
-    var stripeToken = req.body.stripeToken;
-
-    function handlePayment(product, memberData) {
-        processCharge({
-            currency: 'SEK',
-            amount: product.price,
-            description: product.name,
-        }, stripeToken, function() {
-            return fetchOrCreateMember(product, memberData);
-        }, function(err) {
-            var error = handleStripeError(err);
-            return res.status(400).json(error);
-        });
-    };
-
-    function fetchOrCreateMember(product, memberData) {
-        MemberHelper.fetchMember(memberData.email, function(err, maybeMember) {
-            if (err) {
-                return handleError(res, err);
-            }
-            if (maybeMember) {
-                return updateMemberData(product, maybeMember, memberData);
-            } else {
-                // Member doesn't exist, we need to create the member before we
-                // proceed
-                MemberHelper.createMember(memberData, function(err, member) {
-                    if (err) {
-                        return handleError(res, err);
-                    }
-
-                    return createBuyer(product, member, true);
-                });
-            }
-        });
-    };
-
-    function updateMemberData(product, member, memberData) {
-        // If days remain on current membership we want to extend the
-        // membership instead of overwriting it
-        if (moment(member.expirationDate) > moment()) {
-            // Default to 1 day
-            var daysDiff = moment(member.expirationDate).diff(moment(), 'days') || 1;
-            memberData.expirationDate.add(daysDiff, 'days');
-        }
-
-        MemberHelper.updateMember(member, memberData, function(err, updatedMember) {
-            if (err) {
-                return handleError(res, err);
-            }
-
-            return createBuyer(product, updatedMember, false);
-        });
-    };
-
-    function createBuyer(product, member, newMember) {
-        PaymentHelper.createBuyer('Member', member._id, function(err, buyer) {
-            if (err) {
-                return handleError(res, err);
-            }
-
-            return addPayment(product, member, newMember, buyer);
-        });
-    };
-
-    function addPayment(product, member, newMember, buyer) {
-        Payment.create({
-            buyer: buyer._id,
-            amount: product.price,
-            products: [ product._id ],
-        }, function(err, payment) {
-            if (err) {
-                return handleError(res, err);
-            }
-
-            return sendReceipt(product, member, newMember);
-        });
-    };
-
-    function sendReceipt(product, member, newMember) {
-        var receiptMail = {
-            from: ewbMail.sender(),
-            to: member.email,
-            subject: ewbMail.getSubject('receipt', { name: product.name }),
-            text: ewbMail.getBody('receipt', {
-                buyer: member.email,
-                date: moment().format('YYYY-MM-DD HH:mm'),
-                total: PaymentHelper.formatTotal([product]),
-                tax: PaymentHelper.formatTax([product]),
-                list: PaymentHelper.formatProductList([product]),
-            }),
-        };
-
-        OutgoingMessage.create(receiptMail, function(err, outgoingMessage) {
-            if (err) {
-                ewbError.create({ message: 'Membership receipt mail', origin: __filename, params: err });
-            }
-
-            return sendConfirmation(member, newMember);
-        });
-    }
-
-    function sendConfirmation(member, newMember) {
-        var confirmationMail = {
-            from: ewbMail.sender(),
-            to: req.body.email,
-        };
-
-        if (newMember) {
-            confirmationMail.subject = ewbMail.getSubject('new-member');
-            confirmationMail.text = ewbMail.getBody('new-member');
-        } else {
-            confirmationMail.subject = ewbMail.getSubject('renewal');
-            confirmationMail.text = ewbMail.getBody('renewal');
-        }
-
-        OutgoingMessage.create(confirmationMail, function(err, outgoingMessage) {
-            if (err) {
-                ewbError.create({ message: 'Membership confirmation mail', origin: __filename, params: err });
-            }
-        });
-
-        return res.status(201).json(member);
-    };
-
-    Product.findOne({ _id: new mongoose.Types.ObjectId(req.body.productId) }, function(err, product) {
-        if (err) {
-            return handleError(res, err);
-        }
-
-        if (product) {
-            // Important to trim email since we use it for lookups
-            var memberData = {
-                email: req.body.email.trim(),
-                name: req.body.name,
-                location: req.body.location,
-                profession: req.body.profession,
-                education: req.body.education,
-                type: req.body.type,
-                gender: req.body.gender,
-                yearOfBirth: req.body.yearOfBirth,
-                expirationDate: moment().add(product.typeAttributes.durationDays, 'days'),
-            };
-
-            return handlePayment(product, memberData);
-        } else {
-            return res.sendStatus(400);
-        }
-    });
-
+exports.confirmEventPayment = function(req, res, next) {
+    
 };
 
 exports.confirmEventPayment = function(req, res) {
