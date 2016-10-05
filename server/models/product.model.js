@@ -41,23 +41,38 @@ function createProductType(identifier) {
     `, identifier);
 }
 
-function createProduct(productTypeId, attributes) {
-    let data = Object.assign(attributes, {productTypeId: productTypeId});
-    return db.one(`
-        INSERT INTO product (
-            product_type_id, name, price, description, attribute
-        ) VALUES (
-            $[productTypeId], $[name], $[price], $[description], $[attribute]
-        )
-        RETURNING id
-    `, data);
+function create(attributes) {
+    if (!Array.isArray(attributes)) {
+        attributes = [attributes];
+    }
+
+    return db.tx(transaction => {
+        let queries = attributes.map(data => {
+            data.attribute = {};
+
+            return transaction.one(`
+                INSERT INTO product (
+                    product_type_id, name, price, description, attribute
+                ) VALUES (
+                    (
+                    SELECT id
+                    FROM product_type
+                    WHERE identifier LIKE $[productType]
+                    ), $[name], $[price], $[description], $[attribute]
+                )
+                RETURNING *
+            `, data);
+        });
+
+        return transaction.batch(queries);
+    });
 }
 
 module.exports = {
     index: index,
     get: get,
     createProductType: createProductType,
-    createProduct: createProduct,
+    create: create,
 };
 
 //var mongoose = require('mongoose');

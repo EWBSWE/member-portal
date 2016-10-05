@@ -3,7 +3,11 @@
 var db = require('../db').db;
 
 function create(attributes) {
-    return db.one(`
+    return txCreate(attributes, db);
+}
+
+function txCreate(attributes, transaction) {
+    return transaction.one(`
         INSERT INTO email_template (
             sender,
             subject,
@@ -18,4 +22,5 @@ function create(attributes) {
 
 module.exports = {
     create: create,
+    txCreate: txCreate,
 };

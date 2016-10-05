@@ -1,13 +1,10 @@
 'use strict';
 
-var promise = require('bluebird');
+var Promise = require('bluebird');
+var pgp = require('pg-promise')({ promiseLib: Promise });
+var path = require('path');
+
 var environment = require('../config/environment');
-
-let options = {
-    promiseLib: promise,
-};
-
-var pgp = require('pg-promise')(options);
 
 let db = pgp({
     host: environment.db.host,
@@ -22,7 +19,12 @@ if (environment.seedDB) {
     // TODO
 }
 
+function sql(file) {
+    return new pgp.QueryFile(path.join(__dirname, file), {minify: true});
+}
+
 module.exports = {
     db: db,
-    pgp: pgp
+    pgp: pgp,
+    sql: sql
 };

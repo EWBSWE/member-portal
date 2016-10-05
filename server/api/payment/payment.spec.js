@@ -28,30 +28,24 @@ describe('Payment controller', function() {
 
     beforeEach(function(done) {
         Product.createProductType('Member').then(productType => {
-            return Product.createProduct(productType.id, {
+            return Product.create({
                 name: 'Foo',
                 price: 100,
                 description: 'This is a description',
+                productType: productType.productType,
                 attribute: {
                     durationDays: 365,
                     memberType: 'student',
                 }
             });
-        }).then(product => {
-            productId = product.id;
-
+        }).then(() => {
             Member.createAuthenticatable('admin@admin.com', 'password', 'admin').then(data => {
                 memberId = data.id;
-
-                agent.post('/auth/local')
-                    .send({ email: 'admin@admin.com', password: 'password' })
-                    .end((err, res) => {
-                        token = res.body.token;
-                        done();
-                    });
+                done();
             });
         }).catch(err => {
             console.log(err);
+            done(err);
         });
     });
 
@@ -76,6 +70,17 @@ describe('Payment controller', function() {
     });
 
     xdescribe('Become a member', function() {
+        var accessToken;
+
+        beforeEach(function(done) {
+            agent.post('/auth/local')
+                .send({ email: 'admin@admin.com', password: 'password' })
+                .end((err, res) => {
+                    token = res.body.token;
+                    done();
+                });
+        });
+
         it('should create a Stripe token', function(done) {
             stripe.tokens.create({
                 card: {
@@ -322,55 +327,39 @@ describe('Payment controller', function() {
     });
 
     describe('Event participation', function() {
-        var eventId;
-        var freeProductId;
-        var notFreeProductId;
+        var event;
 
-        beforeEach(function() {
-            return Product.createProductType('Event').then(pt => {
-                return Product.createProduct(pt.id, {
-                    name: 'Free Product',
-                    price: 0,
-                    description: 'This is a description',
-                    attribute: {}
-                });
-            }).then(product => {
-                freeProductId = product.id;
-
-                return Product.createProduct(product.product_type_id, {
-                    name: 'Not Free Product',
-                    price: 100,
-                    description: 'This is a description',
-                    attribute: {}
-                });
-            }).then(product => {
-                notFreeProductId = product.id;
-
-                return EmailTemplate.create({
-                    sender: 'noreply@ingenjorerutangranser.se',
-                    subject: 'subject',
-                    body: 'body',
-                });
-            }).then(template => {
+        beforeEach(function(done) {
+            Product.createProductType('Event').then(() => {
                 return Event.create({
                     name: 'Some event',
                     active: true,
                     notificationOpen: true,
                     identifier: 'identifier',
                     dueDate: moment().add(1, 'month'),
-                    emailTemplateId: template.id,
+                    emailTemplate: {
+                        sender: 'noreply@ingenjorerutangranser.se',
+                        subject: 'subject',
+                        body: 'body',
+                    },
                     addons: [{
                         capacity: 100,
-                        productId: freeProductId,
+                        name: 'Free',
+                        description: 'Free description',
+                        price: 0,
                     }, {
                         capacity: 10,
-                        productId: notFreeProductId,
-                    }],
+                        name: 'Not Free',
+                        description: 'Not Free description',
+                        price: 100,
+                    }]
                 });
-            }).then(event => {
-                eventId = event.id;
+            }).then(e => {
+                event = e;
+                done();
             }).catch(err => {
                 console.log(err);
+                done(err);
             });
         });
 
@@ -385,11 +374,29 @@ describe('Payment controller', function() {
                 done();
             }).catch(err => {
                 console.log(err);
+                done(err);
             });
         });
 
-        it('should sign up for event with no fee', function() {
-            
+        it('should sign up for event with no fee', function(done) {
+            agent.post('/api/payments/confirm-event')
+                .send({
+                    stripeToken: null,
+                    participant: {
+                        name: 'Some name',
+                        email: 'ict@ingenjorerutangranser.se',
+                    },
+                    identifier: event.identifier,
+                    addonIds: event.addon_ids
+                })
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        return done(err);
+                    }
+
+                    done();
+                });
         });
 
         it('should sign up for event with fee');
