@@ -73,26 +73,25 @@ function create(attributes) {
     });
 }
 
+function findByProductType(productType) {
+    return db.any(`
+        SELECT
+            id,
+            name,
+            price,
+            description,
+            attribute,
+            product_type_id,
+            currency_code
+        FROM product
+        WHERE product_type_id = (SELECT id FROM product_type WHERE identifier = $1)
+    `, productType);
+}
+
 module.exports = {
     index: index,
     get: get,
     createProductType: createProductType,
     create: create,
+    findByProductType: findByProductType,
 };
-
-//var mongoose = require('mongoose');
-//var Schema = mongoose.Schema;
-
-//var ProductType = require('./product-type.model');
-
-//var ProductSchema = new Schema({
-    //name: { type: String, required: true },
-    //price: { type: Number, min: 0, required: true },
-    //description: { type: String },
-    //type: { type: mongoose.Schema.Types.ObjectId, ref: 'ProductType', required: true },
-    //typeAttributes: { type: mongoose.Schema.Types.Mixed },
-    //currency: { type: String, required: true, default: 'SEK' },
-    //createdAt: { type: Date, required: true, default: Date.now },
-//});
-
-//module.exports = mongoose.model('Product', ProductSchema);

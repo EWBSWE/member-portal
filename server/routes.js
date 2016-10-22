@@ -14,7 +14,7 @@ module.exports = function(app) {
   app.use('/api/errors', require('./api/ewb-error'));
   //app.use('/api/events', require('./api/event'));
   app.use('/api/payments', require('./api/payment'));
-  //app.use('/api/products', require('./api/product'));
+  app.use('/api/products', require('./api/product'));
   app.use('/api/settings', require('./api/setting'));
   //app.use('/api/users', require('./api/user'));
 

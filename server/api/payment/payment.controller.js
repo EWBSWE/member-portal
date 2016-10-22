@@ -266,8 +266,3 @@ function processCharge(chargeAttributes, stripeToken, successCallback, errorCall
     });
 };
 
-function handleStripeError(err) {
-    ewbError.create('Stripe charge error', __filename, err);
-    return { errorType: err.type };
-};
-
