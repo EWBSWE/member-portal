@@ -12,6 +12,7 @@ if (process.env.NODE_ENV === 'production') {
 var moment = require('moment');
 
 var ewbError = require('../../models/ewb-error.model');
+var Event = require('../../models/event.model');
 var Member = require('../../models/member.model');
 var OutgoingMessage = require('../../models/outgoing-message.model');
 var Payment = require('../../models/payment.model');
@@ -114,34 +115,22 @@ exports.confirmMembershipPayment = function(req, res, next) {
 };
 
 exports.confirmEventPayment = function(req, res, next) {
-    console.log(req.body);
-
     if (!req.body.identifier) {
         let badRequest = new Error('Missing parameters');
         badRequest.status = 400;
         return next(badRequest);
     }
 
-    console.log('asd');
-
-    Event.find(req.body.identifier).then(event => {
+    Event.findWithAddons(req.body.identifier).then(event => {
         if (!event) {
             return res.sendStatus(404);
         }
 
-        // IN PROGRESS
-        // summera addons
-        // om sum > 0
-        //      process betalning
-        //      lagg till delatagre
-        //      kvitto
-        //  else 
-        //      lagg till delatagre
-        //      kvitto
-        let sum = 0;
-        // TODO fix sum
+        let selectedAddons = event.addons.filter(addon => { return req.body.addonIds.includes(addon.id); });
+        let sum = selectedAddons.reduce((total, addon) => { return total + addon.price; }, 0);
+
         if (sum === 0) {
-            return Promise.resolve(e);
+            return Promise.resolve(event);
         } else {
             return new Promise((resolve, reject) => {
                 processCharge({
@@ -166,44 +155,38 @@ exports.confirmEventPayment = function(req, res, next) {
             email: req.body.participant.email,
             message: req.body.participant.message
         }).then(() => {
-            console.log('THIS IS THE PART WHERE WE SEND THE MAIL');
-            console.log('THIS IS THE PART WHERE WE SEND THE MAIL');
-            console.log('THIS IS THE PART WHERE WE SEND THE MAIL');
-            console.log('THIS IS THE PART WHERE WE SEND THE MAIL');
-            console.log('THIS IS THE PART WHERE WE SEND THE MAIL');
-            console.log('THIS IS THE PART WHERE WE SEND THE MAIL');
-            console.log('THIS IS THE PART WHERE WE SEND THE MAIL');
-            console.log('THIS IS THE PART WHERE WE SEND THE MAIL');
-            console.log('THIS IS THE PART WHERE WE SEND THE MAIL');
-            console.log('THIS IS THE PART WHERE WE SEND THE MAIL');
-            return Promise.resolve();
-            //let receiptMail = {
-                //sender: ewbMail.sender(),
-                //recipient: member.email,
-                //subject: ewbMail.getSubject('receipt', { name: product.name }),
-                //body: ewbMail.getBody('receipt', {
-                    //buyer: member.email,
-                    //date: moment().format('YYYY-MM-DD HH:mm'),
-                    //total: PaymentHelper.formatTotal([product]),
-                    //tax: PaymentHelper.formatTax([product]),
-                    //list: PaymentHelper.formatProductList([product]),
-                //}),
-            //};
-
-            //let confirmationMail = {
-                //sender: ewbMail.sender(),
-                //recipient: member.email,
-                //subject: 'foo', // TODO fix me
-                //body: 'bar', // TODO fix me
-            //};
-
-            //return OutgoingMessage.create(receiptMail).then(() => {
-                //return OutgoingMessage.create(confirmationMail);
-            //});
+            return Event.findWithAddons(event.identifier);
         });
+    }).then(event => {
+        // Only keep addons that was selected
+        event.addons = event.addons.filter(addon => { return req.body.addonIds.includes(addon.id); });
+
+        return Promise.resolve(event);
+    }).then(event => {
+        if (event.email_template_id) {
+            // TODO
+            // If event has a custom email template.
+            //EmailHelper.createFromTemplate(event.email_template_id);
+        }
+
+        let receiptMail = {
+            sender: ewbMail.sender(),
+            recipient: req.body.participant.email,
+            subject: ewbMail.getSubject('receipt', { name: event.name }),
+            body: ewbMail.getBody('receipt', {
+                buyer: req.body.participant.email,
+                date: moment().format('YYYY-MM-DD HH:mm'),
+                total: PaymentHelper.formatTotal(event.addons),
+                tax: PaymentHelper.formatTax(event.addons),
+                list: PaymentHelper.formatProductList(event.addons),
+            }),
+        };
+
+        return OutgoingMessage.create(receiptMail);
     }).then(() => {
         res.sendStatus(201);
     }).catch(err => {
+        console.log(err);
         next(err);
     });
 };

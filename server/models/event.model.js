@@ -3,6 +3,7 @@
 var db = require('../db').db;
 
 var EmailTemplate = require('./email-template.model');
+var Member = require('./member.model');
 var Product = require('./product.model');
 
 function create(attributes) {
@@ -63,7 +64,6 @@ function create(attributes) {
     }).then(event => {
         return db.tx(transaction => {
             let queries = attributes.addons.map(addon => {
-                console.log(addon);
                 return transaction.one(`
                     INSERT INTO event_addon (event_id, capacity, product_id)
                     VALUES ($1, $2, $3)
@@ -71,15 +71,13 @@ function create(attributes) {
                 `, [event.id, addon.capacity, addon.productId]);
             });
             return transaction.batch(queries);
-        }).then(() => {
-            console.log(event);
+        }).then(addons => {
             return Promise.resolve(event);
         });
     });
 }
 
 function addParticipant(event, participant) {
-    console.log(event, participant);
     return Member.find(participant.email).then(maybeMember => {
         if (!maybeMember) {
             return Member.create(participant);
@@ -87,22 +85,24 @@ function addParticipant(event, participant) {
 
         return Promise.resolve(maybeMember);
     }).then(member => {
-        console.log(member);
         return db.tx(transaction => {
             return transaction.batch([
                 db.one(`
                     UPDATE event_addon
                     SET capacity = (capacity - 1)
                     WHERE id IN ($1)
+                    RETURNING id
                 `, participant.addonIds),
+
                 db.one(`
                     INSERT INTO event_participant (
                         event_id,
                         member_id,
                         message
                     ) VALUES ($1, $2, $3)
-                    RETURNING id
+                    RETURNING member_id
                 `, [event.id, member.id, participant.message]),
+
                 db.one(`
                     INSERT INTO payment (member_id, amount)
                     VALUES ($1, (
@@ -110,7 +110,7 @@ function addParticipant(event, participant) {
                         FROM event
                         LEFT JOIN event_addon ON (event.id = event_addon.event_id)
                         LEFT JOIN product ON (event_addon.product_id = product.id)
-                        WHERE event_addon.id IN ($2)
+                        WHERE event_addon.id IN ($2:csv)
                         )
                     )
                     RETURNING id
@@ -122,20 +122,51 @@ function addParticipant(event, participant) {
         return db.none(`
             INSERT INTO event_payment (event_id, payment_id)
             VALUES ($1, $2)
-        `, event.id, payment.id);
+        `, [event.id, payment.id]);
     });
 }
 
 function find(identifier) {
     return db.oneOrNone(`
-        SELECT id, name
+        SELECT
+            event.id,
+            event.email_template_id,
+            event.identifier,
+            event.name,
+            array_agg(event_addon.id) AS addons
         FROM event
-        WHERE identifier = $1
+        LEFT JOIN event_addon ON (event.id = event_addon.event_id)
+        WHERE event.identifier = $1
+        GROUP BY event.id
     `, identifier);
+}
+
+function findWithAddons(identifier) {
+    return find(identifier).then(event => {
+        return db.any(`
+            SELECT
+                event_addon.id,
+                name,
+                price,
+                description,
+                attribute,
+                currency_code
+            FROM event_addon
+            LEFT JOIN product ON (event_addon.product_id = product.id)
+        `).then(addons => {
+            // Parse the price of each addon as an integer
+            addons.forEach(addon => { addon.price = +addon.price });
+
+            event.addons = addons;
+
+            return Promise.resolve(event);
+        });
+    });
 }
 
 module.exports = {
     create: create,
     addParticipant: addParticipant,
-    find: find
+    find: find,
+    findWithAddons: findWithAddons,
 };

@@ -355,6 +355,8 @@ describe('Payment controller', function() {
                     }]
                 });
             }).then(e => {
+                return Event.find(e.identifier);
+            }).then(e => {
                 event = e;
                 done();
             }).catch(err => {
@@ -387,7 +389,7 @@ describe('Payment controller', function() {
                         email: 'ict@ingenjorerutangranser.se',
                     },
                     identifier: event.identifier,
-                    addonIds: event.addon_ids
+                    addonIds: [event.addons[0]]
                 })
                 .expect(201)
                 .end((err, res) => {

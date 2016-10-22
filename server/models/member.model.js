@@ -17,6 +17,23 @@ function txCreate(memberAttributes, transaction) {
         return Promise.reject(generateErrorMessages(memberAttributes));
     }
 
+    let optionalColumns = [
+        'name',
+        'location',
+        'education',
+        'profession',
+        'memberTypeId',
+        'gender',
+        'yearOfBirth',
+        'expirationDate',
+    ];
+
+    optionalColumns.forEach(c => {
+        if (memberAttributes[c] === undefined) {
+            memberAttributes[c] = null;
+        }
+    });
+
     return transaction.one(`
         INSERT INTO member (
             email,

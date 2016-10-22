@@ -228,7 +228,7 @@ function formatProductList(products) {
 
     for (var i = 0; i < products.length; i++) {
         var product = products[i];
-        text += product.name + '  -  ' + product.price + ' ' + product.currency + '\n';
+        text += product.name + '  -  ' + product.price + ' ' + product.currency_code + '\n';
     }
 
     return text;
@@ -244,7 +244,7 @@ function formatTotal(products) {
         return total + product.price;
     }, 0);
 
-    return total + ' ' + products[0].currency;
+    return total + ' SEK';
 }
 
 function formatTax(products) {
