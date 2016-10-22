@@ -41,6 +41,8 @@ function createProductType(identifier) {
     `, identifier);
 }
 
+// TODO why does function create many ????
+// ???????????????
 function create(attributes) {
     if (!Array.isArray(attributes)) {
         attributes = [attributes];
@@ -48,8 +50,11 @@ function create(attributes) {
 
     return db.tx(transaction => {
         let queries = attributes.map(data => {
-            data.attribute = {};
+            if (!data.attribute) {
+                data.attribute = {};
+            }
 
+            // TODO why not take an productType id instead of the identifier???
             return transaction.one(`
                 INSERT INTO product (
                     product_type_id, name, price, description, attribute

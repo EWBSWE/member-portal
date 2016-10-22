@@ -25,7 +25,6 @@ var PaymentHelper = require('../payment/payment.helper');
 
 var ewbMail = require('../../components/ewb-mail');
 
-
 var Purchase = require('../../helpers/purchase.helper');
 
 
@@ -52,7 +51,6 @@ exports.confirmMembershipPayment = function(req, res, next) {
         return next(badRequest);
     }
 
-    let stripeToken = req.body.stripeToken;
     let memberData = {
         email: req.body.email.trim(),
         name: req.body.name,
@@ -70,7 +68,7 @@ exports.confirmMembershipPayment = function(req, res, next) {
                 currency: product.currency_code,
                 amount: product.price,
                 description: product.name
-            }, stripeToken, () => {
+            }, req.body.stripeToken, () => {
                 resolve(product);
             }, err => {
                 let badRequest = new Error('Stripe rejected');
@@ -115,7 +113,7 @@ exports.confirmMembershipPayment = function(req, res, next) {
 };
 
 exports.confirmEventPayment = function(req, res, next) {
-    if (!req.body.identifier) {
+    if (!req.body.identifier || !Array.isArray(req.body.addonIds)) {
         let badRequest = new Error('Missing parameters');
         badRequest.status = 400;
         return next(badRequest);
@@ -132,13 +130,19 @@ exports.confirmEventPayment = function(req, res, next) {
         if (sum === 0) {
             return Promise.resolve(event);
         } else {
+            if (!req.body.stripeToken) {
+                let badRequest = new Error('Missing parameters');
+                badRequest.status = 400;
+                return next(badRequest);
+            }
+
             return new Promise((resolve, reject) => {
                 processCharge({
-                    currency: product.currency_code,
-                    amount: product.price,
+                    currency: 'SEK',
+                    amount: sum,
                     description: event.name
-                }, stripeToken, () => {
-                    resolve(product);
+                }, req.body.stripeToken, () => {
+                    resolve(event);
                 }, err => {
                     let badRequest = new Error('Stripe rejected');
                     badRequest.status = 400;
@@ -186,54 +190,9 @@ exports.confirmEventPayment = function(req, res, next) {
     }).then(() => {
         res.sendStatus(201);
     }).catch(err => {
-        console.log(err);
         next(err);
     });
 };
-
-//exports.confirmEventPayment = function(req, res) {
-    //function sendReceiptEmail(ewbEvent, eventParticipant, selectedAddons) {
-        //var products = _.map(selectedAddons, 'product');
-        //var receiptMail = {
-            //from: ewbMail.sender(),
-            //to: eventParticipant.email,
-            //subject: ewbMail.getSubject('receipt', { name: ewbEvent.confirmationEmail.subject }),
-            //text: ewbMail.getBody('receipt', {
-                //buyer: eventParticipant.email,
-                //date: moment().format('YYYY-MM-DD HH:mm'),
-                //total: PaymentHelper.formatTotal(products),
-                //tax: PaymentHelper.formatTax(products),
-                //list: PaymentHelper.formatProductList(products),
-            //}),
-        //};
-
-        //OutgoingMessage.create(receiptMail, function(err, outgoingMessage) {
-            //if (err) {
-                //ewbError.create({ message: 'Event receipt mail', origin: __filename, params: err });
-            //}
-
-            //return sendConfirmationEmail(ewbEvent, eventParticipant);
-        //});
-    //}
-
-    //function sendConfirmationEmail(ewbEvent, eventParticipant) {
-        //var confirmationMail = {
-            //from: ewbMail.sender(),
-            //to: eventParticipant.email,
-            //subject: ewbEvent.confirmationEmail.subject,
-            //text: ewbEvent.confirmationEmail.body,
-        //};
-
-        //OutgoingMessage.create(confirmationMail, function(err, outgoingMessage) {
-            //if (err) {
-                //ewbError.create({ message: 'Event confirmation mail', origin: __filename, params: err });
-            //}
-        //});
-        
-        //return res.status(200).json(ewbEvent);
-    //}
-
-//};
 
 exports.stripeCheckoutKey = function (req, res) {
     var key = '***REMOVED***';
