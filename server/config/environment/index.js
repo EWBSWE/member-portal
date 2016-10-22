@@ -3,6 +3,8 @@
 var path = require('path');
 var _ = require('lodash');
 
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+
 let defaultConfig = {
     env: process.env.NODE_ENV,
 

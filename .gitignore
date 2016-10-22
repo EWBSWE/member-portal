@@ -9,3 +9,4 @@ dist
 .mongo
 *.zip
 development.local.js
+coverage
