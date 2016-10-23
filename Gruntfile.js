@@ -531,7 +531,7 @@ module.exports = function (grunt) {
     },
       mocha_istanbul: {
           coverage: {
-              src: ['server/models', 'server/api/*'],
+              src: ['server/models', 'server/api/*', 'server/test/*'],
               options: {
                   mask: '*.spec.js',
               }
