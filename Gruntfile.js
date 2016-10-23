@@ -2,13 +2,6 @@
 'use strict';
 
 module.exports = function (grunt) {
-  var localConfig;
-  try {
-    localConfig = require('./server/config/local.env');
-  } catch(e) {
-    localConfig = {};
-  }
-
   // Load grunt tasks automatically, when needed
   require('jit-grunt')(grunt, {
     express: 'grunt-express-server',
@@ -436,7 +429,6 @@ module.exports = function (grunt) {
       prod: {
         NODE_ENV: 'production'
       },
-      all: localConfig
     },
 
     // Compiles Sass to CSS
@@ -568,13 +560,12 @@ module.exports = function (grunt) {
 
   grunt.registerTask('serve', function (target) {
     if (target === 'dist') {
-      return grunt.task.run(['build', 'env:all', 'env:prod', 'express:prod', 'wait', 'open', 'express-keepalive']);
+      return grunt.task.run(['build', 'env:prod', 'express:prod', 'wait', 'open', 'express-keepalive']);
     }
 
     if (target === 'debug') {
       return grunt.task.run([
         'clean:server',
-        'env:all',
         'injector:sass', 
         'concurrent:server',
         'injector',
