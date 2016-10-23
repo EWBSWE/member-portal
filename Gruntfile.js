@@ -17,7 +17,6 @@ module.exports = function (grunt) {
     cdnify: 'grunt-google-cdn',
     protractor: 'grunt-protractor-runner',
     injector: 'grunt-asset-injector',
-    buildcontrol: 'grunt-build-control',
   });
 
   // Time how long tasks take. Can help when optimizing build times
@@ -382,12 +381,6 @@ module.exports = function (grunt) {
         push: true,
         connectCommits: false,
         message: 'Built %sourceName% from commit %sourceCommit% on branch %sourceBranch%'
-      },
-      heroku: {
-        options: {
-          remote: 'heroku',
-          branch: 'master'
-        }
       },
       openshift: {
         options: {
