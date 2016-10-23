@@ -3,6 +3,7 @@
 // Test specific configuration
 // ===========================
 module.exports = {
+    port: 8999,
     db: {
         host: 'localhost',
         port: 5432,

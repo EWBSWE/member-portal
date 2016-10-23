@@ -537,9 +537,18 @@ module.exports = function (grunt) {
             },
         },
     },
+      mocha_istanbul: {
+          coverage: {
+              src: ['server/models', 'server/api/*'],
+              options: {
+                  mask: '*.spec.js',
+              }
+          }
+      },
   });
 
   grunt.loadNpmTasks('grunt-angular-gettext');
+  grunt.loadNpmTasks('grunt-mocha-istanbul');
 
   // Used for delaying livereload until after server has restarted
   grunt.registerTask('wait', function () {
@@ -592,17 +601,16 @@ module.exports = function (grunt) {
   grunt.registerTask('test', function(target) {
     if (target === 'server') {
       return grunt.task.run([
-        'env:all',
         'env:test',
         'seed-database',
-        'mochaTest'
+        'mocha_istanbul',
       ]);
     }
 
     else if (target === 'client') {
       return grunt.task.run([
         'clean:server',
-        'env:all',
+        'env:test',
         'injector:sass', 
         'concurrent:test',
         'injector',
@@ -614,7 +622,6 @@ module.exports = function (grunt) {
     else if (target === 'e2e') {
       return grunt.task.run([
         'clean:server',
-        'env:all',
         'env:test',
         'injector:sass', 
         'concurrent:test',
@@ -628,7 +635,7 @@ module.exports = function (grunt) {
 
     else grunt.task.run([
       'test:server',
-      'test:client'
+      'test:client',
     ]);
   });
 
@@ -672,4 +679,5 @@ module.exports = function (grunt) {
         });
     });
 
+    grunt.registerTask('coverage', ['env:test', 'mocha_istanbul']);
 };

@@ -107,7 +107,7 @@ describe('Payment controller', function() {
 
             this.timeout(4000);
 
-            return new Promise((resolve, reject) => {
+            new Promise((resolve, reject) => {
                 stripe.tokens.create({
                     card: {
                         number: '4242424242424242',
@@ -233,7 +233,7 @@ describe('Payment controller', function() {
             });
         });
 
-        it('should reject new member with erroneous payment', function(done) {
+        it('should reject new member with erroneous payment', function() {
             this.timeout(4000);
 
             return new Promise((resolve, reject) => {
@@ -266,10 +266,10 @@ describe('Payment controller', function() {
                     .expect(400)
                     .end((err, res) => {
                         if (err) {
-                            return done(err);
+                            return Promise.reject(err);
                         }
 
-                        done();
+                        return Promise.resolve();
                     });
             });
         });
@@ -408,7 +408,8 @@ describe('Payment controller', function() {
 
         it('should sign up for event with fee', function(done) {
             this.timeout(4000);
-            return new Promise((resolve, reject) => {
+
+            new Promise((resolve, reject) => {
                 stripe.tokens.create({
                     card: {
                         number: '4242424242424242',
@@ -450,7 +451,8 @@ describe('Payment controller', function() {
 
         it('should sign up for event with both free and not free addon', function(done) {
             this.timeout(4000);
-            return new Promise((resolve, reject) => {
+
+            new Promise((resolve, reject) => {
                 stripe.tokens.create({
                     card: {
                         number: '4242424242424242',
@@ -493,7 +495,8 @@ describe('Payment controller', function() {
 
         it('should reject participants when payment fails', function(done) {
             this.timeout(4000);
-            return new Promise((resolve, reject) => {
+
+            new Promise((resolve, reject) => {
                 stripe.tokens.create({
                     card: {
                         number: '4000000000000002',

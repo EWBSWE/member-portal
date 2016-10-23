@@ -4,7 +4,7 @@ var expect = require('chai').expect;
 var moment = require('moment');
 
 var db = require('../db').db;
-var Member = require('./member.model');
+var Member = require('../models/member.model');
 
 describe('Member', function() {
     afterEach(function(done) {

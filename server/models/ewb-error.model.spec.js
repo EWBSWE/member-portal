@@ -24,7 +24,7 @@ describe('Error', function() {
         });
 
         it('should fail when missing arguments', function(done) {
-            return ewbError.create().catch(err => {
+            ewbError.create().catch(err => {
                 done();
             });
         });
