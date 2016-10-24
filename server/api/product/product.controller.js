@@ -20,6 +20,7 @@ var ProductType = require('../../models/product-type.model');
  * @param {next}
  */
 exports.membership = function(req, res, next) {
+    // TODO Should probably fetch product type id and query by that
     Product.findByProductType(ProductType.MEMBERSHIP).then(products => {
         res.status(200).json(products);
     }).catch(err => {
