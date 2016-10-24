@@ -12,6 +12,15 @@ var moment = require('moment');
 var Member = require('../../models/member.model');
 var OutgoingMessage = require('../../models/outgoing-message.model');
 
+/**
+ * Returns all members.
+ *
+ * @memberOf controller.Member
+ *
+ * @param {object} req - Express request object
+ * @param {object} res - Express response object
+ * @param {object} next - Express next error function
+ */
 exports.index = function(req, res, next) {
     Member.index().then(data => {
         res.status(200).json(data);
