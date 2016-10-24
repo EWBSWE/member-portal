@@ -537,10 +537,19 @@ module.exports = function (grunt) {
               }
           }
       },
+      jsdoc: {
+          dist: {
+              src: ['server/**/*.js'],
+              options: {
+                  destination: 'doc',
+              }
+          }
+      },
   });
 
   grunt.loadNpmTasks('grunt-angular-gettext');
   grunt.loadNpmTasks('grunt-mocha-istanbul');
+    grunt.loadNpmTasks('grunt-jsdoc');
 
   // Used for delaying livereload until after server has restarted
   grunt.registerTask('wait', function () {

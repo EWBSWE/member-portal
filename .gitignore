@@ -10,3 +10,4 @@ dist
 *.zip
 development.local.js
 coverage
+doc
