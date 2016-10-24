@@ -1,12 +1,16 @@
+/**
+ * Member controller
+ *
+ * @namespace controller.Member
+ * @memberOf controller
+ */
+
 'use strict';
 
-var _ = require('lodash');
 var moment = require('moment');
 
-//var Buyer = require('../../models/buyer.model');
 var Member = require('../../models/member.model');
 var OutgoingMessage = require('../../models/outgoing-message.model');
-//var Payment = require('../../models/payment.model');
 
 exports.index = function(req, res, next) {
     Member.index().then(data => {
@@ -110,20 +114,100 @@ exports.changePassword = function(req, res, next) {
     });
 };
 
-exports.me = function(req, res) {
+exports.me = function(req, res, next) {
+    let userId = req.user._id;
     
+    if (!userId) {
+        let forbidden = new Error('Not signed in.');
+        forbidden.status = 403;
+        return next(forbidden);
+    }
+
+    Member.get(userId).then(member => {
+        if (!member) {
+            return res.sendStatus(404);
+        }
+
+        res.status(200).json(member);
+    }).catch(err => {
+        next(err);
+    });
 };
 
-exports.authCallback = function(req, res) {
-    
+exports.authCallback = function(req, res, next) {
+    res.redirect('/')
 };
 
-exports.resetPassword = function(req, res) {
-    
+/**
+ * Reset password
+ *
+ * @memberOf controller.Member
+ *
+ * @param {object} req Request
+ * @param {object} res Response
+ * @param {object} next Error
+ */
+exports.resetPassword = function(req, res, next) {
+    if (!req.body.email) {
+        let badRequest = new Error('Bad request.');
+        badRequest.status = 400;
+        return next(badRequest);
+    }
+
+    Member.find(req.body.email).then(member => {
+        if (!member) {
+            // Even though we didn't find any member with that email we pretend
+            // that we did just to prevent leaking out information about any
+            // email addresses that we have or may not have.
+            return res.sendStatus(201);
+        }
+
+        return Member.resetPassword(member.id);
+    }).then(data => {
+        let {member, resetToken} = data;
+
+        let url = 'http://localhost:9000/reset-password?token=' + resetToken;
+        if (process.env.NODE_ENV === 'production') {
+            // TODO: Fix this URL
+            url = 'https://blimedlem.ingenjorerutangranser.se/reset-password?token=' + resetToken;
+        }
+
+        return OutgoingMessage.create({
+            from: 'noreply@ingenjorerutangranser.se',
+            to: member.email,
+            subject: ewbMail.getSubject('reset-password'),
+            text: ewbMail.getBody('reset-password', { url: url }),
+        });
+    }).then(() => {
+        res.sendStatus(201);
+    }).catch(err => {
+        next(err);
+    });
 };
 
-exports.resetPasswordWithToken = function(req, res) {
-    
+/**
+ * This is not done, only placeholder atm.
+ *
+ * @memberOf controller.Member
+ */
+exports.resetPasswordWithToken = function(req, res, next) {
+    if (!req.body.token || !req.body.newPassword) {
+        let badRequest = new Error('Bad request.');
+        badRequest.status = 400;
+        return next(badRequest);
+    }
+
+    Member.findWith({ resetToken: req.body.token, resetValidity: moment() }).then(member => {
+        if (!member) {
+            return res.sendStatus(404);
+        }
+
+        return Member.update(member.id, { password: req.body.newPassword });
+    }).then(member => {
+        res.sendStatus(201);
+    }).catch(err => {
+        next(err);
+    });
 };
 
 
@@ -255,23 +339,3 @@ exports.resetPasswordWithToken = function(req, res) {
     //}
   //});
 //};
-
-//exports.getPayments = function(req, res) {
-    //Buyer.findOne({ type: 'Member', document: req.params.id }, function(err, buyer) {
-        //if (err) {
-            //return handleError(res, err);
-        //}
-
-        //if (!buyer) {
-            //return res.sendStatus(404);
-        //}
-
-        //Payment.find({ buyer: buyer._id }, function(err, payments) {
-            //if (err) {
-                //return handleError(res, err);
-            //}
-            //return res.status(200).json(payments);
-        //});
-    //});
-//};
-

@@ -6,7 +6,7 @@ var jwt = require('jsonwebtoken');
 var moment = require('moment');
 var crypto = require('crypto');
 
-var User = require('../../models/user.model');
+//var User = require('../../models/user.model');
 var OutgoingMessage = require('../../models/outgoing-message.model');
 var ewbError = require('../../models/ewb-error.model');
 

@@ -1,9 +1,14 @@
+/**
+ * Member model
+ *
+ * @namespace model.Member
+ */
+
 'use strict';
 
 var Promise = require('bluebird');
 var crypto = require('crypto');
 var moment = require('moment');
-var lodash = require('lodash');
 
 var config = require('../config/environment');
 var db = require('../db').db;
@@ -109,6 +114,12 @@ function update(id, attributes) {
     `, Object.assign(attributes, {id: id}));
 }
 
+/**
+ * Returns all members.
+ *
+ * @memberOf model.Member
+ * @returns {Promise}
+ */
 function index() {
     return db.any(`
         SELECT
