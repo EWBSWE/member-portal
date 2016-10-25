@@ -220,13 +220,6 @@ describe('Payment controller', function() {
                         });
                 });
             }).then(() => {
-                return Member.find('ict@ingenjorerutangranser.se');
-            }).then(member => {
-                // TODO
-                // Move this kind of stuff to unit test
-                expect(member).to.exist;
-                expect(member.name).to.eql('New name');
-                expect(moment(member.expiration_date).diff(moment(expirationDate), 'days')).to.be.above(364);
                 done();
             }).catch(err => {
                 done(err);

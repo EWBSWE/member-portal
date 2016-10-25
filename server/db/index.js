@@ -1,3 +1,9 @@
+/**
+ * Database
+ *
+ * @namespace db
+ */
+
 'use strict';
 
 var Promise = require('bluebird');
@@ -19,12 +25,7 @@ if (environment.seedDB) {
     // TODO
 }
 
-function sql(file) {
-    return new pgp.QueryFile(path.join(__dirname, file), {minify: true});
-}
-
 module.exports = {
     db: db,
     pgp: pgp,
-    sql: sql
 };

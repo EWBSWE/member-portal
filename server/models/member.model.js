@@ -2,6 +2,7 @@
  * Member model
  *
  * @namespace model.Member
+ * @memberOf model
  */
 
 'use strict';
@@ -11,7 +12,33 @@ var crypto = require('crypto');
 var moment = require('moment');
 
 var config = require('../config/environment');
+
 var db = require('../db').db;
+
+var postgresHelper = require('../helpers/postgres.helper');
+
+const COLUMN_MAP = {
+    email: 'email',
+    hashedPassword: 'hashed_password',
+    salt: 'salt',
+    role: 'role',
+    resetValidity: 'reset_validity',
+    resetToken: 'reset_token',
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+    name: 'name',
+    location: 'location',
+    education: 'education',
+    profession: 'profession',
+    memberTypeId: 'member_type_id',
+    gender: 'gender',
+    yearOfBirth: 'year_of_birth',
+    expirationDate: 'expiration_date',
+};
+
+const MANDATORY_MAP = {
+    email: 'email',
+}
 
 function create(memberAttributes) {
     return txCreate(memberAttributes, db);
@@ -97,21 +124,27 @@ function txCreateAuthenticatable(email, password, role, transaction) {
     `, data);
 }
 
-function update(id, attributes) {
+/**
+ * Updates a member
+ * 
+ * @memberOf model.Member
+ * @param {number} id - The member id
+ * @param {object} data - The attributes that should be updated
+ * @returns {Promise<object,Error>} Resolves to the updated member
+ */
+function update(id, data) {
+    let mapped = postgresHelper.mapDataToColumns(COLUMN_MAP, data);
+
+    if (mapped  === null) {
+        return Promise.reject('No attributes to update');
+    }
+
     return db.one(`
         UPDATE member
-        SET
-            name = $[name],
-            location = $[location],
-            education = $[education],
-            profession = $[profession],
-            member_type_id = $[member_type_id],
-            gender = $[gender],
-            year_of_birth = $[year_of_birth],
-            expiration_date = $[expiration_date]
+        SET ${mapped}
         WHERE id = $[id]
         RETURNING *
-    `, Object.assign(attributes, {id: id}));
+    `, Object.assign(data, {id: id}));
 }
 
 /**
@@ -243,13 +276,3 @@ module.exports = {
     find: find,
     destroy: destroy,
 }
-
-//// Non-sensitive info we'll be putting in the token
-//UserSchema
-  //.virtual('token')
-  //.get(function() {
-    //return {
-      //'_id': this._id,
-      //'role': this.role
-    //};
-  //});
