@@ -8,6 +8,9 @@
 'use strict';
 
 var moment = require('moment');
+var crypto = require('crypto');
+
+var routeHelper = require('../../helpers/route.helper');
 
 var Member = require('../../models/member.model');
 var OutgoingMessage = require('../../models/outgoing-message.model');
@@ -106,6 +109,13 @@ exports.destroy = function(req, res, next) {
 };
 
 exports.bulkCreate = function(req, res, next) {
+    if (!req.body.csv) {
+        return next(routeHelper.badRequest());
+    }
+
+    let members = csv.replace(/ /g, ' ').split(/\n/);
+
+
     throw 'Not implemented yet';
 };
 

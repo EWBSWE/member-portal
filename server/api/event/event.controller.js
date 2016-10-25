@@ -1,50 +1,83 @@
-'use strict';
+/**
+ * Event controller
+ *
+ * @namespace controller.Event
+ * @memberOf controller
+ */
 
-var _ = require('lodash');
-var mongoose = require('mongoose');
+'use strict';
 
 var Event = require('../../models/event.model');
 var EventAddon = require('../../models/event-addon.model');
 var EventParticipant = require('../../models/event-participant.model');
 var Product = require('../../models/product.model');
 var ProductType = require('../../models/product-type.model');
-
 var EventHelper = require('./event.helper');
 
-exports.index = function (req, res) {
-    return Event.find().exec(function(err, events) {
-        if (err) {
-            return handleError(res, err);
-        }
-        return res.status(200).json(events);
+/**
+ * Responds with all the events.
+ *
+ * @memberOf controller.Event
+ *
+ * @param {object} req - Express request object
+ * @param {object} res - Express response object
+ * @param {object} next - Express error function
+ */
+exports.index = function (req, res, next) {
+    Event.index().then(events => {
+        res.status(200).json(events);
+    }).catch(err => {
+        next(err);
     });
 };
 
-exports.showPublic = function(req, res) {
-    return Event.findOne({
-        identifier: req.query.url,
-        active: true
-    }).populate({
-        path: 'addons',
-        populate: {
-            path: 'product',
-        },
-    }).lean().exec(function(err, ewbEvent) {
-        if (err) {
-            return handleError(res, err);
-        }
-
+/**
+ * TODO
+ *
+ * @memberOf controller.Event
+ *
+ * @param {object} req - Express request object
+ * @param {object} res - Express response object
+ * @param {object} next - Express error function
+ */
+exports.showPublic = function(req, res, next) {
+    Event.find(req.query.url).then(ewbEvent => {
         if (!ewbEvent) {
             return res.sendStatus(404);
         }
 
-        ewbEvent.remaining = ewbEvent.maxParticipants - ewbEvent.participants.length;
-
-        // Don't send list of participant ids
-        delete ewbEvent.participants;
-
-        return res.status(200).json(ewbEvent);
+        res.status(200).json(ewbEvent);
+    }).catch(err => {
+        next(err);
     });
+
+    //if (!req.query.url) {
+    //}
+
+    //return Event.findOne({
+        //identifier: req.query.url,
+        //active: true
+    //}).populate({
+        //path: 'addons',
+        //populate: {
+            //path: 'product',
+        //},
+    //}).lean().exec(function(err, ewbEvent) {
+        //if (err) {
+            //return handleError(res, err);
+        //}
+
+        //if (!ewbEvent) {
+            //return res.sendStatus(404);
+        //}
+
+        //ewbEvent.remaining = ewbEvent.maxParticipants - ewbEvent.participants.length;
+
+        //// Don't send list of participant ids
+        //delete ewbEvent.participants;
+
+        //return res.status(200).json(ewbEvent);
+    //});
 }
 
 exports.show = function (req, res) {

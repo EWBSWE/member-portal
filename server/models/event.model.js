@@ -1,3 +1,10 @@
+/**
+ * Event model
+ *
+ * @namespace model.Event
+ * @memberOf model
+ */
+
 'use strict';
 
 var db = require('../db').db;
@@ -5,6 +12,27 @@ var db = require('../db').db;
 var EmailTemplate = require('./email-template.model');
 var Member = require('./member.model');
 var Product = require('./product.model');
+
+/**
+ * Fetch all events.
+ *
+ * @returns {Promise<Array, Error>} An array of events
+ */
+function index() {
+    return db.any(`
+        SELECT
+            id,
+            name,
+            identifier,
+            active,
+            created_at,
+            updated_at,
+            due_date,
+            notification_open
+        FROM event
+        ORDER BY id
+    `);
+}
 
 function create(attributes) {
     let templateId;
