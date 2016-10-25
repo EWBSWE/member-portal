@@ -14,7 +14,6 @@ var moment = require('moment');
 var config = require('../config/environment');
 
 var db = require('../db').db;
-
 var postgresHelper = require('../helpers/postgres.helper');
 
 const COLUMN_MAP = {
@@ -36,60 +35,25 @@ const COLUMN_MAP = {
     expirationDate: 'expiration_date',
 };
 
-const MANDATORY_MAP = {
-    email: 'email',
-}
-
 function create(memberAttributes) {
     return txCreate(memberAttributes, db);
 }
 
-function txCreate(memberAttributes, transaction) {
-    if (!valid(memberAttributes)) {
-        return Promise.reject(generateErrorMessages(memberAttributes));
+function txCreate(data, transaction) {
+    if (!valid(data)) {
+        return Promise.reject(generateErrorMessages(data));
+    }
+    
+    let {columns, wrapped} = postgresHelper.mapDataForInsert(COLUMN_MAP, data);
+    
+    if (columns === null || wrapped === null) {
+        return Promise.reject('Missing attributes');
     }
 
-    let optionalColumns = [
-        'name',
-        'location',
-        'education',
-        'profession',
-        'memberTypeId',
-        'gender',
-        'yearOfBirth',
-        'expirationDate',
-    ];
-
-    optionalColumns.forEach(c => {
-        if (memberAttributes[c] === undefined) {
-            memberAttributes[c] = null;
-        }
-    });
-
     return transaction.one(`
-        INSERT INTO member (
-            email,
-            name,
-            location,
-            education,
-            profession,
-            member_type_id,
-            gender,
-            year_of_birth,
-            expiration_date
-        ) VALUES (
-            $[email],
-            $[name],
-            $[location],
-            $[education],
-            $[profession],
-            $[memberTypeId],
-            $[gender],
-            $[yearOfBirth],
-            $[expirationDate]
-        )
+        INSERT INTO member (${columns}) VALUES (${wrapped})
         RETURNING id, email, expiration_date
-    `, memberAttributes);
+    `, data);
 }
 
 function createAuthenticatable(email, password, role) {
@@ -133,7 +97,7 @@ function txCreateAuthenticatable(email, password, role, transaction) {
  * @returns {Promise<object,Error>} Resolves to the updated member
  */
 function update(id, data) {
-    let mapped = postgresHelper.mapDataToColumns(COLUMN_MAP, data);
+    let mapped = postgresHelper.mapDataForUpdate(COLUMN_MAP, data);
 
     if (mapped  === null) {
         return Promise.reject('No attributes to update');

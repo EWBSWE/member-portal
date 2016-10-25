@@ -1,9 +1,5 @@
 'use strict';
 
-
-
-//var should = require('should');
-
 var expect = require('chai').expect;
 var moment = require('moment');
 var request = require('supertest');
@@ -20,6 +16,7 @@ var Member = require('../../models/member.model');
 var OutgoingMessage = require('../../models/outgoing-message.model');
 var Payment = require('../../models/payment.model');
 var Product = require('../../models/product.model');
+var ProductType = require('../../models/product-type.model');
 
 describe('Payment controller', function() {
     var productId;
@@ -27,19 +24,19 @@ describe('Payment controller', function() {
     var token;
 
     beforeEach(function(done) {
-        Product.createProductType('Member').then(productType => {
+        ProductType.create(ProductType.MEMBERSHIP).then(productType => {
             return Product.create({
                 name: 'Foo',
                 price: 100,
                 description: 'This is a description',
-                productType: 'Member',
+                productTypeId: productType.id,
                 attribute: {
                     durationDays: 365,
                     memberType: 'student',
                 }
             });
-        }).then(products => {
-            productId = products[0].id;
+        }).then(product => {
+            productId = product.id;
         }).then(() => {
             Member.createAuthenticatable('admin@admin.com', 'password', 'admin').then(data => {
                 memberId = data.id;
@@ -328,7 +325,7 @@ describe('Payment controller', function() {
         var event;
 
         beforeEach(function(done) {
-            Product.createProductType('Event').then(() => {
+            ProductType.create(ProductType.EVENT).then(() => {
                 return Event.create({
                     name: 'Some event',
                     active: true,

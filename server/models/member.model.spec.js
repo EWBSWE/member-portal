@@ -6,7 +6,7 @@ var moment = require('moment');
 var db = require('../db').db;
 var Member = require('../models/member.model');
 
-describe.only('Member', function() {
+describe('Member', function() {
     let memberTypeId;
 
     beforeEach(function(done) {

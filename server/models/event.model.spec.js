@@ -6,12 +6,13 @@ var db = require('../db').db;
 
 var Event = require('./event.model');
 var Product = require('./product.model');
+var ProductType = require('./product-type.model');
 
 describe('event model', function() {
     var event;
 
     beforeEach(function(done) {
-        Product.createProductType('Event').then(() => {
+        ProductType.create('Event').then(() => {
             return Event.create({
                 name: 'Some event',
                 active: true,

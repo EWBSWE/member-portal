@@ -14,9 +14,10 @@ var Member = require('./member.model');
 var Product = require('./product.model');
 
 /**
- * Fetch all events.
+ * Fetch all events
  *
- * @returns {Promise<Array, Error>} An array of events
+ * @memberOf model.Event
+ * @returns {Promise<Array|Error>} Resolves to an array of events
  */
 function index() {
     return db.any(`

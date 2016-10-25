@@ -1,23 +1,31 @@
+/**
+ * Product model
+ *
+ * @namespace model.Product
+ * @memberOf model
+ */
+
 'use strict';
 
 var db = require('../db').db;
+var postgresHelper = require('../helpers/postgres.helper');
 
-function index() {
-    return db.any(`
-        SELECT
-            id,
-            name,
-            price,
-            description,
-            product_type_id,
-            currency_code,
-            created_at,
-            updated_at
-        FROM product
-        ORDER BY id
-    `);
-}
+const COLUMN_MAP = {
+    name: 'name',
+    price: 'price',
+    description: 'description',
+    attribute: 'attribute',
+    productTypeId: 'product_type_id',
+    currencyCode: 'currency_code',
+};
 
+/**
+ * Return product
+ *
+ * @memberOf model.Product
+ * @param {number} id - Product id
+ * @returns {Promise<Object|Error>} - Resolves to a product
+ */
 function get(id) {
     return db.oneOrNone(`
         SELECT
@@ -33,44 +41,59 @@ function get(id) {
     `, id);
 }
 
-function createProductType(identifier) {
-    return db.one(`
-        INSERT INTO product_type (identifier)
-        VALUES ($1)
-        RETURNING id
-    `, identifier);
-}
+/**
+ * Create product or products depending on input. If data is an object assume
+ * we create a single product otherwise we create an array of products.
+ *
+ * @memberOf model.Product
+ * @param {Object|Array} data - Product data
+ * @returns {Promise<Object|Array|Error>} - Resolves to a single product or an
+ * array of products
+ */
+function create(data) {
+    // If data is an array, assume we want to create multiple products.
+    // Otherwise we try to create a single product.
+    if (Array.isArray(data)) {
+        if (data.length === 0) {
+            return Promise.reject('Missing attributes');
+        }
 
-// TODO why does function create many ????
-// ???????????????
-function create(attributes) {
-    if (!Array.isArray(attributes)) {
-        attributes = [attributes];
-    }
+        return db.tx(transaction => {
+            let queries = data.map(product => {
+                if (!product.attribute) {
+                    product.attribute = {};
+                }
 
-    return db.tx(transaction => {
-        let queries = attributes.map(data => {
-            if (!data.attribute) {
-                data.attribute = {};
-            }
+                let {columns, wrapped} = postgresHelper.mapDataForInsert(COLUMN_MAP, product);
+                if (columns === null || wrapped === null) {
+                    return null;
+                }
 
-            // TODO why not take an productType id instead of the identifier???
-            return transaction.one(`
-                INSERT INTO product (
-                    product_type_id, name, price, description, attribute
-                ) VALUES (
-                    (
-                    SELECT id
-                    FROM product_type
-                    WHERE identifier LIKE $[productType]
-                    ), $[name], $[price], $[description], $[attribute]
-                )
-                RETURNING *
-            `, data);
+                let sql = `
+                    INSERT INTO product (${columns})
+                    VALUES (${wrapped})
+                    RETURNING *
+                `;
+
+                return transaction.one(sql, product);
+            });
+
+            return transaction.batch(queries);
         });
+    } else {
+        let {columns, wrapped} = postgresHelper.mapDataForInsert(COLUMN_MAP, data);
+        if (columns === null || wrapped === null) {
+            return Promise.reject('Missing attributes');
+        }
 
-        return transaction.batch(queries);
-    });
+        let sql = `
+            INSERT INTO product (${columns})
+            VALUES (${wrapped})
+            RETURNING *
+        `;
+
+        return db.one(sql, data)
+    }
 }
 
 function findByProductType(productType) {
@@ -89,9 +112,7 @@ function findByProductType(productType) {
 }
 
 module.exports = {
-    index: index,
     get: get,
-    createProductType: createProductType,
     create: create,
     findByProductType: findByProductType,
 };
