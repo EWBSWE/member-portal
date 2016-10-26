@@ -14,7 +14,11 @@ describe('EWB Error controller', function() {
         var token;
 
         before(function(done) {
-            Member.createAuthenticatable('admin@admin.com', 'password', 'admin').then(data => {
+            Member.create({
+                email: 'admin@admin.com',
+                password: 'password',
+                role: 'admin'
+            }).then(data => {
                 memberId = data.id;
 
                 agent.post('/auth/local')

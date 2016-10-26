@@ -35,57 +35,83 @@ const COLUMN_MAP = {
     expirationDate: 'expiration_date',
 };
 
-function create(memberAttributes) {
-    return txCreate(memberAttributes, db);
-}
-
-function txCreate(data, transaction) {
-    if (!valid(data)) {
-        return Promise.reject(generateErrorMessages(data));
-    }
-    
-    let {columns, wrapped} = postgresHelper.mapDataForInsert(COLUMN_MAP, data);
-    
-    if (columns === null || wrapped === null) {
-        return Promise.reject('Missing attributes');
+function create(data) {
+    let dataValid = false;
+    if (Array.isArray(data)) {
+        dataValid = data.map(validate).reduce((a, b) => { return a && b; }, true);
+    } else if (typeof data === 'object'){
+        dataValid = validate(data);
     }
 
-    return transaction.one(`
-        INSERT INTO member (${columns}) VALUES (${wrapped})
-        RETURNING id, email, expiration_date
-    `, data);
-}
-
-function createAuthenticatable(email, password, role) {
-    return txCreateAuthenticatable(email, password, role, db);
-}
-
-function txCreateAuthenticatable(email, password, role, transaction) {
-    if (!validEmail(email)) {
-        return Promise.reject('Invalid email');
-    }
-    if (!validPassword(password)) {
-        return Promise.reject('Password too short');
-    }
-    if(!validRole(role)) {
-        return Promise.reject('Invalid role');
+    if (!dataValid) {
+        return Promise.reject('Invalid member');
     }
 
-    let salt = makeSalt();
-    let hashedPassword = hashPassword(password, salt);
+    // Helper function to create member
+    let _create = (member, transaction) => {
+        if (member.password !== undefined && member.password !== null) {
+            let salt = makeSalt();
+            let hashedPassword = hashPassword(data.password, salt);
 
-    let data = {
-        email: email,
-        role: role,
-        hashedPassword: hashedPassword,
-        salt: salt,
+            Object.assign(member, {
+                hashedPassword: hashedPassword,
+                salt: salt,
+                resetValidity: null,
+                resetToken: null,
+            });
+
+            delete member.password;
+        }
+
+        let {columns, wrapped} = postgresHelper.mapDataForInsert(COLUMN_MAP, member);
+
+        if (columns === null || wrapped === null) {
+            return null;
+        }
+
+        let sql = `
+            INSERT INTO member (${columns})
+            VALUES (${wrapped})
+            RETURNING id, email, expiration_date
+        `;
+
+        return transaction.one(sql, member);
     };
 
-    return transaction.one(`
-        INSERT INTO member(email, hashed_password, salt, role)
-        VALUES($[email], $[hashedPassword], $[salt], $[role])
-        RETURNING id, email, hashed_password, salt, role
-    `, data);
+    // If data is an array, assume we want to create multiple members.
+    // Otherwise we try to create a single member.
+    if (Array.isArray(data)) {
+        return db.tx(transaction => {
+            let queries = data.map(member => {
+                return _create(member, transaction);
+            });
+
+            if (queries.includes(null)) {
+                return Promise.reject(new Error('Some members could not be mapped'));
+            }
+
+            return transaction.batch(queries);
+        });
+    } else {
+        return _create(data, db);
+    }
+}
+
+function validate(member) {
+    if (!validEmail(member.email)) {
+        return false;
+    }
+
+    // Password is optional
+    if (member.password && !validPassword(member.password)) {
+        return false;
+    }
+    // Role is optional
+    if (member.role && !validRole(member.role)) {
+        return false;
+    }
+
+    return true;
 }
 
 /**
@@ -98,6 +124,11 @@ function txCreateAuthenticatable(email, password, role, transaction) {
  */
 function update(id, data) {
     if (data.password !== undefined && data.password !== null) {
+        if (!validPassword(data.password)) {
+            return Promise.reject('Invalid password');
+        }
+
+
         let salt = makeSalt();
         let hashedPassword = hashPassword(data.password, salt);
 
@@ -258,26 +289,24 @@ function createResetToken(id) {
 }
 
 function findBy(data) {
-    let sql = postgresHelper.mapDataForSelect(COLUMN_MAP, data);
+    let wheres = postgresHelper.where(COLUMN_MAP, data);
 
     return db.any(`
         SELECT id, email, reset_validity
         FROM member
-        WHERE ${sql}
-    `, data);
+        WHERE ${wheres.clause}
+    `, wheres.data);
 }
 
 module.exports = {
-    create: create,
-    txCreate: txCreate,
-    createAuthenticatable: createAuthenticatable,
-    txCreateAuthenticatable: txCreateAuthenticatable,
-    authenticate: authenticate,
-    update: update,
     index: index,
     get: get,
+    create: create,
+    update: update,
+    authenticate: authenticate,
     find: find,
     findBy: findBy,
     destroy: destroy,
     createResetToken: createResetToken,
+    validate: validate,
 }

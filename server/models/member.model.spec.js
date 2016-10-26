@@ -24,37 +24,61 @@ describe('Member', function() {
 
     describe('Creation', function() {
         it('should create member with password', function() {
-            return Member.createAuthenticatable('test@test.com', 'test1234', 'user');
+            return Member.create({
+                email: 'test@test.com',
+                password: 'test1234',
+                role: 'user'
+            });
         });
 
         it('should reject erroneous password', function(done) {
-            Member.createAuthenticatable('test@test.com', 'short', 'user').catch(err => {
-                expect(err).to.equal('Password too short');
+            Member.create({
+                email: 'test@test.com',
+                password: 'short',
+                role: 'user'
+            }).catch(err => {
+                expect(err).to.equal('Invalid member');
                 done();
             });
         });
 
         it('should reject erroneous email', function(done) {
-            Member.createAuthenticatable('fail', 'validpassword', 'user').catch(err => {
-                expect(err).to.equal('Invalid email');
+            Member.create({
+                email: 'fail',
+                password: 'validpassword',
+                role: 'user'
+            }).catch(err => {
+                expect(err).to.equal('Invalid member');
                 done();
             });
         });
 
         it('should reject erroneous role', function(done) {
-            Member.createAuthenticatable('valid@email.domain', 'validpassword', 'fool').catch(err => {
-                expect(err).to.equal('Invalid role');
+            Member.create({
+                email: 'valid@email.domain',
+                password: 'validpassword',
+                role: 'fool'
+            }).catch(err => {
+                expect(err).to.equal('Invalid member');
                 done();
             });
         });
 
         it('should fail to create member that is missing arguments', function(done) {
-            Member.createAuthenticatable().catch(err => { done(); });
+            Member.create().catch(err => { done(); });
         });
 
         it('should fail to create member with same email as other member', function(done) {
-            Member.createAuthenticatable('test@test.com', 'test1234', 'user').then(data => {
-                return Member.createCreateAuthenticatable('test@test.com', 'test1234', 'user');
+            Member.create({
+                email: 'test@test.com',
+                password: 'test1234',
+                role: 'user'
+            }).then(data => {
+                return Member.create({
+                    email: 'test@test.com',
+                    password: 'test1234',
+                    role: 'user'
+                });
             }).catch(err => {
                 done();
             });
@@ -194,19 +218,33 @@ describe('Member', function() {
 
     describe('Authentication', function() {
         it('should authenticate user if password is valid', function() {
-            return Member.createAuthenticatable('test@test.com', 'test1234', 'user').then(data => {
+            return Member.create({
+                email: 'test@test.com',
+                password: 'test1234',
+                role: 'user'
+            }).then(data => {
+                return db.one(`SELECT * FROM member WHERE id = $1`, data.id);
+            }).then(data => {
                 expect(Member.authenticate('test1234', data.hashed_password, data.salt)).to.be.true;
             });
         });
 
         it('should not authenticate user if password is invalid', function() {
-            return Member.createAuthenticatable('test@test.com', 'test1234', 'user').then(data => {
+            return Member.create({
+                email: 'test@test.com',
+                password: 'test1234',
+                role: 'user'
+            }).then(data => {
                 expect(Member.authenticate('wrong password', data.hashed_password, data.salt)).to.be.false;
             });
         });
 
         it('should reject user without password', function() {
-            return Member.createAuthenticatable('test@test.com', 'test1234', 'user').then(data => {
+            return Member.create({
+                email: 'test@test.com',
+                password: 'test1234',
+                role: 'user'
+            }).then(data => {
                 expect(Member.authenticate(null, null, null)).to.be.false;
             });
         });

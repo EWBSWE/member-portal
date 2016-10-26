@@ -81,8 +81,31 @@ function mapDataForInsert(columnMap, data) {
     return {columns, wrapped};
 }
 
+function where(columnMap, data) {
+    let keys = Object.keys(columnMap);
+    let validParams = Object.keys(data).filter(k => { return keys.includes(k); });
+
+    if (validParams.length === 0) {
+        return null;
+    }
+
+    let counter = 1;
+    let mapped = validParams.map(param => {
+        if (Array.isArray(data[param])) {
+            return `${columnMap[param]} IN ($${counter++}:csv)`
+        }
+
+        return `${columnMap[param]} = $${counter++}`;
+    });
+
+    return {
+        clause: mapped.join(' AND '),
+        data: validParams.map(p => { return data[p]; }),
+    }
+}
+
 module.exports = {
     mapDataForUpdate: mapDataForUpdate,
     mapDataForInsert: mapDataForInsert,
-    mapDataForSelect: mapDataForUpdate,
+    where: where,
 }

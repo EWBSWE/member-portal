@@ -20,7 +20,6 @@ var Product = require('../../models/product.model');
 
 var EmailHelper = require('../../helpers/email.helper');
 var EventHelper = require('../event/event.helper');
-var MemberHelper = require('../member/member.helper');
 var PaymentHelper = require('../payment/payment.helper');
 
 var ewbMail = require('../../components/ewb-mail');

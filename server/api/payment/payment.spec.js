@@ -38,7 +38,11 @@ describe('Payment controller', function() {
         }).then(product => {
             productId = product.id;
         }).then(() => {
-            Member.createAuthenticatable('admin@admin.com', 'password', 'admin').then(data => {
+            Member.create({
+                email: 'admin@admin.com',
+                password: 'password',
+                role: 'admin'
+            }).then(data => {
                 memberId = data.id;
                 done();
             });

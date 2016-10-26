@@ -55,9 +55,18 @@ describe('Member controller', function() {
     let user;
 
     beforeEach(function(done) {
-        Member.createAuthenticatable('admin@admin.com', 'password', 'admin').then(member => {
+        Member.create({
+            email: 'admin@admin.com',
+            password: 'password',
+            role: 'admin'
+        }).then(member => {
             admin = member;
-            return Member.createAuthenticatable('user@user.com', 'password', 'user');
+
+            return Member.create({
+                email: 'user@user.com',
+                password: 'password',
+                role: 'user'
+            });
         }).then(member => {
             user = member;
             done();
@@ -160,6 +169,41 @@ describe('Member controller', function() {
                 });
             });
         });
+
+        cases = [{
+            role: roles.admin,
+            expectCode: 404,
+            description: 'should get a 404 if member not found as an admin',
+        }, {
+            role: roles.user,
+            expectCode: 404,
+            description: 'should get a 404 if member not found as a user',
+        }, {
+            role: roles.guest,
+            expectCode: 401,
+            description: 'should deny guest to get some@example.com',
+        }];
+
+        cases.forEach(function(testCase) {
+            it(testCase.description, function(done) {
+                let memberId;
+
+                Member.create({ email: 'some@example.com' }).then(member => {
+                    memberId = member.id;
+
+                    return Member.destroy(memberId);
+                }).then(() => {
+                    testCase.role.auth().then(token => {
+                        agent.get(`/api/members/${memberId}`)
+                            .query({ access_token: token })
+                            .expect(testCase.expectCode)
+                            .end((err, res) => {
+                                done(err);
+                            });
+                    });
+                });
+            });
+        });
     });
 
     describe('POST /api/members', function() {
@@ -193,6 +237,11 @@ describe('Member controller', function() {
             description: 'should create admin as an admin',
             data: data.admin,
         }, {
+            role: roles.admin,
+            expectCode: 400,
+            description: 'should fail to create user as an admin',
+            data: {},
+        }, {
             role: roles.user,
             expectCode: 201,
             description: 'should create member as a user',
@@ -207,6 +256,11 @@ describe('Member controller', function() {
             expectCode: 403,
             description: 'should deny user to create admin',
             data: data.admin,
+        }, {
+            role: roles.user,
+            expectCode: 400,
+            description: 'should fail to create user as a user',
+            data: {},
         }, {
             role: roles.guest,
             expectCode: 401,
@@ -240,28 +294,82 @@ describe('Member controller', function() {
     });
 
     describe('POST /api/members/bulk', function() {
-        let csv = ``;
+        let base = [
+            { email: 'some@example.com' },
+            { email: 'other@example.com' },
+            { email: 'another@example.com', name: 'Has a name' },
+            { email: 'user@user.com' },
+        ];
 
         let cases = [{
             role: roles.admin,
             expectCode: 201,
             description: 'should bulk create users as an admin',
+            additional: [],
+        }, {
+            role: roles.admin,
+            expectCode: 201,
+            description: 'should bulk create admins as an admin',
+            additional: [{
+                email: 'admin2@admin.com', password: 'password', role: 'admin'
+            }],
+        }, {
+            role: roles.admin,
+            expectCode: 201,
+            description: 'should bulk create users as an admin',
+            additional: [{
+                email: 'user2@user.com', password: 'password', role: 'user'
+            }],
+        }, {
+            role: roles.admin,
+            expectCode: 201,
+            description: 'should bulk create admins and users as an admin',
+            additional: [{
+                email: 'admin2@admin.com', password: 'password', role: 'admin'
+            }, {
+                email: 'user2@user.com', password: 'password', role: 'user'
+            }],
         }, {
             role: roles.user,
             expectCode: 201,
             description: 'should bulk create users as a user',
+            additional: [],
+        }, {
+            role: roles.user,
+            expectCode: 201,
+            description: 'shoul bulk create users as a user',
+            additional: [{
+                email: 'user2@user.com', password: 'password', role: 'user'
+            }],
+        }, {
+            role: roles.user,
+            expectCode: 403,
+            description: 'should fail to bulk create admins as a user',
+            additional: [{
+                email: 'admin2@admin.com', password: 'password', role: 'admin'
+            }],
+        }, {
+            role: roles.user,
+            expectCode: 403,
+            description: 'should fail to bulk create admins and users as a user',
+            additional: [{
+                email: 'admin2@admin.com', password: 'password', role: 'admin'
+            }, {
+                email: 'user2@user.com', password: 'password', role: 'user'
+            }],
         }, {
             role: roles.guest,
             expectCode: 401,
             description: 'should deny guest to bulk create users',
+            additional: [],
         }];
         
         cases.forEach(function(testCase) {
             it(testCase.description, function(done) {
                 testCase.role.auth().then(token => {
-                    agent.post('/api/members')
+                    agent.post('/api/members/bulk')
                         .query({ access_token: token })
-                        .send({ csv: csv })
+                        .send({ members: base.concat(testCase.additional) })
                         .expect(testCase.expectCode)
                         .end((err, res) => {
                             done(err);

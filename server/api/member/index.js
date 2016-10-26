@@ -18,7 +18,6 @@ router.post('/reset-password-token', controller.resetPasswordWithToken);
 
 router.put('/:id', auth.isAuthenticated(), controller.update);
 
-// TODO make sure that regular users cannot delete admins
 router.delete('/:id', auth.isAuthenticated(), controller.destroy);
 
 
