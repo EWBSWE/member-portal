@@ -1,7 +1,8 @@
 /**
  * Product controller
  *
- * @namespace Product
+ * @namespace controller.Product
+ * @memberOf controller
  */
 
 'use strict';
@@ -20,8 +21,9 @@ var ProductType = require('../../models/product-type.model');
  * @param {next}
  */
 exports.membership = function(req, res, next) {
-    // TODO Should probably fetch product type id and query by that
-    Product.findByProductType(ProductType.MEMBERSHIP).then(products => {
+    ProductType.find(ProductType.MEMBERSHIP).then(pt => {
+        return Product.findByProductTypeId(pt.id);
+    }).then(products => {
         res.status(200).json(products);
     }).catch(err => {
         next(err);
@@ -40,7 +42,9 @@ exports.membership = function(req, res, next) {
  * @param {next}
  */
 exports.ewbEvent = function(req, res, next) {
-    Product.findByProductType(ProductType.EVENT).then(products => {
+    ProductType.find(ProductType.EVENT).then(pt => {
+        return Product.findByProductTypeId(pt.id);
+    }).then(products => {
         res.status(200).json(products);
     }).catch(err => {
         next(err);

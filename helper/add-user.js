@@ -2,13 +2,13 @@
 
 let path = require('path');
 
-let User = require(path.join(__dirname, '../server/models/user.model'));
+let Member= require(path.join(__dirname, '../server/models/member.model'));
 
 let email = process.argv[2];
 let password = process.argv[3];
 let role = process.argv[4];
 
-let user = User.create(email, password, role);
+let user = Member.createAuthenticatable(email, password, role);
 
 user.then(data => {
     console.log(data);

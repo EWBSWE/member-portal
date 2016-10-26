@@ -13,7 +13,7 @@ function deleteErrors(transaction) {
 }
 
 function insertAuthenticatableMembers(transaction) {
-    return Member.txCreateAuthenticatable('admin@admin.se', 'Test1234', 'admin', transaction);
+    return Member.txCreateAuthenticatable('admin@admin.se', 'Admin123', 'admin', transaction);
 }
 
 function empty() {

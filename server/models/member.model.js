@@ -138,6 +138,7 @@ function get(id) {
         SELECT
             id,
             email,
+            role,
             location,
             education,
             profession,

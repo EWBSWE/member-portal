@@ -134,8 +134,8 @@ exports.changePassword = function(req, res, next) {
 };
 
 exports.me = function(req, res, next) {
-    let userId = req.user._id;
-    
+    let userId = req.user.id;
+
     if (!userId) {
         let forbidden = new Error('Not signed in.');
         forbidden.status = 403;

@@ -2,7 +2,7 @@
 
 angular.module('ewbMemberApp')
   .factory('User', function ($resource) {
-    return $resource('/api/users/:id/:controller', {
+    return $resource('/api/members/:id/:controller', {
       id: '@_id'
     },
     {

@@ -36,6 +36,9 @@ function isAuthenticated() {
                 }
                 req.user = data;
                 next();
+
+                // Suppress warning about runaway promise
+                return null;
             }).catch(err => {
                 next(err);
             });
@@ -49,6 +52,7 @@ function hasRole(roleRequired) {
     if (!roleRequired) {
         throw new Error('Required role needs to be set');
     }
+
 
     return compose()
         .use(isAuthenticated())

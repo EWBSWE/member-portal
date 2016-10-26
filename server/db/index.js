@@ -20,11 +20,6 @@ let db = pgp({
     password: environment.db.password,
 });
 
-if (environment.seedDB) {
-    console.log('SEEDING');
-    // TODO
-}
-
 module.exports = {
     db: db,
     pgp: pgp,
