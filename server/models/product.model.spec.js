@@ -4,18 +4,16 @@ var expect = require('chai').expect;
 
 var db = require('../db').db;
 
-var Product = require('../models/product.model');
-var ProductType = require('../models/product-type.model');
+var Product = require('./product.model');
+var ProductType = require('./product-type.model');
 
-describe.only('Product model', function() {
+describe('Product model', function() {
     let productTypeId;
 
     beforeEach(function(done) {
         ProductType.create('Test').then(productType => {
             productTypeId = productType.id;
             done();
-        }).catch(err => {
-            done(err)
         });
     });
 
@@ -24,8 +22,6 @@ describe.only('Product model', function() {
             return db.any('DELETE FROM product_type');
         }).then(() => {
             done();
-        }).catch(err => {
-            done(err);
         });
     });
 
@@ -68,27 +64,56 @@ describe.only('Product model', function() {
         });
 
         it('should fail to create an array of products that if one is lacking the required attributes', function(done) {
-            Product.create([{}, {}]).catch(err => {
-                done();
-            });
+            Product.create([{}, {}]).catch(err => { done(); });
         });
 
         it('should fail to create an array of products that if one is lacking the required attributes', function(done) {
-            Product.create([{}]).catch(err => {
-                done();
-            });
+            Product.create([{}]).catch(err => { done(); });
         });
 
         it('should fail to create an array of products that if one is lacking the required attributes', function(done) {
-            Product.create([]).catch(err => {
-                done();
-            });
+            Product.create([]).catch(err => { done(); });
         });
     });
 
     describe('Read', function() {
-        it('should find product by a given id');
-        it('should find all products by a given product type');
+        it('should find product by a given id', function(done) {
+            let data = {
+                productTypeId: productTypeId,
+                name: 'Test 1',
+                price: '10',
+            };
+
+            Product.create(data).then(product => {
+                return Product.get(product.id);
+            }).then(product => {
+                expect(product.product_type_id).to.equal(data.productTypeId);
+                expect(product.name).to.equal(data.name);
+                expect(product.price).to.equal(data.price);
+
+                done();
+            });
+        });
+
+        it('should find all products by a given product type', function(done) {
+            let data = [{
+                productTypeId: productTypeId,
+                name: 'Test 1',
+                price: '10',
+            }, {
+                productTypeId: productTypeId,
+                name: 'Test 2',
+                price: '11',
+            }];
+
+            Product.create(data).then(products => {
+                return Product.findByProductTypeId(productTypeId);
+            }).then(products => {
+                expect(products.length).to.equal(data.length);
+
+                done();
+            });
+        });
     });
 
     describe('Update', function() {

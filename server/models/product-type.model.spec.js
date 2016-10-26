@@ -1,18 +1,49 @@
 'use strict';
 
-function index() {
-    throw new Error('not yet implemented');
-}
+var expect = require('chai').expect;
 
-module.exports = {
-    index: index
-};
+let db = require('../db').db;
 
-//var mongoose = require('mongoose');
-//var Schema = mongoose.Schema;
+let ProductType = require('./product-type.model');
 
-//var ProductTypeSchema = new Schema({
-    //identifier: { type: String, unique: true, required: true },
-//});
+describe('Product type model', function() {
+    afterEach(function(done) {
+        db.any('DELETE FROM product_type').then(() => {
+            done();
+        });
+    });
 
-//module.exports = mongoose.model('ProductType', ProductTypeSchema);
+    describe('Create', function() {
+        it('should create a product type', function(done) {
+            ProductType.create('identifier').then(pt => {
+                done();
+            });
+        });
+
+        it('should fail to create a product type with missing identifier', function(done) {
+            ProductType.create().catch(err => {
+                done();
+            });
+        });
+
+        it('should fail to create a product type with unique identifier', function(done) {
+            ProductType.create('identifier').then(pt => {
+                return ProductType.create('identifier');
+            }).catch(err => {
+                done();
+            });
+        });
+    });
+
+    describe('Read', function() {
+        it('should find product type by identifier', function(done) {
+            ProductType.create('identifier').then(pt => {
+                return ProductType.find('identifier');
+            }).then(pt => {
+                expect(pt.identifier).to.equal('identifier');
+
+                done();
+            });
+        });
+    });
+});

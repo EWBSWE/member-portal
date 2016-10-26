@@ -1,7 +1,20 @@
+/**
+ * Payment model
+ *
+ * @namespace model.Payment
+ * @memberOf model
+ */
+
 'use strict';
 
 var db = require('../db').db;
 
+/**
+ * Fetch all payments
+ *
+ * @memberOf model.Payment
+ * @returns {Promise<Array|Error>} Resolves to an array of payments
+ */
 function index() {
     return db.any(`
         SELECT id, member_id, amount, currency_code, created_at
@@ -10,6 +23,13 @@ function index() {
     `);
 }
 
+/**
+ * Fetch a payment
+ *
+ * @memberOf model.Payment
+ * @param {Number} id - Payment id
+ * @returns {Promise<Object|Error>} Resolves to a payment
+ */
 function get(id) {
     return db.any(`
         SELECT id, member_id, amount, currency_code, created_at
@@ -18,6 +38,13 @@ function get(id) {
     `, id);
 }
 
+/**
+ * Fetch all payments by member
+ *
+ * @memberOf model.Payment
+ * @param {Number} memberId - Member id
+ * @returns {Promise<Array|Error>} Resolves to an array of payments
+ */
 function find(memberId) {
     return db.any(`
         SELECT id, member_id, amount, currency_code, created_at
@@ -31,21 +58,3 @@ module.exports = {
     get: get,
     find: find,
 }
-
-//var mongoose = require('mongoose');
-//var Schema = mongoose.Schema;
-
-//var Buyer = require('./buyer.model');
-//var Product = require('./product.model');
-
-//var PaymentSchema = new Schema({
-    //buyer: { type: mongoose.Schema.Types.ObjectId, ref: 'Buyer', required: true },
-    //products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
-    //amount: { type: Number, required: true },
-    //currency: { type: String, required: true, default: 'SEK' },
-    //createdAt: { type: Date, required: true, default: Date.now },
-//});
-
-//PaymentSchema.index({ buyer: 1 });
-
-//module.exports = mongoose.model('Payment', PaymentSchema);

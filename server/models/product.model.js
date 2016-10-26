@@ -60,10 +60,6 @@ function create(data) {
 
         return db.tx(transaction => {
             let queries = data.map(product => {
-                if (!product.attribute) {
-                    product.attribute = {};
-                }
-
                 let {columns, wrapped} = postgresHelper.mapDataForInsert(COLUMN_MAP, product);
                 if (columns === null || wrapped === null) {
                     return null;
@@ -77,6 +73,10 @@ function create(data) {
 
                 return transaction.one(sql, product);
             });
+
+            if (queries.includes(null)) {
+                return Promise.reject(new Error('Some products could not be mapped'));
+            }
 
             return transaction.batch(queries);
         });
@@ -96,7 +96,7 @@ function create(data) {
     }
 }
 
-function findByProductType(productType) {
+function findByProductTypeId(id) {
     return db.any(`
         SELECT
             id,
@@ -107,12 +107,12 @@ function findByProductType(productType) {
             product_type_id,
             currency_code
         FROM product
-        WHERE product_type_id = (SELECT id FROM product_type WHERE identifier = $1)
-    `, productType);
+        WHERE product_type_id = $1
+    `, id);
 }
 
 module.exports = {
     get: get,
     create: create,
-    findByProductType: findByProductType,
+    findByProductTypeId: findByProductTypeId,
 };
