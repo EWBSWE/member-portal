@@ -97,6 +97,20 @@ function txCreateAuthenticatable(email, password, role, transaction) {
  * @returns {Promise<object,Error>} Resolves to the updated member
  */
 function update(id, data) {
+    if (data.password !== undefined && data.password !== null) {
+        let salt = makeSalt();
+        let hashedPassword = hashPassword(data.password, salt);
+
+        Object.assign(data, {
+            hashedPassword: hashedPassword,
+            salt: salt,
+            resetValidity: null,
+            resetToken: null,
+        });
+
+        delete data.password;
+    }
+
     let mapped = postgresHelper.mapDataForUpdate(COLUMN_MAP, data);
 
     if (mapped  === null) {
@@ -145,7 +159,8 @@ function get(id) {
             member_type_id,
             gender,
             year_of_birth,
-            expiration_date
+            expiration_date,
+            reset_token
         FROM member
         WHERE id = $1
     `, id);
@@ -229,6 +244,29 @@ function hashPassword(plainText, salt) {
     return crypto.pbkdf2Sync(plainText, buffer, 10000, 64, 'sha512').toString('base64');
 }
 
+function createResetToken(id) {
+    let resetToken = crypto.randomBytes(24).toString('hex');
+
+    return db.one(`
+        UPDATE member
+        SET
+            reset_validity = NOW() + '15 minutes'::interval,
+            reset_token = $2
+        WHERE id = $1
+        RETURNING email, reset_token
+    `, [id, resetToken]);
+}
+
+function findBy(data) {
+    let sql = postgresHelper.mapDataForSelect(COLUMN_MAP, data);
+
+    return db.any(`
+        SELECT id, email, reset_validity
+        FROM member
+        WHERE ${sql}
+    `, data);
+}
+
 module.exports = {
     create: create,
     txCreate: txCreate,
@@ -239,5 +277,7 @@ module.exports = {
     index: index,
     get: get,
     find: find,
+    findBy: findBy,
     destroy: destroy,
+    createResetToken: createResetToken,
 }

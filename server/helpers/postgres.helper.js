@@ -84,4 +84,5 @@ function mapDataForInsert(columnMap, data) {
 module.exports = {
     mapDataForUpdate: mapDataForUpdate,
     mapDataForInsert: mapDataForInsert,
+    mapDataForSelect: mapDataForUpdate,
 }

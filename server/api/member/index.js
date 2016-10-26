@@ -12,13 +12,14 @@ router.get('/:id', auth.isAuthenticated(), controller.get);
 
 router.post('/', auth.isAuthenticated(), controller.create);
 router.post('/bulk', auth.isAuthenticated(), controller.bulkCreate);
+
 router.post('/reset-password', controller.resetPassword);
 router.post('/reset-password-token', controller.resetPasswordWithToken);
 
 router.put('/:id', auth.isAuthenticated(), controller.update);
 
+// TODO make sure that regular users cannot delete admins
 router.delete('/:id', auth.isAuthenticated(), controller.destroy);
 
-router.put('/:id/password', auth.isAuthenticated(), controller.changePassword);
 
 module.exports = router;

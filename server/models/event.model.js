@@ -194,6 +194,7 @@ function findWithAddons(identifier) {
 }
 
 module.exports = {
+    index: index,
     create: create,
     addParticipant: addParticipant,
     find: find,

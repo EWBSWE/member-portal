@@ -69,17 +69,6 @@ describe('Payment controller', function() {
     });
 
     describe('Become a member', function() {
-        var accessToken;
-
-        beforeEach(function(done) {
-            agent.post('/auth/local')
-                .send({ email: 'admin@admin.com', password: 'password' })
-                .end((err, res) => {
-                    token = res.body.token;
-                    done();
-                });
-        });
-
         it('should create a Stripe token', function(done) {
             stripe.tokens.create({
                 card: {
