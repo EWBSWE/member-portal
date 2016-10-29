@@ -9,6 +9,7 @@ var router = express.Router();
 router.get('/', auth.isAuthenticated(), controller.index);
 router.get('/me', auth.isAuthenticated(), controller.me);
 router.get('/:id', auth.isAuthenticated(), controller.get);
+router.get('/:id/payments', auth.isAuthenticated(), controller.getPayments);
 
 router.post('/', auth.isAuthenticated(), controller.create);
 router.post('/bulk', auth.isAuthenticated(), controller.bulkCreate);

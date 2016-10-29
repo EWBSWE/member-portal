@@ -144,7 +144,7 @@ describe('Payment controller', function() {
                 return OutgoingMessage.find(member.email);
             }).then(messages => {
                 expect(messages.length).to.eql(2);
-                return Payment.find(member.id);
+                return Payment.findBy({ memberId: member.id });
             }).then(payments => {
                 expect(payments.length).to.eql(1);
                 done();

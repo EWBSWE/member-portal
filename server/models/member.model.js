@@ -165,16 +165,17 @@ function update(id, data) {
 function index() {
     return db.any(`
         SELECT
-            id,
+            member.id,
             email,
+            name,
             location,
             education,
             profession,
-            member_type_id,
-            gender,
-            year_of_birth,
+            member_type,
+            created_at,
             expiration_date
         FROM member
+        LEFT JOIN member_type ON (member.member_type_id = member_type.id)
         ORDER BY id
     `);
 }
@@ -182,19 +183,20 @@ function index() {
 function get(id) {
     return db.oneOrNone(`
         SELECT
-            id,
+            member.id,
             email,
             role,
             location,
             education,
             profession,
-            member_type_id,
+            member_type,
             gender,
             year_of_birth,
             expiration_date,
             reset_token
         FROM member
-        WHERE id = $1
+        LEFT JOIN member_type ON (member.member_type_id = member_type.id)
+        WHERE member.id = $1
     `, id);
 }
 

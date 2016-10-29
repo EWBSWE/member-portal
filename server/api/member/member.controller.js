@@ -13,6 +13,7 @@ var crypto = require('crypto');
 var routeHelper = require('../../helpers/route.helper');
 
 var Member = require('../../models/member.model');
+var Payment = require('../../models/payment.model');
 var OutgoingMessage = require('../../models/outgoing-message.model');
 var ewbMail = require('../../components/ewb-mail');
 
@@ -45,6 +46,14 @@ exports.get = function(req, res, next) {
             return res.sendStatus(404);
         }
         res.status(200).json(data);
+    }).catch(err => {
+        next(err);
+    });
+};
+
+exports.getPayments = function(req, res, next) {
+    Payment.findBy({ memberId: req.params.id }).then(payments => {
+        return res.status(200).json(payments);
     }).catch(err => {
         next(err);
     });

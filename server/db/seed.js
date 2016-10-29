@@ -23,7 +23,7 @@ function insertDummyMembers() {
 
     return MemberType.index().then(memberTypes => {
 
-        let members = Array.apply(null, {length: 4}).map((_, index) => {
+        let members = Array.apply(null, {length: 100}).map((_, index) => {
             return {
                 name: `Member Membersson ${index}`,
                 email: `member${index}@example.com`,
@@ -43,10 +43,11 @@ function insertDummyMembers() {
 
 function insertPayments() {
     return Member.index().then(members => {
-        let payments = members.map(m => {
+        let payments = members.map((m, index) => {
             return {
                 memberId: m.id,
                 amount: Math.floor(Math.random() * 200) + 80,
+                createdAt: moment().subtract(index + Math.floor(Math.random() * 100) + 1, 'days'),
             };
         });
 

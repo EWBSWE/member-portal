@@ -28,7 +28,7 @@ function index() {
     return db.any(`
         SELECT id, member_id, amount, currency_code, created_at
         FROM payment
-        ORDER BY id
+        ORDER BY created_at DESC
     `);
 }
 
@@ -45,21 +45,6 @@ function get(id) {
         FROM payment
         WHERE id = $1
     `, id);
-}
-
-/**
- * Fetch all payments by member
- *
- * @memberOf model.Payment
- * @param {Number} memberId - Member id
- * @returns {Promise<Array|Error>} Resolves to an array of payments
- */
-function find(memberId) {
-    return db.any(`
-        SELECT id, member_id, amount, currency_code, created_at
-        FROM payment
-        WHERE member_id = $1
-    `, memberId);
 }
 
 /**
@@ -97,9 +82,26 @@ function create(data) {
     }
 }
 
+/**
+ * Find all payments by specifying attributes
+ *
+ * @memberOf model.Payment
+ * @param {Object} data - Object containing attributes to query against.
+ * @returns {Promise<Array|Error>} Resolves to an array of objects.
+ */
+function findBy(data) {
+    let wheres = postgresHelper.where(COLUMN_MAP, data);
+
+    return db.any(`
+        SELECT id, member_id, amount, currency_code, created_at
+        FROM payment
+        WHERE ${wheres.clause}
+    `, wheres.data);
+}
+
 module.exports = {
     index: index,
     get: get,
-    find: find,
+    findBy: findBy,
     create: create,
 };
