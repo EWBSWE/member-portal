@@ -165,6 +165,7 @@ function update(id, data) {
 function index() {
     return db.any(`
         SELECT
+            id,
             email,
             location,
             education,

@@ -9,6 +9,15 @@
 
 var db = require('../db').db;
 
+var postgresHelper = require('../helpers/postgres.helper');
+
+const COLUMN_MAP = {
+    amount: 'amount',
+    memberId: 'member_id',
+    currencyCode: 'currency_code',
+    createdAt: 'created_at',
+};
+
 /**
  * Fetch all payments
  *
@@ -53,8 +62,44 @@ function find(memberId) {
     `, memberId);
 }
 
+/**
+ * Create payments
+ *
+ * @memberOf model.Payment
+ * @param {Object|Array} data - Either an object or an array of objects
+ * containing payment attributes>
+ * @returns {Promise<Object|Array|Error>} Resolves to either to an object or
+ * array of objects.
+ */
+function create(data) {
+    let _create = (payment, transaction) => {
+        let {columns, wrapped} = postgresHelper.mapDataForInsert(COLUMN_MAP, payment);
+
+        let sql = `
+            INSERT INTO payment (${columns})
+            VALUES (${wrapped})
+            RETURNING id
+        `;
+
+        return transaction.one(sql, payment);
+    };
+
+    if (Array.isArray(data)) {
+        return db.tx(transaction => {
+            let queries = data.map(payment => {
+                return _create(payment, transaction);
+            });
+
+            return transaction.batch(queries);
+        });
+    } else {
+        return _create(payment, db);
+    }
+}
+
 module.exports = {
     index: index,
     get: get,
     find: find,
-}
+    create: create,
+};
