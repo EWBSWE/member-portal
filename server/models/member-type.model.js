@@ -24,7 +24,16 @@ function find(memberType) {
     `, memberType);
 }
 
+function create(memberType) {
+    return db.one(`
+        INSERT INTO member_type (member_type)
+        VALUES ($1)
+        RETURNING id
+    `, memberType);
+}
+
 module.exports = {
     index: index,
     find: find,
+    create: create,
 };

@@ -53,6 +53,11 @@ CREATE TABLE setting (
     description TEXT
 );
 
+INSERT INTO setting (key, value, description)
+VALUES
+('StripeTransactionFeePercent', '0.014', 'Percentage of total transaction amount applied to each purchase.'),
+('StripeTransactionFeeFlat', '1.8', 'Flat fee applied on each purchase');
+
 -- Ewb Error
 CREATE TABLE ewb_error (
     id SERIAL PRIMARY KEY,
@@ -106,6 +111,11 @@ CREATE TABLE product (
 CREATE TRIGGER update_product
 BEFORE UPDATE ON product
 FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
+
+CREATE TABLE payment_product (
+    payment_id INTEGER REFERENCES payment(id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
+    product_id INTEGER REFERENCES product(id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL
+);
 
 
 -- Email template

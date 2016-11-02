@@ -51,7 +51,7 @@ function create(data) {
     let _create = (member, transaction) => {
         if (member.password !== undefined && member.password !== null) {
             let salt = makeSalt();
-            let hashedPassword = hashPassword(data.password, salt);
+            let hashedPassword = hashPassword(member.password, salt);
 
             Object.assign(member, {
                 hashedPassword: hashedPassword,

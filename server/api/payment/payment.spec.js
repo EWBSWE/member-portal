@@ -13,10 +13,52 @@ var db = require('../../db').db;
 var EmailTemplate = require('../../models/email-template.model');
 var Event = require('../../models/event.model');
 var Member = require('../../models/member.model');
+var MemberType = require('../../models/member-type.model');
 var OutgoingMessage = require('../../models/outgoing-message.model');
 var Payment = require('../../models/payment.model');
 var Product = require('../../models/product.model');
 var ProductType = require('../../models/product-type.model');
+
+function authAdmin() {
+    return auth('admin@admin.com', 'password');
+}
+
+function authUser() {
+    return auth('user@user.com', 'password');
+}
+
+function authGuest() {
+    return Promise.resolve(null);
+}
+
+function auth(email, password) {
+    return new Promise((resolve, reject) => {
+        agent.post('/auth/local')
+            .send({ email: email, password: password })
+            .end((err, res) => {
+                if (err) {
+                    return reject(err);
+                }
+
+                resolve(res.body.token);
+            });
+    });
+}
+
+let roles = {
+    admin: {
+        name: 'admin',
+        auth: authAdmin,
+    },
+    user: {
+        name: 'user',
+        auth: authUser,
+    },
+    guest: {
+        name: 'guest',
+        auth: authGuest,
+    },
+};
 
 describe('Payment controller', function() {
     var productId;
@@ -24,28 +66,41 @@ describe('Payment controller', function() {
     var token;
 
     beforeEach(function(done) {
-        ProductType.create(ProductType.MEMBERSHIP).then(productType => {
-            return Product.create({
-                name: 'Foo',
-                price: 100,
-                description: 'This is a description',
-                productTypeId: productType.id,
-                attribute: {
-                    durationDays: 365,
-                    memberType: 'student',
-                }
+        MemberType.create('test').then(memberType => {
+            return ProductType.create(ProductType.MEMBERSHIP).then(productType => {
+                return Product.create({
+                    name: 'Foo',
+                    price: 100,
+                    description: 'This is a description',
+                    productTypeId: productType.id,
+                    attribute: {
+                        durationDays: 365,
+                        member_type_id: memberType.id
+                    }
+                });
             });
         }).then(product => {
             productId = product.id;
         }).then(() => {
-            Member.create({
+            return Member.create([{
                 email: 'admin@admin.com',
                 password: 'password',
                 role: 'admin'
-            }).then(data => {
-                memberId = data.id;
-                done();
+            }, {
+                email: 'user@user.com',
+                password: 'password',
+                role: 'user'
+            }]);
+        }).then(members => {
+            memberId = members[0].id;
+
+            return Payment.create({
+                amount: 10,
+                memberId: memberId,
+                products: [productId],
             });
+        }).then(() => {
+            done();
         }).catch(err => {
             console.log(err);
             done(err);
@@ -62,17 +117,74 @@ describe('Payment controller', function() {
         }).then(() => {
             return db.none(`DELETE FROM ewb_error`);
         }).then(() => {
+            return db.none(`DELETE FROM member_type`);
+        }).then(() => {
+            return db.none(`DELETE FROM payment`);
+        }).then(() => {
             done();
         });
     });
 
-    describe('Fetching payments', function() {
-        it('should fetch all payments as admin');
-        it('should fetch all payments as user');
-        it('should fail to fetch all payments as unauthenticated');
+
+    describe('GET /api/payments', function() {
+        let cases = [{
+            role: roles.admin,
+            expectCode: 200,
+            description: 'should get all payments as an admin',
+        }, {
+            role: roles.user,
+            expectCode: 200,
+            description: 'should get all payments as a user',
+        }, {
+            role: roles.guest,
+            expectCode: 401,
+            description: 'should deny guest to get all payments',
+        }];
+
+        cases.forEach(function(testCase) {
+            it(testCase.description, function(done) {
+                testCase.role.auth().then(token => {
+                    agent.get('/api/payments')
+                        .query({ access_token: token })
+                        .expect(testCase.expectCode)
+                        .end((err, res) => {
+                            done(err);
+                        });
+                });
+            });
+        });
     });
 
-    describe('Become a member', function() {
+    describe('GET /api/payments/:id', function() {
+        let cases = [{
+            role: roles.admin,
+            expectCode: 200,
+            description: 'should get single payment as an admin',
+        }, {
+            role: roles.user,
+            expectCode: 200,
+            description: 'should get single paymentsas a user',
+        }, {
+            role: roles.guest,
+            expectCode: 401,
+            description: 'should deny guest to get single payment',
+        }];
+
+        cases.forEach(function(testCase) {
+            it(testCase.description, function(done) {
+                testCase.role.auth().then(token => {
+                    agent.get('/api/payments')
+                        .query({ access_token: token })
+                        .expect(testCase.expectCode)
+                        .end((err, res) => {
+                            done(err);
+                        });
+                });
+            });
+        });
+    });
+
+    describe('POST /api/payments/confirm', function() {
         it('should create a Stripe token', function(done) {
             stripe.tokens.create({
                 card: {
@@ -314,7 +426,7 @@ describe('Payment controller', function() {
         });
     });
 
-    describe('Event participation', function() {
+    describe('POST /api/payments/confirm-event', function() {
         var event;
 
         beforeEach(function(done) {
@@ -516,6 +628,54 @@ describe('Payment controller', function() {
             }).catch(err => {
                 console.log(err);
                 done(err);
+            });
+        });
+    });
+
+    describe('GET /api/payments/stripe-checkout', function() {
+        it('should return a Stripe checkout key', function(done) {
+            agent.get('/api/payments/stripe-checkout')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        return done(err);
+                    }
+
+                    done();
+                });
+        });
+    });
+
+    describe('GET /api/payments/report', function() {
+        let cases = [{
+            role: roles.admin,
+            expectCode: 200,
+            description: 'should get report as an admin',
+        }, {
+            role: roles.user,
+            expectCode: 200,
+            description: 'should get report as a user',
+        }, {
+            role: roles.guest,
+            expectCode: 401,
+            description: 'should deny guest to get report',
+        }];
+
+        cases.forEach(function(testCase) {
+            it(testCase.description, function(done) {
+                testCase.role.auth().then(token => {
+                    agent.get('/api/payments/report')
+                        .query({
+                            access_token: token,
+                            start: moment().subtract(2, 'months').format('YYYY-MM-DD'),
+                            end: moment().add(1, 'month').format('YYYY-MM-DD'),
+                            recipient: 'ict@ingenjorerutangranser.se',
+                        })
+                        .expect(testCase.expectCode)
+                        .end((err, res) => {
+                            done(err);
+                        });
+                });
             });
         });
     });

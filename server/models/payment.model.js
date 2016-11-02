@@ -7,6 +7,8 @@
 
 'use strict';
 
+var moment = require('moment');
+
 var db = require('../db').db;
 
 var postgresHelper = require('../helpers/postgres.helper');
@@ -69,17 +71,58 @@ function create(data) {
         return transaction.one(sql, payment);
     };
 
-    if (Array.isArray(data)) {
-        return db.tx(transaction => {
-            let queries = data.map(payment => {
-                return _create(payment, transaction);
+    let _joinTable = (paymentId, productId, transaction) => {
+        let sql = `
+            INSERT INTO payment_product (payment_id, product_id)
+            VALUES ($1, $2)
+        `;
+
+        return transaction.none(sql, [paymentId, productId]);
+    };
+
+    // Simplify and adjust for the case where input is just an object instead
+    // of an array of objects. And put this in a new variable since we don't
+    // want to mess with the input.
+    let inputs = Array.isArray(data) ? data : [data];
+
+    return db.tx(transaction => {
+        let queries = inputs.map(payment => {
+            return _create(payment, transaction);
+        });
+
+        // First we create all the payment entries and then we create the
+        // helper entries required to map out the many to many relationship.
+        return transaction.batch(queries).then(payments => {
+            // Variables inputs and payments should be of the same size if all
+            // INSERTs were successful.
+            inputs = inputs.map((payment, index) => {
+                payment.id = payments[index].id;
+
+                return payment;
             });
 
-            return transaction.batch(queries);
+            let queries = [];
+            
+            inputs.forEach(payment => {
+                queries = queries.concat(payment.products.map(productId => {
+                    return _joinTable(payment.id, productId, transaction);
+                }));
+            });
+
+            return transaction.batch(queries).then(() => {
+                return Promise.resolve(payments);
+            });
         });
-    } else {
-        return _create(payment, db);
-    }
+    }).then(payments => {
+        // Depending on the argument to the create function we return it
+        // appropriately. That is, pass an object get an object, pass an array
+        // get an array.
+        if (Array.isArray(data)) {
+            return Promise.resolve(payments);
+        } else {
+            return Promise.resolve(payments[0]);
+        }
+    });
 }
 
 /**
@@ -99,9 +142,55 @@ function findBy(data) {
     `, wheres.data);
 }
 
+/**
+ * Find all payments between two dates and return a string counting the total
+ * of each product purchased during that period of time. Database query
+ * accounts for payment fees and taxes.
+ *
+ * @memberOf model.Payment
+ * @param {Date} start - Starting date.
+ * @param {Date} end - Ending date.
+ * @returns {Promise<String|Error>} Resolves to a formatted body of text.
+ */
+function generateReport(start, end) {
+    return db.any(`
+        SELECT
+            (1 - stripe_fee_percent.value) * (count(payment.id) * product.price) - stripe_fee_flat.value AS total,
+            product.name AS product_name
+        FROM payment
+        JOIN payment_product ON payment.id = payment_id
+        JOIN product ON product.id = product_id
+        JOIN (
+            SELECT value::FLOAT
+            FROM setting
+            WHERE key = 'StripeTransactionFeePercent'
+        ) stripe_fee_percent ON true
+        JOIN (
+            SELECT value::FLOAT
+            FROM setting
+            WHERE key = 'StripeTransactionFeeFlat'
+        ) stripe_fee_flat ON true
+        WHERE
+            payment.created_at >= $1 AND payment.created_at <= $2
+        GROUP BY
+            product.id, stripe_fee_percent.value, stripe_fee_flat.value
+    `, [
+        moment(start).startOf('day').toDate(),
+        moment(end).endOf('day').toDate()
+    ]).then(results => {
+        let formattedResults = results.map(r => { return `${r.total}\t\t${r.product_name}`; });
+        let sum = results.reduce((total, product) => { return total + product.total; }, 0);
+
+        let body = 'Netto EWB \tTyp\n\n' + formattedResults.join('\n') + `\n\nSum: ${sum}`;
+
+        return Promise.resolve(body);
+    });
+}
+
 module.exports = {
     index: index,
     get: get,
     findBy: findBy,
     create: create,
+    generateReport: generateReport,
 };

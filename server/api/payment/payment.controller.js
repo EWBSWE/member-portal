@@ -1,6 +1,11 @@
-'use strict';
+/**
+ * Payment controller
+ *
+ * @namespace controller.Payment
+ * @memberOf controller
+ */
 
-var _ = require('lodash');
+'use strict';
 
 var Promise = require('bluebird');
 
@@ -27,6 +32,14 @@ var ewbMail = require('../../components/ewb-mail');
 var Purchase = require('../../helpers/purchase.helper');
 
 
+/**
+ * Get all payments
+ *
+ * @memberOf controller.Payment
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Object} next - Express error function
+ */
 exports.index = function(req, res, next) {
     Payment.index().then(data => {
         res.status(200).json(data);
@@ -35,6 +48,14 @@ exports.index = function(req, res, next) {
     });
 };
 
+/**
+ * Get payment
+ *
+ * @memberOf controller.Payment
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Object} next - Express error function
+ */
 exports.get = function(req, res, next) {
     Payment.get(req.params.id).then(data => {
         res.status(200).json(data);
@@ -43,6 +64,14 @@ exports.get = function(req, res, next) {
     });
 };
 
+/**
+ * Confirm membership payment
+ *
+ * @memberOf controller.Payment
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Object} next - Express error function
+ */
 exports.confirmMembershipPayment = function(req, res, next) {
     if (!req.body.stripeToken || !req.body.productId) {
         let badRequest = new Error('Missing parameters');
@@ -111,6 +140,14 @@ exports.confirmMembershipPayment = function(req, res, next) {
     });
 };
 
+/**
+ * Confirm event payment
+ *
+ * @memberOf controller.Payment
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Object} next - Express error function
+ */
 exports.confirmEventPayment = function(req, res, next) {
     if (!req.body.identifier || !Array.isArray(req.body.addonIds)) {
         let badRequest = new Error('Missing parameters');
@@ -193,6 +230,14 @@ exports.confirmEventPayment = function(req, res, next) {
     });
 };
 
+/**
+ * Get Stripe checkout key
+ *
+ * @memberof controller.Payment
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Object} next - Express error function
+ */
 exports.stripeCheckoutKey = function (req, res) {
     var key = '***REMOVED***';
     if (process.env.NODE_ENV === 'production') {
@@ -202,51 +247,34 @@ exports.stripeCheckoutKey = function (req, res) {
     return res.status(200).json({ key: key });
 };
 
-exports.generateReport = function (req, res) {
-    var periodStart = moment(req.body.periodStart);
-    var periodEnd = moment(req.body.periodEnd);
-    var recipient = req.body.recipient;
+/**
+ * Generate payment report
+ *
+ * @memberof controller.Payment
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Object} next - Express error function
+ */
+exports.generateReport = function (req, res, next) {
+    var start = moment(req.query.start);
+    var end = moment(req.query.end);
+    var recipient = req.query.recipient;
+    // TODO check valid params
 
-    var validParams = {
-        periodStart: periodStart.isValid(),
-        periodEnd: periodEnd.isValid(),
-        recipient: EmailHelper.isValid(recipient),
-    };
+    Payment.generateReport(start.toDate(), end.toDate()).then(report => {
+        let mail = {
+            sender: ewbMail.sender(),
+            recipient: recipient,
+            subject: 'EWB Report: ' + start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'),
+            body: report,
+        };
 
-    var anyError = !_.values(validParams).reduce(function(a, b) {
-        return a && b;
-    }, true);
-
-    if (anyError) {
-        return res.status(400).json(validParams);
-    } else {
-        PaymentHelper.generateReport({
-            periodStart: periodStart.format('YYYY-MM-DD'),
-            periodEnd: periodEnd.format('YYYY-MM-DD'),
-        }, function(err, data) {
-            if (err) {
-                ewbError.create({ message: 'Failed to generate report', origin: __filename, params: err });
-                return handleError(res, err);
-            }
-
-            var text = PaymentHelper.formatReport(data);
-
-            var mail = {
-                from: ewbMail.sender(),
-                to: process.env.NODE_ENV === 'production' ? recipient : process.env.DEV_MAIL,
-                subject: 'EWB Report: ' + periodStart.format('YYYY-MM-DD') + ' - ' + periodEnd.format('YYYY-MM-DD'),
-                text: text,
-            };
-
-            OutgoingMessage.create(mail, function(err, outgoingMessage) {
-                if (err) {
-                    ewbError.create({ message: 'Failed to create report mail', origin: __filename, params: err });
-                }
-            });
-
-            return res.status(200).json(data);
-        });
-    }
+        return OutgoingMessage.create(mail);
+    }).then(() => {
+        return res.sendStatus(200);
+    }).catch(err => {
+        next(err);
+    });
 };
 
 function processCharge(chargeAttributes, stripeToken, successCallback, errorCallback) {

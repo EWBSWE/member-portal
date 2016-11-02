@@ -51,6 +51,22 @@ function get(id) {
  * array of products
  */
 function create(data) {
+    let _create = (product, transaction) => {
+        let {columns, wrapped} = postgresHelper.mapDataForInsert(COLUMN_MAP, product);
+
+        if (columns === null || wrapped === null) {
+            return null;
+        }
+
+        let sql = `
+            INSERT INTO product (${columns})
+            VALUES (${wrapped})
+            RETURNING *
+        `;
+
+        return transaction.one(sql, product);
+    };
+
     // If data is an array, assume we want to create multiple products.
     // Otherwise we try to create a single product.
     if (Array.isArray(data)) {
@@ -60,18 +76,7 @@ function create(data) {
 
         return db.tx(transaction => {
             let queries = data.map(product => {
-                let {columns, wrapped} = postgresHelper.mapDataForInsert(COLUMN_MAP, product);
-                if (columns === null || wrapped === null) {
-                    return null;
-                }
-
-                let sql = `
-                    INSERT INTO product (${columns})
-                    VALUES (${wrapped})
-                    RETURNING *
-                `;
-
-                return transaction.one(sql, product);
+                return _create(product, transaction);
             });
 
             if (queries.includes(null)) {
@@ -81,18 +86,7 @@ function create(data) {
             return transaction.batch(queries);
         });
     } else {
-        let {columns, wrapped} = postgresHelper.mapDataForInsert(COLUMN_MAP, data);
-        if (columns === null || wrapped === null) {
-            return Promise.reject('Missing attributes');
-        }
-
-        let sql = `
-            INSERT INTO product (${columns})
-            VALUES (${wrapped})
-            RETURNING *
-        `;
-
-        return db.one(sql, data)
+        return _create(data, db);
     }
 }
 
