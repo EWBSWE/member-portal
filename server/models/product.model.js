@@ -86,6 +86,10 @@ function create(data) {
             return transaction.batch(queries);
         });
     } else {
+        if (!data.name || !data.price || !data.productTypeId) {
+            return Promise.reject('Missing attributes');
+        }
+
         return _create(data, db);
     }
 }

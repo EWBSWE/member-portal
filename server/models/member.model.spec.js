@@ -5,21 +5,27 @@ var moment = require('moment');
 
 var db = require('../db').db;
 var Member = require('../models/member.model');
+var MemberType = require('../models/member-type.model');
 
 describe('Member', function() {
     let memberTypeId;
 
     beforeEach(function(done) {
-        db.one('SELECT id FROM member_type LIMIT 1').then(memberType => {
+        MemberType.create('Student').then(memberType => {
             memberTypeId = memberType.id;
             done();
         }).catch(err => {
+            console.log(err);
             done(err);
         });
     });
 
     afterEach(function(done) {
-        db.any('DELETE FROM member').then(() => { done(); });
+        db.any('DELETE FROM member').then(() => {
+            return db.any('DELETE FROM member_type');
+        }).then(() => {
+            done();
+        });
     });
 
     describe('Creation', function() {

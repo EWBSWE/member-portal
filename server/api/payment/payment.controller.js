@@ -105,17 +105,21 @@ exports.confirmMembershipPayment = function(req, res, next) {
             });
         });
     }).then(product => {
-        return Purchase.membership(product, memberData);
-    }).then(data => {
-        let member = data.member;
-        let product = data.product;
-
+        return Member.extendMembership(memberData, product).then(member => {
+            return Payment.create({
+                member: member,
+                products: [product],
+            });
+        }).then(() => {
+            return Promise.resolve(product);
+        });
+    }).then(product => {
         let receiptMail = {
             sender: ewbMail.sender(),
-            recipient: member.email,
+            recipient: memberData.email,
             subject: ewbMail.getSubject('receipt', { name: product.name }),
             body: ewbMail.getBody('receipt', {
-                buyer: member.email,
+                buyer: memberData.email,
                 date: moment().format('YYYY-MM-DD HH:mm'),
                 total: PaymentHelper.formatTotal([product]),
                 tax: PaymentHelper.formatTax([product]),
@@ -125,7 +129,7 @@ exports.confirmMembershipPayment = function(req, res, next) {
 
         let confirmationMail = {
             sender: ewbMail.sender(),
-            recipient: member.email,
+            recipient: memberData.email,
             subject: 'foo', // TODO fix me
             body: 'bar', // TODO fix me
         };
@@ -136,6 +140,7 @@ exports.confirmMembershipPayment = function(req, res, next) {
     }).then(() => {
         res.sendStatus(201);
     }).catch(err => {
+        console.log(err);
         next(err);
     });
 };

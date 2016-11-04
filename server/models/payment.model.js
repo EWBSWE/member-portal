@@ -85,6 +85,14 @@ function create(data) {
     // want to mess with the input.
     let inputs = Array.isArray(data) ? data : [data];
 
+    inputs = inputs.map(i => {
+        return {
+            amount: i.products.reduce((total, product) => { return total + product.price; }, 0),
+            memberId: i.member.id,
+            products: i.products
+        }
+    });
+
     return db.tx(transaction => {
         let queries = inputs.map(payment => {
             return _create(payment, transaction);
@@ -104,8 +112,8 @@ function create(data) {
             let queries = [];
             
             inputs.forEach(payment => {
-                queries = queries.concat(payment.products.map(productId => {
-                    return _joinTable(payment.id, productId, transaction);
+                queries = queries.concat(payment.products.map(product => {
+                    return _joinTable(payment.id, product.id, transaction);
                 }));
             });
 

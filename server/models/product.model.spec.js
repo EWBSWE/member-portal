@@ -45,6 +45,10 @@ describe('Product model', function() {
             Product.create({}).catch(err => { done(); });
         });
 
+        it('should fail to create products that are lacking the required attributes', function(done) {
+            Product.create([{}, {}]).catch(err => { done(); });
+        });
+
         it('should create an array of products', function(done) {
             Product.create([{
                 productTypeId: productTypeId,

@@ -62,11 +62,15 @@ let roles = {
 
 describe('Payment controller', function() {
     var productId;
+    var product;
     var memberId;
     var token;
+    var memberTypeId;
 
     beforeEach(function(done) {
         MemberType.create('test').then(memberType => {
+            memberTypeId = memberType.id;
+
             return ProductType.create(ProductType.MEMBERSHIP).then(productType => {
                 return Product.create({
                     name: 'Foo',
@@ -74,13 +78,14 @@ describe('Payment controller', function() {
                     description: 'This is a description',
                     productTypeId: productType.id,
                     attribute: {
-                        durationDays: 365,
+                        days: 365,
                         member_type_id: memberType.id
                     }
                 });
             });
-        }).then(product => {
-            productId = product.id;
+        }).then(p => {
+            product = p;
+            productId = p.id;
         }).then(() => {
             return Member.create([{
                 email: 'admin@admin.com',
@@ -95,9 +100,8 @@ describe('Payment controller', function() {
             memberId = members[0].id;
 
             return Payment.create({
-                amount: 10,
-                memberId: memberId,
-                products: [productId],
+                member: members[0],
+                products: [product],
             });
         }).then(() => {
             done();
@@ -279,7 +283,7 @@ describe('Payment controller', function() {
                 education: 'Some education',
                 gender: 'other',
                 yearOfBirth: '1900',
-                memberTypeId: 1,
+                memberTypeId: memberTypeId,
                 expirationDate: expirationDate,
             }).then(() => { 
                 return new Promise((resolve, reject) => {
@@ -380,7 +384,7 @@ describe('Payment controller', function() {
                 education: 'Some education',
                 gender: 'other',
                 yearOfBirth: '1900',
-                memberTypeId: 1,
+                memberTypeId: memberTypeId,
                 expirationDate: moment().add(1, 'year')
             }).then(() => { 
                 return new Promise((resolve, reject) => {

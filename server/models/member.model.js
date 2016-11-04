@@ -301,6 +301,24 @@ function findBy(data) {
     `, wheres.data);
 }
 
+function extendMembership(memberData, product) {
+    return findBy({ email: memberData.email }).then(members => {
+        if (members.length === 0) {
+            return create(memberData);
+        }
+        
+        return Promise.resolve(members[0]);
+    }).then(member => {
+        if (member.expiration_date !== null) {
+            memberData.expirationDate = moment(member.expiration_date).add(product.attribute.days, 'days').toDate();
+        } else {
+            memberData.expirationDate = moment().add(product.attribute.days, 'days').toDate();
+        }
+
+        return update(member.id, memberData);
+    });
+}
+
 module.exports = {
     index: index,
     get: get,
@@ -312,4 +330,5 @@ module.exports = {
     destroy: destroy,
     createResetToken: createResetToken,
     validate: validate,
+    extendMembership: extendMembership,
 }
