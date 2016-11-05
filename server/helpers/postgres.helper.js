@@ -22,7 +22,7 @@
  *   illegalKey: 'another value',
  * }
  *
- * let sql = mapDataToUpdate(columnMap, data);
+ * let sql = update(columnMap, data);
  *
  * sql => "
  *   key = $[key],
@@ -39,7 +39,7 @@
  * @returns {String|null} Returns a string of the mapped placeholder data or null if
  * no valid valid params could be mapped
  */
-function mapDataForUpdate(columnMap, data) {
+function update(columnMap, data) {
     let keys = Object.keys(columnMap);
     let validParams = Object.keys(data).filter(a => { return keys.includes(a); });
 
@@ -67,7 +67,11 @@ function mapDataForUpdate(columnMap, data) {
  * @returns {object|null} Returns an object with the mapped placeholder data or
  * null if no valid valid params could be mapped
  */
-function mapDataForInsert(columnMap, data) {
+function insert(columnMap, data) {
+    if (data === undefined) {
+        return {columns: null, wrapped: null};
+    }
+
     let keys = Object.keys(columnMap);
     let validParams = Object.keys(data).filter(a => { return keys.includes(a); });
 
@@ -105,7 +109,11 @@ function where(columnMap, data) {
 }
 
 module.exports = {
-    mapDataForUpdate: mapDataForUpdate,
-    mapDataForInsert: mapDataForInsert,
     where: where,
+    insert: insert,
+    update: update,
+
+    // deprecated
+    mapDataForUpdate: update,
+    mapDataForInsert: insert,
 }

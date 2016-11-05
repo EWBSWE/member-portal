@@ -12,6 +12,18 @@ var db = require('../db').db;
 var EmailTemplate = require('./email-template.model');
 var Member = require('./member.model');
 var Product = require('./product.model');
+var ProductType = require('./product-type.model');
+
+var postgresHelper = require('../helpers/postgres.helper');
+
+const COLUMN_MAP = {
+    name: 'name',
+    identifier: 'identifier',
+    active: 'active',
+    dueDate: 'due_date',
+    emailTemplateId: 'email_template_id',
+    notificationOpen: 'notification_open',
+};
 
 /**
  * Fetch all events
@@ -35,43 +47,25 @@ function index() {
     `);
 }
 
-function create(attributes) {
+function create(data) {
     let templateId;
     let productIds;
 
-    return new Promise((resolve, reject) => {
-        if (!attributes.emailTemplateId) {
-            return EmailTemplate.create(attributes.emailTemplate).then(template => {
-                resolve(template);
-            }).catch(err => {
-                reject(err);
-            });
-        }
-
-        return resolve({ id: attributes.emailTemplateId });
-    }).then(template => {
+    return EmailTemplate.create(data.emailTemplate).then(template => {
         templateId = template.id;
 
-        attributes.addons.forEach(addon => { addon.productType = 'Event' });
+        return ProductType.find(ProductType.EVENT);
+    }).then(pt => {
+        data.addons.forEach(addon => { addon.productTypeId = pt.id });
 
-        return new Promise((resolve, reject) => {
-            if (!attributes.productIds) {
-                return Product.create(attributes.addons).then(products => {
-                    resolve(products);
-                }).catch(err => {
-                    reject(err);
-                });
-            }
-
-            return resolve(attributes.productIds);
-        });
+        return Product.create(data.addons);
     }).then(products => {
-        // Update attributes.addons with correct product_id
-        for (var i = 0; i < attributes.addons.length; i++) {
-            attributes.addons[i].productId = products[i].id;
+        // Update data.addons with correct product_id
+        for (var i = 0; i < data.addons.length; i++) {
+            data.addons[i].productId = products[i].id;
         }
 
-        attributes.emailTemplateId = templateId;
+        data.emailTemplateId = templateId;
 
         return db.one(`
             INSERT INTO event (
@@ -88,11 +82,11 @@ function create(attributes) {
                 $[dueDate],
                 $[emailTemplateId],
                 $[notificationOpen]
-            ) RETURNING id, identifier
-        `, attributes);
+            ) RETURNING id, identifier, email_template_id
+        `, data);
     }).then(event => {
         return db.tx(transaction => {
-            let queries = attributes.addons.map(addon => {
+            let queries = data.addons.map(addon => {
                 return transaction.one(`
                     INSERT INTO event_addon (event_id, capacity, product_id)
                     VALUES ($1, $2, $3)
@@ -108,7 +102,7 @@ function create(attributes) {
 
 function addParticipant(event, participant) {
     return Member.find(participant.email).then(maybeMember => {
-        if (!maybeMember) {
+        if (maybeMember === null) {
             return Member.create(participant);
         }
 
@@ -119,7 +113,7 @@ function addParticipant(event, participant) {
                 db.one(`
                     UPDATE event_addon
                     SET capacity = (capacity - 1)
-                    WHERE id IN ($1)
+                    WHERE id IN ($1) AND capacity > 0
                     RETURNING id
                 `, participant.addonIds),
 
@@ -155,8 +149,10 @@ function addParticipant(event, participant) {
     });
 }
 
-function find(identifier) {
-    return db.oneOrNone(`
+function findBy(data) {
+    let wheres = postgresHelper.where(COLUMN_MAP, data);
+
+    return db.any(`
         SELECT
             event.id,
             event.email_template_id,
@@ -165,38 +161,105 @@ function find(identifier) {
             array_agg(event_addon.id) AS addons
         FROM event
         LEFT JOIN event_addon ON (event.id = event_addon.event_id)
-        WHERE event.identifier = $1
+        WHERE ${wheres.clause}
         GROUP BY event.id
-    `, identifier);
+    `, wheres.data);
 }
 
 function findWithAddons(identifier) {
-    return find(identifier).then(event => {
+    return findBy({ identifier: identifier }).then(events => {
+        if (events.length === 0) {
+            return Promise.resolve(null);
+        }
+
         return db.any(`
             SELECT
                 event_addon.id,
                 name,
+                capacity,
                 price,
                 description,
                 attribute,
                 currency_code
             FROM event_addon
             LEFT JOIN product ON (event_addon.product_id = product.id)
-        `).then(addons => {
-            // Parse the price of each addon as an integer
-            addons.forEach(addon => { addon.price = +addon.price });
+            WHERE event_id = $1
+        `, events[0].id).then(addons => {
+            // Parse the price and capacity of each addon as an integer
+            addons.forEach(addon => {
+                addon.capacity = +addon.capacity;
+                addon.price = +addon.price;
+            });
 
-            event.addons = addons;
+            events[0].addons = addons;
 
-            return Promise.resolve(event);
+            return Promise.resolve(events[0]);
         });
     });
+}
+
+/**
+ * Get event
+ *
+ * @memberOf model.Event
+ * @param {Number} id - Id of event
+ * @returns {Promise<Object|Error>} Resolves to an event object
+ */
+function get(id) {
+    return db.oneOrNone(`
+        SELECT
+            event.id,
+            event.identifier,
+            event.name,
+            array_agg(event_addon.id) AS addons
+        FROM event
+        LEFT JOIN event_addon ON (event.id = event_addon.event_id)
+        WHERE event.id = $1
+        GROUP BY event.id
+    `, id);
+}
+
+/**
+ * Destroy event
+ *
+ * @memberOf model.Event
+ * @param {Number} id - Id of event
+ * @returns {Promise<Undefined|Error>} Resolves to undefined
+ */
+function destroy(id) {
+    return db.none(`DELETE FROM event WHERE id = $1`, id);
+}
+
+/**
+ * Update event
+ *
+ * @memberOf model.Event
+ * @param {Number} id - Id of event
+ * @param {Object} data - Object with new attributes
+ * @returns {Promise<Object|Error>} Resolves to new object
+ */
+function update(id, data) {
+    let mapped = postgresHelper.update(COLUMN_MAP, data);
+
+    if (mapped === null) {
+        return Promise.reject('No attributes to update');
+    }
+
+    return db.one(`
+        UPDATE event
+        SET ${mapped}
+        WHERE id = $[id]
+        RETURNING *
+    `, Object.assign(data, {id: id}));
 }
 
 module.exports = {
     index: index,
     create: create,
+    get: get,
+    destroy: destroy,
     addParticipant: addParticipant,
-    find: find,
+    findBy: findBy,
     findWithAddons: findWithAddons,
+    update: update,
 };

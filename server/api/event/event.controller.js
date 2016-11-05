@@ -19,9 +19,9 @@ var EventHelper = require('./event.helper');
  *
  * @memberOf controller.Event
  *
- * @param {object} req - Express request object
- * @param {object} res - Express response object
- * @param {object} next - Express error function
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Object} next - Express error function
  */
 exports.index = function (req, res, next) {
     Event.index().then(events => {
@@ -32,85 +32,60 @@ exports.index = function (req, res, next) {
 };
 
 /**
- * TODO
+ * Fetch public event
  *
  * @memberOf controller.Event
  *
- * @param {object} req - Express request object
- * @param {object} res - Express response object
- * @param {object} next - Express error function
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Object} next - Express error function
  */
 exports.showPublic = function(req, res, next) {
-    Event.find(req.query.url).then(ewbEvent => {
-        if (!ewbEvent) {
+    Event.findBy({
+        identifier: req.query.url,
+        active: true,
+    }).then(events => {
+        if (events.length === 0) {
             return res.sendStatus(404);
         }
 
-        res.status(200).json(ewbEvent);
+        res.status(200).json(events[0]);
     }).catch(err => {
         next(err);
     });
-
-    //if (!req.query.url) {
-    //}
-
-    //return Event.findOne({
-        //identifier: req.query.url,
-        //active: true
-    //}).populate({
-        //path: 'addons',
-        //populate: {
-            //path: 'product',
-        //},
-    //}).lean().exec(function(err, ewbEvent) {
-        //if (err) {
-            //return handleError(res, err);
-        //}
-
-        //if (!ewbEvent) {
-            //return res.sendStatus(404);
-        //}
-
-        //ewbEvent.remaining = ewbEvent.maxParticipants - ewbEvent.participants.length;
-
-        //// Don't send list of participant ids
-        //delete ewbEvent.participants;
-
-        //return res.status(200).json(ewbEvent);
-    //});
 }
 
-exports.show = function (req, res) {
-    Event.findById(req.params.id).populate([{
-        path: 'addons',
-        populate: {
-            path: 'product',
-        },
-    }, {
-        path: 'participants',
-    }, {
-        path: 'payments',
-        populate: {
-            path: 'buyer',
-            populate: {
-                path: 'document',
-                model: 'EventParticipant',
-            },
-        },
-    }]).lean().exec(function(err, ewbEvent) {
-        if (err) {
-            return handleError(res, err);
-        }
-
-        if (!ewbEvent) {
+/**
+ * Fetch event
+ *
+ * @memberOf controller.Event
+ *
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Object} next - Express error function
+ */
+exports.show = function (req, res, next) {
+    Event.get(req.params.id).then(event => {
+        if (event === null) {
             return res.sendStatus(404);
         }
 
-        return res.status(200).json(ewbEvent);
+        res.status(200).json(event);
+    }).catch(err => {
+        next(err);
     });
 };
 
-exports.create = function (req, res) {
+/**
+ * Create event
+ * IN PROGRESS TODO
+ *
+ * @memberOf controller.Event
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Object} next - Express error function
+ */
+exports.create = function (req, res, next) {
     var eventData = {
         name: req.body.name,
         identifier: req.body.identifier,
@@ -118,88 +93,96 @@ exports.create = function (req, res) {
         active: req.body.active == 1,
         contact: req.body.contact,
         dueDate: req.body.dueDate,
-        confirmationEmail: {
+        emailTemplate: {
             subject: req.body.confirmationEmail.subject,
             body: req.body.confirmationEmail.body,
         },
         notificationOpen: req.body.notificationOpen == 1,
         subscribers: req.body.subscribers,
+        addons: req.body.addons,
     };
+
+    Event.create(data).then(event => {
+        return res.sendStatus(201);
+    }).catch(err => {
+        next(err);
+    });
+    
 
     // Validate addons
-    if (req.body.addons.length === 0) {
-        return res.status(400).json({ addons: true });
-    }
+    //if (req.body.addons.length === 0) {
+        //return res.status(400).json({ addons: true });
+    //}
 
-    function createEvent(eventData, productType, addonData) {
-        Event.create(eventData, function(err, ewbEvent) {
-            if (err) {
-                return handleError(res, err);
-            }
+    //function createEvent(eventData, productType, addonData) {
+        //Event.create(eventData, function(err, ewbEvent) {
+            //if (err) {
+                //return handleError(res, err);
+            //}
 
-            return createProducts(ewbEvent, productType, addonData);
-        });
-    };
+            //return createProducts(ewbEvent, productType, addonData);
+        //});
+    //};
 
-    function createProducts(ewbEvent, productType, addonData) {
-        var products = _.map(addonData, function(addon) {
-            return {
-                name: addon.name,
-                price: addon.price,
-                description: addon.description,
-                type: productType._id,
-            };
-        });
+    //function createProducts(ewbEvent, productType, addonData) {
+        //var products = _.map(addonData, function(addon) {
+            //return {
+                //name: addon.name,
+                //price: addon.price,
+                //description: addon.description,
+                //type: productType._id,
+            //};
+        //});
 
-        Product.create(products, function(err, newProducts) {
-            if (err) {
-                return handleError(res, err);
-            }
+        //Product.create(products, function(err, newProducts) {
+            //if (err) {
+                //return handleError(res, err);
+            //}
 
-            return createAddons(ewbEvent, addonData, newProducts);
-        });
-    };
+            //return createAddons(ewbEvent, addonData, newProducts);
+        //});
+    //};
 
-    function createAddons(ewbEvent, addons, products) {
-        for (var i = 0; i < addons.length; i++) {
-            addons[i].product = products[i]._id;
-        }
+    //function createAddons(ewbEvent, addons, products) {
+        //for (var i = 0; i < addons.length; i++) {
+            //addons[i].product = products[i]._id;
+        //}
 
-        EventAddon.create(addons, function(err, addons) {
-            if (err) {
-                return handleError(res, err);
-            }
+        //EventAddon.create(addons, function(err, addons) {
+            //if (err) {
+                //return handleError(res, err);
+            //}
 
-            ewbEvent.addons = addons;
-            ewbEvent.save(function(err, updatedEwbEvent) {
-                if (err) {
-                    return handleError(res, err);
-                }
+            //ewbEvent.addons = addons;
+            //ewbEvent.save(function(err, updatedEwbEvent) {
+                //if (err) {
+                    //return handleError(res, err);
+                //}
 
-                return res.status(201).json(ewbEvent);
+                //return res.status(201).json(ewbEvent);
 
-            });
-        });
-    };
+            //});
+        //});
+    //};
 
-    Event.findOne({ identifier: eventData.identifier }, function(err, maybeEvent) {
-        if (err) {
-            return handleError(res, err);
-        }
+    //Event.findOne({ identifier: eventData.identifier }, function(err, maybeEvent) {
+        //if (err) {
+            //return handleError(res, err);
+        //}
 
-        // If we found an event, then we need to use a different identifier
-        if (maybeEvent) {
-            return res.status(400).json({ identifier: true });
-        }
+        //// If we found an event, then we need to use a different identifier
+        //if (maybeEvent) {
+            //return res.status(400).json({ identifier: true });
+        //}
 
-        ProductType.findOne({ identifier: 'Event' }, function(err, productType) {
-            if (err) {
-                return handleError(res, err);
-            }
+        //ProductType.findOne({ identifier: 'Event' }, function(err, productType) {
+            //if (err) {
+                //return handleError(res, err);
+            //}
 
-            return createEvent(eventData, productType, req.body.addons);
-        });
-    });
+            //return createEvent(eventData, productType, req.body.addons);
+        //});
+    //});
 };
 
 exports.update = function (req, res) {

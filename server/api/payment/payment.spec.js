@@ -10,7 +10,6 @@ var agent = request.agent(app);
 
 var db = require('../../db').db;
 
-var EmailTemplate = require('../../models/email-template.model');
 var Event = require('../../models/event.model');
 var Member = require('../../models/member.model');
 var MemberType = require('../../models/member-type.model');
@@ -459,9 +458,9 @@ describe('Payment controller', function() {
                     }]
                 });
             }).then(e => {
-                return Event.find(e.identifier);
-            }).then(e => {
-                event = e;
+                return Event.findBy({ identifier: e.identifier });
+            }).then(es => {
+                event = es[0];
                 done();
             }).catch(err => {
                 console.log(err);

@@ -63,7 +63,7 @@ function create(data) {
             delete member.password;
         }
 
-        let {columns, wrapped} = postgresHelper.mapDataForInsert(COLUMN_MAP, member);
+        let {columns, wrapped} = postgresHelper.insert(COLUMN_MAP, member);
 
         if (columns === null || wrapped === null) {
             return null;
@@ -142,9 +142,9 @@ function update(id, data) {
         delete data.password;
     }
 
-    let mapped = postgresHelper.mapDataForUpdate(COLUMN_MAP, data);
+    let mapped = postgresHelper.update(COLUMN_MAP, data);
 
-    if (mapped  === null) {
+    if (mapped === null) {
         return Promise.reject('No attributes to update');
     }
 

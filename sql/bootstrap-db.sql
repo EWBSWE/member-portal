@@ -142,7 +142,7 @@ CREATE TABLE event (
 CREATE TABLE event_addon (
     id SERIAL PRIMARY KEY,
     event_id INTEGER REFERENCES event (id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
-    capacity INTEGER NOT NULL,
+    capacity INTEGER NOT NULL CONSTRAINT positive_capacity CHECK (capacity >= 0),
     product_id INTEGER REFERENCES product (id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL
 );
 
