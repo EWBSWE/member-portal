@@ -34,9 +34,6 @@ describe('Event model', function() {
             return db.none(`DELETE FROM member`);
         }).then(() => {
             done();
-        }).catch(err => {
-            console.log(err);
-            done(err);
         });
     });
 
@@ -70,8 +67,6 @@ describe('Event model', function() {
                 expect(es.length).to.equal(before + 1);
 
                 done();
-            }).catch(err => {
-                done(err);
             });
         });
 
@@ -109,8 +104,6 @@ describe('Event model', function() {
                 expect(e.addons.length).to.equal(3);
 
                 done();
-            }).catch(err => {
-                done(err);
             });
         });
 
@@ -451,8 +444,6 @@ describe('Event model', function() {
                 expect(e.active).to.equal(false);
 
                 done();
-            }).catch(err => {
-                done(err);
             });
         });
 
@@ -490,8 +481,6 @@ describe('Event model', function() {
                 expect(e.addons[1].name).to.equal('Some name');
 
                 done();
-            }).catch(err => {
-                done(err);
             });
         });
 

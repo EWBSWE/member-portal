@@ -11,6 +11,12 @@ let db = require('../db').db;
 
 var postgresHelper = require('../helpers/postgres.helper');
 
+const COLUMN_MAP = {
+    key: 'key',
+    value: 'value',
+    description: 'description',
+};
+
 /**
  * Find settings by attributes
  *
