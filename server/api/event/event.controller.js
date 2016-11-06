@@ -12,7 +12,6 @@ var EventAddon = require('../../models/event-addon.model');
 var EventParticipant = require('../../models/event-participant.model');
 var Product = require('../../models/product.model');
 var ProductType = require('../../models/product-type.model');
-var EventHelper = require('./event.helper');
 
 /**
  * Responds with all the events.
