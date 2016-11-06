@@ -24,13 +24,8 @@ var Payment = require('../../models/payment.model');
 var Product = require('../../models/product.model');
 
 var EmailHelper = require('../../helpers/email.helper');
-var EventHelper = require('../event/event.helper');
-var PaymentHelper = require('../payment/payment.helper');
 
 var ewbMail = require('../../components/ewb-mail');
-
-var Purchase = require('../../helpers/purchase.helper');
-
 
 /**
  * Get all payments
@@ -121,9 +116,9 @@ exports.confirmMembershipPayment = function(req, res, next) {
             body: ewbMail.getBody('receipt', {
                 buyer: memberData.email,
                 date: moment().format('YYYY-MM-DD HH:mm'),
-                total: PaymentHelper.formatTotal([product]),
-                tax: PaymentHelper.formatTax([product]),
-                list: PaymentHelper.formatProductList([product]),
+                total: Payment.formatTotal([product]),
+                tax: Payment.formatTax([product]),
+                list: Payment.formatProductList([product]),
             }),
         };
 
@@ -221,9 +216,9 @@ exports.confirmEventPayment = function(req, res, next) {
             body: ewbMail.getBody('receipt', {
                 buyer: req.body.participant.email,
                 date: moment().format('YYYY-MM-DD HH:mm'),
-                total: PaymentHelper.formatTotal(event.addons),
-                tax: PaymentHelper.formatTax(event.addons),
-                list: PaymentHelper.formatProductList(event.addons),
+                total: Payment.formatTotal(event.addons),
+                tax: Payment.formatTax(event.addons),
+                list: Payment.formatProductList(event.addons),
             }),
         };
 

@@ -206,10 +206,42 @@ function generateReport(start, end) {
     });
 }
 
+function formatProductList(products) {
+    var text = '';
+
+    for (var i = 0; i < products.length; i++) {
+        var product = products[i];
+        text += product.name + '  -  ' + product.price + ' ' + product.currency_code + '\n';
+    }
+
+    return text;
+}
+
+function formatTotal(products) {
+    if (products.length === 0) {
+        // TODO add some default currency or let something decide currency
+        return '0 SEK';
+    }
+
+    var total = products.reduce(function(total, product) {
+        return total + product.price;
+    }, 0);
+
+    return total + ' SEK';
+}
+
+function formatTax(products) {
+    // TODO When products include tax, fix this.
+    return '0 SEK';
+}
+
 module.exports = {
     index: index,
     get: get,
     findBy: findBy,
     create: create,
     generateReport: generateReport,
+    formatProductList: formatProductList,
+    formatTotal: formatTotal,
+    formatTax: formatTax,
 };
