@@ -1,32 +1,27 @@
+/**
+ * Settings controller
+ *
+ * @memberOf controller
+ * @namespace controller.Setting
+ */
+
 'use strict';
 
-var db = require('../../db').db;
+let db = require('../../db').db;
+var Setting = require('../../models/setting.model');
 
-exports.index = function(req, res) {
-    db.any(`
-        SELECT key, value, description 
-        FROM setting
-        ORDER BY key
-    `).then(data => {
-        res.status(200).json(data);
+/**
+ * Get all settings
+ *
+ * @memberOf controller.Setting
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Object} next - Express error function
+ */
+exports.index = function(req, res, next) {
+    Setting.index().then(settings => {
+        res.status(200).json(settings);
     }).catch(err => {
-        res.sendStatus(500);
-    });
-};
-
-exports.update = function(req, res) {
-    if (!req.body.value) {
-        return res.sendStatus(400);
-    }
-
-    db.one(`
-        UPDATE setting
-        SET value = $1, description = $2
-        WHERE key = $3
-        RETURNING *
-    `, [req.body.value, req.body.description, req.params.id]).then(data => {
-        res.status(200).json(data);
-    }).catch(err => {
-        res.sendStatus(500);
+        next(err);
     });
 };

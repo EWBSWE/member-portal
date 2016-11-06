@@ -18,6 +18,18 @@ const COLUMN_MAP = {
 };
 
 /**
+ * Find all settings
+ *
+ * @returns {Promise<Array|Error>} Resolves to an array of objects
+ */
+function index() {
+    return db.any(`
+        SELECT key, value, description
+        FROM setting
+    `);
+}
+
+/**
  * Find settings by attributes
  *
  * @param {Object} data - Object to query against
@@ -34,5 +46,6 @@ function findBy(data) {
 }
 
 module.exports = {
+    index: index,
     findBy: findBy,
 };
