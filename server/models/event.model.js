@@ -50,8 +50,28 @@ function index() {
 function create(data) {
     let templateId;
     let productIds;
+    let members = [];
 
-    return EmailTemplate.create(data.emailTemplate).then(template => {
+    if (!Array.isArray(data.subscribers)) {
+        return Promise.reject('Invalid subscribers');
+    }
+
+    return new Promise((resolve, reject) => {
+        if (data.subscribers.length === 0) {
+            resolve();
+        } else {
+            Member.findBy({ email: data.subscribers }).then(ms => {
+                if (ms.length !== data.subscribers.length) {
+                    reject('Invalid subscribers');
+                } else {
+                    members = ms;
+                    resolve();
+                }
+            });
+        }
+    }).then(() => {
+        return EmailTemplate.create(data.emailTemplate);
+    }).then(template => {
         templateId = template.id;
 
         return ProductType.find(ProductType.EVENT);
@@ -86,21 +106,32 @@ function create(data) {
         `, data);
     }).then(event => {
         return db.tx(transaction => {
-            let queries = data.addons.map(addon => {
+            let addonQueries = data.addons.map(addon => {
                 return transaction.one(`
                     INSERT INTO event_addon (event_id, capacity, product_id)
                     VALUES ($1, $2, $3)
                     RETURNING *
                 `, [event.id, addon.capacity, addon.productId]);
             });
+
+            let subscriberQueries = members.map(m => {
+                return transaction.one(`
+                    INSERT INTO event_subscriber (event_id, member_id)
+                    VALUES ($1, $2)
+                    RETURNING *
+                `, [event.id, m.id]);
+            });
+
+            let queries = addonQueries.concat(subscriberQueries);
+
             return transaction.batch(queries);
-        }).then(addons => {
+        }).then(() => {
             return Promise.resolve(event);
         });
     });
 }
 
-function addParticipant(event, participant) {
+function addParticipant(eventId, participant) {
     return Member.find(participant.email).then(maybeMember => {
         if (maybeMember === null) {
             return Member.create(participant);
@@ -124,7 +155,7 @@ function addParticipant(event, participant) {
                         message
                     ) VALUES ($1, $2, $3)
                     RETURNING member_id
-                `, [event.id, member.id, participant.message]),
+                `, [eventId, member.id, participant.message]),
 
                 db.one(`
                     INSERT INTO payment (member_id, amount)
@@ -145,7 +176,7 @@ function addParticipant(event, participant) {
         return db.none(`
             INSERT INTO event_payment (event_id, payment_id)
             VALUES ($1, $2)
-        `, [event.id, payment.id]);
+        `, [eventId, payment.id]);
     });
 }
 

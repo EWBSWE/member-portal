@@ -59,7 +59,8 @@ describe('Event model', function() {
                         name: 'Free',
                         description: 'Free description',
                         price: 0,
-                    }]
+                    }],
+                    subscribers: [],
                 });
             }).then(e => {
                 return Event.index();
@@ -97,7 +98,8 @@ describe('Event model', function() {
                     name: 'Name',
                     description: 'Description',
                     price: 200,
-                }]
+                }],
+                subscribers: [],
             }).then(e => {
                 return Event.get(e.id);
             }).then(e => {
@@ -139,7 +141,8 @@ describe('Event model', function() {
                     name: 'Name',
                     description: 'Description',
                     price: 200,
-                }]
+                }],
+                subscribers: [],
             }).catch(err => { done(); });
         });
 
@@ -166,7 +169,8 @@ describe('Event model', function() {
                     name: 'Name',
                     description: 'Description',
                     price: 200,
-                }]
+                }],
+                subscribers: [],
             }).catch(err => { done(); });
         });
 
@@ -188,7 +192,8 @@ describe('Event model', function() {
                     description: 'Free description',
                     price: 0,
                 }, {}, {}
-                ]
+                ],
+                subscribers: [],
             }).catch(err => { done(); });
         });
 
@@ -214,11 +219,72 @@ describe('Event model', function() {
                         subject: 'subject',
                         body: 'body',
                     },
+                    subscribers: [],
                 });
             }).catch(err => {
 
                 Product.findByProductTypeId(productType.id).then(ps => {
                     expect(productsBefore).to.equal(ps.length);
+
+                    done();
+                });
+            });
+        });
+
+        it('should create event with subscribers', function(done) {
+            Member.create({email: 'some@example.com'}).then(() => {
+                return Event.create({
+                    name: 'event',
+                    identifier: 'identifier',
+                    active: true,
+                    dueDate: moment().add(1, 'month').toDate(),
+                    notificationOpen: false,
+                    emailTemplate: {
+                        sender: 'ict@ingenjorerutangranser.se',
+                        subject: 'subject',
+                        body: 'body',
+                    },
+                    addons: [{
+                        capacity: 100,
+                        name: 'Free',
+                        description: 'Free description',
+                        price: 0,
+                    }],
+                    subscribers: ['some@example.com'],
+                });
+            }).then(e => {
+                return db.any('SELECT event_id, member_id FROM event_subscriber WHERE event_id = $1', e.id);
+            }).then(data => {
+                expect(data.length).equal(1);
+
+                done();
+            });
+        });
+
+        it('should fail to create event with subscribers', function(done) {
+            Member.create({email: 'some@example.com'}).then(() => {
+                return Event.create({
+                    name: 'event',
+                    identifier: 'identifier',
+                    active: true,
+                    dueDate: moment().add(1, 'month').toDate(),
+                    notificationOpen: false,
+                    emailTemplate: {
+                        sender: 'ict@ingenjorerutangranser.se',
+                        subject: 'subject',
+                        body: 'body',
+                    },
+                    addons: [{
+                        capacity: 100,
+                        name: 'Free',
+                        description: 'Free description',
+                        price: 0,
+                    }],
+                    subscribers: ['wrong@example.com'],
+                });
+            }).catch(err => {
+                return db.any('SELECT event_id, member_id FROM event_subscriber').then(data => {
+                    expect(data.length).equal(0);
 
                     done();
                 });
@@ -244,7 +310,8 @@ describe('Event model', function() {
                     name: 'Free',
                     description: 'Free description',
                     price: 0,
-                }]
+                }],
+                subscribers: [],
             }).then(() => {
                 return Event.index();
             }).then(es => {
@@ -271,7 +338,8 @@ describe('Event model', function() {
                     name: 'Free',
                     description: 'Free description',
                     price: 0,
-                }]
+                }],
+                subscribers: [],
             }).then(e => {
                 return Event.get(e.id);
             }).then(e => {
@@ -298,7 +366,8 @@ describe('Event model', function() {
                     name: 'Free',
                     description: 'Free description',
                     price: 0,
-                }]
+                }],
+                subscribers: [],
             }).then(e => {
                 event = e;
 
@@ -334,7 +403,8 @@ describe('Event model', function() {
                     name: 'Not free',
                     description: 'Free description',
                     price: 100,
-                }]
+                }],
+                subscribers: [],
             }).then(e => {
                 return Event.findWithAddons('no match');
             }).then(e => {
@@ -366,7 +436,8 @@ describe('Event model', function() {
                     name: 'Not free',
                     description: 'Free description',
                     price: 100,
-                }]
+                }],
+                subscribers: [],
             }).then(e => {
                 return Event.findWithAddons(e.identifier);
             }).then(e => {
@@ -398,7 +469,8 @@ describe('Event model', function() {
                     name: 'Not free',
                     description: 'Free description',
                     price: 100,
-                }]
+                }],
+                subscribers: [],
             }).then(e => {
                 return Event.findBy({ name: 'event' });
             }).then(es => {
@@ -436,7 +508,8 @@ describe('Event model', function() {
                     name: 'Not free',
                     description: 'Free description',
                     price: 100,
-                }]
+                }],
+                subscribers: [],
             }).then(e => {
                 return Event.update(e.id, { name: 'new name', active: false });
             }).then(e => {
@@ -464,7 +537,8 @@ describe('Event model', function() {
                     name: 'Free',
                     description: 'Free description',
                     price: 0,
-                }]
+                }],
+                subscribers: [],
             }).then(e => {
                 return EventAddon.create({
                     eventId: e.id,
@@ -504,7 +578,8 @@ describe('Event model', function() {
                     name: 'Free',
                     description: 'Free description',
                     price: 0,
-                }]
+                }],
+                subscribers: [],
             }).then(e => {
                 return Event.update(e.id, { missingKey: 'value' });
             }).catch(err => {
@@ -531,7 +606,8 @@ describe('Event model', function() {
                     name: 'Free',
                     description: 'Free description',
                     price: 0,
-                }]
+                }],
+                subscribers: [],
             }).then(e => {
                 return Event.destroy(e.id);
             }).then(() => {
@@ -564,11 +640,12 @@ describe('Event model', function() {
                     name: 'Free',
                     description: 'Free description',
                     price: 0,
-                }]
+                }],
+                subscribers: [],
             }).then(e => {
                 return Event.get(e.id);
             }).then(e => {
-                return Event.addParticipant(e, {
+                return Event.addParticipant(e.id, {
                     email: 'name@example.com',
                     addonIds: [e.addons[0]],
                 });
@@ -599,12 +676,13 @@ describe('Event model', function() {
                         name: 'Free',
                         description: 'Free description',
                         price: 0,
-                    }]
+                    }],
+                    subscribers: [],
                 });
             }).then(e => {
                 return Event.get(e.id);
             }).then(e => {
-                return Event.addParticipant(e, {
+                return Event.addParticipant(e.id, {
                     email: 'some@example.com',
                     addonIds: [e.addons[0]],
                 });
@@ -634,11 +712,12 @@ describe('Event model', function() {
                     name: 'Free',
                     description: 'Free description',
                     price: 0,
-                }]
+                }],
+                subscribers: [],
             }).then(e => {
                 return Event.get(e.id);
             }).then(e => {
-                return Event.addParticipant(e, {
+                return Event.addParticipant(e.id, {
                     email: 'name@example.com',
                     addonIds: [e.addons[0]],
                 });

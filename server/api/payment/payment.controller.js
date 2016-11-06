@@ -194,7 +194,7 @@ exports.confirmEventPayment = function(req, res, next) {
             });
         }
     }).then(event => {
-        return Event.addParticipant(event, {
+        return Event.addParticipant(event.id, {
             addonIds: req.body.addonIds,
             name: req.body.participant.name,
             email: req.body.participant.email,

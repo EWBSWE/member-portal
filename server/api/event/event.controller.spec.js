@@ -91,14 +91,14 @@ describe('Event controller', function() {
                         description: 'Not Free description',
                         price: 100,
                     }],
+                    subscribers: ['user@user.com'],
                 });
             });
         }).then(e => {
+            return Event.get(e.id);
+        }).then(e => {
             ewbEvent = e;
             done();
-        }).catch(err => {
-            console.log(err);
-            done(err);
         });
     });
 
@@ -230,18 +230,181 @@ describe('Event controller', function() {
     });
 
     describe('POST /api/events', function() {
-        
+        let validEvent = {
+            name: 'Event',
+            identifier: 'some-event',
+            description: 'description',
+            active: 1,
+            contact: null,
+            dueDate: moment().add(1, 'year').toDate(),
+            emailTemplate: {
+                subject: 'subject',
+                body: 'body'
+            },
+            notificationOpen: 1,
+            subscribers: ['user@user.com'],
+            addons: [{
+                name: 'Addon 1',
+                price: 10,
+                capacity: 10,
+            }],
+        };
+
+        let invalidEvent = {
+            name: 'Event',
+            identifier: 'some-event',
+            description: 'description',
+            active: 1,
+            contact: null,
+            dueDate: moment().add(1, 'year').toDate(),
+            notificationOpen: 1,
+            subscribers: ['user@user.com'],
+            addons: [{
+                name: 'Addon 1',
+                price: 10,
+                capacity: 10,
+            }],
+        };
+
+        let cases = [{
+            role: roles.admin,
+            expectCode: 201,
+            description: 'should create an event as an admin',
+            data: validEvent,
+        }, {
+            role: roles.user,
+            expectCode: 201,
+            description: 'should create an event as a user',
+            data: validEvent,
+        }, {
+            role: roles.admin,
+            expectCode: 400,
+            description: 'should fail to create an event as an admin',
+            data: invalidEvent,
+        }, {
+            role: roles.user,
+            expectCode: 400,
+            description: 'should fail to create an event as a user',
+            data: invalidEvent,
+        }, {
+            role: roles.guest,
+            expectCode: 401,
+            description: 'should deny guest to create an event',
+            data: validEvent,
+        }];
+
+        cases.forEach(function(testCase) {
+            it(testCase.description, function(done) {
+                testCase.role.auth().then(token => {
+                    agent.post('/api/events')
+                        .query({ access_token: token })
+                        .send(testCase.data)
+                        .expect(testCase.expectCode)
+                        .end((err, res) => {
+                            done(err);
+                        });
+                });
+            });
+        });
     });
 
     describe('PUT /api/events/:id', function() {
-        
+        let validEvent = {
+            name: 'Event 2',
+        };
+
+        let cases = [{
+            role: roles.admin,
+            expectCode: 202,
+            description: 'should create an event as an admin',
+            data: validEvent,
+        }, {
+            role: roles.user,
+            expectCode: 202,
+            description: 'should create an event as a user',
+            data: validEvent,
+        }, {
+            role: roles.guest,
+            expectCode: 401,
+            description: 'should deny guest to create an event',
+            data: validEvent,
+        }];
+
+        cases.forEach(function(testCase) {
+            it(testCase.description, function(done) {
+                testCase.role.auth().then(token => {
+                    agent.put(`/api/events/${ewbEvent.id}`)
+                        .query({ access_token: token })
+                        .send(testCase.data)
+                        .expect(testCase.expectCode)
+                        .end((err, res) => {
+                            done(err);
+                        });
+                });
+            });
+        });
     });
 
     describe('DELETE /api/events/:id', function() {
-        
+        let cases = [{
+            role: roles.admin,
+            expectCode: 204,
+            description: 'should delete an event as an admin',
+        }, {
+            role: roles.user,
+            expectCode: 204,
+            description: 'should delete an event as a user',
+        }, {
+            role: roles.guest,
+            expectCode: 401,
+            description: 'should deny guest to delete an event',
+        }];
+
+        cases.forEach(function(testCase) {
+            it(testCase.description, function(done) {
+                testCase.role.auth().then(token => {
+                    agent.delete(`/api/events/${ewbEvent.id}`)
+                        .query({ access_token: token })
+                        .expect(testCase.expectCode)
+                        .end((err, res) => {
+                            done(err);
+                        });
+                });
+            });
+        });
     });
 
     describe('POST /api/events/:id/add-participant', function() {
-        
+        let cases = [{
+            role: roles.admin,
+            expectCode: 200,
+            description: 'should add participant to an event as an admin',
+        }, {
+            role: roles.user,
+            expectCode: 200,
+            description: 'should add participant to an event as a user',
+        }, {
+            role: roles.guest,
+            expectCode: 401,
+            description: 'should deny guest to add participants',
+        }];
+
+        cases.forEach(function(testCase) {
+            it(testCase.description, function(done) {
+                testCase.role.auth().then(token => {
+                    agent.post(`/api/events/${ewbEvent.id}/add-participant`)
+                        .query({ access_token: token })
+                        .send({
+                            email: 'participant@example.com',
+                            addonIds: [ewbEvent.addons[0]],
+                            message: 'No message',
+                        })
+                        .expect(testCase.expectCode)
+                        .end((err, res) => {
+                            done(err);
+                        });
+                });
+            });
+        });
     });
 });

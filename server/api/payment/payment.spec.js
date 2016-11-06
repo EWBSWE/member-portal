@@ -455,7 +455,8 @@ describe('Payment controller', function() {
                         name: 'Not Free',
                         description: 'Not Free description',
                         price: 100,
-                    }]
+                    }],
+                    subscribers: [],
                 });
             }).then(e => {
                 return Event.findBy({ identifier: e.identifier });
