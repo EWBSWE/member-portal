@@ -42,7 +42,7 @@ function index() {
  * @returns {Promise<Object|Error>} Resolves to a payment
  */
 function get(id) {
-    return db.any(`
+    return db.one(`
         SELECT id, member_id, amount, currency_code, created_at
         FROM payment
         WHERE id = $1
@@ -86,12 +86,23 @@ function create(data) {
     let inputs = Array.isArray(data) ? data : [data];
 
     inputs = inputs.map(i => {
+        if (i.member === undefined || i.member === null) {
+            return null;
+        }
+        if (i.products === undefined || i.products === null || i.products.length === 0) {
+            return null;
+        }
+
         return {
             amount: i.products.reduce((total, product) => { return total + product.price; }, 0),
             memberId: i.member.id,
             products: i.products
         }
     });
+
+    if (inputs.includes(null)) {
+        return Promise.reject('Missing attributes');
+    }
 
     return db.tx(transaction => {
         let queries = inputs.map(payment => {

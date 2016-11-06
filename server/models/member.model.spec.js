@@ -6,6 +6,8 @@ var moment = require('moment');
 var db = require('../db').db;
 var Member = require('../models/member.model');
 var MemberType = require('../models/member-type.model');
+var Product = require('../models/product.model');
+var ProductType = require('../models/product-type.model');
 
 describe('Member', function() {
     let memberTypeId;
@@ -14,9 +16,6 @@ describe('Member', function() {
         MemberType.create('Student').then(memberType => {
             memberTypeId = memberType.id;
             done();
-        }).catch(err => {
-            console.log(err);
-            done(err);
         });
     });
 
@@ -24,16 +23,22 @@ describe('Member', function() {
         db.any('DELETE FROM member').then(() => {
             return db.any('DELETE FROM member_type');
         }).then(() => {
+            return db.any('DELETE FROM product');
+        }).then(() => {
+            return db.any('DELETE FROM product_type');
+        }).then(() => {
             done();
         });
     });
 
-    describe('Creation', function() {
-        it('should create member with password', function() {
-            return Member.create({
+    describe('Create', function() {
+        it('should create member with password', function(done) {
+            Member.create({
                 email: 'test@test.com',
                 password: 'test1234',
                 role: 'user'
+            }).then(() => {
+                done();
             });
         });
 
@@ -90,8 +95,8 @@ describe('Member', function() {
             });
         });
 
-        it('should create member without authenticateable attributes', function() {
-            return db.one('SELECT id FROM member_type LIMIT 1').then(data => {
+        it('should create member without authenticateable attributes', function(done) {
+            db.one('SELECT id FROM member_type LIMIT 1').then(data => {
                 let memberTypeId = data.id;
 
                 return Member.create({
@@ -105,6 +110,8 @@ describe('Member', function() {
                     yearOfBirth: '1997',
                     expirationDate: moment().add(1, 'year'),
                 });
+            }).then(() => {
+                done();
             });
         });
 
@@ -122,7 +129,7 @@ describe('Member', function() {
     });
 
     describe('Update', function() {
-        it('should update a members attributes', function() {
+        it('should update a members attributes', function(done) {
             let old = {
                 email: 'email@email.email',
                 name: 'Some name',
@@ -147,7 +154,7 @@ describe('Member', function() {
                 expirationDate: moment().add(1, 'year'),
             };
 
-            return Member.create(old).then(member => {
+            Member.create(old).then(member => {
                 old.id = member.id;
                 return Member.update(member.id, updated);
             }).then(member => {
@@ -164,6 +171,8 @@ describe('Member', function() {
                 expect(member.gender).to.equal(updated.gender);
                 expect(member.year_of_birth).to.equal(updated.yearOfBirth);
                 expect(moment(member.expiration_date).format()).to.equal(updated.expirationDate.format());
+
+                done();
             });
         });
 
@@ -220,11 +229,94 @@ describe('Member', function() {
                 done();
             });
         });
+
+        it('should fail to update if members password is too short', function(done) {
+            let someGuy = {
+                email: 'some@example.com',
+                role: 'user',
+                password: 'validpassword',
+            };
+
+            Member.create(someGuy).then(member => {
+                return Member.update(member.id, {password: 'short'});
+            }).catch(err => {
+                done();
+            });
+        });
+
+        it('should update members password', function(done) {
+            let someGuy = {
+                email: 'some@example.com',
+                role: 'user',
+                password: 'validpassword',
+            };
+
+            Member.create(someGuy).then(member => {
+                return Member.update(member.id, {password: 'alsovalidpassword'});
+            }).then(() => {
+                done();
+            });
+        });
+
+        it('should extend a members membership', function(done) {
+            ProductType.create(ProductType.MEMBERSHIP).then(pt => {
+                return Product.create({
+                    name: 'Membership 1 year',
+                    price: 10,
+                    attribute: {
+                        days: 365,
+                        member_type_id: memberTypeId,
+                    },
+                    productTypeId: pt.id,
+                });
+            }).then(p => {
+                return Member.create({
+                    email: 'new@example.com',
+                    expirationDate: moment().add(1, 'year'),
+                }).then(m => {
+                    return Member.extendMembership({
+                        email: 'new@example.com',
+                        name: 'Some name',
+                    }, p);
+                });
+            }).then(m => {
+                let diff = moment(m.expiration_date).diff(moment(), 'days');
+
+                expect(diff).to.equal(365 * 2 - 1);
+
+                done();
+            });
+        });
+
+        it('should create a member and extend a members membership', function(done) {
+            ProductType.create(ProductType.MEMBERSHIP).then(pt => {
+                return Product.create({
+                    name: 'Membership 1 year',
+                    price: 10,
+                    attribute: {
+                        days: 365,
+                        member_type_id: memberTypeId,
+                    },
+                    productTypeId: pt.id,
+                });
+            }).then(p => {
+                return Member.extendMembership({
+                    email: 'new@example.com',
+                    name: 'Some name',
+                }, p);
+            }).then(m => {
+                let diff = moment(m.expiration_date).diff(moment(), 'days');
+
+                expect(diff).to.equal(364);
+
+                done();
+            });
+        });
     });
 
     describe('Authentication', function() {
-        it('should authenticate user if password is valid', function() {
-            return Member.create({
+        it('should authenticate user if password is valid', function(done) {
+            Member.create({
                 email: 'test@test.com',
                 password: 'test1234',
                 role: 'user'
@@ -232,26 +324,29 @@ describe('Member', function() {
                 return db.one(`SELECT * FROM member WHERE id = $1`, data.id);
             }).then(data => {
                 expect(Member.authenticate('test1234', data.hashed_password, data.salt)).to.be.true;
+                done();
             });
         });
 
-        it('should not authenticate user if password is invalid', function() {
-            return Member.create({
+        it('should not authenticate user if password is invalid', function(done) {
+            Member.create({
                 email: 'test@test.com',
                 password: 'test1234',
                 role: 'user'
             }).then(data => {
                 expect(Member.authenticate('wrong password', data.hashed_password, data.salt)).to.be.false;
+                done();
             });
         });
 
-        it('should reject user without password', function() {
-            return Member.create({
+        it('should reject user without password', function(done) {
+            Member.create({
                 email: 'test@test.com',
                 password: 'test1234',
                 role: 'user'
             }).then(data => {
                 expect(Member.authenticate(null, null, null)).to.be.false;
+                done();
             });
         });
     });
@@ -295,8 +390,6 @@ describe('Member', function() {
                 expect(emails.includes('other@example.com')).to.be.true;
 
                 done();
-            }).catch(err => {
-                done(err);
             });
         });
 
@@ -319,8 +412,6 @@ describe('Member', function() {
                 expect(member.email).to.equal(someGuy.email);
 
                 done();
-            }).catch(err => {
-                done(err);
             });
         });
 
@@ -345,10 +436,7 @@ describe('Member', function() {
             }).then(() => {
                 return Member.get(oldId);
             }).then(member => {
-                if (member === null) {
-                    done();
-                }
-            }).catch(err => {
+                expect(member).to.equal(null);
                 done();
             });
         });
@@ -372,8 +460,40 @@ describe('Member', function() {
                 expect(member.email).to.equal(someGuy.email);
 
                 done();
-            }).catch(err => {
-                done(err);
+            });
+        });
+
+        it('should find member by some attributes', function(done) {
+            Member.create([{
+                email: 'one@example.com',
+                name: 'Name',
+            }, {
+                email: 'two@example.com',
+                name: 'Name',
+            }]).then(() => {
+                return Member.findBy({ email: 'one@example.com' });
+            }).then(ms => {
+                expect(ms.length).to.equal(1);
+
+                return Member.findBy({name: 'Name'});
+            }).then(ms => {
+                expect(ms.length).to.equal(2);
+
+                done();
+            });
+        });
+    });
+
+    describe('Reset password', function() {
+        it('should create password reset token for user', function(done) {
+            Member.create({
+                email: 'any@example.com',
+                role: 'user',
+                password: 'validpassword',
+            }).then(m => {
+                return Member.createResetToken(m.id);
+            }).then(m => {
+                done();
             });
         });
     });

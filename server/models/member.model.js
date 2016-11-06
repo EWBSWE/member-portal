@@ -65,10 +65,6 @@ function create(data) {
 
         let {columns, wrapped} = postgresHelper.insert(COLUMN_MAP, member);
 
-        if (columns === null || wrapped === null) {
-            return null;
-        }
-
         let sql = `
             INSERT INTO member (${columns})
             VALUES (${wrapped})
@@ -85,10 +81,6 @@ function create(data) {
             let queries = data.map(member => {
                 return _create(member, transaction);
             });
-
-            if (queries.includes(null)) {
-                return Promise.reject(new Error('Some members could not be mapped'));
-            }
 
             return transaction.batch(queries);
         });
@@ -222,26 +214,6 @@ function destroy(id) {
     return db.none(`DELETE FROM member WHERE id = $1`, id);
 }
 
-function valid(member) {
-    if (!member.email || !validEmail(member.email)) {
-        return false;
-    }
-
-    return true;
-}
-
-function generateErrorMessages(member) {
-    let errors = {};
-
-    if (!member.email) {
-        errors.email = 'Epost saknas';
-    } else if (!validEmail(member.email)) {
-        errors.email = 'Ogiltig epost-adress';
-    }
-
-    return errors;
-}
-
 function validEmail(email) {
     if (!email) {
         return false;
@@ -295,7 +267,7 @@ function findBy(data) {
     let wheres = postgresHelper.where(COLUMN_MAP, data);
 
     return db.any(`
-        SELECT id, email, reset_validity
+        SELECT id, email, reset_validity, expiration_date
         FROM member
         WHERE ${wheres.clause}
     `, wheres.data);
