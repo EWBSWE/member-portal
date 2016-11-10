@@ -41,7 +41,7 @@ angular.module('ewbMemberApp')
         membersToExport = tmp;
       }
 
-      var keysToIgnore = ['_id', '__v', '$$hashKey'];
+      var keysToIgnore = ['id'];
       var csvContent = 'data:text/csv;charset=utf-8,';
 
       var memberKeys = Object.keys($scope.members[0]);
