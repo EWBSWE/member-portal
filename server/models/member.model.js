@@ -177,11 +177,13 @@ function get(id) {
         SELECT
             member.id,
             email,
+            name,
             role,
             location,
             education,
             profession,
             member_type,
+            member_type_id,
             gender,
             year_of_birth,
             expiration_date,
