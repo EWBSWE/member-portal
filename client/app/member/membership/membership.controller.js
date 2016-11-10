@@ -22,15 +22,21 @@ angular.module('ewbMemberApp')
         console.log('error', data);
     });
 
-    var callback = function(token) {
+    var findMatchingProduct = function() {
         var product = _.find($scope.products, function(p) {
-            return p.typeAttributes.memberType === $scope.newMember.type &&
-                p.typeAttributes.durationDays === $scope.newMember.subscriptionLength * 365;
+            return p.attribute.member_type === $scope.newMember.type &&
+                p.attribute.days === $scope.newMember.subscriptionLength * 365;
         });
+
+        return product;
+    }
+
+    var callback = function(token) {
+        var product = findMatchingProduct();
 
         $http.post('/api/payments/confirm', {
             stripeToken: token,
-            productId: product._id,
+            productId: product.id,
             name: $scope.newMember.name,
             location: $scope.newMember.location,
             profession: $scope.newMember.profession,
@@ -40,7 +46,7 @@ angular.module('ewbMemberApp')
             type: $scope.newMember.type,
             yearOfBirth: $scope.newMember.yearOfBirth,
         }).success(function(data) {
-            $scope.successEmail = data.email;
+            $scope.successEmail = $scope.newMember.email;
             $('.js-confirmation').modal('show');
             $scope.newMember = {};
             $scope.form.$setPristine();
@@ -48,15 +54,15 @@ angular.module('ewbMemberApp')
             var errorMessage = gettextCatalog.getString('We failed to complete your transaction. No payment processed.');
             if (data.errorType === 'StripeCardError') {
                 errorMessage = gettextCatalog.getString('Your card was declined. No payment processed.');
-            } else if (err.type === 'RateLimitError') {
+            } else if (data.errorType === 'RateLimitError') {
                 // Too many requests made to the API too quickly
-            } else if (err.type === 'StripeInvalidError') {
+            } else if (data.errorType === 'StripeInvalidError') {
                 // Invalid parameters were supplied to Stripe's API
-            } else if (err.type === 'StripeAPIError') {
+            } else if (data.errorType === 'StripeAPIError') {
                 // An error occurred internally with Stripe's API
-            } else if (err.type === 'StripeConnectionError') {
+            } else if (data.errorType === 'StripeConnectionError') {
                 // Some kind of error occurred during the HTTPS communication
-            } else if (err.type === 'StripeAuthenticationError') {
+            } else if (data.errorType === 'StripeAuthenticationError') {
                 // Probably used incorrect API key
             }
 
@@ -70,17 +76,14 @@ angular.module('ewbMemberApp')
             return;
         }
 
-        var product = _.find($scope.products, function(p) {
-            return p.typeAttributes.memberType === $scope.newMember.type &&
-                p.typeAttributes.durationDays === $scope.newMember.subscriptionLength * 365;
-        });
+        var product = findMatchingProduct();
 
         if (stripeHandler) {
             stripeHandler.open({
                 name: gettextCatalog.getString('Engineers without borders'),
                 description: gettextCatalog.getString('Membership'),
                 // image: 'bild.png', // TODO
-                currency: product.currency,
+                currency: product.currency_code,
                 amount: product.price * 100,
                 email: $scope.newMember.email,
             });
