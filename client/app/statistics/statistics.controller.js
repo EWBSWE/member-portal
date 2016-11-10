@@ -23,11 +23,11 @@ angular.module('ewbMemberApp')
         $scope.members = members;
 
         _.each(members, function(member) {
-            if (member.type === 'student') {
+            if (member.member_type === 'student') {
                 $scope.memberCounts.student++;
-            } else if (member.type === 'working') {
+            } else if (member.member_type === 'working') {
                 $scope.memberCounts.working++;
-            } else if (member.type === 'senior') {
+            } else if (member.member_type === 'senior') {
                 $scope.memberCounts.senior++;
             }
 
@@ -35,14 +35,14 @@ angular.module('ewbMemberApp')
                 $scope.genderCounts.male++;
             } else if (member.gender === 'female') {
                 $scope.genderCounts.female++;
-            } else {
+            } else if (member.gender === 'other'){
                 $scope.genderCounts.other++;
             }
 
-            if ($scope.birthYears[member.yearOfBirth] === undefined) {
-                $scope.birthYears[member.yearOfBirth] = 1;
+            if ($scope.birthYears[member.year_of_birth] === undefined) {
+                $scope.birthYears[member.year_of_birth] = 1;
             } else {
-                $scope.birthYears[member.yearOfBirth]++;
+                $scope.birthYears[member.year_of_birth]++;
             }
 
             if ($scope.locations[member.location] === undefined) {
