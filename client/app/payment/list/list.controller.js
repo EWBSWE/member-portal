@@ -21,8 +21,8 @@ angular.module('ewbMemberApp')
 
         $http.get('/api/payments/report', {
             params: {
-                periodStart: $scope.report.periodStart.trim(),
-                periodEnd: $scope.report.periodEnd.trim(),
+                start: $scope.report.periodStart.trim(),
+                end: $scope.report.periodEnd.trim(),
                 recipient: $scope.report.recipient.trim(),
             }
         }).success(function(response) {
