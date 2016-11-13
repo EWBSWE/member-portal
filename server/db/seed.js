@@ -12,11 +12,15 @@ let Product = require('../models/product.model');
 let ProductType = require('../models/product-type.model');
 
 function insertAuthenticatableMembers() {
-    return Member.create({
+    return Member.create([{
         email: 'admin@admin.se',
         password: 'Admin123',
         role: 'admin',
-    });
+    }, {
+        email: 'user@user.se',
+        password: 'password123',
+        role: 'user',
+    }]);
 }
 
 function insertDummyMembers() {

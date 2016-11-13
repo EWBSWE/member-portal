@@ -27,11 +27,19 @@ var ewbMail = require('../../components/ewb-mail');
  * @param {object} next - Express next error function
  */
 exports.index = function(req, res, next) {
-    Member.index().then(data => {
-        res.status(200).json(data);
-    }).catch(err => {
-        next(err);
-    });
+    if (req.query.role) {
+        Member.findBy({ role: req.query.role }).then(data => {
+            res.status(200).json(data);
+        }).catch(err => {
+            next(err);
+        });
+    } else {
+        Member.index().then(data => {
+            res.status(200).json(data);
+        }).catch(err => {
+            next(err);
+        });
+    }
 };
 
 exports.get = function(req, res, next) {

@@ -269,7 +269,7 @@ function findBy(data) {
     let wheres = postgresHelper.where(COLUMN_MAP, data);
 
     return db.any(`
-        SELECT id, email, reset_validity, expiration_date
+        SELECT id, email, role, reset_validity, expiration_date
         FROM member
         WHERE ${wheres.clause}
     `, wheres.data);
