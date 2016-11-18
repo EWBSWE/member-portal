@@ -18,6 +18,7 @@ var postgresHelper = require('../helpers/postgres.helper');
 
 const COLUMN_MAP = {
     name: 'name',
+    description: 'description',
     identifier: 'identifier',
     active: 'active',
     dueDate: 'due_date',
@@ -41,8 +42,11 @@ function index() {
             created_at,
             updated_at,
             due_date,
-            notification_open
+            notification_open,
+            count(member_id) AS participants
         FROM event
+        LEFT JOIN event_participant ON event.id = event_id
+        GROUP BY id
         ORDER BY id
     `);
 }
@@ -90,6 +94,7 @@ function create(data) {
         return db.one(`
             INSERT INTO event (
                 name,
+                description,
                 identifier,
                 active,
                 due_date,
@@ -97,6 +102,7 @@ function create(data) {
                 notification_open
             ) VALUES (
                 $[name],
+                $[description],
                 $[identifier],
                 $[active],
                 $[dueDate],
@@ -108,7 +114,7 @@ function create(data) {
         return db.tx(transaction => {
             let addonQueries = data.addons.map(addon => {
                 return transaction.one(`
-                    INSERT INTO event_addon (event_id, capacity, product_id)
+                    INSERT INTO event_product (event_id, capacity, product_id)
                     VALUES ($1, $2, $3)
                     RETURNING *
                 `, [event.id, addon.capacity, addon.productId]);
@@ -142,7 +148,7 @@ function addParticipant(eventId, participant) {
         return db.tx(transaction => {
             return transaction.batch([
                 db.one(`
-                    UPDATE event_addon
+                    UPDATE event_product
                     SET capacity = (capacity - 1)
                     WHERE id IN ($1) AND capacity > 0
                     RETURNING id
@@ -151,20 +157,19 @@ function addParticipant(eventId, participant) {
                 db.one(`
                     INSERT INTO event_participant (
                         event_id,
-                        member_id,
-                        message
-                    ) VALUES ($1, $2, $3)
+                        member_id
+                    ) VALUES ($1, $2)
                     RETURNING member_id
-                `, [eventId, member.id, participant.message]),
+                `, [eventId, member.id]),
 
                 db.one(`
                     INSERT INTO payment (member_id, amount)
                     VALUES ($1, (
                         SELECT SUM(price)
                         FROM event
-                        LEFT JOIN event_addon ON (event.id = event_addon.event_id)
-                        LEFT JOIN product ON (event_addon.product_id = product.id)
-                        WHERE event_addon.id IN ($2:csv)
+                        LEFT JOIN event_product ON (event.id = event_product.event_id)
+                        LEFT JOIN product ON (event_product.product_id = product.id)
+                        WHERE event_product.id IN ($2:csv)
                         )
                     )
                     RETURNING id
@@ -173,10 +178,24 @@ function addParticipant(eventId, participant) {
         });
     }).then(transactionResult => {
         let payment = transactionResult[2];
+
         return db.none(`
-            INSERT INTO event_payment (event_id, payment_id)
-            VALUES ($1, $2)
-        `, [eventId, payment.id]);
+            INSERT INTO event_payment (event_id, payment_id, message)
+            VALUES ($1, $2, $3)
+        `, [eventId, payment.id, participant.message]).then(() => {
+            return db.tx(transaction => {
+                let queries = participant.addonIds.map(a => {
+                    return transaction.none(`
+                        INSERT INTO payment_product (payment_id, product_id)
+                        VALUES ($1, (
+                            SELECT product_id FROM event_product WHERE id = $2
+                        ))
+                    `, [payment.id, a]);
+                });
+
+                return transaction.batch(queries);
+            });
+        });
     });
 }
 
@@ -189,9 +208,9 @@ function findBy(data) {
             event.email_template_id,
             event.identifier,
             event.name,
-            array_agg(event_addon.id) AS addons
+            array_agg(event_product.id) AS addons
         FROM event
-        LEFT JOIN event_addon ON (event.id = event_addon.event_id)
+        LEFT JOIN event_product ON (event.id = event_product.event_id)
         WHERE ${wheres.clause}
         GROUP BY event.id
     `, wheres.data);
@@ -205,15 +224,15 @@ function findWithAddons(identifier) {
 
         return db.any(`
             SELECT
-                event_addon.id,
+                event_product.id,
                 name,
                 capacity,
                 price,
                 description,
                 attribute,
                 currency_code
-            FROM event_addon
-            LEFT JOIN product ON (event_addon.product_id = product.id)
+            FROM event_product
+            LEFT JOIN product ON (event_product.product_id = product.id)
             WHERE event_id = $1
         `, events[0].id).then(addons => {
             // Parse the price and capacity of each addon as an integer
@@ -239,15 +258,57 @@ function findWithAddons(identifier) {
 function get(id) {
     return db.oneOrNone(`
         SELECT
-            event.id,
-            event.identifier,
-            event.name,
-            array_agg(event_addon.id) AS addons
+            id,
+            identifier,
+            name,
+            description,
+            created_at,
+            due_date,
+            notification_open,
+            active
         FROM event
-        LEFT JOIN event_addon ON (event.id = event_addon.event_id)
         WHERE event.id = $1
-        GROUP BY event.id
-    `, id);
+    `, id).then(e => {
+        return db.task(t => {
+            return t.batch([
+                t.many(`
+                    SELECT product.id, product.name, product.price, capacity
+                    FROM event_product
+                    JOIN product ON product.id = event_product.product_id
+                    WHERE event_id = $1
+                    ORDER BY product.id
+                `, id),
+                t.any(`
+                    SELECT name, email
+                    FROM event_participant
+                    JOIN member ON member.id = member_id
+                    WHERE event_id = $1
+                `, id),
+                t.any(`
+                    SELECT email
+                    FROM member
+                    JOIN event_subscriber ON member.id = event_subscriber.member_id
+                    WHERE event_id = $1
+                `, id),
+                t.any(`
+                    SELECT name, email, amount, message, array_agg(payment_product.product_id) AS addons
+                    FROM event_payment
+                    JOIN payment ON event_payment.payment_id = payment.id
+                    JOIN member ON payment.member_id = member.id
+                    JOIN payment_product ON payment.id = payment_product.payment_id
+                    WHERE event_id = $1
+                    GROUP BY name, email, amount, message
+                `, id),
+            ]);
+        }).spread((addons, participants, subscribers, payments) => {
+            e.addons = addons;
+            e.participants = participants;
+            e.subscribers = subscribers;
+            e.payments = payments;
+
+            return Promise.resolve(e);
+        });
+    });
 }
 
 /**

@@ -8,7 +8,7 @@
 'use strict';
 
 var Event = require('../../models/event.model');
-var EventAddon = require('../../models/event-addon.model');
+var EventProduct = require('../../models/event-product.model');
 var EventParticipant = require('../../models/event-participant.model');
 var Product = require('../../models/product.model');
 var ProductType = require('../../models/product-type.model');
@@ -102,7 +102,7 @@ exports.create = function (req, res, next) {
             body: req.body.emailTemplate.body,
         },
         notificationOpen: req.body.notificationOpen == 1,
-        subscribers: req.body.subscribers,
+        subscribers: req.body.subscribers || [],
         addons: req.body.addons,
     };
 

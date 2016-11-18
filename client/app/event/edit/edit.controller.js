@@ -10,6 +10,26 @@ angular.module('ewbMemberApp')
     $scope.showSuccess = false;
     $scope.editEvent = $routeParams.id;
 
+    $scope.ev = {
+        identifier: 'identifier',
+        name: 'name',
+        description: 'description',
+        active: false,
+        dueDate: '2019-01-01',
+        contact: 'admin@admin.se',
+        addons: [{
+            name: 'name',
+            price: 1111,
+            description: 'description',
+            capacity: 111
+        }],
+        notificationOpen: false,
+        confirmationEmail: {
+            subject: 'subject',
+            body: 'body'
+        },
+    };
+
     if ($routeParams.id) {
         $http.get('/api/events/' + $routeParams.id).success(function(ev) {
             _.each(ev.addons, function(a) {
@@ -70,7 +90,7 @@ angular.module('ewbMemberApp')
             dueDate: $scope.ev.dueDate,
             contact: $scope.ev.contact,
             addons: $scope.ev.addons,
-            confirmationEmail: $scope.ev.confirmationEmail,
+            emailTemplate: $scope.ev.confirmationEmail,
             notificationOpen: $scope.ev.notificationOpen,
             subscribers: $scope.ev.subscribers,
         };

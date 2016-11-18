@@ -28,7 +28,7 @@
                 <div ng-show="ev.addons.length" ng-repeat="addon in ev.addons" ng-if="$index > 0">
                     <p><strong>Välj till</strong></p>
                     <label class="radio-inline control-label">
-                        <input type="checkbox" name="type" ng-value="addon._id" ng-model="participant.addons[addon._id]" ng-disabled="addon.capacity <= 0"/>
+                        <input type="checkbox" name="type" ng-value="addon.id" ng-model="participant.addons[addon.id]" ng-disabled="addon.capacity <= 0"/>
                         <span>{{addon.product.name}} för <strong>{{addon.product.price}} kr</strong></span>. <span ng-show="addon.capacity <= 0">Fullbokad!</span>
                         <p class="help-block" ng-show="addon.product.description" style="white-space: pre-wrap;">{{addon.product.description}}</p>
                     </label>

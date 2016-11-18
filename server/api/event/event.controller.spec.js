@@ -104,7 +104,7 @@ describe('Event controller', function() {
 
     afterEach(function(done) {
         db.any('DELETE FROM event').then(() => {
-            return db.any('DELETE FROM event_addon');
+            return db.any('DELETE FROM event_product');
         }).then(() => {
             return db.any('DELETE FROM event_subscriber');
         }).then(() => {

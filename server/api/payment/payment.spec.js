@@ -469,7 +469,7 @@ describe('Payment controller', function() {
 
         afterEach(function(done) {
             db.none(`DELETE FROM event`).then(() => {
-                return db.none(`DELETE FROM event_addon`)
+                return db.none(`DELETE FROM event_product`)
             }).then(() => {
                 return db.none(`DELETE FROM event_participant`)
             }).then(() => {

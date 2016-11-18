@@ -7,7 +7,7 @@ var db = require('../db').db;
 
 var EmailTemplate = require('./email-template.model');
 var Event = require('./event.model');
-var EventAddon = require('./event-addon.model');
+var EventProduct = require('./event-product.model');
 var Member = require('./member.model');
 var Product = require('./product.model');
 var ProductType = require('./product-type.model');
@@ -21,7 +21,7 @@ describe('Event model', function() {
 
     afterEach(function(done) {
         db.none(`DELETE FROM event`).then(() => {
-            return db.none(`DELETE FROM event_addon`)
+            return db.none(`DELETE FROM event_product`)
         }).then(() => {
             return db.none(`DELETE FROM event_participant`)
         }).then(() => {
@@ -540,7 +540,7 @@ describe('Event model', function() {
                 }],
                 subscribers: [],
             }).then(e => {
-                return EventAddon.create({
+                return EventProduct.create({
                     eventId: e.id,
                     capacity: 200,
                     price: 200,

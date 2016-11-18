@@ -5,6 +5,7 @@ let Promise = require('bluebird');
 
 let db = require('../db').db;
 
+let Event = require('../models/event.model');
 let Member = require('../models/member.model');
 let MemberType = require('../models/member-type.model');
 let Payment = require('../models/payment.model');
@@ -100,7 +101,47 @@ function insertProductPayments() {
             return Payment.create(payments);
         });
     })
+}
 
+function insertEvent() {
+    return ProductType.create(ProductType.EVENT).then(productType => {
+        return Event.create({
+            name: 'event',
+            identifier: 'identifier',
+            description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+            active: true,
+            dueDate: moment().add(1, 'month').toDate(),
+            notificationOpen: false,
+            emailTemplate: {
+                sender: 'ict@ingenjorerutangranser.se',
+                subject: 'subject',
+                body: 'body',
+            },
+            addons: [{
+                capacity: 100,
+                name: 'Free',
+                description: 'Free description',
+                price: 0,
+            }, {
+                capacity: 10,
+                name: 'Not free',
+                description: 'Not free description',
+                price: 10,
+            }],
+            subscribers: ['admin@admin.se'],
+        });
+    });
+}
+
+function insertParticipants() {
+    return Event.findWithAddons('identifier').then(e => {
+        return Event.addParticipant(e.id, {
+            name: 'Some Guy',
+            email: 'some@email.se',
+            addonIds: e.addons.map(a => { return a.id; }),
+            message: 'Message',
+        });
+    });
 }
 
 function empty() {
@@ -111,6 +152,12 @@ function empty() {
             t.any(`DELETE FROM member`),
             t.any(`DELETE FROM product`),
             t.any(`DELETE FROM product_type`),
+            t.any(`DELETE FROM event`),
+            t.any(`DELETE FROM event_product`),
+            t.any(`DELETE FROM event_payment`),
+            t.any(`DELETE FROM event_participant`),
+            t.any(`DELETE FROM event_subscriber`),
+            t.any(`DELETE FROM email_template`),
         ];
 
         return t.batch(queries);
@@ -127,6 +174,10 @@ function populate() {
         return insertProducts();
     }).then(() => {
         return insertProductPayments();
+    }).then(() => {
+        return insertEvent();
+    }).then(() => {
+        return insertParticipants();
     }).catch(err => {
         console.log('Error while seeding!');
         console.log(err);

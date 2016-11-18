@@ -121,6 +121,7 @@ CREATE TABLE email_template (
 CREATE TABLE event (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
+    description TEXT NOT NULL,
     identifier TEXT UNIQUE NOT NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -130,7 +131,7 @@ CREATE TABLE event (
     notification_open BOOLEAN NOT NULL DEFAULT TRUE
 );
 
-CREATE TABLE event_addon (
+CREATE TABLE event_product (
     id SERIAL PRIMARY KEY,
     event_id INTEGER REFERENCES event (id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
     capacity INTEGER NOT NULL CONSTRAINT positive_capacity CHECK (capacity >= 0),
@@ -144,11 +145,11 @@ CREATE TABLE event_subscriber (
 
 CREATE TABLE event_participant (
     event_id INTEGER REFERENCES event(id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
-    member_id INTEGER REFERENCES member(id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
-    message TEXT
+    member_id INTEGER REFERENCES member(id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL
 );
 
 CREATE TABLE event_payment (
     event_id INTEGER REFERENCES event(id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
-    payment_id INTEGER REFERENCES payment(id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL
+    payment_id INTEGER REFERENCES payment(id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
+    message TEXT
 );

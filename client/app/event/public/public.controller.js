@@ -46,7 +46,7 @@ angular.module('ewbMemberApp')
             params: { url: $routeParams.url },
         }).success(function(ev) {
             $scope.ev = ev;
-            $scope.ev.isPast = moment(ev.dueDate).endOf('day') < moment();
+            $scope.ev.isPast = moment(ev.due_date).endOf('day') < moment();
         }).error(function() {
             $location.path('/');
         });

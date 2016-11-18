@@ -1,7 +1,7 @@
 /**
- * Event addon model
+ * Event product model
  *
- * @namespace model.EventAddon
+ * @namespace model.EventProduct
  * @memberOf model
  */
 
@@ -21,11 +21,11 @@ const COLUMN_MAP = {
 };
 
 /**
- * Create event addon
+ * Create event product
  *
  * @memberOf model
- * @param {Object} data - Object of event addon attributes
- * @returns {Promise} Resolves to an event addon
+ * @param {Object} data - Object of event product attributes
+ * @returns {Promise} Resolves to an event product
  */
 function create(data) {
     return ProductType.find(ProductType.EVENT).then(pt => {
@@ -38,7 +38,7 @@ function create(data) {
         let {columns, wrapped} = postgresHelper.insert(COLUMN_MAP, data);
 
         return db.one(`
-            INSERT INTO event_addon (${columns})
+            INSERT INTO event_product (${columns})
             VALUES (${wrapped})
             RETURNING id, capacity
         `, data);
