@@ -427,15 +427,6 @@ describe('Member controller', function() {
                 });
         });
 
-        it('should respond with a bad request if missing params', function(done) {
-            agent.post('/api/members/reset-password-token')
-                .send({})
-                .expect(400)
-                .end((err, res) => {
-                    done(err);
-                });
-        });
-
         it('should allow any logged in to reset their password', function(done) {
             new Promise((resolve, reject) => {
                 agent.post('/api/members/reset-password')

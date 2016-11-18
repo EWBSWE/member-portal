@@ -79,11 +79,11 @@ angular.module('ewbMemberApp')
        * @param  {Function} callback    - optional
        * @return {Promise}
        */
-      changePassword: function(oldPassword, newPassword, callback) {
+      changePassword: function(password, newPassword, callback) {
         var cb = callback || angular.noop;
 
-        return User.changePassword({ id: currentUser._id }, {
-          oldPassword: oldPassword,
+        return User.changePassword({ id: currentUser.id }, {
+          password: password,
           newPassword: newPassword
         }, function(user) {
           return cb(user);

@@ -238,7 +238,7 @@ describe('Member', function() {
             };
 
             Member.create(someGuy).then(member => {
-                return Member.update(member.id, {password: 'short'});
+                return Member.update(member.id, {password: 'validpassword', newPassword: 'short'});
             }).catch(err => {
                 done();
             });
@@ -252,8 +252,22 @@ describe('Member', function() {
             };
 
             Member.create(someGuy).then(member => {
-                return Member.update(member.id, {password: 'alsovalidpassword'});
+                return Member.update(member.id, {password: 'validpassword', newPassword: 'alsovalidpassword'});
             }).then(() => {
+                done();
+            });
+        });
+
+        it('should fail to update members password', function(done) {
+            let someGuy = {
+                email: 'some@example.com',
+                role: 'user',
+                password: 'validpassword',
+            };
+
+            Member.create(someGuy).then(member => {
+                return Member.update(member.id, {password: 'invalidpassword', newPassword: 'alsovalidpassword'});
+            }).catch(err => {
                 done();
             });
         });

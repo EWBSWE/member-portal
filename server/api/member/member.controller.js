@@ -276,7 +276,10 @@ exports.resetPasswordWithToken = function(req, res, next) {
             return Promise.reject('Token invalid');
         }
 
-        return Member.update(member.id, { password: req.body.newPassword });
+        return Member.update(member.id, {
+            newPassword: req.body.newPassword,
+            resetToken: req.body.token
+        });
     }).then(member => {
         res.sendStatus(202);
     }).catch(err => {
