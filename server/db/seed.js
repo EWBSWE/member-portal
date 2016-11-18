@@ -26,7 +26,6 @@ function insertAuthenticatableMembers() {
 function insertDummyMembers() {
     let genders = ['male', 'female', 'other'];
 
-
     return MemberType.index().then(memberTypes => {
 
         let members = Array.apply(null, {length: 100}).map((_, index) => {
@@ -91,10 +90,10 @@ function insertProductPayments() {
             let payments = members.map((m, index) => {
                 let randomProduct = products[Math.floor(Math.random() * products.length)];
                 return {
-                    memberId: m.id,
+                    member: m,
                     amount: randomProduct.price,
-                    createdAt: moment().subtract(index + Math.floor(Math.random() * 100) + 1, 'days'),
-                    products: [randomProduct.id],
+                    createdAt: moment().subtract(index + Math.floor(Math.random() * 100) + 1, 'days').toDate(),
+                    products: [randomProduct],
                 };
             });
 

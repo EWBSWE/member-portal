@@ -101,7 +101,7 @@ function create(data) {
     });
 
     if (inputs.includes(null)) {
-        return Promise.reject('Missing attributes');
+        return Promise.reject('Payment: Missing attributes');
     }
 
     return db.tx(transaction => {

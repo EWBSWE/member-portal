@@ -58,15 +58,6 @@ VALUES
 ('StripeTransactionFeePercent', '0.014', 'Percentage of total transaction amount applied to each purchase.'),
 ('StripeTransactionFeeFlat', '1.8', 'Flat fee applied on each purchase');
 
--- Ewb Error
-CREATE TABLE ewb_error (
-    id SERIAL PRIMARY KEY,
-    message TEXT NOT NULL,
-    origin TEXT NOT NULL,
-    params JSONB NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
 -- Outgoing Message
 CREATE TABLE outgoing_message (
     id SERIAL PRIMARY KEY,
