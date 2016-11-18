@@ -118,8 +118,6 @@ describe('Payment controller', function() {
         }).then(() => {
             return db.none(`DELETE FROM outgoing_message`);
         }).then(() => {
-            return db.none(`DELETE FROM ewb_error`);
-        }).then(() => {
             return db.none(`DELETE FROM member_type`);
         }).then(() => {
             return db.none(`DELETE FROM payment`);

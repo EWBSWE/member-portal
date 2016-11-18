@@ -16,7 +16,6 @@ if (process.env.NODE_ENV === 'production') {
 
 var moment = require('moment');
 
-var ewbError = require('../../models/ewb-error.model');
 var Event = require('../../models/event.model');
 var Member = require('../../models/member.model');
 var OutgoingMessage = require('../../models/outgoing-message.model');
@@ -287,7 +286,6 @@ function processCharge(chargeAttributes, stripeToken, successCallback, errorCall
         if (err === null) {
             successCallback(charge);
         } else {
-            ewbError.create('Stripe process charge', __filename, err);
             errorCallback(err);
         }
     });

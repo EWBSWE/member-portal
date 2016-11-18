@@ -115,22 +115,6 @@ function validate(member) {
  * @returns {Promise<object,Error>} Resolves to the updated member
  */
 function update(id, data) {
-    let makeNewPassword = () => {
-        if (!validPassword(data.newPassword)) {
-            return Promise.reject('Invalid password');
-        }
-
-        let salt = makeSalt();
-        let hashedPassword = hashPassword(data.newPassword, salt);
-
-        Object.assign(data, {
-            hashedPassword: hashedPassword,
-            salt: salt,
-            resetValidity: null,
-            resetToken: null,
-        });
-    };
-
     return new Promise((resolve, reject) => {
         if (data.newPassword !== undefined && data.newPassword !== null && data.password !== undefined && data.password !== null) {
             db.one('SELECT hashed_password, salt FROM member WHERE id = $1', id).then(member => {
@@ -140,13 +124,39 @@ function update(id, data) {
 
                 return Promise.resolve();
             }).then(() => {
-                makeNewPassword();
+                if (!validPassword(data.newPassword)) {
+                    return Promise.reject('Invalid password');
+                }
+
+                let salt = makeSalt();
+                let hashedPassword = hashPassword(data.newPassword, salt);
+
+                Object.assign(data, {
+                    hashedPassword: hashedPassword,
+                    salt: salt,
+                    resetValidity: null,
+                    resetToken: null,
+                });
+
                 resolve();
             }).catch(err => {
                 reject(err);
             });
         } else if (data.newPassword !== undefined && data.newPassword !== null && data.resetToken !== undefined && data.resetToken !== null) {
-            makeNewPassword();
+            if (!validPassword(data.newPassword)) {
+                return Promise.reject('Invalid password');
+            }
+
+            let salt = makeSalt();
+            let hashedPassword = hashPassword(data.newPassword, salt);
+
+            Object.assign(data, {
+                hashedPassword: hashedPassword,
+                salt: salt,
+                resetValidity: null,
+                resetToken: null,
+            });
+
             resolve();
         } else {
             resolve();

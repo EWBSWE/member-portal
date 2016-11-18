@@ -109,7 +109,6 @@ function empty() {
         let queries = [
             t.any(`DELETE FROM payment`),
             t.any(`DELETE FROM payment_product`),
-            t.any(`DELETE FROM ewb_error`),
             t.any(`DELETE FROM member`),
             t.any(`DELETE FROM product`),
             t.any(`DELETE FROM product_type`),
