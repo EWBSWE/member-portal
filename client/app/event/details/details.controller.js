@@ -24,7 +24,7 @@ angular.module('ewbMemberApp')
 
     $scope.joinProducts = function(products) {
         var matchingAddons = _.filter($scope.ev.addons, function(addon) {
-            return _.include(products, addon.id);
+            return _.include(products, addon.product_id);
         });
 
         return _.map(matchingAddons, function(a) {
