@@ -22,11 +22,12 @@ exports.create = function (req, res, next) {
         eventId: req.params.id,
         name: req.body.name,
         price: req.body.price,
+        description: req.body.description,
         capacity: req.body.capacity,
     };
 
     EventProduct.create(data).then(a => {
-        res.sendStatus(201);
+        res.status(201).json(a);
     }).catch(err => {
         next(err);
     });

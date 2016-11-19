@@ -10,34 +10,38 @@ angular.module('ewbMemberApp')
     $scope.showSuccess = false;
     $scope.editEvent = $routeParams.id;
 
-    $scope.ev = {
-        identifier: 'identifier',
-        name: 'name',
-        description: 'description',
-        active: false,
-        dueDate: '2019-01-01',
-        contact: 'admin@admin.se',
-        addons: [{
+    if (!$scope.editEvent) {
+        $scope.ev = {
+            identifier: 'identifier',
             name: 'name',
-            price: 1111,
             description: 'description',
-            capacity: 111
-        }],
-        notificationOpen: false,
-        confirmationEmail: {
-            subject: 'subject',
-            body: 'body'
-        },
-    };
+            active: false,
+            dueDate: '2019-01-01',
+            contact: 'admin@admin.se',
+            addons: [{
+                name: 'name',
+                price: 1111,
+                description: 'description',
+                capacity: 111
+            }],
+            notificationOpen: false,
+            confirmationEmail: {
+                subject: 'subject',
+                body: 'body'
+            },
+        };
+    }
 
     if ($routeParams.id) {
         $http.get('/api/events/' + $routeParams.id).success(function(ev) {
             _.each(ev.addons, function(a) {
-                a.name = a.product.name;
-                a.price = a.product.price;
-                a.description = a.product.description;
+                a.price = +a.price;
             });
-            
+
+            ev.subscribers = _.map(ev.subscribers, function(s) {
+                return s.email;
+            });
+
             $scope.ev = ev;
             $scope.ev.dueDate = moment($scope.ev.dueDate).format('YYYY-MM-DD');
         });
@@ -113,8 +117,60 @@ angular.module('ewbMemberApp')
         }
     };
 
-    $scope.submitAddon = function() {
+    $scope.submitAddon = function(addonId) {
+        if (!$scope.editEvent) {
+            return;
+        }
+
+        if ($scope.ev.addons[addonId].id) {
+            var data = {
+                name: $scope.ev.addons[addonId].name,
+                description: $scope.ev.addons[addonId].description,
+                price: $scope.ev.addons[addonId].price,
+                capacity: $scope.ev.addons[addonId].capacity,
+            };
+
+            $http.put('/api/events/' + $scope.ev.id + '/addon/' + $scope.ev.addons[addonId].id, data).success(function(data, status) {
+                $scope.ev.addons[addonId].success = 'Sparat!';
+                $scope.ev.addons[addonId].error = null;
+            }).error(function(data, status) {
+                $scope.ev.addons[addonId].error = 'Misslyckades med uppdatering. Testa igen eller skicka ett mail till ict@ingenjorerutangranser.se.';
+                $scope.ev.addons[addonId].success = null;
+            });
+        } else {
+            var data = {
+                name: $scope.ev.addons[addonId].name,
+                description: $scope.ev.addons[addonId].description,
+                price: $scope.ev.addons[addonId].price,
+                capacity: $scope.ev.addons[addonId].capacity,
+            };
+
+            $http.post('/api/events/' + $scope.ev.id + '/addon', data).success(function(data, status) {
+                $scope.ev.addons[addonId].id = data.id;
+                $scope.ev.addons[addonId].success = 'Lagt till alternativ!';
+                $scope.ev.addons[addonId].error = null;
+            }).error(function(data, status) {
+                $scope.ev.addons[addonId].error = 'Misslyckades med tillägg. Testa igen eller skicka ett mail till ict@ingenjorerutangranser.se.';
+                $scope.ev.addons[addonId].success = null;
+            });
+        }
     };
+
+    $scope.deleteAddon = function(addonId) {
+        if (!$scope.editEvent) {
+            return;
+        }
+
+        if ($scope.ev.addons[addonId].id) {
+            $http.delete('/api/events/' + $scope.ev.id + '/addon/' + $scope.ev.addons[addonId].id).success(function(data, status) {
+                $scope.ev.addons.splice(addonId, 1);
+            }).error(function(data, status) {
+                $scope.ev.addons[addonId].error = 'Misslyckades med borttagning. Testa igen eller skicka ett mail till ict@ingenjorerutangranser.se.';
+            });
+        } else {
+            $scope.ev.addons.splice(addonId, 1);
+        }
+    }
 
     $scope.increaseAddons = function() {
         $scope.ev.addons.push({});

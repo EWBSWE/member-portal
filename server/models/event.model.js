@@ -261,7 +261,8 @@ function get(id) {
             created_at,
             due_date,
             notification_open,
-            active
+            active,
+            email_template_id
         FROM event
         WHERE event.id = $1
     `, id).then(e => {
@@ -272,7 +273,7 @@ function get(id) {
         return db.task(t => {
             return t.batch([
                 t.many(`
-                    SELECT event_product.id, product_id, product.name, product.price, capacity
+                    SELECT event_product.id, product_id, product.name, product.price, capacity, product.description
                     FROM event_product
                     JOIN product ON product.id = event_product.product_id
                     WHERE event_id = $1
@@ -299,12 +300,18 @@ function get(id) {
                     WHERE event_id = $1
                     GROUP BY name, email, amount, message
                 `, id),
+                t.one(`
+                    SELECT subject, body
+                    FROM email_template
+                    WHERE id = $1
+                `, e.email_template_id),
             ]);
-        }).spread((addons, participants, subscribers, payments) => {
+        }).spread((addons, participants, subscribers, payments, emailTemplate) => {
             e.addons = addons;
             e.participants = participants;
             e.subscribers = subscribers;
             e.payments = payments;
+            e.emailTemplate = emailTemplate;
 
             return Promise.resolve(e);
         });
