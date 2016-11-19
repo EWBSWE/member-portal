@@ -147,11 +147,10 @@ function addParticipant(eventId, participant) {
     }).then(member => {
         return db.tx(transaction => {
             return transaction.batch([
-                transaction.one(`
+                transaction.none(`
                     UPDATE event_product
                     SET capacity = (capacity - 1)
                     WHERE event_id = $1 AND id IN ($2:csv) AND capacity > 0
-                    RETURNING id
                 `, [eventId, participant.addonIds]),
                 transaction.one(`
                     INSERT INTO event_participant (event_id, member_id)

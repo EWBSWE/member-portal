@@ -10,8 +10,6 @@
 
             <p>Sista anmälningsdag: <strong>{{ev.dueDate | amDateFormat: 'YYYY-MM-DD'}}</strong></p>
 
-            <p>Kontakt: {{ev.contact}}</p>
-
             <a href="http://www.ingenjorerutangranser.se">
                 <img class="logo" src="/assets/images/ewb-logo.png" alt="Logo" />
             </a>
@@ -21,16 +19,16 @@
             <p class="bg-warning" ng-show="!ev.notificationOpen" style="padding: 20px; border-radius: 5px;">Anmälan är stängd.</p>
             <form novalidate name="form" class="payment-form">
                 <p>
-                    Delta i <strong>{{ev.addons[0].product.name}}</strong> för en kostnad på <strong>{{ev.addons[0].product.price}} kr</strong></span>.
+                    Delta i <strong>{{ev.addons[0].name}}</strong> för en kostnad på <strong>{{ev.addons[0].price}} kr</strong></span>.
                 </p>
-                <p class="help-block" ng-show="ev.addons[0].product.description" style="white-space: pre-wrap;">{{ev.addons[0].product.description}}</p>
+                <p class="help-block" ng-show="ev.addons[0].description" style="white-space: pre-wrap;">{{ev.addons[0].description}}</p>
 
                 <div ng-show="ev.addons.length" ng-repeat="addon in ev.addons" ng-if="$index > 0">
                     <p><strong>Välj till</strong></p>
                     <label class="radio-inline control-label">
                         <input type="checkbox" name="type" ng-value="addon.id" ng-model="participant.addons[addon.id]" ng-disabled="addon.capacity <= 0"/>
-                        <span>{{addon.product.name}} för <strong>{{addon.product.price}} kr</strong></span>. <span ng-show="addon.capacity <= 0">Fullbokad!</span>
-                        <p class="help-block" ng-show="addon.product.description" style="white-space: pre-wrap;">{{addon.product.description}}</p>
+                        <span>{{addon.name}} för <strong>{{addon.price}} kr</strong></span>. <span ng-show="addon.capacity <= 0">Fullbokad!</span>
+                        <p class="help-block" ng-show="addon.description" style="white-space: pre-wrap;">{{addon.description}}</p>
                     </label>
                 </div>
 
