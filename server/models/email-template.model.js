@@ -40,6 +40,30 @@ function create(data) {
     return db.one(sql, data);
 }
 
+/**
+ * Update email template
+ *
+ * @memberOf model.EmailTemplate
+ * @param {Number} id - Email template id
+ * @param {Object} data - Contains email template attributes
+ * @returns {Promise<Object|Error>} Resolves to an object.
+ */
+function update(id, data) {
+    let mapped = postgresHelper.update(COLUMN_MAP, data);
+
+    if (mapped === null) {
+        return Promise.reject('No attributes to update');
+    }
+
+    return db.one(`
+        UPDATE email_template
+        SET ${mapped}
+        WHERE id = $[id]
+        RETURNING *
+    `, Object.assign(data, {id: id}));
+}
+
 module.exports = {
     create: create,
+    update: update,
 };

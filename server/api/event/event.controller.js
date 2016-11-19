@@ -109,7 +109,6 @@ exports.create = function (req, res, next) {
     Event.create(data).then(event => {
         res.sendStatus(201);
     }).catch(err => {
-        console.log(err);
         next(err);
     });
 };
@@ -123,7 +122,21 @@ exports.create = function (req, res, next) {
  * @param {Object} next - Express error function
  */
 exports.update = function(req, res, next) {
-    Event.update(req.params.id, req.body).then(event => {
+    let data = {
+        name: req.body.name,
+        identifier: req.body.identifier,
+        description: req.body.description,
+        active: req.body.active,
+        notificationOpen: req.body.notificationOpen,
+        dueDate: req.body.dueDate,
+        subscribers: req.body.subscribers,
+        emailTemplate: {
+            subject: req.body.emailTemplate.subject,
+            body: req.body.emailTemplate.body,
+        },
+    };
+
+    Event.update(req.params.id, data).then(event => {
         res.sendStatus(202);
     }).catch(err => {
         next(err);
@@ -148,7 +161,6 @@ exports.addParticipant = function(req, res, next) {
     Event.addParticipant(req.params.id, participant).then(() => {
         res.sendStatus(200);
     }).catch(err => {
-        console.log(err);
         next(err);
     });
 };

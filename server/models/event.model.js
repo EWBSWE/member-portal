@@ -349,7 +349,15 @@ function update(id, data) {
         SET ${mapped}
         WHERE id = $[id]
         RETURNING *
-    `, Object.assign(data, {id: id}));
+    `, Object.assign(data, {id: id})).then(e => {
+        if (data.emailTemplate) {
+            return EmailTemplate.update(e.email_template_id, data.emailTemplate).then(() => {
+                return Promise.resolve(e);
+            });
+        }
+
+        return Promise.resolve(e);
+    });
 }
 
 module.exports = {
