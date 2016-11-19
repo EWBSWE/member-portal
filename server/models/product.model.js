@@ -109,8 +109,23 @@ function findByProductTypeId(id) {
     `, id);
 }
 
+function update(id, data) {
+    let mapped = postgresHelper.update(COLUMN_MAP, data);
+    if (mapped === null) {
+        return Promise.reject('Product: No attributes to update');
+    }
+
+    return db.one(`
+        UPDATE product
+        SET ${mapped}
+        WHERE id = $[id]
+        RETURNING *
+    `, Object.assign(data, { id }));
+}
+
 module.exports = {
     get: get,
     create: create,
     findByProductTypeId: findByProductTypeId,
+    update: update,
 };

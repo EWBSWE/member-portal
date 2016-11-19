@@ -113,6 +113,9 @@ angular.module('ewbMemberApp')
         }
     };
 
+    $scope.submitAddon = function() {
+    };
+
     $scope.increaseAddons = function() {
         $scope.ev.addons.push({});
     };

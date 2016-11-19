@@ -74,6 +74,7 @@ describe('Event controller', function() {
                     active: true,
                     notificationOpen: true,
                     identifier: 'identifier',
+                    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                     dueDate: moment().add(1, 'month'),
                     emailTemplate: {
                         sender: 'noreply@ingenjorerutangranser.se',
@@ -396,7 +397,7 @@ describe('Event controller', function() {
                         .query({ access_token: token })
                         .send({
                             email: 'participant@example.com',
-                            addonIds: [ewbEvent.addons[0]],
+                            addonIds: [ewbEvent.addons[0].id],
                             message: 'No message',
                         })
                         .expect(testCase.expectCode)

@@ -46,6 +46,7 @@ describe('Event model', function() {
                 return Event.create({
                     name: 'event',
                     identifier: 'identifier',
+                    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                     active: true,
                     dueDate: moment().add(1, 'month').toDate(),
                     notificationOpen: false,
@@ -75,6 +76,7 @@ describe('Event model', function() {
             Event.create({
                 name: 'event',
                 identifier: 'identifier',
+                description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                 active: true,
                 dueDate: moment().add(1, 'month').toDate(),
                 notificationOpen: false,
@@ -118,6 +120,7 @@ describe('Event model', function() {
         it('should fail to create event with no identifier', function(done) {
             Event.create({
                 name: 'event',
+                description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                 active: true,
                 dueDate: moment().add(1, 'month').toDate(),
                 notificationOpen: false,
@@ -151,6 +154,7 @@ describe('Event model', function() {
                 name: 'event',
                 active: true,
                 identifier: 'identifier',
+                description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                 dueDate: moment().add(1, 'month').toDate(),
                 notificationOpen: false,
                 emailTemplate: {},
@@ -179,6 +183,7 @@ describe('Event model', function() {
                 name: 'event',
                 active: true,
                 identifier: 'identifier',
+                description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                 dueDate: moment().add(1, 'month').toDate(),
                 notificationOpen: false,
                 emailTemplate: {
@@ -212,6 +217,7 @@ describe('Event model', function() {
                     name: 'event',
                     active: true,
                     identifier: 'identifier',
+                    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                     dueDate: moment().add(1, 'month').toDate(),
                     notificationOpen: false,
                     emailTemplate: {
@@ -236,6 +242,7 @@ describe('Event model', function() {
                 return Event.create({
                     name: 'event',
                     identifier: 'identifier',
+                    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                     active: true,
                     dueDate: moment().add(1, 'month').toDate(),
                     notificationOpen: false,
@@ -266,6 +273,7 @@ describe('Event model', function() {
                 return Event.create({
                     name: 'event',
                     identifier: 'identifier',
+                    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                     active: true,
                     dueDate: moment().add(1, 'month').toDate(),
                     notificationOpen: false,
@@ -297,6 +305,7 @@ describe('Event model', function() {
             Event.create({
                 name: 'event',
                 identifier: 'identifier',
+                description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                 active: true,
                 dueDate: moment().add(1, 'month').toDate(),
                 notificationOpen: false,
@@ -325,6 +334,7 @@ describe('Event model', function() {
             Event.create({
                 name: 'event',
                 identifier: 'identifier',
+                description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                 active: true,
                 dueDate: moment().add(1, 'month').toDate(),
                 notificationOpen: false,
@@ -353,6 +363,7 @@ describe('Event model', function() {
             Event.create({
                 name: 'event',
                 identifier: 'identifier',
+                description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                 active: true,
                 dueDate: moment().add(1, 'month').toDate(),
                 notificationOpen: false,
@@ -385,6 +396,7 @@ describe('Event model', function() {
             Event.create({
                 name: 'event',
                 identifier: 'identifier',
+                description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                 active: true,
                 dueDate: moment().add(1, 'month').toDate(),
                 notificationOpen: false,
@@ -418,6 +430,7 @@ describe('Event model', function() {
             Event.create({
                 name: 'event',
                 identifier: 'identifier',
+                description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                 active: true,
                 dueDate: moment().add(1, 'month').toDate(),
                 notificationOpen: false,
@@ -451,6 +464,7 @@ describe('Event model', function() {
             Event.create({
                 name: 'event',
                 identifier: 'identifier',
+                description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                 active: true,
                 dueDate: moment().add(1, 'month').toDate(),
                 notificationOpen: false,
@@ -490,6 +504,7 @@ describe('Event model', function() {
             Event.create({
                 name: 'event',
                 identifier: 'identifier',
+                description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                 active: true,
                 dueDate: moment().add(1, 'month').toDate(),
                 notificationOpen: false,
@@ -524,6 +539,7 @@ describe('Event model', function() {
             Event.create({
                 name: 'event',
                 identifier: 'identifier',
+                description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                 active: true,
                 dueDate: moment().add(1, 'month').toDate(),
                 notificationOpen: false,
@@ -565,6 +581,7 @@ describe('Event model', function() {
             Event.create({
                 name: 'event',
                 identifier: 'identifier',
+                description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                 active: true,
                 dueDate: moment().add(1, 'month').toDate(),
                 notificationOpen: false,
@@ -593,6 +610,7 @@ describe('Event model', function() {
             Event.create({
                 name: 'event',
                 identifier: 'identifier',
+                description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                 active: true,
                 dueDate: moment().add(1, 'month').toDate(),
                 notificationOpen: false,
@@ -627,6 +645,7 @@ describe('Event model', function() {
             Event.create({
                 name: 'event',
                 identifier: 'identifier',
+                description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                 active: true,
                 dueDate: moment().add(1, 'month').toDate(),
                 notificationOpen: false,
@@ -647,7 +666,7 @@ describe('Event model', function() {
             }).then(e => {
                 return Event.addParticipant(e.id, {
                     email: 'name@example.com',
-                    addonIds: [e.addons[0]],
+                    addonIds: [e.addons[0].id],
                 });
             }).then(() => {
                 return Event.findWithAddons('identifier');
@@ -663,6 +682,7 @@ describe('Event model', function() {
                 return Event.create({
                     name: 'event',
                     identifier: 'identifier',
+                    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                     active: true,
                     dueDate: moment().add(1, 'month').toDate(),
                     notificationOpen: false,
@@ -684,7 +704,7 @@ describe('Event model', function() {
             }).then(e => {
                 return Event.addParticipant(e.id, {
                     email: 'some@example.com',
-                    addonIds: [e.addons[0]],
+                    addonIds: [e.addons[0].id],
                 });
             }).then(() => {
                 return Event.findWithAddons('identifier');
@@ -699,6 +719,7 @@ describe('Event model', function() {
             Event.create({
                 name: 'event',
                 identifier: 'identifier',
+                description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                 active: true,
                 dueDate: moment().add(1, 'month').toDate(),
                 notificationOpen: false,
@@ -719,7 +740,7 @@ describe('Event model', function() {
             }).then(e => {
                 return Event.addParticipant(e.id, {
                     email: 'name@example.com',
-                    addonIds: [e.addons[0]],
+                    addonIds: [e.addons[0].id],
                 });
             }).catch(err => {
                 done();

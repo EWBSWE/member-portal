@@ -147,33 +147,29 @@ function addParticipant(eventId, participant) {
     }).then(member => {
         return db.tx(transaction => {
             return transaction.batch([
-                db.one(`
+                transaction.one(`
                     UPDATE event_product
                     SET capacity = (capacity - 1)
-                    WHERE id IN ($1) AND capacity > 0
+                    WHERE event_id = $1 AND id IN ($2:csv) AND capacity > 0
                     RETURNING id
-                `, participant.addonIds),
-
-                db.one(`
-                    INSERT INTO event_participant (
-                        event_id,
-                        member_id
-                    ) VALUES ($1, $2)
+                `, [eventId, participant.addonIds]),
+                transaction.one(`
+                    INSERT INTO event_participant (event_id, member_id)
+                    VALUES ($1, $2)
                     RETURNING member_id
                 `, [eventId, member.id]),
-
-                db.one(`
+                transaction.one(`
                     INSERT INTO payment (member_id, amount)
                     VALUES ($1, (
                         SELECT SUM(price)
                         FROM event
                         LEFT JOIN event_product ON (event.id = event_product.event_id)
                         LEFT JOIN product ON (event_product.product_id = product.id)
-                        WHERE event_product.id IN ($2:csv)
+                        WHERE event.id = $2 AND event_product.id IN ($3:csv)
                         )
                     )
                     RETURNING id
-                `, [member.id, participant.addonIds])
+                `, [member.id, eventId, participant.addonIds])
             ]);
         });
     }).then(transactionResult => {
@@ -269,10 +265,14 @@ function get(id) {
         FROM event
         WHERE event.id = $1
     `, id).then(e => {
+        if (e === null) {
+            return null;
+        }
+
         return db.task(t => {
             return t.batch([
                 t.many(`
-                    SELECT product.id, product.name, product.price, capacity
+                    SELECT event_product.id, product_id, product.name, product.price, capacity
                     FROM event_product
                     JOIN product ON product.id = event_product.product_id
                     WHERE event_id = $1
