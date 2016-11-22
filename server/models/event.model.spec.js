@@ -27,6 +27,8 @@ describe('Event model', function() {
         }).then(() => {
             return db.none(`DELETE FROM event_payment`);
         }).then(() => {
+            return db.none(`DELETE FROM payment`);
+        }).then(() => {
             return db.none(`DELETE FROM product`);
         }).then(() => {
             return db.none(`DELETE FROM product_type`);
@@ -712,6 +714,8 @@ describe('Event model', function() {
                 expect(e.addons[0].capacity).to.equal(99);
 
                 done();
+            }).catch(err => {
+                done(err);
             });
         });
 

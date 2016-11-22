@@ -162,9 +162,6 @@ exports.confirmEventPayment = function(req, res, next) {
         let selectedAddons = event.addons.filter(addon => { return req.body.addonIds.includes(addon.id); });
         let sum = selectedAddons.reduce((total, addon) => { return total + addon.price; }, 0);
 
-        console.log('selected addons', selectedAddons, sum);
-        console.log(req.body);
-
         if (sum === 0) {
             return Promise.resolve(event);
         } else {

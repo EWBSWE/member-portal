@@ -127,23 +127,10 @@ exports.create = function (req, res, next) {
  * @param {Object} next - Express error function
  */
 exports.update = function(req, res, next) {
-    let data = {
-        name: req.body.name,
-        identifier: req.body.identifier,
-        description: req.body.description,
-        active: req.body.active,
-        notificationOpen: req.body.notificationOpen,
-        dueDate: req.body.dueDate,
-        subscribers: req.body.subscribers,
-        emailTemplate: {
-            subject: req.body.emailTemplate.subject,
-            body: req.body.emailTemplate.body,
-        },
-    };
-
-    Event.update(req.params.id, data).then(event => {
+    Event.update(req.params.id, req.body).then(event => {
         res.sendStatus(202);
     }).catch(err => {
+        console.log(err);
         next(err);
     });
 };
