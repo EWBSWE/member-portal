@@ -1,125 +1,137 @@
 <div ng-include="'components/navbar/navbar.html'"></div>
 
 <header class="hero-unit" id="banner">
-  <div class="container">
-    <h1>Bulk add members</h1>
-  </div>
+    <div class="container">
+        <h1>Bulk add members</h1>
+    </div>
 </header>
 
 <div class="container">
-  <form class="member-form">
-    <div class="bg-success" ng-show="validMembers.length > 0 || updatedMembers.length > 0">
-      <div class="new-members" ng-show="validMembers.length > 0">
-        <p>Tillagda medlemmar:</p>
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <td>Id</td>
-              <td>Name</td>
-              <td>Epost</td>
-              <td>Ort</td>
-              <td>Yrke</td>
-              <td>Utbildning</td>
-              <td>Typ</td>
-              <td>Kön</td>
-              <td>Födelseår</td>
-              <td>Created at</td>
-              <td>Member until</td>
-            </tr>
-          </thead>
-          <tbody ng-repeat="member in validMembers">
-            <tr>
-              <td>{{member._id}}</td>
-              <td>{{member.name}}</td>
-              <td>{{member.email}}</td>
-              <td>{{member.location}}</td>
-              <td>{{member.profession}}</td>
-              <td>{{member.education}}</td>
-              <td>{{member.type}}</td>
-              <td>{{member.gender}}</td>
-              <td>{{member.yearOfBirth}}</td>
-              <td>{{member.createdAt | amDateFormat: 'YYYY-MM-DD'}}</td>
-              <td>{{member.expirationDate | amDateFormat: 'YYYY-MM-DD'}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="updated-members" ng-show="updatedMembers.length > 0">
-        <p>Uppdaterade medlemmar:</p>
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <td>Id</td>
-              <td>Name</td>
-              <td>Epost</td>
-              <td>Ort</td>
-              <td>Yrke</td>
-              <td>Utbildning</td>
-              <td>Typ</td>
-              <td>Kön</td>
-              <td>Födelseår</td>
-              <td>Created at</td>
-              <td>Member until</td>
-            </tr>
-          </thead>
-          <tbody ng-repeat="member in updatedMembers">
-            <tr>
-              <td>{{member._id}}</td>
-              <td>{{member.name}}</td>
-              <td>{{member.email}}</td>
-              <td>{{member.location}}</td>
-              <td>{{member.profession}}</td>
-              <td>{{member.education}}</td>
-              <td>{{member.type}}</td>
-              <td>{{member.gender}}</td>
-              <td>{{member.yearOfBirth}}</td>
-              <td>{{member.createdAt | amDateFormat: 'YYYY-MM-DD'}}</td>
-              <td>{{member.expirationDate | amDateFormat: 'YYYY-MM-DD'}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <div class="bg-danger" ng-show="invalidMembers.length > 0">
-      <p>Misslyckades med följande medlemmar:</p>
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <td>Input data</td>
-          </tr>
-        </thead>
-        <tbody ng-repeat="member in invalidMembers">
-          <tr>
-            <td>{{member.raw}}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <p>
-      Mata in en medlem på varje rad enligt formen
-    </p>
-    <p class="bg-info">
-      Längd är det antal dagar som medlemskapet anses vara aktiv och skrivs med positiva heltal. 365 = 1 år, 1095 = 3 år.
-    </p>
-    <pre>
+    <form class="member-form">
+        <div class="bg-success" ng-show="validMembers.length > 0 || updatedMembers.length > 0">
+            <div class="new-members" ng-show="validMembers.length > 0">
+                <p>Tillagda medlemmar:</p>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <td>Id</td>
+                            <td>Name</td>
+                            <td>Epost</td>
+                            <td>Ort</td>
+                            <td>Yrke</td>
+                            <td>Utbildning</td>
+                            <td>Typ</td>
+                            <td>Kön</td>
+                            <td>Födelseår</td>
+                            <td>Member until</td>
+                        </tr>
+                    </thead>
+                    <tbody ng-repeat="member in validMembers">
+                        <tr>
+                            <td>{{member.id}}</td>
+                            <td>{{member.name}}</td>
+                            <td>{{member.email}}</td>
+                            <td>{{member.location}}</td>
+                            <td>{{member.profession}}</td>
+                            <td>{{member.education}}</td>
+                            <td>{{member.memberType}}</td>
+                            <td>{{member.gender}}</td>
+                            <td>{{member.yearOfBirth}}</td>
+                            <td>{{member.expirationDate | amDateFormat: 'YYYY-MM-DD'}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="updated-members" ng-show="updatedMembers.length > 0">
+                <p>Uppdaterade medlemmar:</p>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <td>Id</td>
+                            <td>Name</td>
+                            <td>Epost</td>
+                            <td>Ort</td>
+                            <td>Yrke</td>
+                            <td>Utbildning</td>
+                            <td>Typ</td>
+                            <td>Kön</td>
+                            <td>Födelseår</td>
+                            <td>Member until</td>
+                        </tr>
+                    </thead>
+                    <tbody ng-repeat="member in updatedMembers">
+                        <tr>
+                            <td>{{member.id}}</td>
+                            <td>{{member.name}}</td>
+                            <td>{{member.email}}</td>
+                            <td>{{member.location}}</td>
+                            <td>{{member.profession}}</td>
+                            <td>{{member.education}}</td>
+                            <td>{{member.memberType}}</td>
+                            <td>{{member.gender}}</td>
+                            <td>{{member.yearOfBirth}}</td>
+                            <td>{{member.expirationDate | amDateFormat: 'YYYY-MM-DD'}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="bg-danger" ng-show="invalidMembers.length > 0">
+            <p>Misslyckades med följande medlemmar:</p>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <td>Name</td>
+                        <td>Epost</td>
+                        <td>Ort</td>
+                        <td>Yrke</td>
+                        <td>Utbildning</td>
+                        <td>Typ</td>
+                        <td>Kön</td>
+                        <td>Födelseår</td>
+                        <td>Member until</td>
+                    </tr>
+                </thead>
+                <tbody ng-repeat="member in invalidMembers">
+                    <tr>
+                        <td>{{member.name}}</td>
+                        <td>{{member.email}}</td>
+                        <td>{{member.location}}</td>
+                        <td>{{member.profession}}</td>
+                        <td>{{member.education}}</td>
+                        <td>{{member.memberType}}</td>
+                        <td>{{member.gender}}</td>
+                        <td>{{member.yearOfBirth}}</td>
+                        <td>{{member.expirationDate | amDateFormat: 'YYYY-MM-DD'}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p>
+        Mata in en medlem på varje rad enligt formen
+        </p>
+        <p class="bg-info">
+        Längd är det antal dagar som medlemskapet anses vara aktiv och skrivs med positiva heltal. 365 = 1 år, 1095 = 3 år.
+        </p>
+        <pre>
       namn, epost, ort, yrke, utbildning, student, male, födelseår, längd
       namn, epost, ort, yrke, utbildning, working, female, födelseår, längd
       namn, epost, ort, yrke, utbildning, senior, other, födelseår, längd
       ...
-    </pre>
-    <p>
-      Till exempel
-    </p>
-    <pre>
+        </pre>
+        <p>
+        Till exempel
+        </p>
+        <pre>
       Glenn Hysen, glenn@hysen.com, Göteborg, Dansgubbe, Fotbollsskola, senior, male, 1959, 365
       Tobias Hysen, tobias@hysen.com, Kina, Fotbollsproffs, Fotbollsskola, working, male, 1982, 1095
-    </pre>
-    <div class="form-group">
-      <label for="inputEmail">Medlemmar</label>
-      <textarea type="text" name="inputCSV" class="form-control" id="inputCSV" rows="10" ng-model="csv"></textarea>
-    </div>
-    <span class="input-group-btn">
-      <button type="submit" class="btn btn-primary" ng-click="addMembers()">Lägg till medlemmar</button>
-    </span>
-  </form>
+        </pre>
+        <div class="form-group">
+            <label for="inputEmail">Medlemmar</label>
+            <textarea type="text" name="inputCSV" class="form-control" id="inputCSV" rows="10" ng-model="csv"></textarea>
+        </div>
+        <span class="input-group-btn">
+            <button type="submit" class="btn btn-primary" ng-click="addMembers()">Lägg till medlemmar</button>
+        </span>
+    </form>
 </div>

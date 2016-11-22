@@ -140,7 +140,9 @@ exports.destroy = function(req, res, next) {
 
 exports.bulkCreate = function(req, res, next) {
     if (!req.body.members) {
-        return next(routeHelper.badRequest());
+        let badRequest = new Error('Bad request.');
+        badRequest.status = 400;
+        return next(badRequest);
     }
 
     let roles = req.body.members.map(m => { return m.role });
@@ -152,24 +154,39 @@ exports.bulkCreate = function(req, res, next) {
 
     Member.findBy({ email: emails }).then(members => {
         // First we filter out any existing members
-        let existing = members.map(m => { return m.email; });
+        let existingMembers = members.map(m => { return m.email; });
 
         // Filter out members that do not exists yet and has valid
         // attributes
-        let valid = req.body.members.filter(m => {
-            return !existing.includes(m.email) && Member.validate(m);
+        let toCreate = req.body.members.filter(m => {
+            return !existingMembers.includes(m.email) && Member.validate(m);
+        });
+
+        let toUpdate = req.body.members.filter(m => {
+            return existingMembers.includes(m.email);
+        }).map(m => {
+            // Should always find someone since we already filtered out
+            // existing members.
+            let current = members.filter(c => { return c.email === m.email; })[0];
+
+            // Map id to its respective input
+            return Object.assign(m, { id: current.id });
         });
 
         // Filter out the remaining invalid members
-        let invalid = req.body.members.filter(m => {
+        let toReject = req.body.members.filter(m => {
             return !Member.validate(m);
         });
 
-        return Member.create(valid).then(created => {
+        return Member.create(toCreate).then(created => {
+            let updates = toUpdate.map(m => { return Member.update(m.id, m)});
+
+            return Promise.all(updates);
+        }).then(() => {
             res.status(201).json({
-                existing: existing,
-                created: created,
-                invalid: invalid,
+                updated: toUpdate,
+                created: toCreate,
+                invalid: toReject,
             });
         });
     }).catch(err => {
