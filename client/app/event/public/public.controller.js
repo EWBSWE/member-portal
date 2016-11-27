@@ -77,8 +77,10 @@ angular.module('ewbMemberApp')
 
         var sum = 0;
         for (var i = 0; i < selectedAddons.length; i++) {
-            sum += selectedAddons[i].price;
+            sum += parseInt(selectedAddons[i].price);
         }
+
+        console.log(sum, selectedAddons);
 
         if (sum === 0) {
             callback(null);
