@@ -288,10 +288,7 @@ describe('Member', function() {
                     email: 'new@example.com',
                     expirationDate: moment().add(1, 'year'),
                 }).then(m => {
-                    return Member.extendMembership({
-                        email: 'new@example.com',
-                        name: 'Some name',
-                    }, p);
+                    return Member.extendMembership(m, p);
                 });
             }).then(m => {
                 let diff = moment(m.expiration_date).diff(moment(), 'days');
@@ -302,7 +299,7 @@ describe('Member', function() {
             });
         });
 
-        it('should create a member and extend a members membership', function(done) {
+        it('should fail to extend a membership if missing member id', function(done) {
             ProductType.create(ProductType.MEMBERSHIP).then(pt => {
                 return Product.create({
                     name: 'Membership 1 year',
@@ -314,15 +311,8 @@ describe('Member', function() {
                     productTypeId: pt.id,
                 });
             }).then(p => {
-                return Member.extendMembership({
-                    email: 'new@example.com',
-                    name: 'Some name',
-                }, p);
-            }).then(m => {
-                let diff = moment(m.expiration_date).diff(moment(), 'days');
-
-                expect(diff).to.equal(364);
-
+                return Member.extendMembership({}, p);
+            }).catch(() => {
                 done();
             });
         });

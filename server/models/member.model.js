@@ -304,22 +304,18 @@ function findBy(data) {
     `, wheres.data);
 }
 
-function extendMembership(memberData, product) {
-    return findBy({ email: memberData.email }).then(members => {
-        if (members.length === 0) {
-            return create(memberData);
-        }
-        
-        return Promise.resolve(members[0]);
-    }).then(member => {
-        if (member.expiration_date !== null) {
-            memberData.expirationDate = moment(member.expiration_date).add(product.attribute.days, 'days').toDate();
-        } else {
-            memberData.expirationDate = moment().add(product.attribute.days, 'days').toDate();
-        }
+function extendMembership(member, product) {
+    if (!member.id) {
+        throw 'Missing id';
+    }
 
-        return update(member.id, memberData);
-    });
+    let expirationDate = moment().add(product.attribute.days, 'days').toDate();
+
+    if (member.expiration_date !== null) {
+        expirationDate = moment(member.expiration_date).add(product.attribute.days, 'days').toDate();
+    }
+
+    return update(member.id, {expirationDate: expirationDate});
 }
 
 module.exports = {

@@ -74,6 +74,8 @@ exports.confirmMembershipPayment = function(req, res, next) {
         return next(badRequest);
     }
 
+    winston.info('Initiating membership payment');
+
     let memberData = {
         email: req.body.email.trim(),
         name: req.body.name,
@@ -86,29 +88,58 @@ exports.confirmMembershipPayment = function(req, res, next) {
     };
 
     Product.get(req.body.productId).then(product => {
+        winston.info('membership product', product);
+
         return new Promise((resolve, reject) => {
+            winston.info('processing charge');
+
             processCharge({
                 currency: product.currency_code,
                 amount: product.price,
                 description: product.name
             }, req.body.stripeToken, () => {
+                winston.info('stripe processing successful');
                 resolve(product);
             }, err => {
+                winston.info('stripe processing failed');
                 let badRequest = new Error('Stripe rejected');
                 badRequest.status = 400;
-                next(badRequest);
+                reject(badRequest);
             });
         });
     }).then(product => {
-        return Member.extendMembership(memberData, product).then(member => {
-            return Payment.create({
-                member: member,
-                products: [product],
+        return Member.findBy({ email: memberData.email }).then(members => {
+            if (members.length === 0) {
+                winston.info('new member, creating');
+                return Member.create(memberData);
+            }
+
+            winston.info('existing member, updating', {expirationDate: members[0].expiration_date});
+            return Member.update(members[0].id, memberData);
+        }).then(member => {
+            winston.info('extending membership');
+            return Member.extendMembership(member, product).then(member => {
+                winston.info('new end date', {expirationDate: member.expiration_date});
+                return Payment.create({
+                    member: member,
+                    products: [product],
+                }).then(() => {
+                    winston.info('create confirmation mail');
+                    let mail = {
+                        sender: ewbMail.sender(),
+                        recipient: memberData.email,
+                        subject: ewbMail.getSubject('membership'),
+                        body: ewbMail.getBody('membership', { expirationDate: moment(member.expiration_date).format('YYYY-MM-DD') }),
+                    };
+
+                    return OutgoingMessage.create(mail);
+                });
             });
         }).then(() => {
             return Promise.resolve(product);
         });
     }).then(product => {
+        winston.info('create receipt mail');
         let receiptMail = {
             sender: ewbMail.sender(),
             recipient: memberData.email,
@@ -122,17 +153,9 @@ exports.confirmMembershipPayment = function(req, res, next) {
             }),
         };
 
-        let confirmationMail = {
-            sender: ewbMail.sender(),
-            recipient: memberData.email,
-            subject: 'foo', // TODO fix me
-            body: 'bar', // TODO fix me
-        };
-
-        return OutgoingMessage.create(receiptMail).then(() => {
-            return OutgoingMessage.create(confirmationMail);
-        });
+        return OutgoingMessage.create(receiptMail);
     }).then(() => {
+        winston.info('all done');
         res.sendStatus(201);
     }).catch(err => {
         next(err);
