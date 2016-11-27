@@ -32,7 +32,7 @@ module.exports = function(app) {
         //app.use(favicon(path.join(config.root, 'public', 'favicon.ico')));
         app.use(express.static(path.join(config.root, 'public')));
         app.set('appPath', '/public');
-        app.use(morgan('dev'));
+        app.use(morgan('combined'));
 
         app.use(function(err, req, res, next) {
             res.status(err.status || 500).json({status: 'error', message: err.message});

@@ -15,6 +15,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 var moment = require('moment');
+var winston = require('winston');
 
 var Event = require('../../models/event.model');
 var Member = require('../../models/member.model');
@@ -134,7 +135,6 @@ exports.confirmMembershipPayment = function(req, res, next) {
     }).then(() => {
         res.sendStatus(201);
     }).catch(err => {
-        console.log(err);
         next(err);
     });
 };
