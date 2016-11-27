@@ -22,8 +22,7 @@ var Member = require('../../models/member.model');
 var OutgoingMessage = require('../../models/outgoing-message.model');
 var Payment = require('../../models/payment.model');
 var Product = require('../../models/product.model');
-
-var EmailHelper = require('../../helpers/email.helper');
+var EmailTemplate = require('../../models/email-template.model');
 
 var ewbMail = require('../../components/ewb-mail');
 
@@ -185,7 +184,9 @@ exports.confirmEventPayment = function(req, res, next) {
         let selectedAddons = event.addons.filter(addon => { return req.body.addonIds.includes(addon.id); });
         let sum = selectedAddons.reduce((total, addon) => { return total + addon.price; }, 0);
 
+        winston.info('initiating event payment', event);
         if (sum === 0) {
+            winston.info('free event');
             return Promise.resolve(event);
         } else {
             if (!req.body.stripeToken) {
@@ -200,17 +201,20 @@ exports.confirmEventPayment = function(req, res, next) {
                     amount: sum,
                     description: event.name
                 }, req.body.stripeToken, () => {
+                    winston.info('payment successful');
                     resolve(event);
                 }, err => {
+                    winston.info('payment failed');
                     let badRequest = new Error('Stripe rejected');
                     badRequest.status = 400;
-                    next(badRequest);
+                    reject(badRequest);
                 });
             }).catch(err => {
                 next(err);
             });
         }
     }).then(event => {
+        winston.info('add participant');
         return Event.addParticipant(event.id, {
             addonIds: req.body.addonIds,
             name: req.body.participant.name,
@@ -225,12 +229,7 @@ exports.confirmEventPayment = function(req, res, next) {
 
         return Promise.resolve(event);
     }).then(event => {
-        if (event.email_template_id) {
-            // TODO
-            // If event has a custom email template.
-            //EmailHelper.createFromTemplate(event.email_template_id);
-        }
-
+        winston.info('create receipt mail');
         let receiptMail = {
             sender: ewbMail.sender(),
             recipient: req.body.participant.email,
@@ -244,8 +243,21 @@ exports.confirmEventPayment = function(req, res, next) {
             }),
         };
 
-        return OutgoingMessage.create(receiptMail);
+        return OutgoingMessage.create(receiptMail).then(() => {
+            return EmailTemplate.get(event.email_template_id);
+        }).then(template => {
+            winston.info('create event mail');
+            let eventMail = {
+                sender: ewbMail.noreply(),
+                recipient: req.body.participant.email,
+                subject: template.subject,
+                body: template.body,
+            };
+
+            return OutgoingMessage.create(eventMail);
+        });
     }).then(() => {
+        winston.info('all done!');
         res.sendStatus(201);
     }).catch(err => {
         next(err);

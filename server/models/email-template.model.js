@@ -63,7 +63,23 @@ function update(id, data) {
     `, Object.assign(data, {id: id}));
 }
 
+/**
+ * Get email template
+ *
+ * @memberOf model.EmailTemplate
+ * @param {Number} id - Email template id
+ * @returns {Promise<Object|Error>} Resolves to an object.
+ */
+function get(id) {
+    return db.one(`
+        SELECT subject, body
+        FROM email_template
+        WHERE id = $1
+    `, id);
+}
+
 module.exports = {
     create: create,
     update: update,
+    get: get,
 };
