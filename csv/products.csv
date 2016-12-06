@@ -1,0 +1,20 @@
+_id,name,price,description,type,typeAttributes,currency,createdAt
+ObjectId(56e008f32323682a06012565),Medlemskap 1 år student,40,,ObjectId(56e008f22323682a06012563),"{""durationDays"":365,""memberType"":""student""}",SEK,2016-03-09T11:28:51.265Z
+ObjectId(56e008f32323682a06012566),Medlemskap 3 år student,90,,ObjectId(56e008f22323682a06012563),"{""durationDays"":1095,""memberType"":""student""}",SEK,2016-03-09T11:28:51.266Z
+ObjectId(56e008f32323682a06012567),Medlemskap 1 år yrkesverksam,100,,ObjectId(56e008f22323682a06012563),"{""durationDays"":365,""memberType"":""working""}",SEK,2016-03-09T11:28:51.267Z
+ObjectId(56e008f32323682a06012568),Medlemskap 3 år yrkesverksam,250,,ObjectId(56e008f22323682a06012563),"{""durationDays"":1095,""memberType"":""working""}",SEK,2016-03-09T11:28:51.267Z
+ObjectId(56e008f32323682a06012569),Medlemskap 1 år senior,100,,ObjectId(56e008f22323682a06012563),"{""durationDays"":365,""memberType"":""senior""}",SEK,2016-03-09T11:28:51.268Z
+ObjectId(56e008f32323682a0601256a),Medlemskap 3 år senior,250,,ObjectId(56e008f22323682a06012563),"{""durationDays"":1095,""memberType"":""senior""}",SEK,2016-03-09T11:28:51.268Z
+ObjectId(56e013d651cd417410609394),Årsmöte,0,Årsmötet,ObjectId(56e008f22323682a06012564),,SEK,2016-03-09T12:15:18.670Z
+ObjectId(56e013d651cd417410609395),Middag,200,Var med och avsluta mötet med mat! Tänk på att anmäla eventuella allergier till nagon@...se,ObjectId(56e008f22323682a06012564),,SEK,2016-03-09T12:15:18.671Z
+ObjectId(56e7d5b5b7fd768a1428292f),Ett rimligt testevent,0,Rimlig kostnad,ObjectId(56e008f22323682a06012564),,SEK,2016-03-15T09:28:21.864Z
+ObjectId(56e7d88fe197300c164d3219),Ett rimligt testevent,0,Delta i ett rimligt testevent,ObjectId(56e008f22323682a06012564),,SEK,2016-03-15T09:40:31.870Z
+ObjectId(56ef2782b25d858954fd7222),Årsmöte 2016,0,,ObjectId(56e008f22323682a06012564),,SEK,2016-03-20T22:43:14.959Z
+ObjectId(56f1ad68b25d858954fd7241),Middag - Årsmöte 2016,200,,ObjectId(56e008f22323682a06012564),,SEK,2016-03-22T20:39:04.073Z
+ObjectId(56f1b084b25d858954fd7248),Årsmöte 2016,0,,ObjectId(56e008f22323682a06012564),,SEK,2016-03-22T20:52:20.868Z
+ObjectId(56f1b163b25d858954fd724b),"Middag, Årsmöte 2016",200,"OBS: Vänligen ange kostpreferenser/allergi, samt eventuellt intresse för sängplats under kommentar.",ObjectId(56e008f22323682a06012564),,SEK,2016-03-22T20:56:03.834Z
+ObjectId(56f981c1fbc95ecd2014460d),Middag,0,Test,ObjectId(56e008f22323682a06012564),,SEK,2016-03-28T19:10:57.438Z
+ObjectId(57fbb4b7774b3f1d42ca2597),Member Meeting 2016,0,"If you need a place to sleep, tell us in the comments!",ObjectId(56e008f22323682a06012564),,SEK,2016-10-10T15:33:11.066Z
+ObjectId(57fbb7e5774b3f1d42ca259a),EWB Member Meet-up Dinner 2016,150,"If you have any allergies or food preferences, or if you would like somewhere to sleep, tell us in the comments section!
+
+If there is an error with your payment, you might have to enable internet payments at your bank.",ObjectId(56e008f22323682a06012564),,SEK,2016-10-10T15:46:45.599Z

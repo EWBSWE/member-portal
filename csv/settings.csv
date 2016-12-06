@@ -1,0 +1,5 @@
+key,value,description
+StripeTransferEmails,ict@ingenjorerutangranser.se,"A list of comma separated email addresses formatted as ""foo@bar.se,bar@baz.com"". This list of people will receive a copy of the monthly transactions"
+StripeTransferDate,14,Day in month that money is transferred from Stripe to EWB. If value is 14 then that counts as YYYY-MM-14 00:00:00. Cron job runs at the 21st of each month.
+StripeTransactionFeePercent,0.014,"Stripe transaction fee, as a floating point number. For instance 0.014 is equivalent to 1.4% of each transaction."
+StripeTransactionFeeFlat,1.8,"Stripe flat fee per transaction, in SEK. For instance, Stripe charge 1.8 SEK per transaction."
