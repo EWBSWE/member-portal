@@ -56,14 +56,13 @@ function main() {
     }).then(() => {
         return insertProducts(data.products);
     }).then(() => {
-        //return insertPayments(data.payments, data.buyers, data.eventParticipants);
-        return Promise.resolve();
-    }).then(() => {
         return insertEvents(data.events, data.eventParticipants);
     }).then(() => {
         return insertEventAddons(data.eventAddons, data.events);
     }).then(() => {
         return insertSettings(data.settings);
+    }).then(() => {
+        return insertPayments(data.payments, data.buyers, data.eventParticipants, data.events);
     }).then(() => {
         console.log('All is well in Middle-earth.');
 
@@ -291,8 +290,14 @@ function insertProducts(data) {
     });
 }
 
-function insertPayments(data, buyers, eventParticipants) {
+function insertPayments(data, buyers, eventParticipants, events) {
     console.log('INSERTING PAYMENTS');
+
+    events.forEach(e => {
+        e.payments = JSON.parse(e.payments).map(p => {
+            return `ObjectId(${p.$oid})`;
+        });
+    });
 
     return db.any('SELECT * FROM member').then(members => {
         let buyerMemberMap = {};
@@ -357,7 +362,19 @@ function insertPayments(data, buyers, eventParticipants) {
             });
         });
     }).then(([products, payments]) => {
-        // NEED TO ALSO INSERT INTO TO JOIN TABLE payment_product
+        data.forEach(d => {
+            let payment = payments.filter(p => {
+                return d._id === p.mongo_id;
+            })[0];
+
+            if (!d.products) {
+                d.product_ids = [];
+                return false;
+            }
+
+            d.payment_id = payment.id;
+        });
+
         data.forEach(d => {
             // There is one payment that is not linked to any products.
             // Will adjust that manually once migration is complete.
@@ -365,55 +382,63 @@ function insertPayments(data, buyers, eventParticipants) {
                 return false;
             } else {
                 d.product_ids = products.filter(p => {
-                    let mongoProducts = JSON.parse(d.products.replace(/""/g, '"').replace(/^"/, '').replace(/"$/, ''));
+                    let mongoProducts = JSON.parse(d.products).map(mp => {
+                        return `ObjectId(${mp.$oid})`;
+                    });
                     return mongoProducts.includes(p.mongo_id);
                 });
             }
         });
 
-        // TODO MAP PRODUCT ID TO DATA
-
         return db.task(tx => {
             let queries = [];
 
             data.forEach(d => {
-                queries.push(tx.none(`
-                    INSERT INTO payment_product (
-                        payment_id,
-                        product_id
-                    ) VALUES (
-                        $1,
-                        $2
-                    )
-                `, [d.payment_id, d.product_id]));
-            });
-
-            return tx.batch(queries);
-        }).then(() => {
-            return db.task(tx => {
-                let queries = [];
-
-                data.forEach(d => {
+                d.product_ids.forEach(p => {
                     queries.push(tx.none(`
-                        INSERT INTO event_payment (
-                            event_id,
-                            payment_id
+                        INSERT INTO payment_product (
+                            payment_id,
+                            product_id
                         ) VALUES (
                             $1,
                             $2
                         )
-                    `, [d.event_id, d.payment_id]));
+                    `, [d.payment_id, p.id]));
+                });
+            });
+
+            return tx.batch(queries);
+        }).then(() => {
+            events.forEach(e => {
+                e.payment_ids = e.payments.map(p => {
+                    let id = payments.filter(pp => {
+                        return p === pp.mongo_id;
+                    })[0].id;
+
+                    return id;
+                });
+            });
+
+            return db.task(tx => {
+                let queries = [];
+
+                events.forEach(e => {
+                    e.payment_ids.forEach(p => {
+                        queries.push(tx.none(`
+                            INSERT INTO event_payment (
+                                event_id,
+                                payment_id
+                            ) VALUES (
+                                $1,
+                                $2
+                            )
+                        `, [e.id, p]));
+                    });
                 });
 
                 return tx.batch(queries);
             });
         });
-
-        // NEED TO ALSO INSERT INTO TO JOIN TABLE event_payment
-
-        //console.log(data);
-
-        return Promise.resolve();
     });
 }
 
