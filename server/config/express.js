@@ -16,6 +16,8 @@ var path = require('path');
 var config = require('./environment');
 var passport = require('passport');
 
+const logger = require('./logger');
+
 module.exports = function(app) {
     var env = app.get('env');
 
@@ -32,7 +34,7 @@ module.exports = function(app) {
         //app.use(favicon(path.join(config.root, 'public', 'favicon.ico')));
         app.use(express.static(path.join(config.root, 'public')));
         app.set('appPath', '/public');
-        app.use(morgan('combined'));
+        app.use(morgan('combined', {stream: logger.stream}));
 
         app.use(function(err, req, res, next) {
             res.status(err.status || 500).json({status: 'error', message: err.message});
@@ -40,7 +42,7 @@ module.exports = function(app) {
     }
 
     if (env === 'development') {
-        app.use(morgan('dev'));
+        app.use(morgan('dev', {stream: logger.stream}));
     }
 
     if ('development' === env || 'test' === env) {
