@@ -128,7 +128,7 @@ function insertEvent() {
                 description: 'Not free description',
                 price: 10,
             }],
-            subscribers: ['admin@admin.se'],
+            subscribers: ['admin@admin.se', 'user@user.se'],
         });
     });
 }
@@ -140,6 +140,20 @@ function insertParticipants() {
             email: 'some@email.se',
             addonIds: e.addons.map(a => { return a.id; }),
             message: 'Message',
+        }).then(() => {
+            return Event.addParticipant(e.id, {
+                name: 'Some Other Guy',
+                email: 'some_other@email.se',
+                addonIds: e.addons.map(a => { return a.id; }),
+                message: 'Message',
+            });
+        }).then(() => {
+            return Event.addParticipant(e.id, {
+                name: 'Yet Another Guy',
+                email: 'some_other_foo@email.se',
+                addonIds: e.addons.map(a => { return a.id; }),
+                message: 'Message',
+            });
         });
     });
 }
