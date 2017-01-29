@@ -8,7 +8,7 @@ ObjectId(5662d7bf47fe0a8231281c3e),Johanna Kvarnemo,Göteborg,,Konstruktör/ mas
 ObjectId(5665eade47fe0a8231281c41),Annah Håkansson,Lund,Civilingenjör Ekosystemteknik/Riskhantering,,annah.hakansson@gmail.com,student,other,,2015-12-02T21:38:10.000Z,2018-12-07T20:23:58.000Z
 ObjectId(56669db847fe0a8231281c44),Karin Farsäter,TECKOMATORP,Doktorand inom hållbar renovering,,karin.farsater@gmail.com,student,other,,2015-12-02T21:38:10.000Z,2018-12-08T09:07:04.000Z
 ObjectId(5667e9b647fe0a8231281c47),Yousef Arfaoui,Stockholm,Civilingenjör,,arfaoui@kth.se,student,other,,2015-12-02T21:38:10.000Z,2018-12-09T08:43:34.000Z
-ObjectId(5668645e47fe0a8231281c4a),Elin Elisson,Göteborg,"Brandingenjör, civ ing riskhantering",Brand och riskingenjör,elin.elisson@gmail.com,student,female,1988,2015-12-02T21:38:10.000Z,2017-12-09T09:00:53.993Z
+ObjectId(5668645e47fe0a8231281c4a),Elin Elisson,Malmö,"Brandingenjör, civilingenjör riskhantering",,elin.elisson@gmail.com,student,other,,2015-12-02T21:38:10.000Z,2016-12-09T17:26:54.000Z
 ObjectId(56689d0c47fe0a8231281c4d),Andreas Andreasson,Göteborg,,Civilingenjör,andreas.andreasson@gmail.com,working,other,,2015-12-02T21:38:10.000Z,2016-12-09T21:28:44.000Z
 ObjectId(5669356447fe0a8231281c50),Liv Eriksson,Linköping,,,liver196@student.liu.se,student,female,1900,2015-12-02T21:38:10.000Z,2019-02-01T18:57:03.000Z
 ObjectId(5669382e47fe0a8231281c57),Sofie Thisted,Malmö,Civilingenjör inom Ekosystemteknik,,thistedsofie@gmail.com,student,other,,2015-12-02T21:38:10.000Z,2016-12-30T08:04:28.000Z
@@ -357,7 +357,7 @@ ObjectId(566a838c61701e376b395cf7),Sofia Canclini,Stockholm,Civing kemivetenskap
 ObjectId(566a838c61701e376b395cf4),Pernilla Larsson,Stockholm,,Elkonsult/Maskinteknik,pernla@kth.se,working,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
 ObjectId(566a838c61701e376b395cf3),Fredrik Backman,Stockholm,Studerande KTH,,fbackman88@gmail.com,student,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
 ObjectId(566a838c61701e376b395cf6),Elin Toijer,Stockholm,student på KTH,,toijer@kth.se,student,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
-ObjectId(566a838c61701e376b395cf5),Gustav Isaksson,Södertälje,Energi- och miljöteknik,Student,gustavis@kth.se,student,male,1988,2015-12-10T18:48:38.000Z,2017-12-29T12:06:08.899Z
+ObjectId(566a838c61701e376b395cf5),Gustav Isaksson,Stockholm,Civiling Energi-miljöteknik mastersinriktning miljöteknik och hållbar infrastruktur,,gustavis@kth.se,student,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
 ObjectId(566a838c61701e376b395cf9),Jakob Jones,Stockholm,,Aktuarie/Ingenjör,jakob.jones@gmail.com,working,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
 ObjectId(566a838c61701e376b395cf8),Catarina Bojesson,Eskilstuna,,Civing Industriell ekonomi doktorand inom Innovation och Design på Mälardalens Högskola och Bombardier,catarina.bojesson@gmail.com,working,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
 ObjectId(566a838c61701e376b395cfd),Björn Andersson,Lund,Civing väg och vatten inriktn vattenresurshantering,,larf.andersson@gmail.com,student,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
@@ -382,7 +382,7 @@ ObjectId(566a838c61701e376b395d0d),Josefin Karlsson,Stockholm,,Civilingenjör Me
 ObjectId(566a838c61701e376b395d0c),Daniel Kostet,Luleå,Civiling inom väg-och vattenbyggnad,,daniel.kostet@gmail.com,student,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
 ObjectId(566a838c61701e376b395d11),Albert Melin,Linköping,ASIEN,,karl.albert.pettersson@gmail.com,student,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
 ObjectId(566a838c61701e376b395d10),Albin Axelsson,Linköping,M,,albka151@student.liu.se,student,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
-ObjectId(566a838c61701e376b395d0f),Awder Rashed,Stockholm,Civilingenjör i system i teknik och samhälle,Managementkonsult,awder.rashed@gmail.com,working,male,1989,2015-12-10T18:48:38.000Z,2019-12-29T11:39:09.815Z
+ObjectId(566a838c61701e376b395d0f),Awder Rashed,Stockholm,,System i Teknik & SamhälleManagementkonsult,awder.rashed@gmail.com,working,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
 ObjectId(566a838c61701e376b395d0e),Roland Lindblom,Stockholm,,VVS ingenjör / Energiingenjör,roland.lindblom@ventilator.se,working,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
 ObjectId(566a838c61701e376b395d15),Hanna tudesson,Linköping,medtech,,haner415@studen.liu.se,student,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
 ObjectId(566a838c61701e376b395d12),Hanna,Linköping,0,,hanna.b@live.se,student,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
@@ -402,7 +402,7 @@ ObjectId(566a838c61701e376b395d1e),Matthias Werneskog,Linköping,EMM,,matthiassc
 ObjectId(566a838c61701e376b395d1d),Frida Janson,Linköping,EMM,,frida_borring@hotmail.com,student,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
 ObjectId(566a838c61701e376b395d22),Ingela Filipsson,Stockholm,Civilingenjör i miljö- och vattenteknik,,ingelafi@gmail.com,student,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
 ObjectId(566a838c61701e376b395d24),Axel Steinert,Göteborg,Väg- och vatten,,steinert7@gmail.com,student,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
-ObjectId(566a838c61701e376b395d25),Eva Burenius,Kullavik,psykolog,psykolog,eva@burenius.se,senior,female,1946,2015-12-10T18:48:38.000Z,2017-12-29T15:22:19.709Z
+ObjectId(566a838c61701e376b395d25),Eva Burénius,Göteborg,,Leg Psykolog,eva@burenius.se,,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
 ObjectId(566a838c61701e376b395d26),Paulina Koskenniemi,Luleå,Industriell miljö- och processteknik,,paulinakoskenniemi@hotmail.com,student,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
 ObjectId(566a838c61701e376b395d23),Christopher Doane,Linköping,0,,chrdo495@student.liu.se,student,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
 ObjectId(566a838c61701e376b395d28),Isak Fredlund,Malmö,Interaktionsdesign Malmö Högskola,,isak@fredlund.se,student,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
@@ -438,7 +438,7 @@ ObjectId(566a838c61701e376b395d43),Daniel Nilsen,Luleå,maskinteknik,,daniel.nil
 ObjectId(566a838c61701e376b395d48),Lina Karlsson,Göteborg,,Ekosystemteknik miljöingenjör,lina.karlsson@gmail.com,working,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
 ObjectId(566a838c61701e376b395d46),Antonia Nilsson,Lund,Industriell ekonomi,,antonia.k.nilsson@gmail.com,student,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
 ObjectId(566a838c61701e376b395d47),Jennie Haag,Uppsala,,Arbetar som konsult inom vattenrening,haagjennie@gmail.com,working,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
-ObjectId(566a838c61701e376b395d45),Christina Claeson-Jonsson,Göteborg,"V91, Dr 98",Civilingenjör,christina.claesonjonsson@gmail.com,working,female,1967,2015-12-10T18:48:38.000Z,2020-01-24T19:10:40.685Z
+ObjectId(566a838c61701e376b395d45),Christina Claeson-Jonsson,Göteborg,,FoU-chef /Civilingenjör V Tekn dr.,christina.claesonjonsson@gmail.com,working,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
 ObjectId(566a838c61701e376b395d49),Sebastian Andersson,Singapore,,byggnadskonstruktion infrastruktur och stadsplanering,sebastian.j.andersson@gmail.com,working,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:04:28.000Z
 ObjectId(566a846b61701e376b395d4a),Annlouise Hermansson,Göteborg,,Mekanik konstruktör Maskin ingenjör,annlouise.hermansson@tele2.se,working,other,,2015-12-10T18:48:38.000Z,2016-12-30T08:08:11.000Z
 ObjectId(566a84f161701e376b395d4b),Tommy Pap,Göteborg,Väg och vatten,,ymmo_2@hotmail.com,student,other,,2015-12-10T18:48:38.000Z,2017-07-01T07:10:24.000Z
@@ -840,9 +840,9 @@ ObjectId(5673df8761701e376b395ee9),Karl Malmberg,Uppsala,Energisystem,,karl.w.ma
 ObjectId(567415e361701e376b395eec),Jessica Lovell,göteborg,civ. ing. miljö och vattenteknik,miljökonsult,lovell.jessica@gmail.com,working,female,1986,2015-12-10T18:48:38.000Z,2017-12-18T10:37:31.837Z
 ObjectId(567bc68df80c594e3c22d03f),Felicia Bjersing,Göteborg,Student - Civil Environmental Engineering,,felicia.bjersing@hotmail.com,student,other,,2015-12-21T23:29:00.000Z,2018-12-24T10:18:53.000Z
 ObjectId(567ef4fef80c594e3c22d04b),Vidar Stiernström,Uppsala,Civilingenjörsutbildning i teknisk fysik,,vidar_stiernstrom@hotmail.com,student,other,,2015-12-21T23:29:00.000Z,2016-12-26T20:13:50.000Z
-ObjectId(567f085bf80c594e3c22d04e),Alan,Rimbo,Magister i Fysik + Rymdstudier,"Innovatör, Konsult",alan.pritchard@adinfinitum.se,working,,1970,2015-12-21T23:29:00.000Z,2020-01-04T23:55:37.446Z
+ObjectId(567f085bf80c594e3c22d04e),Alan Pritchard,"Blidö, Stockholm, Sweden",,"MSc Optoelectronics, MSS Space Studies, Innovator and Innovation Consultant",alan.pritchard@adinfinitum.se,working,other,,2015-12-21T23:29:00.000Z,2016-12-26T21:36:27.000Z
 ObjectId(567fc45ef80c594e3c22d051),peter larsson,göteborg,,Msc mechanical engineer energy conversion,pla@inocean.se,working,other,,2015-12-21T23:29:00.000Z,2016-12-27T10:58:38.000Z
-ObjectId(567fe69ff80c594e3c22d054),Ali Saleh Wassouf,Göteborg,"Olja teknik, Företagsekonomi","Integration, Projektadministratör",wassouf.aly@gmail.com,working,male,1972,2015-12-21T23:29:00.000Z,2020-01-26T09:42:39.221Z
+ObjectId(567fe69ff80c594e3c22d054),Ali Saleh Wassouf,Göteborg,,Business administration & Diploma Petroleum Engineering,wassouf.aly@gmail.com,working,other,,2015-12-21T23:29:00.000Z,2016-12-27T13:24:47.000Z
 ObjectId(56823ddef80c594e3c22d059),Kristina Dahlman,Stockholm,,Environmental engineer,kristina.dahlman@gmail.com,working,other,,2015-12-21T23:29:00.000Z,2016-12-29T08:01:34.000Z
 ObjectId(5682dcaaf80c594e3c22d05c),Sofia Buhrgard,Åmål,,Civilingenjör,buhrgard@outlook.com,working,other,,2015-12-21T23:29:00.000Z,2016-12-29T19:19:06.000Z
 ObjectId(56866ebbf80c594e3c22d063),Bengt Norell,Örnsköldsvik,,Bergsingenjör,bengtnorell@hotmail.com,working,other,,2015-12-21T23:29:00.000Z,2019-01-01T12:19:07.000Z
@@ -852,7 +852,7 @@ ObjectId(568a5cbaf80c594e3c22d06e),Admas Aklilu,sweden,,Electrical Engineer,y1ad
 ObjectId(568bee3593b79b544598a196),Elise Ramqvist,Sweden,Mechanical engineering,,elise.ramqvist@gmail.com,student,other,,2016-01-05T16:24:21.352Z,2019-01-05T16:24:21.000Z
 ObjectId(568d29b093b79b544598a199),Matilda Kryh,Göteborg,,"Civil Engineering, Master in structural engineering av building performance design",matilda.kryh@gmail.com,working,other,,2016-01-06T14:50:24.045Z,2019-01-06T14:50:24.000Z
 ObjectId(568d633093b79b544598a19c),Robert Granström,Umeå,,Energy Ingineer,robertgranstrom87@gmail.com,working,other,,2016-01-06T18:55:44.625Z,2017-01-06T18:55:44.000Z
-ObjectId(568eab5393b79b544598a1a1),Pär Pettersson,Malmö,Teknisk fysik och elektroteknik (Y) samt lärarexamen på LiU. Dr i kemiteknik på LTH/Mittuniversitetet. Master i tyska/engelska på UU.,Gymnasielärare,par_pettersson@msn.com,working,male,1972,2016-01-07T18:15:47.695Z,2020-01-07T11:31:44.346Z
+ObjectId(568eab5393b79b544598a1a1),Pär Pettersson,Malmö,,"Gymnasielärare, civilingenjör",par_pettersson@msn.com,working,other,,2016-01-07T18:15:47.695Z,2017-01-07T18:15:47.000Z
 ObjectId(56904a6d93b79b544598a1a4),Fredrik Liljekvist,Uppsala,Mechanical Engineering,,liljeqvisten@hotmail.com,student,other,,2016-01-08T23:46:53.923Z,2017-01-08T23:46:53.000Z
 ObjectId(56910d6393b79b544598a1a7),Emil Gunnarsson,Linköping,Civ. Industrial engineering and management,,emilgunnarsson90@gmail.com,student,other,,2016-01-09T13:38:43.851Z,2017-01-09T13:38:43.000Z
 ObjectId(56936aff93b79b544598a1aa),Christer Olsson,Lidingö Sweden,,Msc Solar engineering and technical physics,kosterchrister@gmail.com,working,other,,2016-01-11T08:42:39.695Z,2019-01-11T08:42:39.000Z
@@ -997,7 +997,7 @@ ObjectId(56c86135975abc1d36eca53a),Christian Naccache,Västerås,Teknisk Fysik,O
 ObjectId(56c8d474975abc1d36eca53d),Mahmud Nurein,Jönköping,"Maskinteknik, Msc Indutridesign",Maskiningenjör/Industridesigner,mahnur@live.se,student,male,1990,2016-02-20T21:02:44.208Z,2019-02-20T21:02:44.000Z
 ObjectId(56cb6dbdc2b17235234b5641),Madeleine Burgren,Göteborg,"Civilingenjör, industriell ekonomi",Konsult,b_madeleine@hotmail.com,working,female,1989,2016-02-22T20:21:17.269Z,2017-02-22T20:21:17.000Z
 ObjectId(56cb9152c2b17235234b5644),Eyad Mohammad,Malmö,"Mekatronikingenjör, Processingenjör/Process Plant Designer",student,eyad.adelmohammad@gmail.com,student,male,1984,2016-02-22T22:53:06.142Z,2017-02-22T22:53:06.000Z
-ObjectId(56cc6d4dc2b17235234b5647),Jansson,Uppsala,Civilingenjör energisystem,Projektledare energiteknik,hannajansson87@gmail.com,working,female,1987,2016-02-23T14:31:41.995Z,2020-02-22T17:00:53.716Z
+ObjectId(56cc6d4dc2b17235234b5647),Hanna Jansson,Uppsala,Civilingenjör Energisystem,,hannajansson87@gmail.com,student,female,1987,2016-02-23T14:31:41.995Z,2017-02-23T14:31:41.000Z
 ObjectId(56cc73dac2b17235234b564a),Teresia Börjesson,Göteborg,"Civilingenjör, Väg-och vattenbyggnad",,teresia.borjesson@gmail.com,student,female,1992,2016-02-23T14:59:38.978Z,2017-02-23T14:59:38.000Z
 ObjectId(56cd5c5c909d2da6541c1b08),Jenny Edgren,Linköping,Civilingenjör i Design och Produktutveckling,studerande,jened152@student.liu.se,student,female,,2016-02-24T07:31:40.798Z,2019-02-23T07:33:43.000Z
 ObjectId(56cd5c5c909d2da6541c1b09),Gabriel Persson,Linköping,-,studerande,gabpe635@student.liu.se,student,male,1991,2016-02-24T07:31:40.800Z,2019-02-23T07:33:43.000Z
@@ -1142,7 +1142,7 @@ ObjectId(574c008c06d7b5c2363a16e5),Marielle Danelijan,Linköping,Civilingenjör 
 ObjectId(574c008c06d7b5c2363a16e6),Vanessa Carpenter,Linköping,Industriell ekonomi,student,thevmc@hotmail.com,student,female,1991,2016-05-30T08:57:48.197Z,2019-05-30T08:57:48.190Z
 ObjectId(574c008c06d7b5c2363a16e8),Erik Nilsson,Uppsala,STS,,eriks@mail.se,student,male,1994,2016-05-30T08:57:48.198Z,2017-06-11T17:10:46.397Z
 ObjectId(574c008c06d7b5c2363a16e9),Oskar Areskog,Uppsala,STS,,oskarscout@gmail.com,student,male,1995,2016-05-30T08:57:48.199Z,2019-06-11T17:10:46.397Z
-ObjectId(574c008c06d7b5c2363a16ea),Johan Blad,Uppsala,Civilingenjör,Student,johan.blad@hotmail.se,student,male,1992,2016-05-30T08:57:48.199Z,2022-06-09T20:01:36.837Z
+ObjectId(574c008c06d7b5c2363a16ea),Johan Blad,Uppsala,STS,,johan.blad@hotmail.se,student,male,1992,2016-05-30T08:57:48.199Z,2019-06-11T17:10:46.397Z
 ObjectId(574c008c06d7b5c2363a16eb),Joel Valdemarsson,Uppsala,STS,,joel.valdemarsson@gmail.com,student,male,1994,2016-05-30T08:57:48.200Z,2019-06-11T17:10:46.397Z
 ObjectId(574c008c06d7b5c2363a16e7),Oskar Syrjä,Uppsala,STS,,oskar.syrja@hotmail.com,student,male,1993,2016-05-30T08:57:48.198Z,2017-06-11T17:10:46.397Z
 ObjectId(574c008c06d7b5c2363a16ef),Adam Ekström Hagevall,Uppsala,STS,,adam.hagevall@hotmail.com,student,male,1994,2016-05-30T08:57:48.203Z,2019-05-30T08:57:48.191Z
@@ -1240,7 +1240,7 @@ ObjectId(57d198db774b3f1d42ca24af),Rene Francis,Hallsberg,Engineer,Project  Mana
 ObjectId(57d271e2774b3f1d42ca24b4),Linnea Larsson,Kalmar,"Civilingenjör, Väg- och vatten med inriktning teknisk vattenresurslära",VA-konsult,linnea_larsson_@hotmail.com,working,female,1990,2016-09-09T08:25:06.583Z,2017-09-09T08:25:03.422Z
 ObjectId(57d421fa774b3f1d42ca24b9),Anna Björkman,Stockholm,Civilingenjör och lärare,,anbjorkm@kth.se,student,female,1993,2016-09-10T15:08:42.442Z,2017-09-10T15:08:39.069Z
 ObjectId(57d52f04774b3f1d42ca24be),Cajsa-Lisa Ivarsson,Lund,vattenteknik,student,cajsalisaivarsson@hotmail.com,student,other,1989,2016-09-11T10:16:36.381Z,2019-09-11T10:16:33.729Z
-ObjectId(57d980eb774b3f1d42ca24c3),Julia Melin,Linköping,Civilingenjör - Maskin,Student,julia.b.melin@gmail.com,student,female,,2016-09-14T16:55:07.302Z,2019-12-12T18:25:16.396Z
+ObjectId(57d980eb774b3f1d42ca24c3),Julia Melin,Linköping,Civilingenjör Maskinteknik,,julia.b.melin@gmail.com,student,female,1995,2016-09-14T16:55:07.302Z,2019-09-14T16:55:03.956Z
 ObjectId(57dfa2a5774b3f1d42ca24cd),Amanda Wikström,Täby,Civ. ingenjör industriell ekonomi,,amawik@kth.se,student,female,1995,2016-09-19T08:32:37.123Z,2017-09-19T08:32:33.726Z
 ObjectId(57e0dfa8774b3f1d42ca24d2),Björn Palmqvist,Linköping,Civilingenjör,,palmqvistbjorn@hotmail.com,student,male,1995,2016-09-20T07:05:12.494Z,2019-09-20T07:05:08.860Z
 ObjectId(57e109dd774b3f1d42ca24d8),Mattias Ramstrand,Linköping,Civilingenjör i Datateknik,student,mattias.ramstrand@gmail.com,student,male,,2016-09-20T10:05:17.666Z,2019-09-20T10:07:57.536Z
@@ -1445,57 +1445,3 @@ ObjectId(5841304bce38c6f137e591a5),Emanuel Eriksson,Uppsala,Q,,emanuel.erikssons
 ObjectId(5841304bce38c6f137e591aa),Marcus Blom,Uppsala,Ei,,marcusblom93@gmail.com,student,male,1993,2016-12-02T08:26:51.224Z,2017-12-02T08:26:51.203Z
 ObjectId(5841304bce38c6f137e591a9),Arvid Sundblad,Uppsala,Ei,,arvidsundblad@gmail.com,student,male,1983,2016-12-02T08:26:51.223Z,2017-12-02T08:26:51.203Z
 ObjectId(5841f588ce38c6f137e591ab),Felicia Aneer,Stockholm,,,feliciaaneer@gmail.com,working,female,1989,2016-12-02T22:28:24.813Z,2019-12-02T22:28:30.000Z
-ObjectId(5846c840ce38c6f137e591af),Matilda Eriksson,Luleå,Civilingenjör - Industriell Ekonomi,Student,materv-4@student.ltu.se,student,female,1995,2016-12-06T14:16:32.303Z,2019-12-12T18:25:16.395Z
-ObjectId(5846c840ce38c6f137e591b0),Ibtisam Ahmed,Luleå,Civilingenjör - Teknisk fysik och elektroteknik,Student,ibtahm-6@student.ltu.se,student,female,1994,2016-12-06T14:16:32.304Z,2019-12-12T18:25:16.395Z
-ObjectId(5846c840ce38c6f137e591ae),Pontus Lundbäck,Luleå,Civilingenjör - Industriell Ekonomi,Student,pontuslundback@hotmail.com,student,male,1993,2016-12-06T14:16:32.295Z,2019-12-12T18:25:16.395Z
-ObjectId(584912b4ce38c6f137e591b1),Veronica Östman,Luleå,Civilingejör i Samhällsbyggnad inritkning teknisk miljövård,Miljökonsult,veronica.ostman@wspgroup.se,working,female,1975,2016-12-08T07:58:44.120Z,2019-12-08T07:58:40.298Z
-ObjectId(5849de29ce38c6f137e591ba),Ali Alduraiee,Kista,Ekonomi,Säljare,ali_0578@hotmail.com,working,male,1978,2016-12-08T22:26:49.268Z,2019-12-08T22:26:46.892Z
-ObjectId(584bb017ce38c6f137e591bf),Anna Axelsson,Vänersborg,"Mechanical Engineering, Product Development","Ingenjör, Busines unit manager Medical device",anna.b.axelsson@gmail.com,working,female,1968,2016-12-10T07:34:47.662Z,2019-12-10T07:34:44.312Z
-ObjectId(584bc86fce38c6f137e591c4),Rogier Jongeling,Stockholm,PhD väg och vatten,BIM strateg,rogier.jongeling@planbab.com,working,male,1978,2016-12-10T09:18:39.313Z,2019-12-10T09:18:36.583Z
-ObjectId(584d0405ce38c6f137e591c9),Camilla Ekhagen,Kristinehamn,Innovation och designingenjörs utbildning undersköterska och certifierad inköpare genom Silf,Inköpare,camillacom@yahoo.se,working,female,1971,2016-12-11T07:45:09.734Z,2017-12-11T07:45:06.366Z
-ObjectId(584dbb0dce38c6f137e591ce),Adam Abdulahi Dirie,Bromma,,,adamabdulahi.d@gmail.com,student,male,1997,2016-12-11T20:46:05.888Z,2017-12-11T20:46:02.701Z
-ObjectId(584eeb8cce38c6f137e591d3),Anton Hylin,Linköping,Civilingenjör - Teknisk fysik och elektroteknik,Student,anton.hylin@gmail.com,student,male,1992,2016-12-12T18:25:16.410Z,2017-12-12T18:25:16.395Z
-ObjectId(584eeb8cce38c6f137e591d6),Andreas Bergström,Linköping,Civilingenjör - Teknisk fysik och elektroteknik,Student,andreas.bergstroem@hotmail.com,student,male,1997,2016-12-12T18:25:16.413Z,2017-12-12T18:25:16.395Z
-ObjectId(584eeb8cce38c6f137e591d7),Christine Larshans,Linköping,Civilingenjör - Maskin,Student,christinelarshans@hotmail.com,student,female,1996,2016-12-12T18:25:16.414Z,2019-12-12T18:25:16.396Z
-ObjectId(584eeb8cce38c6f137e591d8),Philip Larsson,Karlstad,Civilingenjör - Energi- och miljöteknik,Student,philiplarsson2@outlook.com,student,male,1992,2016-12-12T18:25:16.414Z,2019-12-12T18:25:16.396Z
-ObjectId(584eeb8cce38c6f137e591d5),Jesper Rylander,Linköping,Civilingenjör - Maskin,Student,jesry572@student.liu.se,student,male,1997,2016-12-12T18:25:16.412Z,2017-12-12T18:25:16.395Z
-ObjectId(584eeb8cce38c6f137e591d4),Louise Fredriksson,Linköping,Civilingenjör - Industriell Ekonomi,Student,elpfredriksson@gmail.com,student,female,1996,2016-12-12T18:25:16.412Z,2017-12-12T18:25:16.395Z
-ObjectId(584eeb8cce38c6f137e591db),Surafel Tasema,Karlstad,Civilingenjör - Maskin,Student,sura.fiseha@gmail.com,student,male,1993,2016-12-12T18:25:16.417Z,2017-12-12T18:25:16.396Z
-ObjectId(584eeb8cce38c6f137e591da),Gustav Green,Karlstad,Civilingenjör - Energi- och miljöteknik,Student,greenkvist@hotmail.com,student,male,1994,2016-12-12T18:25:16.416Z,2017-12-12T18:25:16.396Z
-ObjectId(584eeb8cce38c6f137e591d9),Daniel Nilsson,Karlstad,Civilingenjör - Energi- och miljöteknik,Student,dn-411@hotmail.com,student,male,1996,2016-12-12T18:25:16.415Z,2019-12-12T18:25:16.396Z
-ObjectId(58511087ce38c6f137e591e0),fanny fristedt,Uppsala,Matematik,,fanny_fristedt@hotmail.se,student,,1993,2016-12-14T09:27:35.812Z,2019-12-14T09:27:32.571Z
-ObjectId(58530650ce38c6f137e591e5),Kristoffer Karlsson,Stockholm,Kungliga Tekniska Högskolan,Elektroingenjör,kristoffer_karlsson@hotmail.com,student,male,1993,2016-12-15T21:08:32.847Z,2019-12-15T21:08:30.009Z
-ObjectId(585526face38c6f137e591ea),Emil Lundgren,Stockholm,Byggnadsingenjör,Projektledare BIM,emil.john.lundgren@gmail.com,working,male,1983,2016-12-17T11:52:26.825Z,2019-12-17T11:52:23.325Z
-ObjectId(58552c73ce38c6f137e591ef),Zeid Al-idani,Göteborg,Civilingenjör Elektroteknik,Student,zeid.idani@bahnhof.se,student,male,1986,2016-12-17T12:15:47.975Z,2019-12-17T12:15:44.855Z
-ObjectId(5856ec4ece38c6f137e591f4),Martin Jensen,Västerås,Högskoleingenjör i byggnadsteknik,Byggnadsingenjör,matsmartinjensen@gmail.com,working,male,1989,2016-12-18T20:06:38.777Z,2019-12-18T20:06:35.615Z
-ObjectId(5857188dce38c6f137e591f9),Johan Landin,Göteborg,Byggnadsingenjör inriktning mot arkitektur,Projektledare,landinjohan@hotmail.com,senior,male,1982,2016-12-18T23:15:25.694Z,2019-12-18T23:15:22.392Z
-ObjectId(5857e4eace38c6f137e591fe),Eskil Svensson,Luleå,Hållbar Energiteknik,Student,esksve-3@student.ltu.se,student,male,1993,2016-12-19T13:47:22.199Z,2016-12-22T13:47:22.194Z
-ObjectId(58581c91ce38c6f137e591ff),Christopher State,Nacka,KTH,Student,state@kth.se,student,male,1993,2016-12-19T17:44:49.882Z,2019-12-19T17:44:46.615Z
-ObjectId(585970a0ce38c6f137e59204),Nicklas Brand,Kävlinge,,"Process Ingenjör, Design",nicklas.brand@oatly.com,working,male,1964,2016-12-20T17:55:44.804Z,2017-12-20T17:55:42.997Z
-ObjectId(58599942ce38c6f137e59209),Fredrik Granum,Göteborg,Maskinteknik CTH,Beräkningsingenjör inom bilindustrin,fredrik.granum@gmail.com,working,male,1990,2016-12-20T20:49:06.465Z,2017-12-20T20:49:03.490Z
-ObjectId(585bc0d9ce38c6f137e59212),Oscar Lindell,Stockholm,KTH Byggteknik & design,Projektledare,oscar.lindell@planbab.com,working,male,1982,2016-12-22T12:02:33.422Z,2019-12-22T12:02:29.909Z
-ObjectId(586006e2ce38c6f137e59217),Alen Bardizbanyan,Göteborg,doktor,hårdvaruingenjör,alen.bardizbanyan@gmail.com,working,male,1986,2016-12-25T17:50:26.983Z,2019-12-25T17:50:23.330Z
-ObjectId(58625159ce38c6f137e59220),Samuel Brudefors,Stockholm,Civil ingenjör väg och vatten,Hydrogeolog,samuelbrudefors@gmail.com,working,male,1991,2016-12-27T11:32:41.801Z,2017-12-27T11:32:38.540Z
-ObjectId(58634123ce38c6f137e5922d),Jonas Ericsson,Västra Frölunda,"Civilingenjör Väg och vatten, CTH",Operation support manager,jonas.ericsson@ncc.se,working,male,1966,2016-12-28T04:35:47.823Z,2018-12-27T08:40:56.366Z
-ObjectId(5863e031ce38c6f137e59232),Mårten Lindström,Stockholm,KTH,Civilingenjör/konsult,marten.lindstrom@more10ab.se,working,male,1950,2016-12-28T15:54:25.574Z,2019-12-28T15:54:22.018Z
-ObjectId(58662940ce38c6f137e59237),Tobias Söderdahl,Upplands väsby,Energiingenjör,Gruppchef,soderdahl_tobbe@hotmail.com,working,male,1988,2016-12-30T09:30:40.007Z,2019-12-30T09:30:36.759Z
-ObjectId(586a1528ce38c6f137e59240),Kim Gunnarsson,Malmö,Högskoleingenjör i Energiteknik,Energi-/VVS-ingenjör,kim.gunnarsson@afconsult.com,working,male,1988,2017-01-02T08:54:00.720Z,2020-01-02T08:53:57.563Z
-ObjectId(586a1698ce38c6f137e59245),Christos Papadimitriou,Malmö,Högskola,Konsult,christos.papadimitriou84@gmail.com,working,male,1984,2017-01-02T09:00:08.840Z,2018-01-02T09:00:05.606Z
-ObjectId(586b5221ce38c6f137e5924c),Karaca-Rojan Erbil,Dalby,Civilingenjör,,rojan.erbil@hotmail.com,working,male,1990,2017-01-03T07:26:25.678Z,2018-01-03T07:26:22.273Z
-ObjectId(586b57b6ce38c6f137e59251),Dennis Fritz,Malmö,,VVS-ingenjör,dennis.fritz@afconsult.com,working,male,1988,2017-01-03T07:50:14.364Z,2018-01-03T07:50:11.099Z
-ObjectId(586e4cbfce38c6f137e5925e),Nadim Al-Mosawi,Järfälla,Högskoleingenjörsutbildning inom maskinteknik med inriktning Biomekanik,Mekanikingenjör,nadimalmosawi@outlook.com,working,male,1986,2017-01-05T13:40:15.558Z,2018-01-05T13:40:11.686Z
-ObjectId(5877930bce38c6f137e59263),Nils Perttu,Luleå,Samhällsbyggnadsteknik i Luleå,Geofysiker,nils.perttu@geovista.se,working,male,1979,2017-01-12T14:30:35.503Z,2020-01-12T14:30:32.120Z
-ObjectId(5878c68dce38c6f137e59268),Per Molin,Malmö,Civilingenjör Elkraft,Kraftsystemanalys,per.j.molin@gmail.com,working,male,1981,2017-01-13T12:22:37.964Z,2018-01-13T12:22:35.015Z
-ObjectId(587e1d63ce38c6f137e5926d),Alice Mikkelsen,Göteborg,Design och produktutveckling Chalmers,,alusmikkelsen@gmail.com,student,female,1994,2017-01-17T13:34:27.785Z,2020-01-17T13:34:24.563Z
-ObjectId(587e96a8ce38c6f137e59272),Dan Tatar,Stockholm,Embedded systems,Embedded software engineer,tatar.sorin.dan@gmail.com,working,male,1986,2017-01-17T22:11:52.811Z,2020-01-17T22:11:49.512Z
-ObjectId(58837c90ce38c6f137e59279),Anes Sestic,LUND,Civilingenjör inom maskinteknik,Studerande,mas13ase@student.lu.se,student,male,1994,2017-01-21T15:21:52.728Z,2020-01-21T15:21:49.693Z
-ObjectId(588496eace38c6f137e5927e),Markus Salman,Lund,Civilingenjör maskinteknik,Student,marcussalman@gmail.com,student,male,1992,2017-01-22T11:26:34.352Z,2020-01-22T11:26:30.953Z
-ObjectId(5884f4bfce38c6f137e59283),Michal Niedzialek,Märsta,,,aneta_misiek@amorki.pl,student,male,2.00602176034e+11,2017-01-22T18:06:55.942Z,2020-01-22T18:06:52.634Z
-ObjectId(5885e91fce38c6f137e59288),Sofia Högstrand,Lund,"Civilingenjör, ekosystemteknik",,sofia_hogstrand@hotmail.com,student,female,1992,2017-01-23T11:29:35.420Z,2020-01-23T11:29:31.861Z
-ObjectId(5885f9a5ce38c6f137e5928d),Maria Madsen,Varberg,Innovation and Design Engineering,Engineer,mariamadsen@hotmail.com,working,female,1984,2017-01-23T12:40:05.362Z,2018-01-23T12:40:02.396Z
-ObjectId(5887090dce38c6f137e59292),Mårten Skogh,Göteborg,Teknisk fysik,Student,marten.skogh@gmail.com,student,male,1994,2017-01-24T07:58:05.987Z,2020-01-24T07:58:03.558Z
-ObjectId(58875ab4ce38c6f137e59297),Nour Alhuda Almajni,Stockholm,Civilingenjör i datateknik,Student,ibda3.95@gmail.com,student,female,1995,2017-01-24T13:46:28.090Z,2020-01-24T13:46:24.985Z
-ObjectId(58878a56ce38c6f137e5929c),Joakim Ourti,Stockholm,brandingenjör / civilingenjör riskhantering,konsult,joakimourti@gmail.com,working,male,1985,2017-01-24T17:09:42.299Z,2018-01-24T17:09:38.598Z
-ObjectId(588a2a63ce38c6f137e592a9),Hanna Bengtsson,Stockholm,Civilingenjör samhällsbyggnad,Student,hanna.c.bengtsson@hotmail.com,student,female,1991,2017-01-26T16:57:07.291Z,2020-01-26T16:57:04.095Z
-ObjectId(588b34e3ce38c6f137e592b2),Amir Abass,Dianella,Maskinteknik,Student,amiraliabass@gmail.com,student,male,1996,2017-01-27T11:54:11.275Z,2018-01-27T11:54:07.485Z
-ObjectId(588b3ab0ce38c6f137e592b9),Björn Persson,Göteborg,Civilingenjörsutbildning i Maskinteknik,,bjopers.417@gmail.com,student,male,1993,2017-01-27T12:18:56.415Z,2020-01-27T12:18:53.297Z

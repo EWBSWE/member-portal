@@ -1,0 +1,11 @@
+_id,email,role
+ObjectId(56159dcb55aac37a5ecba7ab),dan.albin.johansson@gmail.com,admin
+ObjectId(5616e6469779eb230b1a15a3),hannes.kuusisto@ingenjorerutangranser.se,admin
+ObjectId(56520c41358db41270081825),edvin.norling@gmail.com,admin
+ObjectId(56a8c473a48d6af16fc5c7fc),lovisa.larsson@ingenjorerutangranser.se,admin
+ObjectId(56cb0dd066ef63f214e70d24),caroline.bastholm@ingenjorerutangranser.se,admin
+ObjectId(56e7011a8a92242872d6c29e),lukas.leander@ingenjorerutangranser.se,admin
+ObjectId(574b12a606d7b5c2363a16da),marten.skogh@ingenjorerutangranser.se,user
+ObjectId(574b12b706d7b5c2363a16dc),axel.eriksson@ingenjorerutangranser.se,user
+ObjectId(574bec6206d7b5c2363a16de),uppsala@ingenjorerutangranser.se,user
+ObjectId(57b09be68e791d78267212d5),nils.landin@gmail.com,user
