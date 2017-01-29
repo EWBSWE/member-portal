@@ -1,20 +1,20 @@
 'use strict';
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
-//var mongoose = require('mongoose');
-var path = require('path');
-var moment = require('moment');
-var Promise = require('bluebird');
+const path = require('path');
+const moment = require('moment');
+const Promise = require('bluebird');
 
-var config = require(path.join(__dirname, '../server/config/environment'));
+const config = require(path.join(__dirname, '../server/config/environment'));
+const log = require(path.join(__dirname, '../server/config/logger'));
 
-var OutgoingMessage = require(path.join(__dirname, '../server/models/outgoing-message.model'));
-var ewbError = require(path.join(__dirname, '../server/models/ewb-error.model'));
+const OutgoingMessage = require(path.join(__dirname, '../server/models/outgoing-message.model'));
 
 var mailgun = require('mailgun-js')({
     apiKey: '***REMOVED***',
     domain: '***REMOVED***',
 });
+
 if (process.env.NODE_ENV === 'production') {
     mailgun = require('mailgun-js')({
         apiKey: '***REMOVED***',
@@ -22,14 +22,15 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
-var numberOfMessages = 2;
+// Number of messages to fetch
+const numberOfMessages = 5;
 
-OutgoingMessage.fetch(numberOfMessages).then(data => {
-    if (data.length === 0) {
+OutgoingMessage.fetch(numberOfMessages).then(messages => {
+    if (messages.length === 0) {
         return Promise.resolve('No messages in queue');
     }
 
-    return Promise.all(data.map(message => {
+    return Promise.all(messages.map(message => {
         return new Promise((resolve, reject) => {
             let mailgunMessage = {
                 to: message.recipient,
@@ -56,13 +57,9 @@ OutgoingMessage.fetch(numberOfMessages).then(data => {
         });
     }));
 }).then(() => {
-    console.log('All done!');
+    log.info('All done!');
     process.exit(0);
 }).catch(err => {
-    ewbError.create('Mailman', __filename, err).then(() => {
-        process.exit(1);
-    }).catch(() => {
-        // Can't do anything sensible if our error logging crashes so just quit
-        process.exit(2);
-    });
+    log.error(err);
+    process.exit(1);
 });
