@@ -48,7 +48,7 @@
         <div class="col-xs-12">
             <div class="form-group">
                 <label>Värdar som prenumererar på uppdateringar ({{ev.subscribers.length}} st)</label>
-                <p>Separera med <a href="#" ng-click="subscribers = ev.subscribers.join(',')">komma</a> eller <a href="#" ng-click="subscribers = ev.subscribers.join('\n')">ny rad</a></p>
+                <p>Separera med <a href="#" ng-click="subscribers = rawSubscribers.join(',')">komma</a> eller <a href="#" ng-click="subscribers = rawSubscribers.join('\n')">ny rad</a></p>
                 <textarea class="form-control" rows="5">{{subscribers}}</textarea>
             </div>
         </div>
