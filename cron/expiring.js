@@ -6,8 +6,6 @@ const path = require('path');
 const moment = require('moment');
 
 const config = require(path.join(__dirname, '../server/config/environment'));
-const Member = require(path.join(__dirname, '../server/models/member.model'));
-const OutgoingMessage = require(path.join(__dirname, '../server/models/outgoing-message.model'));
 const ewbMail = require(path.join(__dirname, '../server/components/ewb-mail'));
 const log = require(path.join(__dirname, '../server/config/logger'));
 const db = require(path.join(__dirname, '../server/db')).db;
