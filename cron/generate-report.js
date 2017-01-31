@@ -49,7 +49,6 @@ Setting.findBy({
 
         return db.task(tx => {
             const queries = mails.map(m => {
-                console.log(m);
                 return db.none(`
                     INSERT INTO outgoing_message (sender, recipient, subject, body)
                     VALUES ($[sender], $[recipient], $[subject], $[body])
