@@ -16,14 +16,14 @@ db.any(`
     SELECT id
     FROM event
     WHERE event.active
-`).then(activeEventIds => {
-    if (activeEventIds.length === 0) {
+`).then(activeEvents => {
+    if (activeEvents.length === 0) {
         log.info('No active events');
         process.exit(0);
     }
 
-    let events = map.activeEventIds(id => {
-        return Event.get(id);
+    let events = activeEvents.map(e => {
+        return Event.get(e.id);
     });
 
     return Promise.all(events);
@@ -36,24 +36,17 @@ db.any(`
             return;
         }
 
-        //<tr ng-repeat="payment in ev.payments">
-            //<td>{{payment.name}}</td>
-            //<td>{{payment.email}}</td>
-            //<td>{{payment.amount}} kr</td>
-            //<td>{{joinProducts(payment.addons)}}</td>
-            //<td>{{payment.message}}</td>
-        //</tr>
         let eventSummary = 'Inga anmälningar';
         if (e.payments.length > 0) {
-            let eventAddonIds = e.addons.map(a => { return a.product_id; });
-
+            eventSummary = 'Namn | Epost | Betalt (SEK) | Val | Meddelande\n\n';
             eventSummary += e.payments.map(p => {
-                // TODO
-                p.
+                let products = e.addons.filter(a => {
+                    return p.addons.includes(a.product_id);
+                });
 
-                let productNames = e.addons.filter(a => {
-                    return eventAddonsIds.includes(a.product_id);
-                }).map(a => { return a.name; }).join(', ');
+                let productNames = products.map(product => {
+                    return product.name;
+                }).join(', ');
 
                 return `${p.name} | ${p.email} | ${p.amount} | ${productNames} | ${p.message}`;
             }).join('\n');
@@ -79,7 +72,7 @@ db.any(`
             return tx.none(`
                 INSERT INTO outgoing_message (sender, recipient, subject, body)
                 VALUES ($[sender], $[recipient], $[subject], $[body])
-            `);
+            `, m);
         });
 
         return tx.batch(queries);
