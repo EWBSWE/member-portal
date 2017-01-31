@@ -56,7 +56,9 @@ CREATE TABLE setting (
 INSERT INTO setting (key, value, description)
 VALUES
 ('StripeTransactionFeePercent', '0.014', 'Percentage of total transaction amount applied to each purchase.'),
-('StripeTransactionFeeFlat', '1.8', 'Flat fee applied on each purchase');
+('StripeTransactionFeeFlat', '1.8', 'Flat fee applied on each purchase'),
+('StripeTransferDate', '12', 'Stripe transfer date'),
+('StripeTransferEmails', 'ict@ingenjorerutangranser.se', 'Recipients of monthly report');
 
 -- Outgoing Message
 CREATE TABLE outgoing_message (
