@@ -11,7 +11,6 @@ var compression = require('compression');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var cookieParser = require('cookie-parser');
-var errorHandler = require('errorhandler');
 var path = require('path');
 var config = require('./environment');
 var passport = require('passport');
@@ -35,10 +34,6 @@ module.exports = function(app) {
         app.use(express.static(path.join(config.root, 'public')));
         app.set('appPath', '/public');
         app.use(morgan('combined', {stream: logger.stream}));
-
-        app.use(function(err, req, res, next) {
-            res.status(err.status || 500).json({status: 'error', message: err.message});
-        });
     }
 
     if (env === 'development') {
@@ -50,6 +45,5 @@ module.exports = function(app) {
         app.use(express.static(path.join(config.root, '.tmp')));
         app.use(express.static(path.join(config.root, 'client')));
         app.set('appPath', 'client');
-        app.use(errorHandler()); // Error handler - has to be last
     }
 };

@@ -11,6 +11,8 @@
 var errors = require('./components/errors');
 var path = require('path');
 
+const logger = require('./config/logger');
+
 module.exports = function(app) {
     app.use('/api/members', require('./api/member'));
     app.use('/api/member-types', require('./api/member-type'));
@@ -29,4 +31,17 @@ module.exports = function(app) {
     app.route('/*').get(function(req, res) {
         res.sendFile('index.html', { root: path.join(__dirname, '../'+app.get('appPath')) });
     });
+
+    const env = app.get('env');
+    if (env === 'production') {
+        app.use(function(err, req, res, next) {
+            logger.error(err);
+
+            res.status(err.status || 500).json({status: 'error', message: err.message});
+        });
+    }
+
+    if (env === 'development' || env === 'test') {
+        app.use(require('errorhandler')());
+    }
 };
