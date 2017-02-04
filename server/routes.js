@@ -41,7 +41,11 @@ module.exports = function(app) {
         });
     }
 
-    if (env === 'development' || env === 'test') {
+    if (env === 'development') {
         app.use(require('errorhandler')());
+    }
+
+    if (env === 'test') {
+        // No error middleware
     }
 };
