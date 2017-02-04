@@ -15,7 +15,8 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 var moment = require('moment');
-var winston = require('winston');
+
+const logger = require('../../config/logger');
 
 var Event = require('../../models/event.model');
 var Member = require('../../models/member.model');
@@ -73,7 +74,7 @@ exports.confirmMembershipPayment = function(req, res, next) {
         return next(badRequest);
     }
 
-    winston.info('Initiating membership payment');
+    logger.info('Initiating membership payment');
 
     let memberData = {
         email: req.body.email.trim(),
@@ -87,20 +88,20 @@ exports.confirmMembershipPayment = function(req, res, next) {
     };
 
     Product.get(req.body.productId).then(product => {
-        winston.info('membership product', product);
+        logger.info('membership product', product);
 
         return new Promise((resolve, reject) => {
-            winston.info('processing charge');
+            logger.info('processing charge');
 
             processCharge({
                 currency: product.currency_code,
                 amount: product.price,
                 description: product.name
             }, req.body.stripeToken, () => {
-                winston.info('stripe processing successful');
+                logger.info('stripe processing successful');
                 resolve(product);
             }, err => {
-                winston.info('stripe processing failed');
+                logger.info('stripe processing failed');
                 let badRequest = new Error('Stripe rejected');
                 badRequest.status = 400;
                 reject(badRequest);
@@ -109,21 +110,21 @@ exports.confirmMembershipPayment = function(req, res, next) {
     }).then(product => {
         return Member.findBy({ email: memberData.email }).then(members => {
             if (members.length === 0) {
-                winston.info('new member, creating');
+                logger.info('new member, creating');
                 return Member.create(memberData);
             }
 
-            winston.info('existing member, updating', {expirationDate: members[0].expiration_date});
+            logger.info('existing member, updating', {expirationDate: members[0].expiration_date});
             return Member.update(members[0].id, memberData);
         }).then(member => {
-            winston.info('extending membership');
+            logger.info('extending membership');
             return Member.extendMembership(member, product).then(member => {
-                winston.info('new end date', {expirationDate: member.expiration_date});
+                logger.info('new end date', {expirationDate: member.expiration_date});
                 return Payment.create({
                     member: member,
                     products: [product],
                 }).then(() => {
-                    winston.info('create confirmation mail');
+                    logger.info('create confirmation mail');
                     let mail = {
                         sender: ewbMail.sender(),
                         recipient: memberData.email,
@@ -138,7 +139,7 @@ exports.confirmMembershipPayment = function(req, res, next) {
             return Promise.resolve(product);
         });
     }).then(product => {
-        winston.info('create receipt mail');
+        logger.info('create receipt mail');
         let receiptMail = {
             sender: ewbMail.sender(),
             recipient: memberData.email,
@@ -154,7 +155,7 @@ exports.confirmMembershipPayment = function(req, res, next) {
 
         return OutgoingMessage.create(receiptMail);
     }).then(() => {
-        winston.info('all done');
+        logger.info('all done');
         res.sendStatus(201);
     }).catch(err => {
         next(err);
@@ -184,9 +185,9 @@ exports.confirmEventPayment = function(req, res, next) {
         let selectedAddons = event.addons.filter(addon => { return req.body.addonIds.includes(addon.id); });
         let sum = selectedAddons.reduce((total, addon) => { return total + addon.price; }, 0);
 
-        winston.info('initiating event payment', event);
+        logger.info('initiating event payment', event);
         if (sum === 0) {
-            winston.info('free event');
+            logger.info('free event');
             return Promise.resolve(event);
         } else {
             if (!req.body.stripeToken) {
@@ -201,10 +202,10 @@ exports.confirmEventPayment = function(req, res, next) {
                     amount: sum,
                     description: event.name
                 }, req.body.stripeToken, () => {
-                    winston.info('payment successful');
+                    logger.info('payment successful');
                     resolve(event);
                 }, err => {
-                    winston.info('payment failed');
+                    logger.info('payment failed');
                     let badRequest = new Error('Stripe rejected');
                     badRequest.status = 400;
                     reject(badRequest);
@@ -214,7 +215,7 @@ exports.confirmEventPayment = function(req, res, next) {
             });
         }
     }).then(event => {
-        winston.info('add participant');
+        logger.info('add participant');
         return Event.addParticipant(event.id, {
             addonIds: req.body.addonIds,
             name: req.body.participant.name,
@@ -229,7 +230,7 @@ exports.confirmEventPayment = function(req, res, next) {
 
         return Promise.resolve(event);
     }).then(event => {
-        winston.info('create receipt mail');
+        logger.info('create receipt mail');
         let receiptMail = {
             sender: ewbMail.sender(),
             recipient: req.body.participant.email,
@@ -246,7 +247,7 @@ exports.confirmEventPayment = function(req, res, next) {
         return OutgoingMessage.create(receiptMail).then(() => {
             return EmailTemplate.get(event.email_template_id);
         }).then(template => {
-            winston.info('create event mail');
+            logger.info('create event mail');
             let eventMail = {
                 sender: ewbMail.noreply(),
                 recipient: req.body.participant.email,
@@ -257,7 +258,7 @@ exports.confirmEventPayment = function(req, res, next) {
             return OutgoingMessage.create(eventMail);
         });
     }).then(() => {
-        winston.info('all done!');
+        logger.info('all done!');
         res.sendStatus(201);
     }).catch(err => {
         next(err);
