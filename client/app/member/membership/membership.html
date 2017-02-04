@@ -112,7 +112,7 @@
             <div>
                 <label translate>Type</label>
             </div>
-            <div ng-class="{'form-group': true, 'has-error': !newMember.type && !form.$pristine, 'has-success': newMember.memberTypeId }">
+            <div ng-class="{'form-group': true, 'has-error': !newMember.memberTypeId && !form.$pristine, 'has-success': newMember.memberTypeId }">
               <label class="radio-inline control-label">
                 <input type="radio" name="type" value="1" ng-model="newMember.memberTypeId"/>
                 <span translate>Student</span>
