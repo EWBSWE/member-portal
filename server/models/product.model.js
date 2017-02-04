@@ -38,7 +38,15 @@ function get(id) {
             currency_code
         FROM product
         WHERE id = $1
-    `, id);
+    `, id).then(p => {
+        if (p) {
+            p.id = +p.id;
+            p.price = +p.price;
+            p.product_type_id = +p.product_type_id;
+        }
+
+        return Promise.resolve(p);
+    });
 }
 
 /**
@@ -84,13 +92,27 @@ function create(data) {
             }
 
             return transaction.batch(queries);
+        }).then(products => {
+            products.forEach(p => {
+                p.id = +p.id;
+                p.price = +p.price;
+                p.product_type_id = +p.product_type_id;
+            });
+
+            return Promise.resolve(products);
         });
     } else {
         if (!data.name || !data.price || !data.productTypeId) {
             return Promise.reject('Missing attributes');
         }
 
-        return _create(data, db);
+        return _create(data, db).then(p => {
+            p.id = +p.id;
+            p.price = +p.price;
+            p.product_type_id = +p.product_type_id;
+
+            return Promise.resolve(p);
+        });
     }
 }
 
@@ -106,7 +128,15 @@ function findByProductTypeId(id) {
             currency_code
         FROM product
         WHERE product_type_id = $1
-    `, id);
+    `, id).then(p => {
+        if (p) {
+            p.id = +p.id;
+            p.price = +p.price;
+            p.product_type_id = +p.product_type_id;
+        }
+
+        return Promise.resolve(p);
+    });
 }
 
 function update(id, data) {

@@ -24,7 +24,7 @@ angular.module('ewbMemberApp')
 
     var findMatchingProduct = function() {
         var product = _.find($scope.products, function(p) {
-            return p.attribute.member_type_id === $scope.newMember.memberTypeId &&
+            return p.attribute.member_type === $scope.newMember.memberType &&
                 p.attribute.days === $scope.newMember.subscriptionLength * 365;
         });
 

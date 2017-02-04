@@ -34,7 +34,7 @@ describe('Product model', function() {
                 description: 'Description',
             }).then(product => {
                 expect(product.name).to.equal('Test');
-                expect(product.price).to.equal('10');
+                expect(product.price).to.equal(10);
                 expect(product.description).to.equal('Description');
                 
                 done();
@@ -85,7 +85,7 @@ describe('Product model', function() {
             let data = {
                 productTypeId: productTypeId,
                 name: 'Test 1',
-                price: '10',
+                price: 10,
             };
 
             Product.create(data).then(product => {
@@ -103,11 +103,11 @@ describe('Product model', function() {
             let data = [{
                 productTypeId: productTypeId,
                 name: 'Test 1',
-                price: '10',
+                price: 10,
             }, {
                 productTypeId: productTypeId,
                 name: 'Test 2',
-                price: '11',
+                price: 11,
             }];
 
             Product.create(data).then(products => {
