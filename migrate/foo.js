@@ -247,8 +247,8 @@ function insertProducts(data) {
         });
 
         data.forEach(d => {
-            if (d.attribute) {
-                d.attribute = JSON.parse(d.attribute.replace(/""/g, '"')
+            if (d.typeAttributes.length) {
+                d.attribute = JSON.parse(d.typeAttributes.replace(/""/g, '"')
                     .replace(/^"/, '').replace(/"$/, ''));
             } else {
                 d.attribute = null;
