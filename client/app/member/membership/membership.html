@@ -112,17 +112,17 @@
             <div>
                 <label translate>Type</label>
             </div>
-            <div ng-class="{'form-group': true, 'has-error': !newMember.type && !form.$pristine, 'has-success': newMember.type }">
+            <div ng-class="{'form-group': true, 'has-error': !newMember.type && !form.$pristine, 'has-success': newMember.memberTypeId }">
               <label class="radio-inline control-label">
-                <input type="radio" name="type" value="student" ng-model="newMember.type"/>
+                <input type="radio" name="type" value="1" ng-model="newMember.memberTypeId"/>
                 <span translate>Student</span>
               </label>
               <label class="radio-inline control-label">
-                <input type="radio" name="type" value="working" ng-model="newMember.type" />
+                <input type="radio" name="type" value="2" ng-model="newMember.memberTypeId" />
                 <span translate>Working</span>
               </label>
               <label class="radio-inline control-label">
-                <input type="radio" name="type" value="senior" ng-model="newMember.type" />
+                <input type="radio" name="type" value="3" ng-model="newMember.memberTypeId" />
                 <span translate>Senior</span>
               </label>
             </div>

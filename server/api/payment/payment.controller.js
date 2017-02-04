@@ -82,7 +82,6 @@ exports.confirmMembershipPayment = function(req, res, next) {
         location: req.body.location,
         profession: req.body.profession,
         education: req.body.education,
-        type: req.body.type,
         gender: req.body.gender,
         yearOfBirth: req.body.yearOfBirth
     };

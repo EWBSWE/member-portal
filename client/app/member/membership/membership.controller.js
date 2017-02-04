@@ -24,7 +24,7 @@ angular.module('ewbMemberApp')
 
     var findMatchingProduct = function() {
         var product = _.find($scope.products, function(p) {
-            return p.attribute.memberType === $scope.newMember.type &&
+            return p.attribute.member_type_id === $scope.newMember.memberTypeId &&
                 p.attribute.days === $scope.newMember.subscriptionLength * 365;
         });
 
@@ -43,7 +43,6 @@ angular.module('ewbMemberApp')
             education: $scope.newMember.education,
             email: $scope.newMember.email,
             gender: $scope.newMember.gender,
-            type: $scope.newMember.type,
             yearOfBirth: $scope.newMember.yearOfBirth,
         }).success(function(data) {
             $scope.successEmail = $scope.newMember.email;
