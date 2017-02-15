@@ -45,13 +45,12 @@ exports.showPublic = function(req, res, next) {
         active: true,
     }).then(events => {
         if (events.length === 0) {
-            return res.sendStatus(404);
+            res.sendStatus(404);
+        } else {
+            // TODO filter out stuff that is not going to the client
+
+            return Event.get(events[0].id);
         }
-        
-
-        // TODO filter out stuff that is not going to the client
-
-        return Event.get(events[0].id);
     }).then(e => {
         res.status(200).json(e);
     }).catch(err => {
