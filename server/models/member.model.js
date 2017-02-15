@@ -201,6 +201,29 @@ function index() {
     `);
 }
 
+function activeMembers() {
+    return db.any(`
+        SELECT
+            member.id,
+            email,
+            name,
+            location,
+            education,
+            profession,
+            member_type,
+            gender,
+            year_of_birth,
+            created_at,
+            expiration_date
+        FROM member
+        LEFT JOIN member_type ON member.member_type_id = member_type.id
+        WHERE
+            member_type IS NOT NULL AND
+            expiration_date >= NOW()
+        ORDER BY id
+    `);
+}
+
 function get(id) {
     return db.oneOrNone(`
         SELECT
@@ -320,6 +343,7 @@ function extendMembership(member, product) {
 
 module.exports = {
     index: index,
+    activeMembers: activeMembers,
     get: get,
     create: create,
     update: update,

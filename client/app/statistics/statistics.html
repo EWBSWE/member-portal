@@ -16,45 +16,33 @@
     <div class="row">
         <div class="col-xs-12 col-sm-6">
             <h2>Medlemmar</h2>
-            <p>Totalt: {{members.length}}</p>
-            <p>Studenter: {{memberCounts.student}}</p>
-            <p>Yrkesverksamma: {{memberCounts.working}}</p>
-            <p>Seniora: {{memberCounts.senior}}</p>
+            <p>Totalt: {{data.members.total}}</p>
+            <p>Studenter: {{data.members.student}}</p>
+            <p>Yrkesverksamma: {{data.members.working}}</p>
+            <p>Seniora: {{data.members.senior}}</p>
         </div>
 
         <div class="col-xs-12 col-sm-6">
             <h2>Kön</h2>
-            <p>Män: {{genderCounts.male}}</p>
-            <p>Kvinnor: {{genderCounts.female}}</p>
-            <p>Annat: {{genderCounts.other}}</p>
+            <p>Män: {{data.members.genders.male}}</p>
+            <p>Kvinnor: {{data.members.genders.female}}</p>
+            <p>Annat: {{data.members.genders.other}}</p>
         </div>
     </div>
 
     <div class="row">
         <div class="col-xs-12 col-sm-6">
             <h2>Åldrar</h2>
-            <div ng-repeat="y in birthYears | orderBy: 'name'">
-                <p>{{y.name}}: {{y.count}}</p>
+            <div ng-repeat="(birthYear, count) in data.members.birthYears | orderBy: 'birthYear'">
+                <p>{{birthYear}}: {{count}}</p>
             </div>
         </div>
 
         <div class="col-xs-12 col-sm-6">
             <h2>Orter</h2>
-            <div ng-repeat="l in locations | orderBy: 'name'">
-                <p>{{l.name}}: {{l.count}}</p>
+            <div ng-repeat="(location, count) in data.members.locations | orderBy: 'location'">
+                <p>{{location}}: {{count}}</p>
             </div>
         </div>
     </div>
 </div>
-<!--<div class="container">-->
-    <!--<div class="row">-->
-        <!--<div class="col-lg-12 row">-->
-            <!--<h1>Students: {{studentCount}}</h1>-->
-            <!--<h1>Working/retired: {{workingCount}}</h1>-->
-            <!--<div class="col-lg-3">-->
-                <!--<h1><small>Total members:</small> {{totalMemberCount}}</h1>-->
-                <!--<nvd3 options="options" data="data"></nvd3>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
-<!--</div>-->

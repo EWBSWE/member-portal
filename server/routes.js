@@ -20,6 +20,7 @@ module.exports = function(app) {
     app.use('/api/payments', require('./api/payment'));
     app.use('/api/products', require('./api/product'));
     app.use('/api/settings', require('./api/setting'));
+    app.use('/api/stats', require('./api/stats'));
 
     app.use('/auth', require('./auth'));
 
