@@ -3,8 +3,12 @@
 // Test specific configuration
 // ===========================
 module.exports = {
-  // MongoDB connection options
-  mongo: {
-    uri: 'mongodb://localhost/ewbmember-test'
-  }
+    port: 8999,
+    db: {
+        host: 'localhost',
+        port: 5432,
+        database: 'ewb_test',
+        user: 'dev',
+        password: 'asdf',
+    },
 };

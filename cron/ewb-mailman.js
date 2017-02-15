@@ -1,68 +1,65 @@
 'use strict';
-
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
-var mongoose = require('mongoose');
-var path = require('path');
-var config = require(path.join(__dirname, '../server/config/environment'));
+const path = require('path');
+const moment = require('moment');
+const Promise = require('bluebird');
 
-var Member = require(path.join(__dirname, '../server/models/member.model'));
-var OutgoingMessage = require(path.join(__dirname, '../server/models/outgoing-message.model'));
-var ewbError = require(path.join(__dirname, '../server/models/ewb-error.model'));
+const config = require(path.join(__dirname, '../server/config/environment'));
+const log = require(path.join(__dirname, '../server/config/logger'));
 
-var moment = require('moment');
+const OutgoingMessage = require(path.join(__dirname, '../server/models/outgoing-message.model'));
 
-var mailgun;
+var mailgun = require('mailgun-js')({
+    apiKey: '***REMOVED***',
+    domain: '***REMOVED***',
+});
+
 if (process.env.NODE_ENV === 'production') {
     mailgun = require('mailgun-js')({
         apiKey: '***REMOVED***',
         domain: 'blimedlem.ingenjorerutangranser.se',
     });
-} else {
-    mailgun = require('mailgun-js')({
-        apiKey: '***REMOVED***',
-        domain: '***REMOVED***',
-    });
 }
 
-mongoose.connect(config.mongo.uri, config.mongo.options);
+// Number of messages to fetch
+const numberOfMessages = 5;
 
-OutgoingMessage
-    .find({ sendAt: { $lt: moment() } }) //@warning: cannot index sendAt since not required and seemingly not always created -> O(n)
-    .sort({ priority: 'descending' })
-    .limit(10)
-    .exec(function(err, outgoingMessages) {
-        if (err) {
-            ewbError.create({ message: 'Fetch outgoing messages', origin: __filename, params: err }, function (err, data) {
-                process.exit(1);
-            });
-        }
+OutgoingMessage.fetch(numberOfMessages).then(messages => {
+    if (messages.length === 0) {
+        return Promise.resolve('No messages in queue');
+    }
 
-        if (outgoingMessages.length) {
-            console.log('Messages found:', outgoingMessages.length);
-            var mailInterval = setInterval(function() {
-                console.log('Messages left:', outgoingMessages.length);
-                if (outgoingMessages.length) {
-                    var message = outgoingMessages.shift();
-                    mailgun.messages().send(message, function(error, body) {
-                        if (error) {
-                            console.log('Mailgun error', error);
-                            message.failedAttempts++;
-                            message.sendAt = moment().add(message.failedAttempts, 'minutes');
-                            message.save();
-                        } else {
-                            console.log(body);
-                            message.remove();
-                        }
+    return Promise.all(messages.map(message => {
+        return new Promise((resolve, reject) => {
+            let mailgunMessage = {
+                to: message.recipient,
+                from: message.sender,
+                subject: message.subject,
+                text: message.body
+            };
+
+            mailgun.messages().send(mailgunMessage, (err, body) => {
+                if (err) {
+                    OutgoingMessage.fail(message.id).then(() => {
+                        reject(err);
+                    }).catch(err => {
+                        reject(err);
                     });
                 } else {
-                    console.log('No messages left in queue');
-                    clearInterval(mailInterval);
-                    process.exit(0);
+                    OutgoingMessage.remove(message.id).then(() => {
+                        resolve(body);
+                    }).catch(err => {
+                        reject(err);
+                    });
                 }
-            }, 3000);
-        } else {
-            console.log('No messages in queue');
-            process.exit(0);
-        }
-    });
+            });
+        });
+    }));
+}).then(() => {
+    log.info('All done!');
+    process.exit(0);
+}).catch(err => {
+    log.error(err);
+    process.exit(1);
+});

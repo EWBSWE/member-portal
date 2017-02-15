@@ -3,10 +3,10 @@
 var express = require('express');
 var passport = require('passport');
 var config = require('../config/environment');
-var User = require('../models/user.model');
+var Member = require('../models/member.model');
 
 // Passport Configuration
-require('./local/passport').setup(User, config);
+require('./local/passport').setup(Member, config);
 
 var router = express.Router();
 

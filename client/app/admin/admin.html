@@ -41,7 +41,7 @@
                     <tr ng-repeat="user in users">
                         <td>{{user.email}}</td>
                         <td>{{user.role}}</td>
-                        <td><button type="submit" class="btn btn-xs btn-danger" ng-click="deleteUser(user._id)">Ta bort</button></td>
+                        <td><button type="submit" class="btn btn-xs btn-danger" ng-click="deleteUser(user.id)">Ta bort</button></td>
                     </tr>
                 </tbody>
             </table>

@@ -3,48 +3,34 @@
 var path = require('path');
 var _ = require('lodash');
 
-function requiredProcessEnv(name) {
-  if(!process.env[name]) {
-    throw new Error('You must set the ' + name + ' environment variable');
-  }
-  return process.env[name];
-}
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
-// All configurations will extend these options
-// ============================================
-var all = {
-  env: process.env.NODE_ENV,
+let defaultConfig = {
+    env: process.env.NODE_ENV,
 
-  // Root path of server
-  root: path.normalize(__dirname + '/../../..'),
+    // Root path of server
+    root: path.normalize(__dirname + '/../../..'),
 
-  // Server port
-  port: process.env.PORT || 9000,
+    // Server port
+    port: process.env.PORT || 9000,
 
-  // Should we populate the DB with sample data?
-  seedDB: false,
+    // Secret for session, you will want to change this and make it an environment variable
+    secrets: {
+        session: process.env.EWB_SESSION_SECRET || 'development-secret'
+    },
 
-  // Secret for session, you will want to change this and make it an environment variable
-  secrets: {
-    session: 'ewb-member-secret'
-  },
+    // List of user roles
+    userRoles: ['guest', 'user', 'admin'],
 
-  // List of user roles
-  userRoles: ['guest', 'user', 'admin'],
+    db: {
+        host: 'localhost',
+        port: 5432,
+        database: 'ewb_dev',
+        user: 'dev',
+        password: 'asdf',
+    },
 
-  // MongoDB connection options
-  mongo: {
-    options: {
-      db: {
-        safe: true
-      }
-    }
-  },
-
+    developerMail: 'ict@ingenjorerutangranser.se',
 };
 
-// Export the config object based on the NODE_ENV
-// ==============================================
-module.exports = _.merge(
-  all,
-  require('./' + process.env.NODE_ENV + '.js') || {});
+module.exports = _.merge(defaultConfig, require(`./${process.env.NODE_ENV}.js`) || {});

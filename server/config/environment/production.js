@@ -3,21 +3,17 @@
 // Production specific configuration
 // =================================
 module.exports = {
-  // Server IP
-  ip:       process.env.OPENSHIFT_NODEJS_IP ||
-            process.env.IP ||
-            undefined,
+    // Server IP
+    ip: process.env.OPENSHIFT_NODEJS_IP || process.env.IP || undefined,
 
-  // Server port
-  port:     process.env.OPENSHIFT_NODEJS_PORT ||
-            process.env.PORT ||
-            8080,
+    // Server port
+    port: process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 8080,
 
-  // MongoDB connection options
-  mongo: {
-    uri:    process.env.MONGOLAB_URI ||
-            process.env.MONGOHQ_URL ||
-            process.env.OPENSHIFT_MONGODB_DB_URL+process.env.OPENSHIFT_APP_NAME ||
-            'mongodb://localhost/ewbmember'
-  }
+    db: {
+        host: process.env.EWB_DB_HOST,
+        port: process.env.EWB_DB_PORT,
+        database: process.env.EWB_DB_DATABASE,
+        user: process.env.EWB_DB_USER,
+        password: process.env.EWB_DB_PASSWORD,
+    }
 };

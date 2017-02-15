@@ -1,12 +1,51 @@
+/**
+ * Settings model
+ *
+ * @namespace model.Setting
+ * @memberOf model
+ */
+
 'use strict';
 
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+let db = require('../db').db;
 
-var SettingSchema = new Schema({
-    key: { type: String, required: true, unique: true },
-    value: { type: String, required: true },
-    description: { type: String },
-});
+var postgresHelper = require('../helpers/postgres.helper');
 
-module.exports = mongoose.model('Setting', SettingSchema);
+const COLUMN_MAP = {
+    key: 'key',
+    value: 'value',
+    description: 'description',
+};
+
+/**
+ * Find all settings
+ *
+ * @returns {Promise<Array|Error>} Resolves to an array of objects
+ */
+function index() {
+    return db.any(`
+        SELECT key, value, description
+        FROM setting
+    `);
+}
+
+/**
+ * Find settings by attributes
+ *
+ * @param {Object} data - Object to query against
+ * @returns {Promise<Array|Error>} Resolves to array of objects
+ */
+function findBy(data) {
+    let wheres = postgresHelper.where(COLUMN_MAP, data);
+
+    return db.any(`
+        SELECT key, value, description
+        FROM setting
+        WHERE ${wheres.clause}
+    `, wheres.data);
+}
+
+module.exports = {
+    index: index,
+    findBy: findBy,
+};

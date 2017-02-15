@@ -45,6 +45,9 @@ angular.module('ewbMemberApp')
         $http.get('/api/events/public', {
             params: { url: $routeParams.url },
         }).success(function(ev) {
+            ev.notificationOpen = ev.notification_open;
+            ev.dueDate = ev.due_date;
+
             $scope.ev = ev;
             $scope.ev.isPast = moment(ev.dueDate).endOf('day') < moment();
         }).error(function() {
@@ -63,17 +66,21 @@ angular.module('ewbMemberApp')
         if (!$scope.participant.addons) {
             $scope.participant.addons = {};
         }
-        $scope.participant.addons[$scope.ev.addons[0]._id] = true;
-        var addonIds = Object.keys($scope.participant.addons);
+        $scope.participant.addons[$scope.ev.addons[0].id] = true;
+        var addonIds = _.map(Object.keys($scope.participant.addons), function(id) {
+            return parseInt(id);
+        }); 
 
         var selectedAddons = _.filter($scope.ev.addons, function(addon) {
-            return _.include(addonIds, addon._id);
+            return _.include(addonIds, addon.id);
         });
 
         var sum = 0;
         for (var i = 0; i < selectedAddons.length; i++) {
-            sum += selectedAddons[i].product.price;
+            sum += parseInt(selectedAddons[i].price);
         }
+
+        console.log(sum, selectedAddons);
 
         if (sum === 0) {
             callback(null);

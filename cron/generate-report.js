@@ -2,94 +2,66 @@
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
-var _ = require('lodash');
-var mongoose = require('mongoose');
-var path = require('path');
-var config = require(path.join(__dirname, '../server/config/environment'));
+const path = require('path');
+const moment = require('moment');
+const Promise = require('bluebird');
 
-var ewbError = require(path.join(__dirname, '../server/models/ewb-error.model'));
-var OutgoingMessage = require(path.join(__dirname, '../server/models/outgoing-message.model'));
-var Setting = require(path.join(__dirname, '../server/models/setting.model'));
+const config = require(path.join(__dirname, '../server/config/environment'));
+const log = require(path.join(__dirname, '../server/config/logger'));
+const ewbMail = require(path.join(__dirname, '../server/components/ewb-mail'));
+const db = require(path.join(__dirname, '../server/db')).db;
 
-var PaymentHelper = require(path.join(__dirname, '../server/api/payment/payment.helper'));
-var ewbMail = require(path.join(__dirname, '../server/components/ewb-mail'));
+const Payment = require(path.join(__dirname, '../server/models/payment.model'));
+const Setting = require(path.join(__dirname, '../server/models/setting.model'));
 
-var moment = require('moment');
-
-var mailgun;
-if (process.env.NODE_ENV === 'production') {
-    mailgun = require('mailgun-js')({
-        apiKey: '***REMOVED***',
-        domain: 'blimedlem.ingenjorerutangranser.se',
-    });
-} else {
-    mailgun = require('mailgun-js')({
-        apiKey: '***REMOVED***',
-        domain: '***REMOVED***',
-    });
-}
-
-mongoose.connect(config.mongo.uri, config.mongo.options);
-
-Setting.findOne({
-    key: 'StripeTransferDate'
-}, function(err, setting) {
-    if (err) {
-        ewbError.create({ message: 'Fetch setting', origin: __filename, params: err }, function (err, data) {
-            process.exit(1);
-        });
+Setting.findBy({
+    key: ['StripeTransferDate', 'StripeTransferEmails']
+}).then(settings => {
+    if (settings.length !== 2) {
+        log.error('Expected to find settings StripeTransferDate and StripeTransferEmails');
+        process.exit(1);
     }
+
+    const stripeTransferDate = settings.filter(s => { return s.key === 'StripeTransferDate'})[0];
+    const stripeTransferEmails = settings.filter(s => { return s.key === 'StripeTransferEmails'})[0];
 
     // Example
     // {
     //   periodStart: 2016-04-14,
     //   periodEnd:   2016-05-13
     // }
-    var params = {
-        periodStart: moment().date(setting.value).subtract(1, 'month'),
-        periodEnd: moment().date(setting.value).subtract(1, 'day'),
+    const params = {
+        periodStart: moment().date(stripeTransferDate.value).subtract(1, 'month'),
+        periodEnd: moment().date(stripeTransferDate.value).subtract(1, 'day'),
     };
 
-    Setting.findOne({
-        key: 'StripeTransferEmails',
-    }, function(err, emailSetting) {
-        if (err) {
-            ewbError.create({ message: 'Fetch email setting', origin: __filename, params: err }, function (err, data) {
-                process.exit(1);
-            });
-        }
+    return Payment.generateReport(params.periodStart, params.periodEnd).then(report => {
+        const period = `Period: ${params.periodStart.startOf('day').format('YYYY-MM-DD HH:mm:ss')} - ${params.periodEnd.endOf('day').format('YYYY-MM-DD HH:mm:ss')}`;
 
-        PaymentHelper.generateReport({
-            periodStart: params.periodStart.format('YYYY-MM-DD'),
-            periodEnd: params.periodEnd.format('YYYY-MM-DD'),
-        }, function(err, data) {
-            if (err) {
-                ewbError.create({ message: 'Generate report', origin: __filename, params: err }, function (err, data) {
-                    process.exit(1);
-                });
-            }
+        const mails = stripeTransferEmails.value.split(/,/).map(recipient => {
+            return {
+                sender: ewbMail.sender(),
+                recipient: recipient,
+                subject: `EWB Report: ${params.periodStart.format('YYYY-MM-DD')} - ${params.periodEnd.format('YYYY-MM-DD')}`,
+                body: report, 
+            };
+        });
 
-            var period = 'Period: ' + params.periodStart.startOf('day').format('YYYY-MM-DD HH:mm:ss') + ' - ' + params.periodEnd.endOf('day').format('YYYY-MM-DD HH:mm:ss');
-            var formattedReport = PaymentHelper.formatReport(data);
-            var text = period + '\n\n' + formattedReport;
-
-            var mails = _.map(emailSetting.value.split(/,/), function(recipient) {
-                return {
-                    from: ewbMail.sender(),
-                    to: recipient,
-                    subject: 'EWB Report: ' + params.periodStart.format('YYYY-MM-DD') + ' - ' + params.periodEnd.format('YYYY-MM-DD'),
-                    text: text,
-                };
+        return db.task(tx => {
+            const queries = mails.map(m => {
+                return db.none(`
+                    INSERT INTO outgoing_message (sender, recipient, subject, body)
+                    VALUES ($[sender], $[recipient], $[subject], $[body])
+                `, m);
             });
 
-            OutgoingMessage.create(mails, function(err, outgoingMessage) {
-                if (err) {
-                    ewbError.create({ message: 'Failed to create report mail', origin: __filename, params: err });
-                }
-
-                console.log('Queued message(s)');
-                process.exit(0);
-            });
+            return tx.batch(queries);
         });
     });
+}).then(mails => {
+    log.info(`Generated report and queued ${mails.length} message(s).`);
+    process.exit(0);
+}).catch(err => {
+    log.error(err);
+    process.exit(1);
 });

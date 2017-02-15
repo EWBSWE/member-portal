@@ -4,7 +4,7 @@ angular.module('ewbMemberApp')
 .controller('AdminCtrl', function ($scope, $http) {
     $scope.users = [];
 
-    $http.get('/api/users').success(function(users) {
+    $http.get('/api/members', { params: { role: ['user', 'admin'] }}).success(function(users) {
         $scope.users = users;
     });
 
@@ -13,10 +13,12 @@ angular.module('ewbMemberApp')
             return;
         }
 
-        $http.post('/api/users', {
+        $http.post('/api/members', {
             email: $scope.email,
+            role: 'user', // TODO add proper form
         }).success(function(data) {
-            $scope.users.push(data);
+            $scope.users.push({ email: $scope.email, role: 'user' });
+
             $scope.email = '';
             $scope.showSuccess = true;
             $scope.showError = false;
@@ -36,9 +38,9 @@ angular.module('ewbMemberApp')
             return;
         }
 
-        $http.delete('/api/users/' + id).success(function(data) {
+        $http.delete('/api/members/' + id).success(function(data) {
             $scope.users = _.filter($scope.users, function(u) {
-                return u._id != id;
+                return u.id != id;
             });
             $scope.showError = false;
         }).error(function(data) {

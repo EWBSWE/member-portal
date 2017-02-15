@@ -41,7 +41,7 @@ angular.module('ewbMemberApp')
 
     $scope.resetPassword = function () {
         if ($scope.user.email) {
-            $http.post('/api/users/reset-password', {
+            $http.post('/api/members/reset-password', {
                 email: $scope.user.email
             }).success(function (data) {
                 $scope.resetSuccessful = true;

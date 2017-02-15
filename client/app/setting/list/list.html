@@ -15,29 +15,13 @@
                         <td>Key</td>
                         <td>Value</td>
                         <td>Description</td>
-                        <td>Action</td>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat-start="setting in settings" ng-class="{ 'bg-success': setting.success, 'bg-danger': !setting.success && setting.success != undefined }">
+                    <tr ng-repeat="setting in settings">
                         <td>{{setting.key}}</td>
                         <td>{{setting.value}}</td>
                         <td>{{setting.description}}</td>
-                        <td>
-                            <button type="submit" class="btn btn-primary" ng-click="showEditFor(setting)">Redigera</button>
-                        </td>
-                    </tr>
-                    <tr ng-repeat-end ng-show="modifiedSetting._id == setting._id">
-                        <td></td>
-                        <td>
-                            <input type="text" class="form-control" name="updateValue" ng-model="modifiedSetting.value"/>
-                        </td>
-                        <td>
-                            <input type="text" class="form-control" name="updateDescription" ng-model="modifiedSetting.description"/>
-                        </td>
-                        <td>
-                            <button type="submit" class="btn btn-primary" ng-click="updateSetting()">Spara</button>
-                        </td>
                     </tr>
                 </tbody>
             </table>

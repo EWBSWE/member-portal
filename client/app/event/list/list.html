@@ -33,17 +33,17 @@
                             </a>
                         </td>
                         <td>
-                            <a href="#" ng-click="sortType = 'createdAt'; sortReverse = !sortReverse">
+                            <a href="#" ng-click="sortType = 'created_at'; sortReverse = !sortReverse">
                                 Skapad
-                                <span ng-show="sortType == 'createdAt' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
-                                <span ng-show="sortType == 'createdAt' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
+                                <span ng-show="sortType == 'created_at' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
+                                <span ng-show="sortType == 'created_at' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
                             </a>
                         </td>
                         <td>
-                            <a href="#" ng-click="sortType = 'dueDate'; sortReverse = !sortReverse">
+                            <a href="#" ng-click="sortType = 'due_date'; sortReverse = !sortReverse">
                                 Sista anmälning
-                                <span ng-show="sortType == 'dueDate' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
-                                <span ng-show="sortType == 'dueDate' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
+                                <span ng-show="sortType == 'due_date' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
+                                <span ng-show="sortType == 'due_date' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
                             </a>
                         </td>
                         <td>
@@ -65,15 +65,15 @@
                 </thead>
                 <tbody>
                     <tr dir-paginate="event in events | orderBy:sortType:sortReverse | filter:filterByEmail | filter:filterByLocation | itemsPerPage: 50">
-                        <td><a href="/event/{{event._id}}">{{event.name}}</a></td>
+                        <td><a href="/event/{{event.id}}">{{event.name}}</a></td>
                         <td><a href="/e/{{event.identifier}}">/e/{{event.identifier}}</td>
-                        <td>{{event.createdAt | amDateFormat: 'YYYY-MM-DD'}}</td>
-                        <td>{{event.dueDate | amDateFormat: 'YYYY-MM-DD'}}</td>
-                        <td>{{event.participants.length}}</td>
+                        <td>{{event.created_at | amDateFormat: 'YYYY-MM-DD'}}</td>
+                        <td>{{event.due_date | amDateFormat: 'YYYY-MM-DD'}}</td>
+                        <td>{{event.participants}}</td>
                         <td ng-class="{ 'bg-success': event.active, 'bg-warning': !event.active }"></td>
                         <td>
-                            <a href="/event/{{event._id}}/edit" class="btn btn-default btn-xs">Redigera</a>
-                            <a href="#" ng-click="deleteEvent(event._id)" class="btn btn-danger btn-xs">Ta bort</a>
+                            <a href="/event/{{event.id}}/edit" class="btn btn-default btn-xs">Redigera</a>
+                            <a href="#" ng-click="deleteEvent(event.id)" class="btn btn-danger btn-xs">Ta bort</a>
                         </td>
                     </tr>
                 </tbody>

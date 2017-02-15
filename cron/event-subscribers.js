@@ -2,98 +2,85 @@
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
-var _ = require('lodash');
-var mongoose = require('mongoose');
-var path = require('path');
-var config = require(path.join(__dirname, '../server/config/environment'));
+const path = require('path');
+const moment = require('moment');
 
-var ewbError = require(path.join(__dirname, '../server/models/ewb-error.model'));
-var OutgoingMessage = require(path.join(__dirname, '../server/models/outgoing-message.model'));
-var Event = require(path.join(__dirname, '../server/models/event.model'));
+const config = require(path.join(__dirname, '../server/config/environment'));
+const ewbMail = require(path.join(__dirname, '../server/components/ewb-mail'));
+const log = require(path.join(__dirname, '../server/config/logger'));
+const db = require(path.join(__dirname, '../server/db')).db;
 
-var EventHelper = require(path.join(__dirname, '../server/api/event/event.helper'));
-var ewbMail = require(path.join(__dirname, '../server/components/ewb-mail'));
+const Event = require(path.join(__dirname, '../server/models/event.model'));
 
-var moment = require('moment');
-
-var mailgun;
-if (process.env.NODE_ENV === 'production') {
-    mailgun = require('mailgun-js')({
-        apiKey: '***REMOVED***',
-        domain: 'blimedlem.ingenjorerutangranser.se',
-    });
-} else {
-    mailgun = require('mailgun-js')({
-        apiKey: '***REMOVED***',
-        domain: '***REMOVED***',
-    });
-}
-
-mongoose.connect(config.mongo.uri, config.mongo.options);
-
-Event.find({
-    active: true
-}).populate([{
-    path: 'participants',
-    populate: {
-        path: 'payments'
+db.any(`
+    SELECT id
+    FROM event
+    WHERE event.active
+`).then(activeEvents => {
+    if (activeEvents.length === 0) {
+        log.info('No active events');
+        process.exit(0);
     }
-}, {
-    path: 'addons',
-    populate: {
-        path: 'product'
-    }
-}, {
-    path: 'payments',
-    populate: {
-        path: 'buyer',
-        populate: {
-            path: 'document',
-            model: 'EventParticipant',
-        },
-    },
-}]).exec(function(err, ewbEvents) {
-    if (err) {
-        ewbError.create({ message: 'Fetch active events', origin: __filename, params: err }, function (err, data) {
-            process.exit(1);
+
+    let events = activeEvents.map(e => {
+        return Event.get(e.id);
+    });
+
+    return Promise.all(events);
+}).then(events => {
+    let mails = [];
+
+    events.forEach(e => {
+        if (e.subscribers.length === 0) {
+            log.info('No subscribers for ' + e.identifier);
+            return;
+        }
+
+        let eventSummary = 'Inga anmälningar';
+        if (e.payments.length > 0) {
+            eventSummary = 'Namn | Epost | Betalt (SEK) | Val | Meddelande\n\n';
+            eventSummary += e.payments.map(p => {
+                let products = e.addons.filter(a => {
+                    return p.addons.includes(a.product_id);
+                });
+
+                let productNames = products.map(product => {
+                    return product.name;
+                }).join(', ');
+
+                return `${p.name} | ${p.email} | ${p.amount} | ${productNames} | ${p.message}`;
+            }).join('\n');
+        }
+
+        e.subscribers.forEach(s => {
+            mails.push({
+                sender: ewbMail.noreply(),
+                recipient: s.email,
+                subject: e.name + ' - ' + moment().format('YYYY-MM-DD'),
+                body: eventSummary,
+            });
         });
-    }
-
-    var eventsWithSubscribers = _.filter(ewbEvents, function(e) {
-        return e.subscribers.length > 0;
     });
 
-    if (eventsWithSubscribers.length === 0) {
-        console.log('Nothing to do');
+    if (mails.length === 0) {
+        log.info('No messages generated.');
         process.exit(0);
     }
 
-    var mails = [];
+    return db.task(tx => {
+        let queries = mails.map(m => {
+            return tx.none(`
+                INSERT INTO outgoing_message (sender, recipient, subject, body)
+                VALUES ($[sender], $[recipient], $[subject], $[body])
+            `, m);
+        });
 
-    _.each(eventsWithSubscribers, function(ewbEvent) {
-        var mail = {
-            from: ewbMail.noreply(),
-            to: ewbEvent.subscribers.join(','),
-            subject: ewbEvent.name + ' - ' + moment().format('YYYY-MM-DD'),
-        };
-
-        if (ewbEvent.payments.length) {
-            var summary = EventHelper.generateSummary(ewbEvent);
-            mail.text = EventHelper.formatSummary(summary);
-        } else {
-            mail.text = 'Inga anmälningar';
-        }
-
-        mails.push(mail);
+        return tx.batch(queries);
     });
-
-    OutgoingMessage.create(mails, function(err, outgoingMessages) {
-        if (err) {
-            ewbError.create({ message: 'Failed to create report mail', origin: __filename, params: err });
-            process.exit(1);
-        }
-
-        console.log('Queued ' + outgoingMessages.length + ' message(s)');
-        process.exit(0);
-    });
+}).then(messages => {
+    log.info('Queued ' + messages.length + ' message(s).');
+    process.exit(0);
+}).catch(err => {
+    log.error(err);
+    process.exit(1);
 });

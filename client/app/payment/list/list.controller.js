@@ -19,10 +19,12 @@ angular.module('ewbMemberApp')
             return;
         }
 
-        $http.post('/api/payments/generate-report', {
-            periodStart: $scope.report.periodStart.trim(),
-            periodEnd: $scope.report.periodEnd.trim(),
-            recipient: $scope.report.recipient.trim(),
+        $http.get('/api/payments/report', {
+            params: {
+                start: $scope.report.periodStart.trim(),
+                end: $scope.report.periodEnd.trim(),
+                recipient: $scope.report.recipient.trim(),
+            }
         }).success(function(response) {
             $scope.success = $scope.report.recipient;
             $scope.report.recipient = null;

@@ -51,30 +51,22 @@
                         Sista anmälningsdatum på formen YYYY-MM-DD. Till exempel 2016-03-12.
                         </p>
                     </div>
-
-                    <div ng-class="{'form-group': true, 'has-error': eventform.inputContact.$error.email, 'has-success': eventform.inputContact.$valid}">
-                        <label for="inputContact" class="control-label">Epost kontaktperson</label>
-                        <input type="email" name="inputContact" id="inputContact" class="form-control" ng-model="ev.contact" required/>
-                        <p class="help-block">
-                        Giltig epost till kontaktperson som kommer visas på anmälningssidan.
-                        </p>
-                    </div>
                 </div>
 
                 <div class="confirmation-email">
-                    <div ng-class="{'form-group': true, 'has-error': eventform.inputConfirmationEmailSubject.$error.confirmationEmail.subject, 'has-success': eventform.inputConfirmationEmailSubject.$valid}">
+                    <div ng-class="{'form-group': true, 'has-error': eventform.inputConfirmationEmailSubject.$error.emailTemplate.subject, 'has-success': eventform.inputConfirmationEmailSubject.$valid}">
                         <label for="inputConfirmationEmailSubject" class="control-label">Bekräftelsemail ämnesrad</label>
-                        <input type="text" name="inputConfirmationEmailSubject" id="inputConfirmationEmailSubject" class="form-control" ng-model="ev.confirmationEmail.subject" required/>
+                        <input type="text" name="inputConfirmationEmailSubject" id="inputConfirmationEmailSubject" class="form-control" ng-model="ev.emailTemplate.subject" required/>
                         <p class="help-block">
                         Titeln på bekräftelsemailet som skickas i samband med slutförd betalning/anmälnig.
                         </p>
                     </div>
 
-                    <div ng-class="{'form-group': true, 'has-error': eventform.inputConfirmationEmailBody.$error.confirmationEmail.body, 'has-success': eventform.inputConfirmationEmailBody.$valid}">
+                    <div ng-class="{'form-group': true, 'has-error': eventform.inputConfirmationEmailBody.$error.emailTemplate.body, 'has-success': eventform.inputConfirmationEmailBody.$valid}">
                         <label for="inputConfirmationEmailBody">Bekräftelsemail epost</label>
-                        <textarea rows="5" name="inputConfirmationEmailBody" id="inputConfirmationEmailBody" class="form-control" ng-model="ev.confirmationEmail.body" required></textarea>
+                        <textarea rows="5" name="inputConfirmationEmailBody" id="inputConfirmationEmailBody" class="form-control" ng-model="ev.emailTemplate.body" required></textarea>
                         <p class="help-block">
-                        Meddelandet i bekräftelsemailet som skickas i samband med slutförd betalning/anmälnig.
+                        Meddelandet i bekräftelsemailet som skickas i samband med slutförd betalning/anmälning.
                         </p>
                     </div>
                 </div>
@@ -122,13 +114,21 @@
                         Nedan följer ett antal godtyckliga alternativ. Det är saker som väljs tillsammans med första alternativet. Exempel på alternativ kan vara att man köper till en t-shirt.
                     </div>
                     <div class="addons form-inline">
+                        <div class="bg-success" ng-show="ev.addons[$index].success" style="padding: 20px; margin-top: 20px;">
+                            {{ev.addons[$index].success}}
+                        </div>
+                        <div class="bg-danger" ng-show="ev.addons[$index].error" style="padding: 20px; margin-top: 20px;">
+                            {{ev.addons[$index].error}}
+                        </div>
+
+                        <input type="hidden" name="addonId" value="{{ev.addons[$index].id}}" ng-model="ev.addons[$index].id" />
                         <div class="form-group">
                             <label for="addonName">Namn</label>
-                            <input type="text" name="addonName" class="form-control" ng-model="ev.addons[$index].name" required/>
+                            <input type="text" name="addonName" class="form-control" ng-model="ev.addons[$index].name" ng-required="$index == 0"/>
                         </div>
                         <div class="form-group">
                             <label for="addonPrice">Kostnad</label>
-                            <input type="number" name="addonPrice" class="form-control" ng-model="ev.addons[$index].price" required/>
+                            <input type="number" name="addonPrice" class="form-control" ng-model="ev.addons[$index].price" ng-required="$index == 0"/>
                         </div>
                         <div class="form-group">
                             <label for="addonDescription">Beskrivning</label>
@@ -136,16 +136,21 @@
                             <p class="help-block">En beskrivande hjälptext som visas under alternativet.</p>
                         </div>
                         <div class="form-group">
-                            <label for="inputContact">Kapacitet</label>
-                            <input type="number" name="addonCapacity" class="form-control" ng-model="ev.addons[$index].capacity" required/>
+                            <label for="inputCapacity">Kapacitet</label>
+                            <input type="number" name="addonCapacity" class="form-control" ng-model="ev.addons[$index].capacity" ng-required="$index == 0"/>
                             <p class="help-block">Hur många deltagare som kan välja detta alternativ. Till exempel sittplatser.</p>
+                        </div>
+
+                        <div class="input-group">
+                            <button type="submit" class="btn btn-primary" ng-click="submitAddon($index)" ng-show="editEvent">Spara</button>
+                            <button type="submit" class="btn btn-danger" ng-click="deleteAddon($index)" ng-show="editEvent && $index > 0">Ta bort</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="input-group" style="margin-top: 20px; float: right;">
                     <button type="submit" class="btn btn-primary" ng-click="increaseAddons()">Fler alternativ</button>
-                    <button type="submit" class="btn btn-primary" ng-click="decreaseAddons()">Ta bort det senaste alternativet</button>
+                    <button type="submit" class="btn btn-primary" ng-click="decreaseAddons()" ng-show="!editEvent">Ta bort det senaste alternativet</button>
                 </div>
             </div>
         </form>

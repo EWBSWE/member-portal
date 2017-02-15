@@ -4,7 +4,6 @@ angular.module('ewbMemberApp', [
         'ngCookies',
         'ngResource', 'ngSanitize',
         'ngRoute',
-        'btford.socket-io',
         'ui.bootstrap',
         'angularMoment',
         'nvd3',

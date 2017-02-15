@@ -7,7 +7,9 @@ angular.module('ewbMemberApp')
     $http.get('/api/events/' + $routeParams.id).success(function(ev) {
         $scope.ev = ev;
         $scope.separatedParticipants = _.map(ev.participants, 'email').join(',');
-        $scope.subscribers = ev.subscribers.join(',');
+
+        $scope.rawSubscribers = _.map(ev.subscribers, 'email');
+        $scope.subscribers = $scope.rawSubscribers.join(',');
     });
 
     var separateWith = function(sep) {
@@ -24,11 +26,11 @@ angular.module('ewbMemberApp')
 
     $scope.joinProducts = function(products) {
         var matchingAddons = _.filter($scope.ev.addons, function(addon) {
-            return _.include(products, addon.product._id);
+            return _.include(products, addon.product_id);
         });
 
         return _.map(matchingAddons, function(a) {
-            return a.product.name;
+            return a.name;
         }).join(', ');
     };
 });

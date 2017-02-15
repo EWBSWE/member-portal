@@ -1,28 +1,19 @@
-process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+'use strict';
 
-var mongoose = require('mongoose');
-var path = require('path');
-var config = require(path.join(__dirname, '../server/config/environment'));
-var User = require(path.join(__dirname, '../server/models/user.model'));
+let path = require('path');
 
-mongoose.connect(config.mongo.uri, config.mongo.options);
+let Member= require(path.join(__dirname, '../server/models/member.model'));
 
-var email = process.argv[2];
-var password = process.argv[3];
-var role = process.argv[4];
+let email = process.argv[2];
+let password = process.argv[3];
+let role = process.argv[4];
 
-if (!email && !password) {
-    console.log('Usage: node add-user.js <email> <password> <role>');
-    process.exit(1);
-}
+let user = Member.createAuthenticatable(email, password, role);
 
-User.create({ email: email, password: password, role: role }, function(err, data) {
-    if (err) {
-        console.log(err);
-        process.exit(1)
-    }
+user.then(data => {
     console.log(data);
     process.exit(0);
+}).catch(err => {
+    console.log(err);
+    process.exit(1);
 });
-
-

@@ -2,13 +2,6 @@
 'use strict';
 
 module.exports = function (grunt) {
-  var localConfig;
-  try {
-    localConfig = require('./server/config/local.env');
-  } catch(e) {
-    localConfig = {};
-  }
-
   // Load grunt tasks automatically, when needed
   require('jit-grunt')(grunt, {
     express: 'grunt-express-server',
@@ -17,7 +10,6 @@ module.exports = function (grunt) {
     cdnify: 'grunt-google-cdn',
     protractor: 'grunt-protractor-runner',
     injector: 'grunt-asset-injector',
-    buildcontrol: 'grunt-build-control',
   });
 
   // Time how long tasks take. Can help when optimizing build times
@@ -118,7 +110,8 @@ module.exports = function (grunt) {
     jshint: {
       options: {
         jshintrc: '<%= yeoman.client %>/.jshintrc',
-        reporter: require('jshint-stylish')
+        reporter: require('jshint-stylish'),
+          reporterOutput: '',
       },
       server: {
         options: {
@@ -383,12 +376,6 @@ module.exports = function (grunt) {
         connectCommits: false,
         message: 'Built %sourceName% from commit %sourceCommit% on branch %sourceBranch%'
       },
-      heroku: {
-        options: {
-          remote: 'heroku',
-          branch: 'master'
-        }
-      },
       openshift: {
         options: {
           remote: 'openshift',
@@ -422,31 +409,18 @@ module.exports = function (grunt) {
     },
 
     // Test settings
-    //karma: {
-      //unit: {
-        //configFile: 'karma.conf.js',
-        //singleRun: true
-      //}
-    //},
+    karma: {
+      unit: {
+        configFile: 'karma.conf.js',
+        singleRun: true
+      }
+    },
 
     mochaTest: {
       options: {
         reporter: 'spec'
       },
       src: ['server/**/*.spec.js']
-    },
-
-    protractor: {
-      options: {
-        configFile: 'protractor.conf.js'
-      },
-      chrome: {
-        options: {
-          args: {
-            browser: 'chrome'
-          }
-        }
-      }
     },
 
     env: {
@@ -456,7 +430,6 @@ module.exports = function (grunt) {
       prod: {
         NODE_ENV: 'production'
       },
-      all: localConfig
     },
 
     // Compiles Sass to CSS
@@ -557,9 +530,27 @@ module.exports = function (grunt) {
             },
         },
     },
+      mocha_istanbul: {
+          coverage: {
+              src: ['server/models', 'server/api/*', 'server/test/*'],
+              options: {
+                  mask: '*.spec.js',
+              }
+          }
+      },
+      jsdoc: {
+          dist: {
+              src: ['server/**/*.js'],
+              options: {
+                  destination: 'doc',
+              }
+          }
+      },
   });
 
   grunt.loadNpmTasks('grunt-angular-gettext');
+  grunt.loadNpmTasks('grunt-mocha-istanbul');
+    grunt.loadNpmTasks('grunt-jsdoc');
 
   // Used for delaying livereload until after server has restarted
   grunt.registerTask('wait', function () {
@@ -579,13 +570,12 @@ module.exports = function (grunt) {
 
   grunt.registerTask('serve', function (target) {
     if (target === 'dist') {
-      return grunt.task.run(['build', 'env:all', 'env:prod', 'express:prod', 'wait', 'open', 'express-keepalive']);
+      return grunt.task.run(['build', 'env:prod', 'express:prod', 'wait', 'open', 'express-keepalive']);
     }
 
     if (target === 'debug') {
       return grunt.task.run([
         'clean:server',
-        'env:all',
         'injector:sass', 
         'concurrent:server',
         'injector',
@@ -609,24 +599,18 @@ module.exports = function (grunt) {
     ]);
   });
 
-  grunt.registerTask('server', function () {
-    grunt.log.warn('The `server` task has been deprecated. Use `grunt serve` to start a server.');
-    grunt.task.run(['serve']);
-  });
-
   grunt.registerTask('test', function(target) {
     if (target === 'server') {
       return grunt.task.run([
-        'env:all',
         'env:test',
-        'mochaTest'
+        'mocha_istanbul',
       ]);
     }
 
     else if (target === 'client') {
       return grunt.task.run([
         'clean:server',
-        'env:all',
+        'env:test',
         'injector:sass', 
         'concurrent:test',
         'injector',
@@ -638,7 +622,6 @@ module.exports = function (grunt) {
     else if (target === 'e2e') {
       return grunt.task.run([
         'clean:server',
-        'env:all',
         'env:test',
         'injector:sass', 
         'concurrent:test',
@@ -652,7 +635,7 @@ module.exports = function (grunt) {
 
     else grunt.task.run([
       'test:server',
-      'test:client'
+      'test:client',
     ]);
   });
 
@@ -681,4 +664,21 @@ module.exports = function (grunt) {
     'build'
   ]);
 
+    grunt.registerTask('seed-database', function() {
+        var done = this.async();
+        var seed = require('./server/db/seed');
+
+        seed.empty().then(() => {
+            console.log('Empty ok');
+            return seed.populate();
+        }).then(() => {
+            console.log('Seed complete');
+            done();
+        }).catch(err => {
+            console.error('Error during seed', err);
+            done();
+        });
+    });
+
+    grunt.registerTask('coverage', ['env:test', 'mocha_istanbul']);
 };

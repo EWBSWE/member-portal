@@ -2,67 +2,56 @@
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
-var mongoose = require('mongoose');
-var path = require('path');
-var config = require(path.join(__dirname, '../server/config/environment'));
+const path = require('path');
+const moment = require('moment');
 
-var Member = require(path.join(__dirname, '../server/models/member.model'));
-var OutgoingMessage = require(path.join(__dirname, '../server/models/outgoing-message.model'));
-var ewbError = require(path.join(__dirname, '../server/models/ewb-error.model'));
+const config = require(path.join(__dirname, '../server/config/environment'));
+const ewbMail = require(path.join(__dirname, '../server/components/ewb-mail'));
+const log = require(path.join(__dirname, '../server/config/logger'));
+const db = require(path.join(__dirname, '../server/db')).db;
 
-var moment = require('moment');
-var ewbMail = require(path.join(__dirname, '../server/components/ewb-mail'));
-
-mongoose.connect(config.mongo.uri, config.mongo.options);
 
 // Fetch members with an expirationDate greater than today but expires within
 // a month. This prevents us from fetching expired members.
-Member.find({ expirationDate: { $lt: moment().add(1, 'month'), $gt: moment() } }, function(err, members) {
-    if (err) {
-        ewbError.create({ message: 'Fetch expiring members', origin: __filename, params: err }, function (err, data) {
-            // Exit with failure code
-            process.exit(1);
-        });
+db.any(`
+    SELECT email, expiration_date
+    FROM member
+    WHERE
+        expiration_date BETWEEN NOW() AND NOW() + INTERVAL '1 month'
+`).then(members => {
+    if (members.length === 0) {
+        log.info('No members with expiring memberships.');
+        return Promise.resolve();
     }
 
-    if (members.length) {
-        var outgoingMessages = [];
-        for (var i = 0; i < members.length; i++) {
-            var member = members[i];
+    return db.task(tx => {
+        let queries = members.map(member => {
+            let data = {
+                sender: ewbMail.sender(),
+                recipient: process.env.DEV_MAIL,
+                subject: ewbMail.getSubject('expiring'),
+                body: ewbMail.getBody('expiring'),
+            };
 
             if (process.env.NODE_ENV === 'production') {
-                var data = {
-                    from: ewbMail.sender(),
-                    to: member.email,
-                    subject: ewbMail.getSubject('expiring'),
-                    text: ewbMail.getBody('expiring'),
-                };
-            } else {
-                var data = {
-                    from: ewbMail.sender(),
-                    to: process.env.DEV_MAIL,
-                    subject: ewbMail.getSubject('expiring'),
-                    text: ewbMail.getBody('expiring'),
-                };
+                data.recipient = member.email;
             }
 
-            outgoingMessages.push(data);
-        }
-
-        OutgoingMessage.create(outgoingMessages, function() {
-            var err = arguments[0];
-            if (err) {
-                process.exit(1);
-            }
-
-            for (var i = 1; i < arguments.length; i++) {
-                var message = arguments[i];
-                console.log(message);
-            }
-
-            process.exit(0);
+            return tx.none(`
+                INSERT INTO outgoing_message (sender, recipient, subject, body)
+                VALUES ($[sender], $[recipient], $[subject], $[body])
+            `, data);
         });
-    } else {
-        process.exit(0);
+
+        return tx.batch(queries);
+    });
+}).then(batch => {
+    if (batch) {
+        log.info('Successfully created ' + batch.length + ' reminder(s) for expiring membership(s).');
     }
+
+    process.exit(0);
+}).catch(err => {
+    log.error(err);
+    process.exit(1);
 });

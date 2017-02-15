@@ -1,6 +1,13 @@
+/**
+ * Payment controller
+ *
+ * @namespace controller.Payment
+ * @memberOf controller
+ */
+
 'use strict';
 
-var _ = require('lodash');
+var Promise = require('bluebird');
 
 var stripe = require('stripe')('***REMOVED***');
 if (process.env.NODE_ENV === 'production') {
@@ -8,357 +15,263 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 var moment = require('moment');
-var mongoose = require('mongoose');
 
-var Buyer = require('../../models/buyer.model');
-var ewbError = require('../../models/ewb-error.model');
+const logger = require('../../config/logger');
+
+var Event = require('../../models/event.model');
 var Member = require('../../models/member.model');
 var OutgoingMessage = require('../../models/outgoing-message.model');
 var Payment = require('../../models/payment.model');
 var Product = require('../../models/product.model');
-
-var EmailHelper = require('../../helpers/email.helper');
-var EventHelper = require('../event/event.helper');
-var MemberHelper = require('../member/member.helper');
-var PaymentHelper = require('../payment/payment.helper');
+var EmailTemplate = require('../../models/email-template.model');
 
 var ewbMail = require('../../components/ewb-mail');
 
-exports.index = function(req, res) {
-    Payment.find().populate({
-        path: 'buyer',
-    }).lean().exec(function (err, payments) {
-        if (err) {
-            return handleError(res, err);
-        }
-        return res.status(200).json(payments);
+/**
+ * Get all payments
+ *
+ * @memberOf controller.Payment
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Object} next - Express error function
+ */
+exports.index = function(req, res, next) {
+    Payment.index().then(data => {
+        res.status(200).json(data);
+    }).catch(err => {
+        next(err);
     });
 };
 
-exports.show = function(req, res) {
-    Payment.findOne({ _id: req.params.id }, function(err, payment) {
-        if (err) {
-            return handleError(res, err);
-        } else {
-            return res.status(200).json(payment);
-        }
+/**
+ * Get payment
+ *
+ * @memberOf controller.Payment
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Object} next - Express error function
+ */
+exports.get = function(req, res, next) {
+    Payment.get(req.params.id).then(data => {
+        res.status(200).json(data);
+    }).catch(err => {
+        next(err);
     });
 };
 
-exports.confirmMembershipPayment = function(req, res) {
-    var stripeToken = req.body.stripeToken;
-
-    function handlePayment(product, memberData) {
-        processCharge({
-            currency: 'SEK',
-            amount: product.price,
-            description: product.name,
-        }, stripeToken, function() {
-            return fetchOrCreateMember(product, memberData);
-        }, function(err) {
-            var error = handleStripeError(err);
-            return res.status(400).json(error);
-        });
-    };
-
-    function fetchOrCreateMember(product, memberData) {
-        MemberHelper.fetchMember(memberData.email, function(err, maybeMember) {
-            if (err) {
-                return handleError(res, err);
-            }
-            if (maybeMember) {
-                return updateMemberData(product, maybeMember, memberData);
-            } else {
-                // Member doesn't exist, we need to create the member before we
-                // proceed
-                MemberHelper.createMember(memberData, function(err, member) {
-                    if (err) {
-                        return handleError(res, err);
-                    }
-
-                    return createBuyer(product, member, true);
-                });
-            }
-        });
-    };
-
-    function updateMemberData(product, member, memberData) {
-        // If days remain on current membership we want to extend the
-        // membership instead of overwriting it
-        if (moment(member.expirationDate) > moment()) {
-            // Default to 1 day
-            var daysDiff = moment(member.expirationDate).diff(moment(), 'days') || 1;
-            memberData.expirationDate.add(daysDiff, 'days');
-        }
-
-        MemberHelper.updateMember(member, memberData, function(err, updatedMember) {
-            if (err) {
-                return handleError(res, err);
-            }
-
-            return createBuyer(product, updatedMember, false);
-        });
-    };
-
-    function createBuyer(product, member, newMember) {
-        PaymentHelper.createBuyer('Member', member._id, function(err, buyer) {
-            if (err) {
-                return handleError(res, err);
-            }
-
-            return addPayment(product, member, newMember, buyer);
-        });
-    };
-
-    function addPayment(product, member, newMember, buyer) {
-        Payment.create({
-            buyer: buyer._id,
-            amount: product.price,
-            products: [ product._id ],
-        }, function(err, payment) {
-            if (err) {
-                return handleError(res, err);
-            }
-
-            return sendReceipt(product, member, newMember);
-        });
-    };
-
-    function sendReceipt(product, member, newMember) {
-        var receiptMail = {
-            from: ewbMail.sender(),
-            to: member.email,
-            subject: ewbMail.getSubject('receipt', { name: product.name }),
-            text: ewbMail.getBody('receipt', {
-                buyer: member.email,
-                date: moment().format('YYYY-MM-DD HH:mm'),
-                total: PaymentHelper.formatTotal([product]),
-                tax: PaymentHelper.formatTax([product]),
-                list: PaymentHelper.formatProductList([product]),
-            }),
-        };
-
-        OutgoingMessage.create(receiptMail, function(err, outgoingMessage) {
-            if (err) {
-                ewbError.create({ message: 'Membership receipt mail', origin: __filename, params: err });
-            }
-
-            return sendConfirmation(member, newMember);
-        });
+/**
+ * Confirm membership payment
+ *
+ * @memberOf controller.Payment
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Object} next - Express error function
+ */
+exports.confirmMembershipPayment = function(req, res, next) {
+    if (!req.body.stripeToken || !req.body.productId) {
+        let badRequest = new Error('Missing parameters');
+        badRequest.status = 400;
+        return next(badRequest);
     }
 
-    function sendConfirmation(member, newMember) {
-        var confirmationMail = {
-            from: ewbMail.sender(),
-            to: req.body.email,
-        };
+    logger.info('Initiating membership payment');
 
-        if (newMember) {
-            confirmationMail.subject = ewbMail.getSubject('new-member');
-            confirmationMail.text = ewbMail.getBody('new-member');
-        } else {
-            confirmationMail.subject = ewbMail.getSubject('renewal');
-            confirmationMail.text = ewbMail.getBody('renewal');
-        }
-
-        OutgoingMessage.create(confirmationMail, function(err, outgoingMessage) {
-            if (err) {
-                ewbError.create({ message: 'Membership confirmation mail', origin: __filename, params: err });
-            }
-        });
-
-        return res.status(201).json(member);
+    let memberData = {
+        email: req.body.email.trim(),
+        name: req.body.name,
+        location: req.body.location,
+        profession: req.body.profession,
+        education: req.body.education,
+        gender: req.body.gender,
+        yearOfBirth: req.body.yearOfBirth
     };
 
-    Product.findOne({ _id: new mongoose.Types.ObjectId(req.body.productId) }, function(err, product) {
-        if (err) {
-            return handleError(res, err);
-        }
+    Product.get(req.body.productId).then(product => {
+        logger.info('membership product', product);
 
-        if (product) {
-            // Important to trim email since we use it for lookups
-            var memberData = {
-                email: req.body.email.trim(),
-                name: req.body.name,
-                location: req.body.location,
-                profession: req.body.profession,
-                education: req.body.education,
-                type: req.body.type,
-                gender: req.body.gender,
-                yearOfBirth: req.body.yearOfBirth,
-                expirationDate: moment().add(product.typeAttributes.durationDays, 'days'),
-            };
+        return new Promise((resolve, reject) => {
+            logger.info('processing charge');
 
-            return handlePayment(product, memberData);
-        } else {
-            return res.sendStatus(400);
-        }
-    });
-
-};
-
-exports.confirmEventPayment = function(req, res) {
-    function processEventPayments(ewbEvent, participantData, selectedAddons) {
-        var sum = EventHelper.sumAddons(selectedAddons);
-
-        return processCharge({
-            currency: 'SEK',
-            amount: sum,
-            description: ewbEvent.name,
-        }, req.body.stripeToken, function(charge) {
-            // Successful charge
-            return createEventParticipant(ewbEvent, participantData, selectedAddons);
-        }, function(stripeError) {
-            // Failed charge
-            var error = handleStripeError(stripeError);
-            return res.status(400).json(error);
-        });
-    };
-
-    function createEventParticipant(ewbEvent, participantData, selectedAddons) {
-        EventHelper.createParticipant({
-            name: participantData.name,
-            email: participantData.email,
-            eventId: ewbEvent._id,
-            comment: participantData.comment,
-        }, function(err, eventParticipant) {
-            if (err) {
-                ewbError.create({ message: 'Error creating event participant', origin: __filename, params: err });
-                return handleError(res, err);
-            }
-
-            return createPayment(ewbEvent, selectedAddons, eventParticipant);
-        });
-    };
-
-    function createPayment(ewbEvent, selectedAddons, eventParticipant) {
-        var sum = EventHelper.sumAddons(selectedAddons);
-        var productIds = _.map(selectedAddons, function(a) {
-            return a.product._id;
-        });
-
-        PaymentHelper.createBuyer('EventParticipant', eventParticipant._id, function(err, buyer) {
-            if (err) {
-                ewbError.create({ message: 'Error fetching buyer', origin: __filename, params: err });
-                return handleError(res, err);
-            }
-
-            Payment.create({
-                buyer: buyer._id,
-                amount: sum,
-                products: productIds
-            }, function(err, payment) {
-                if (err) {
-                    ewbError.create({ message: 'Error creating payment event', origin: __filename, params: err });
-                    return handleError(res, err);
-                }
-
-                return addToEvent(ewbEvent, selectedAddons, eventParticipant, payment);
+            processCharge({
+                currency: product.currency_code,
+                amount: product.price,
+                description: product.name
+            }, req.body.stripeToken, () => {
+                logger.info('stripe processing successful');
+                resolve(product);
+            }, err => {
+                logger.info('stripe processing failed');
+                let badRequest = new Error('Stripe rejected');
+                badRequest.status = 400;
+                reject(badRequest);
             });
         });
-    };
-
-    function addToEvent(ewbEvent, selectedAddons, eventParticipant, payment) {
-        ewbEvent.payments.push(payment);
-        ewbEvent.participants.push(eventParticipant);
-        ewbEvent.save(function(err, updatedEvent) {
-            if (err) {
-                ewbError.create({ message: 'Failed to update event participant', origin: __filename, params: err });
-                return handleError(res, err);
+    }).then(product => {
+        return Member.findBy({ email: memberData.email }).then(members => {
+            if (members.length === 0) {
+                logger.info('new member, creating');
+                return Member.create(memberData);
             }
 
-            return updateEventAddons(updatedEvent, selectedAddons, eventParticipant);
+            logger.info('existing member, updating', {expirationDate: members[0].expiration_date});
+            return Member.update(members[0].id, memberData);
+        }).then(member => {
+            logger.info('extending membership');
+            return Member.extendMembership(member, product).then(member => {
+                logger.info('new end date', {expirationDate: member.expiration_date});
+                return Payment.create({
+                    member: member,
+                    products: [product],
+                }).then(() => {
+                    logger.info('create confirmation mail');
+                    let mail = {
+                        sender: ewbMail.sender(),
+                        recipient: memberData.email,
+                        subject: ewbMail.getSubject('membership'),
+                        body: ewbMail.getBody('membership', { expirationDate: moment(member.expiration_date).format('YYYY-MM-DD') }),
+                    };
+
+                    return OutgoingMessage.create(mail);
+                });
+            });
+        }).then(() => {
+            return Promise.resolve(product);
         });
-    };
-
-    function updateEventAddons(ewbEvent, selectedAddons, eventParticipant) {
-        var addonIds = _.map(selectedAddons, '_id');
-
-        EventHelper.updateAddons(addonIds, function(err, updatedAddons) {
-            if (err) {
-                ewbError.create({ message: 'Failed to update event addon', origin: __filename, params: err });
-                return handleError(res, err);
-            }
-
-            return sendReceiptEmail(ewbEvent, eventParticipant, selectedAddons);
-        });
-    };
-
-    function sendReceiptEmail(ewbEvent, eventParticipant, selectedAddons) {
-        var products = _.map(selectedAddons, 'product');
-        var receiptMail = {
-            from: ewbMail.sender(),
-            to: eventParticipant.email,
-            subject: ewbMail.getSubject('receipt', { name: ewbEvent.confirmationEmail.subject }),
-            text: ewbMail.getBody('receipt', {
-                buyer: eventParticipant.email,
+    }).then(product => {
+        logger.info('create receipt mail');
+        let receiptMail = {
+            sender: ewbMail.sender(),
+            recipient: memberData.email,
+            subject: ewbMail.getSubject('receipt', { name: product.name }),
+            body: ewbMail.getBody('receipt', {
+                buyer: memberData.email,
                 date: moment().format('YYYY-MM-DD HH:mm'),
-                total: PaymentHelper.formatTotal(products),
-                tax: PaymentHelper.formatTax(products),
-                list: PaymentHelper.formatProductList(products),
+                total: Payment.formatTotal([product]),
+                tax: Payment.formatTax([product]),
+                list: Payment.formatProductList([product]),
             }),
         };
 
-        OutgoingMessage.create(receiptMail, function(err, outgoingMessage) {
-            if (err) {
-                ewbError.create({ message: 'Event receipt mail', origin: __filename, params: err });
-            }
-
-            return sendConfirmationEmail(ewbEvent, eventParticipant);
-        });
-    }
-
-    function sendConfirmationEmail(ewbEvent, eventParticipant) {
-        var confirmationMail = {
-            from: ewbMail.sender(),
-            to: eventParticipant.email,
-            subject: ewbEvent.confirmationEmail.subject,
-            text: ewbEvent.confirmationEmail.body,
-        };
-
-        OutgoingMessage.create(confirmationMail, function(err, outgoingMessage) {
-            if (err) {
-                ewbError.create({ message: 'Event confirmation mail', origin: __filename, params: err });
-            }
-        });
-        
-        return res.status(200).json(ewbEvent);
-    }
-
-    EventHelper.fetchEvent(req.body.identifier, function(err, ewbEvent) {
-        if (err) {
-            return handleError(res, err);
-        }
-
-        if (!ewbEvent) {
-            ewbError.create({ message: 'Event not found', origin: __filename, params: err });
-            return res.status(400).json({ message: 'Event not found' });
-        }
-
-        var selectedAddonIds = _.map(req.body.addonIds, function(addonId) {
-            return new mongoose.Types.ObjectId(addonId);
-        });
-
-        var selectedAddons = _.filter(ewbEvent.addons, function(addon) {
-            for (var i = 0; i < selectedAddonIds.length; i++) {
-                if (selectedAddonIds[i].equals(addon._id)) {
-                    return true;
-                }
-            }
-            return false;
-        });
-
-        var sum = EventHelper.sumAddons(selectedAddons);
-
-        if (sum === 0) {
-            // Skip payment step
-            return createEventParticipant(ewbEvent, req.body.participant, selectedAddons);
-        } else {
-            return processEventPayments(ewbEvent, req.body.participant, selectedAddons);
-        }
+        return OutgoingMessage.create(receiptMail);
+    }).then(() => {
+        logger.info('all done');
+        res.sendStatus(201);
+    }).catch(err => {
+        next(err);
     });
 };
 
+/**
+ * Confirm event payment
+ *
+ * @memberOf controller.Payment
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Object} next - Express error function
+ */
+exports.confirmEventPayment = function(req, res, next) {
+    if (!req.body.identifier || !Array.isArray(req.body.addonIds)) {
+        let badRequest = new Error('Missing parameters');
+        badRequest.status = 400;
+        return next(badRequest);
+    }
+
+    Event.findWithAddons(req.body.identifier).then(event => {
+        if (!event) {
+            return res.sendStatus(404);
+        }
+
+        let selectedAddons = event.addons.filter(addon => { return req.body.addonIds.includes(addon.id); });
+        let sum = selectedAddons.reduce((total, addon) => { return total + addon.price; }, 0);
+
+        logger.info('initiating event payment', event);
+        if (sum === 0) {
+            logger.info('free event');
+            return Promise.resolve(event);
+        } else {
+            if (!req.body.stripeToken) {
+                let badRequest = new Error('Missing parameters');
+                badRequest.status = 400;
+                return next(badRequest);
+            }
+
+            return new Promise((resolve, reject) => {
+                processCharge({
+                    currency: 'SEK',
+                    amount: sum,
+                    description: event.name
+                }, req.body.stripeToken, () => {
+                    logger.info('payment successful');
+                    resolve(event);
+                }, err => {
+                    logger.info('payment failed');
+                    let badRequest = new Error('Stripe rejected');
+                    badRequest.status = 400;
+                    reject(badRequest);
+                });
+            }).catch(err => {
+                next(err);
+            });
+        }
+    }).then(event => {
+        logger.info('add participant');
+        return Event.addParticipant(event.id, {
+            addonIds: req.body.addonIds,
+            name: req.body.participant.name,
+            email: req.body.participant.email,
+            message: req.body.participant.message
+        }).then(() => {
+            return Event.findWithAddons(event.identifier);
+        });
+    }).then(event => {
+        // Only keep addons that was selected
+        event.addons = event.addons.filter(addon => { return req.body.addonIds.includes(addon.id); });
+
+        return Promise.resolve(event);
+    }).then(event => {
+        logger.info('create receipt mail');
+        let receiptMail = {
+            sender: ewbMail.sender(),
+            recipient: req.body.participant.email,
+            subject: ewbMail.getSubject('receipt', { name: event.name }),
+            body: ewbMail.getBody('receipt', {
+                buyer: req.body.participant.email,
+                date: moment().format('YYYY-MM-DD HH:mm'),
+                total: Payment.formatTotal(event.addons),
+                tax: Payment.formatTax(event.addons),
+                list: Payment.formatProductList(event.addons),
+            }),
+        };
+
+        return OutgoingMessage.create(receiptMail).then(() => {
+            return EmailTemplate.get(event.email_template_id);
+        }).then(template => {
+            logger.info('create event mail');
+            let eventMail = {
+                sender: ewbMail.noreply(),
+                recipient: req.body.participant.email,
+                subject: template.subject,
+                body: template.body,
+            };
+
+            return OutgoingMessage.create(eventMail);
+        });
+    }).then(() => {
+        logger.info('all done!');
+        res.sendStatus(201);
+    }).catch(err => {
+        next(err);
+    });
+};
+
+/**
+ * Get Stripe checkout key
+ *
+ * @memberof controller.Payment
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Object} next - Express error function
+ */
 exports.stripeCheckoutKey = function (req, res) {
     var key = '***REMOVED***';
     if (process.env.NODE_ENV === 'production') {
@@ -368,51 +281,34 @@ exports.stripeCheckoutKey = function (req, res) {
     return res.status(200).json({ key: key });
 };
 
-exports.generateReport = function (req, res) {
-    var periodStart = moment(req.body.periodStart);
-    var periodEnd = moment(req.body.periodEnd);
-    var recipient = req.body.recipient;
+/**
+ * Generate payment report
+ *
+ * @memberof controller.Payment
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Object} next - Express error function
+ */
+exports.generateReport = function (req, res, next) {
+    var start = moment(req.query.start);
+    var end = moment(req.query.end);
+    var recipient = req.query.recipient;
+    // TODO check valid params
 
-    var validParams = {
-        periodStart: periodStart.isValid(),
-        periodEnd: periodEnd.isValid(),
-        recipient: EmailHelper.isValid(recipient),
-    };
+    Payment.generateReport(start.toDate(), end.toDate()).then(report => {
+        let mail = {
+            sender: ewbMail.sender(),
+            recipient: recipient,
+            subject: 'EWB Report: ' + start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'),
+            body: report,
+        };
 
-    var anyError = !_.values(validParams).reduce(function(a, b) {
-        return a && b;
-    }, true);
-
-    if (anyError) {
-        return res.status(400).json(validParams);
-    } else {
-        PaymentHelper.generateReport({
-            periodStart: periodStart.format('YYYY-MM-DD'),
-            periodEnd: periodEnd.format('YYYY-MM-DD'),
-        }, function(err, data) {
-            if (err) {
-                ewbError.create({ message: 'Failed to generate report', origin: __filename, params: err });
-                return handleError(res, err);
-            }
-
-            var text = PaymentHelper.formatReport(data);
-
-            var mail = {
-                from: ewbMail.sender(),
-                to: process.env.NODE_ENV === 'production' ? recipient : process.env.DEV_MAIL,
-                subject: 'EWB Report: ' + periodStart.format('YYYY-MM-DD') + ' - ' + periodEnd.format('YYYY-MM-DD'),
-                text: text,
-            };
-
-            OutgoingMessage.create(mail, function(err, outgoingMessage) {
-                if (err) {
-                    ewbError.create({ message: 'Failed to create report mail', origin: __filename, params: err });
-                }
-            });
-
-            return res.status(200).json(data);
-        });
-    }
+        return OutgoingMessage.create(mail);
+    }).then(() => {
+        return res.sendStatus(200);
+    }).catch(err => {
+        next(err);
+    });
 };
 
 function processCharge(chargeAttributes, stripeToken, successCallback, errorCallback) {
@@ -425,18 +321,8 @@ function processCharge(chargeAttributes, stripeToken, successCallback, errorCall
         if (err === null) {
             successCallback(charge);
         } else {
-            ewbError.create({ message: 'Stripe process charge', origin: __filename, params: err });
             errorCallback(err);
         }
     });
 };
 
-function handleStripeError(err) {
-    ewbError.create({ message: 'Stripe charge error', origin: __filename, params: err});
-
-    return { errorType: err.type };
-};
-
-function handleError(res, err) {
-    return res.status(500).send(err);
-};
