@@ -12,7 +12,7 @@ var crypto = require('crypto');
 
 var routeHelper = require('../../helpers/route.helper');
 
-var Member = require('../../models/member.model');
+const Member = require('../../models/member.model');
 var Payment = require('../../models/payment.model');
 var OutgoingMessage = require('../../models/outgoing-message.model');
 var ewbMail = require('../../components/ewb-mail');
@@ -82,6 +82,7 @@ exports.create = function(req, res, next) {
         }
 
         let randomPassword = crypto.randomBytes(24).toString('hex');
+
         Member.create({
             email: req.body.email,
             password: randomPassword,
@@ -100,7 +101,15 @@ exports.create = function(req, res, next) {
             next(err);
         });
     } else {
-        Member.create(req.body).then(data => {
+        Member.findBy({email: req.body.email}).then(members => {
+            if (members.length > 0) {
+                let existingMemberError = new Error('Member exists');
+                existingMemberError.status = 400;
+                return Promise.reject(existingMemberError);
+            }
+
+            return Member.create(req.body);
+        }).then(data => {
             res.status(201).json(data);
         }).catch(err => {
             next(err);
