@@ -83,10 +83,20 @@ exports.create = function(req, res, next) {
 
         let randomPassword = crypto.randomBytes(24).toString('hex');
 
-        Member.create({
-            email: req.body.email,
-            password: randomPassword,
-            role: req.body.role
+        Member.findBy({email: req.body.email }).then(members => {
+            if (members.length === 0) {
+                return Member.create({
+                    email: req.body.email,
+                    password: randomPassword,
+                    role: req.body.role
+                });
+            }
+
+            let userOrAdmin = req.body.role === 'admin' ? 'admin' : 'user';
+
+            return Member.update(members[0].id, {role: userOrAdmin}).then(m => {
+                return Member.createResetToken(members[0].id);
+            });
         }).then(member => {
             let url = 'https://blimedlem.ingenjorerutangranser.se/login';
             return OutgoingMessage.create({
