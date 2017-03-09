@@ -1,8 +1,10 @@
 'use strict';
 
 angular.module('ewbMemberApp')
-.controller('AdminCtrl', function ($scope, $http) {
+.controller('AdminCtrl', function ($scope, $http, Auth) {
     $scope.users = [];
+
+    $scope.isAdmin = Auth.isAdmin();
 
     $http.get('/api/members', { params: { role: ['user', 'admin'] }}).success(function(users) {
         $scope.users = users;
