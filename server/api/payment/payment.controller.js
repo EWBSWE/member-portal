@@ -113,7 +113,7 @@ exports.confirmMembershipPayment = function(req, res, next) {
                 return Member.create(memberData);
             }
 
-            logger.info('existing member, updating', {expirationDate: members[0].expiration_date, id: members[0].id });
+            logger.info('existing member, updating', {expirationDate: members[0].expiration_date, id: members[0].id, memberData});
             return Member.update(members[0].id, memberData);
         }).then(member => {
             logger.info('extending membership', { id: member.id });
