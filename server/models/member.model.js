@@ -193,6 +193,8 @@ function index() {
             education,
             profession,
             member_type,
+            gender,
+            year_of_birth,
             created_at,
             expiration_date
         FROM member

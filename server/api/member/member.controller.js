@@ -34,7 +34,7 @@ exports.index = function(req, res, next) {
             next(err);
         });
     } else {
-        Member.activeMembers().then(data => {
+        Member.index().then(data => {
             res.status(200).json(data);
         }).catch(err => {
             next(err);
