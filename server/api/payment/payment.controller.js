@@ -176,6 +176,13 @@ exports.confirmEventPayment = function(req, res, next) {
         return next(badRequest);
     }
 
+    // Make sure that addonIds are integers
+    req.body.addonIds = req.body.addonIds.map(addonId => {
+        return parseInt(addonId, 10);
+    }).filter(addonId => {
+        return addonId;
+    });
+
     Event.findWithAddons(req.body.identifier).then(event => {
         if (!event) {
             return res.sendStatus(404);
