@@ -48,7 +48,9 @@ db.any(`
                     return product.name;
                 }).join(', ');
 
-                return `${p.name} | ${p.email} | ${p.amount} | ${productNames} | ${p.message}`;
+                let message = p.message === null ? "-" : p.message;
+
+                return `${p.name} | ${p.email} | ${p.amount} | ${productNames} | ${message}`;
             }).join('\n');
         }
 
