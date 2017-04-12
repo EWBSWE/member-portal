@@ -192,7 +192,13 @@ exports.confirmEventPayment = function(req, res, next) {
         let sum = selectedAddons.reduce((total, addon) => { return total + addon.price; }, 0);
 
         logger.info('initiating event payment', event);
-        if (sum === 0) {
+        if (sum === 0 && req.body.stripeToken) {
+            logger.error('sum shouldnt be 0 if there is a stripe token present', event, req.body.participant);
+
+            let badRequest = new Error('Malformed parameters');
+            badRequest.status = 400;
+            return next(badRequest);
+        } else if (sum === 0) {
             logger.info('free event');
             return Promise.resolve(event);
         } else {
