@@ -57,7 +57,10 @@ function create(data) {
     let members = [];
 
     if (!Array.isArray(data.subscribers)) {
-        return Promise.reject('Invalid subscribers');
+        const invalidSubscribersError = new Error('Invalid subscribers');
+        invalidSubscribersError.status = 400;
+        invalidSubscribersError.invalidSubscribers = true;
+        return Promise.reject(invalidSubscribersError);
     }
 
     return new Promise((resolve, reject) => {
@@ -66,7 +69,10 @@ function create(data) {
         } else {
             Member.findBy({ email: data.subscribers }).then(ms => {
                 if (ms.length !== data.subscribers.length) {
-                    reject('Invalid subscribers');
+                    const invalidSubscribersError = new Error('Invalid subscribers');
+                    invalidSubscribersError.status = 400;
+                    invalidSubscribersError.invalidSubscribers = true;
+                    reject(invalidSubscribersError);
                 } else {
                     members = ms;
                     resolve();
