@@ -16,7 +16,7 @@ msgstr ""
 msgid "4 digits, for instance 1988"
 msgstr ""
 
-#: client/app/event/public/public.html:84
+#: client/app/event/public/public.html:82
 msgid "A confirmation of your participation is sent to <strong>{{successEmail}}</strong>."
 msgstr ""
 
@@ -25,19 +25,19 @@ msgid "A confirmation of your payment and your membership is sent to <strong>{{s
 msgstr ""
 
 #: client/app/account/login/login.html:71
-#: client/app/event/public/public.html:105
-#: client/app/event/public/public.html:88
+#: client/app/event/public/public.html:103
+#: client/app/event/public/public.html:86
 #: client/app/member/membership/membership.html:177
 #: client/app/member/membership/membership.html:194
 msgid "Close"
 msgstr ""
 
-#: client/app/event/public/public.html:62
+#: client/app/event/public/public.html:60
 msgid "Comment"
 msgstr ""
 
-#: client/app/event/public/public.html:102
-#: client/app/event/public/public.html:85
+#: client/app/event/public/public.html:100
+#: client/app/event/public/public.html:83
 msgid "Do you any questions regarding the event or anything payment related? Reach out to us at <a href=\"mailto:{{ev.contact}}\">{{ev.contact}}</a> for questions regarding this event and <a href=\"mailto:ict@ingenjorerutangranser.se\">ict@ingenjorerutangranser.se</a> for payment or technical questions."
 msgstr ""
 
@@ -52,7 +52,7 @@ msgid "Education"
 msgstr ""
 
 #: client/app/account/login/login.html:12
-#: client/app/event/public/public.html:54
+#: client/app/event/public/public.html:52
 #: client/app/member/membership/membership.html:51
 msgid "Email"
 msgstr ""
@@ -61,8 +61,8 @@ msgstr ""
 msgid "Email sent to {{user.email}}."
 msgstr ""
 
-#: client/app/event/public/public.controller.js:82
-#: client/app/member/membership/membership.controller.js:80
+#: client/app/event/public/public.controller.js:89
+#: client/app/member/membership/membership.controller.js:82
 msgid "Engineers without borders"
 msgstr ""
 
@@ -84,7 +84,7 @@ msgstr ""
 
 #: client/app/member/membership/membership.html:21
 #: client/app/member/membership/membership.html:30
-msgid "If you want to get involved we recommend that you contact your local group that you can find over at <a target=\"_blank\" href=\"http://ingenjorerutangranser.se/organisation\">ingenjorerutangranser.se/organisation</a>. You can also find available positions for current projects at <a target=\"_blank\" href=\"http://volontar.ingenjorerutangranser.se\">volontar.ingenjorerutangranser.se</a>. If you have any other questions that can't be answered by one of the local groups, feel free to contact us at <a href=\"mailto:info@ingenjorerutangranser.se\">info@ingenjorerutangranser.se</a>."
+msgid "If you want to get involved we recommend that you contact your local group that you can find over at <a target=\"_blank\" href=\"https://www.ewb-swe.org/organisation\">www.ewb-swe.org/organisation</a>. You can also find available positions for current projects at <a target=\"_blank\" href=\"http://volontar.ingenjorerutangranser.se\">volontar.ingenjorerutangranser.se</a>. If you have any other questions that can't be answered by one of the local groups, feel free to contact us at <a href=\"mailto:info@ingenjorerutangranser.se\">info@ingenjorerutangranser.se</a>."
 msgstr ""
 
 #: client/app/member/membership/membership.html:90
@@ -100,7 +100,7 @@ msgstr ""
 msgid "Male"
 msgstr ""
 
-#: client/app/member/membership/membership.controller.js:81
+#: client/app/member/membership/membership.controller.js:83
 msgid "Membership"
 msgstr ""
 
@@ -108,7 +108,7 @@ msgstr ""
 msgid "Membership duration"
 msgstr ""
 
-#: client/app/event/public/public.html:46
+#: client/app/event/public/public.html:44
 msgid "Name"
 msgstr ""
 
@@ -120,11 +120,11 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
-#: client/app/event/public/public.html:48
+#: client/app/event/public/public.html:46
 msgid "Please enter a name."
 msgstr ""
 
-#: client/app/event/public/public.html:56
+#: client/app/event/public/public.html:54
 #: client/app/member/membership/membership.html:53
 msgid "Please enter a valid email address."
 msgstr ""
@@ -170,11 +170,11 @@ msgstr ""
 msgid "Student"
 msgstr ""
 
-#: client/app/event/public/public.html:67
+#: client/app/event/public/public.html:65
 msgid "Submit"
 msgstr ""
 
-#: client/app/event/public/public.html:81
+#: client/app/event/public/public.html:79
 msgid "Thank you for participating!"
 msgstr ""
 
@@ -182,7 +182,7 @@ msgstr ""
 msgid "Thank you for the support!"
 msgstr ""
 
-#: client/app/event/public/public.html:98
+#: client/app/event/public/public.html:96
 #: client/app/member/membership/membership.html:187
 msgid "The transaction was unsuccessful"
 msgstr ""
@@ -191,7 +191,7 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: client/app/member/membership/membership.controller.js:48
+#: client/app/member/membership/membership.controller.js:53
 msgid "We failed to complete your transaction. No payment processed."
 msgstr ""
 
@@ -211,7 +211,7 @@ msgstr ""
 msgid "When you click <strong>Sign up</strong> your transaction is managed securely by <a href=\"https://stripe.com/se\" target=\"_blank\">Stripe</a>. When the transaction is completed we send you a confirmation to the email address specified above."
 msgstr ""
 
-#: client/app/event/public/public.html:69
+#: client/app/event/public/public.html:67
 msgid "When you click <strong>Submit</strong> your transaction is managed securely by <a href=\"https://stripe.com/se\" target=\"_blank\">Stripe</a>. When the transaction is completed we send you a confirmation to the email address specified above."
 msgstr ""
 
@@ -223,6 +223,6 @@ msgstr ""
 msgid "Year of birth"
 msgstr ""
 
-#: client/app/member/membership/membership.controller.js:50
+#: client/app/member/membership/membership.controller.js:55
 msgid "Your card was declined. No payment processed."
 msgstr ""
