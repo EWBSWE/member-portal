@@ -27,6 +27,7 @@
     "passport-local": "~1.x",
     "passport-twitter": "latest",
     "pg-promise": "^5.3.3",
+    "rollbar": "^2.3.9",
     "serve-favicon": "~2.x",
     "stripe": "^3.3.4",
     "winston": "^2.3.0"

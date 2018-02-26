@@ -43,6 +43,10 @@ module.exports = function(app) {
     }
 
     if (env === 'development') {
+        app.use(function(err, req, res, next) {
+            logger.error(err);
+            next(err);
+        });
         app.use(require('errorhandler')());
     }
 
