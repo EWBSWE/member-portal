@@ -22,9 +22,19 @@ class RollbarTransport extends winston.Transport {
   }
 
   log(level, message, meta, callback) {
+    if (!this._shouldLog(level)) {
+      return;
+    }
+
     this.rollbar[level](message, meta.stack);
 
     callback();
+  }
+
+  _shouldLog(level) {
+    return level == 'warning' ||
+      level == 'error' ||
+      level == 'critical';
   }
 }
 
@@ -65,7 +75,6 @@ if (process.env.NODE_ENV === 'production') {
   }));
   transports.push(new RollbarTransport({
     name: 'Rollbar',
-    level: 'warning',
     handleExceptions: true,
     accessToken: process.env.ROLLBAR_ACCESS_TOKEN
   }));
