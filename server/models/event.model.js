@@ -69,7 +69,7 @@ function create(data) {
         } else {
             Member.findBy({ email: data.subscribers }).then(ms => {
                 if (ms.length !== data.subscribers.length) {
-                    const invalidSubscribersError = new Error('Invalid subscribers');
+                    const invalidSubscribersError = new Error(`Invalid subscribers - could not find any members with emails ${data.subscribers}`);
                     invalidSubscribersError.status = 400;
                     invalidSubscribersError.invalidSubscribers = true;
                     reject(invalidSubscribersError);
