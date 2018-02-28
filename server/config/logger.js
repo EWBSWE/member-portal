@@ -65,6 +65,7 @@ if (process.env.NODE_ENV === 'production') {
   }));
   transports.push(new RollbarTransport({
     name: 'Rollbar',
+    level: 'warning',
     handleExceptions: true,
     accessToken: process.env.ROLLBAR_ACCESS_TOKEN
   }));
