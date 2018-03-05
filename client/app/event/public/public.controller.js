@@ -67,7 +67,12 @@ angular.module('ewbMemberApp')
             $scope.participant.addons = {};
         }
         $scope.participant.addons[$scope.ev.addons[0].id] = true;
-        var addonIds = _.map(Object.keys($scope.participant.addons), function(id) {
+
+        var selectedAddonIds = _.filter(Object.keys($scope.participant.addons), function(id) {
+          return $scope.participant.addons[id];
+        });
+
+        var addonIds = _.map(selectedAddonIds, function(id) {
             return parseInt(id);
         }); 
 
