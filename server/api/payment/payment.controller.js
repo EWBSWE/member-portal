@@ -107,6 +107,9 @@ exports.confirmMembershipPayment = function(req, res, next) {
             });
         });
     }).then(product => {
+        // Attach member type id to memberData
+        memberData.memberTypeId = product.attribute.member_type_id
+
         return Member.findBy({ email: memberData.email }).then(members => {
             if (members.length === 0) {
                 logger.info('new member, creating');
