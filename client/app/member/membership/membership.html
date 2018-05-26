@@ -42,31 +42,75 @@
     </div>
     <div class="col-xs-12 col-md-6">
       <form novalidate name="form" class="payment-form">
-        <div ng-class="{'form-group': true, 'has-error': form.inputName.$invalid && !form.inputName.$pristine, 'has-success': form.inputName.$valid}">
-          <label class="control-label" for="inputName" translate>First and last name</label>
-          <input class="form-control" type="text" name="inputName" id="inputName" ng-model="newMember.name" required/>
-        </div>
-
         <div ng-class="{'form-group': true, 'has-error': form.inputEmail.$error.email, 'has-success': form.inputEmail.$valid}">
-          <label class="control-label" for="inputEmail" translate>Email</label>
+          <label class="control-label" for="inputEmail" translate>Email *</label>
           <input class="form-control" type="email" name="inputEmail" id="inputEmail" ng-model="newMember.email" required/>
           <p class="help-block" ng-show="form.inputEmail.$error.email" translate>
             Please enter a valid email address.
           </p>
         </div>
+        <div class="form-group">
+          <label class="control-label" for="inputLocation" translate>Location *</label>
+          <input class="form-control" type="text" name="inputLocation" id="inputLocation" ng-model="newMember.location" required/>
+        </div>
+
+        <div class="row">
+          <div class="col-xs-12">
+            <div>
+                <label translate>Type *</label>
+            </div>
+            <div ng-class="{'form-group': true, 'has-error': !newMember.memberType && !form.$pristine, 'has-success': newMember.memberType }">
+              <label class="radio-inline control-label">
+                <input type="radio" name="type" value="student" ng-model="newMember.memberType"/>
+                <span translate>Student</span>
+              </label>
+              <label class="radio-inline control-label">
+                <input type="radio" name="type" value="working" ng-model="newMember.memberType" />
+                <span translate>Working</span>
+              </label>
+              <label class="radio-inline control-label">
+                <input type="radio" name="type" value="senior" ng-model="newMember.memberType" />
+                <span translate>Senior</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xs-12">
+            <div>
+                <label translate>Membership duration *</label>
+            </div>
+            <div ng-class="{'form-group': true, 'has-error': !newMember.subscriptionLength && !form.$pristine, 'has-success': newMember.subscriptionLength}">
+              <label class="radio-inline control-label">
+                <input type="radio" name="subscriptionLength" value="1" ng-model="newMember.subscriptionLength" />
+                <span translate>1 year</span>
+              </label>
+              <label class="radio-inline control-label">
+                <input type="radio" name="subscriptionLength" value="3" ng-model="newMember.subscriptionLength" />
+                <span translate>3 year</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="control-label" for="inputName" translate>Name</label>
+          <input class="form-control" type="text" name="inputName" id="inputName" ng-model="newMember.name" />
+        </div>
 
         <div class="row">
           <div class="col-xs-12 col-md-6">
-            <div ng-class="{'form-group': true, 'has-error': form.inputYearOfBirth.$invalid && !form.inputYearOfBirth.$pristine, 'has-success': form.inputYearOfBirth.$valid}">
+            <div>
               <label class="control-label" for="inputYearOfBirth" translate>Year of birth</label>
-              <input class="form-control" type="number" name="inputYearOfBirth" id="inputYearOfBirth" min="1900" ng-model="newMember.yearOfBirth" ng-init="newMember.yearOfBirth = 19"required/>
+              <input class="form-control" type="number" name="inputYearOfBirth" id="inputYearOfBirth" min="1900" ng-model="newMember.yearOfBirth"/>
               <p class="help-block" translate>
                 4 digits, for instance 1988
               </p>
             </div>
           </div>
           <div class="col-xs-12 col-md-6">
-            <div ng-class="{'form-group': true, 'has-error': !newMember.gender && !form.$pristine, 'has-success': newMember.gender }">
+            <div>
               <div>
                 <label translate>Gender</label>
               </div>
@@ -86,11 +130,6 @@
           </div>
         </div>
 
-        <div ng-class="{'form-group': true }">
-          <label class="control-label" for="inputLocation" translate>Location</label>
-          <input class="form-control" type="text" name="inputLocation" id="inputLocation" ng-model="newMember.location" required/>
-        </div>
-
         <div class="row">
           <div class="col-xs-12 col-md-6">
             <div ng-class="{'form-group': true }">
@@ -105,51 +144,11 @@
             </div>
           </div>
         </div>
-
         
-        <div class="row">
-          <div class="col-xs-12">
-            <div>
-                <label translate>Type</label>
-            </div>
-            <div ng-class="{'form-group': true, 'has-error': !newMember.memberType && !form.$pristine, 'has-success': newMember.memberType }">
-              <label class="radio-inline control-label">
-                <input type="radio" name="type" value="student" ng-model="newMember.memberType"/>
-                <span translate>Student</span>
-              </label>
-              <label class="radio-inline control-label">
-                <input type="radio" name="type" value="working" ng-model="newMember.memberType" />
-                <span translate>Working</span>
-              </label>
-              <label class="radio-inline control-label">
-                <input type="radio" name="type" value="senior" ng-model="newMember.memberType" />
-                <span translate>Senior</span>
-              </label>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-xs-12">
-            <div>
-                <label translate>Membership duration</label>
-            </div>
-            <div ng-class="{'form-group': true, 'has-error': !newMember.subscriptionLength && !form.$pristine, 'has-success': newMember.subscriptionLength}">
-              <label class="radio-inline control-label">
-                <input type="radio" name="subscriptionLength" value="1" ng-model="newMember.subscriptionLength" />
-                <span translate>1 year</span>
-              </label>
-              <label class="radio-inline control-label">
-                <input type="radio" name="subscriptionLength" value="3" ng-model="newMember.subscriptionLength" />
-                <span translate>3 year</span>
-              </label>
-            </div>
-          </div>
-        </div>
         <p class="help-block" for="subscriptionLength" translate>
           Sign up for 1 year starting at 40 SEK for students or join 3 years for 90 SEK (costs for non-students are 100 SEK and 250 SEK, respectively).
         </p>
-
-        <p class="text-warning" ng-show="form.$invalid || !newMember.type || !newMember.subscriptionLength" translate>
+        <p class="text-warning" ng-show="!newMember.memberType || !newMember.subscriptionLength" translate>
           Please fill out all required fields before clicking <strong>Sign up</strong>.
         </p>
         <div class="form-group">
@@ -157,6 +156,12 @@
         </div>
         <p class="help-block" translate>
           When you click <strong>Sign up</strong> your transaction is managed securely by <a href="https://stripe.com/se" target="_blank">Stripe</a>. When the transaction is completed we send you a confirmation to the email address specified above.
+        </p>
+        <p class="help-block" translate>
+          We collect data about members to ensure that we reach out to as many people as possible. The data we collect is only used within Engineers Without Borders Sweden. All data except e-mail and location is optional, but we need those to get in touch with you and make sure that you get information about activities near you.
+        </p>
+        <p class="help-block" translate>
+          If you want to be removed as a member or want to request your data, please get in touch with ict@ewb-swe.org.
         </p>
       </form>
     </div>
