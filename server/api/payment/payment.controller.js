@@ -84,7 +84,7 @@ function confirmMembershipPayment(req, res, next) {
     return new Promise((resolve, reject) => {
       logger.info('processing charge');
 
-      processCharge({
+      stripe.processCharge({
 	currency: product.currency_code,
 	amount: product.price,
 	description: product.name
@@ -204,7 +204,7 @@ function confirmEventPayment(req, res, next) {
             }
 
             return new Promise((resolve, reject) => {
-                processCharge({
+                stripe.processCharge({
                     currency: 'SEK',
                     amount: sum,
                     description: event.name
@@ -272,22 +272,6 @@ function confirmEventPayment(req, res, next) {
     });
 };
 
-/**
- * Get Stripe checkout key
- *
- * @memberof controller.Payment
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Object} next - Express error function
- */
-function stripeCheckoutKey(req, res) {
-    var key = '***REMOVED***';
-    if (process.env.NODE_ENV === 'production') {
-        key = 'pk_live_ATJZnfiF1iDDCQvNK6IgEFA2';
-    }
-
-    return res.status(200).json({ key: key });
-};
 
 /**
  * Generate payment report
@@ -319,36 +303,10 @@ function generateReport(req, res, next) {
     });
 };
 
-function processCharge(chargeAttributes, stripeToken, successCallback, errorCallback) {
-    stripe.charges.create({
-        currency: chargeAttributes.currency,
-        amount: chargeAttributes.amount * 100,
-        source: stripeToken.id,
-        description: chargeAttributes.description,
-    }, function(err, charge) {
-        if (err === null) {
-            successCallback(charge);
-        } else {
-            errorCallback(err);
-        }
-    });
-};
 
-async function processCharge2(chargeAttributes, stripeToken) {
-  return new Promise((resolve, reject) => {
-    stripe.charges.create({
-      currency: chargeAttributes.currency,
-      amount: chargeAttributes.amount * 100,
-      source: stripeToken.id,
-      description: chargeAttributes.description
-    }, function(err, charge) {
-      if (err) {
-	reject(err);
-      } else {
-	resolve(charge);
-      }
-    })
-  });
+function stripeCheckoutKey(req, res) {
+  const key = stripe.getCheckoutKey();
+  return res.status(200).json({ key });
 }
 
 module.exports = {
