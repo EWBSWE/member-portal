@@ -26,7 +26,7 @@ var ewbMail = require('../../components/ewb-mail');
  * @param {object} res - Express response object
  * @param {object} next - Express next error function
  */
-exports.index = function(req, res, next) {
+function index(req, res, next) {
     if (req.query.role) {
         Member.findBy({ role: req.query.role }).then(data => {
             res.status(200).json(data);
@@ -42,7 +42,7 @@ exports.index = function(req, res, next) {
     }
 };
 
-exports.get = function(req, res, next) {
+function get(req, res, next) {
     if (!Number.isInteger(parseInt(req.params.id))) {
         let badRequest = new Error('Bad request.');
         badRequest.status = 400;
@@ -59,7 +59,7 @@ exports.get = function(req, res, next) {
     });
 };
 
-exports.getPayments = function(req, res, next) {
+function getPayments(req, res, next) {
     Payment.findBy({ memberId: req.params.id }).then(payments => {
         return res.status(200).json(payments);
     }).catch(err => {
@@ -67,7 +67,7 @@ exports.getPayments = function(req, res, next) {
     });
 };
 
-exports.create = function(req, res, next) {
+function create(req, res, next) {
     if (!req.body.email) {
         let badRequest = new Error('Bad request.');
         badRequest.status = 400;
@@ -127,7 +127,7 @@ exports.create = function(req, res, next) {
     }
 };
 
-exports.update = function(req, res, next) {
+function update(req, res, next) {
     if (!req.body) {
         let badRequest = new Error('Bad request.');
         badRequest.status = 400;
@@ -141,7 +141,7 @@ exports.update = function(req, res, next) {
     });
 };
 
-exports.destroy = function(req, res, next) {
+function destroy(req, res, next) {
     Member.get(req.params.id).then(member => {
         if ((member.role === 'admin' || member.role === 'user') && req.user.role !== 'admin') {
             let forbidden = new Error('Forbidden');
@@ -157,7 +157,7 @@ exports.destroy = function(req, res, next) {
     });
 };
 
-exports.bulkCreate = function(req, res, next) {
+function bulkCreate(req, res, next) {
     if (!req.body.members) {
         let badRequest = new Error('Bad request.');
         badRequest.status = 400;
@@ -213,7 +213,7 @@ exports.bulkCreate = function(req, res, next) {
     });
 };
 
-exports.me = function(req, res, next) {
+function me(req, res, next) {
     let userId = req.user.id;
 
     if (!userId) {
@@ -233,7 +233,7 @@ exports.me = function(req, res, next) {
     });
 };
 
-exports.authCallback = function(req, res, next) {
+function authCallback(req, res, next) {
     res.redirect('/')
 };
 
@@ -246,7 +246,7 @@ exports.authCallback = function(req, res, next) {
  * @param {object} res Response
  * @param {object} next Error
  */
-exports.resetPassword = function(req, res, next) {
+function resetPassword(req, res, next) {
     if (!req.body.email) {
         let badRequest = new Error('Bad request.');
         badRequest.status = 400;
@@ -290,7 +290,7 @@ exports.resetPassword = function(req, res, next) {
  * @param {Object} res - Express response object
  * @param {Object} next - Express error function
  */
-exports.resetPasswordWithToken = function(req, res, next) {
+function resetPasswordWithToken(req, res, next) {
     if (!req.body.token || !req.body.newPassword) {
         let badRequest = new Error('Bad request.');
         badRequest.status = 400;
@@ -321,4 +321,18 @@ exports.resetPasswordWithToken = function(req, res, next) {
     }).catch(err => {
         next(err);
     });
+};
+
+module.exports = {
+  index,
+  get,
+  getPayments,
+  create,
+  bulkCreate,
+  me,
+  update,
+  destroy,
+  authCallback,
+  resetPassword,
+  resetPasswordWithToken
 };
