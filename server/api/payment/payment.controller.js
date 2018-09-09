@@ -7,25 +7,17 @@
 
 'use strict';
 
-var Promise = require('bluebird');
-
-var stripe = require('stripe')('***REMOVED***');
-if (process.env.NODE_ENV === 'production') {
-    stripe = require('stripe')('sk_live_aRwKpgsqwq7rpsozBg43Clx5');
-}
-
-var moment = require('moment');
-
+const stripe = require('../../stripe');
+const moment = require('moment');
 const logger = require('../../config/logger');
+const Event = require('../../models/event.model');
+const Member = require('../../models/member.model');
+const OutgoingMessage = require('../../models/outgoing-message.model');
+const Payment = require('../../models/payment.model');
+const Product = require('../../models/product.model');
+const EmailTemplate = require('../../models/email-template.model');
 
-var Event = require('../../models/event.model');
-var Member = require('../../models/member.model');
-var OutgoingMessage = require('../../models/outgoing-message.model');
-var Payment = require('../../models/payment.model');
-var Product = require('../../models/product.model');
-var EmailTemplate = require('../../models/email-template.model');
-
-var ewbMail = require('../../components/ewb-mail');
+const ewbMail = require('../../components/ewb-mail');
 
 /**
  * Get all payments
@@ -35,7 +27,7 @@ var ewbMail = require('../../components/ewb-mail');
  * @param {Object} res - Express response object
  * @param {Object} next - Express error function
  */
-exports.index = function(req, res, next) {
+function index(req, res, next) {
     Payment.index().then(data => {
         res.status(200).json(data);
     }).catch(err => {
@@ -51,7 +43,7 @@ exports.index = function(req, res, next) {
  * @param {Object} res - Express response object
  * @param {Object} next - Express error function
  */
-exports.get = function(req, res, next) {
+function get(req, res, next) {
     Payment.get(req.params.id).then(data => {
         res.status(200).json(data);
     }).catch(err => {
@@ -67,116 +59,116 @@ exports.get = function(req, res, next) {
  * @param {Object} res - Express response object
  * @param {Object} next - Express error function
  */
-exports.confirmMembershipPayment = function(req, res, next) {
-    if (!req.body.stripeToken || !req.body.productId) {
-        let badRequest = new Error('Missing parameters');
-        badRequest.status = 400;
-        return next(badRequest);
-    }
+function confirmMembershipPayment(req, res, next) {
+  if (!req.body.stripeToken || !req.body.productId) {
+    const badRequest = new Error('Missing parameters');
+    badRequest.status = 400;
+    return next(badRequest);
+  }
 
-    logger.info('Initiating membership payment');
+  logger.info('Initiating membership payment');
 
-    let memberData = {
-        email: req.body.email.trim(),
-        name: req.body.name,
-        location: req.body.location,
-        profession: req.body.profession,
-        education: req.body.education,
-        gender: req.body.gender,
-        yearOfBirth: req.body.yearOfBirth
+  const memberData = {
+    email: req.body.email.trim(),
+    name: req.body.name,
+    location: req.body.location,
+    profession: req.body.profession,
+    education: req.body.education,
+    gender: req.body.gender,
+    yearOfBirth: req.body.yearOfBirth
+  };
+
+  Product.get(req.body.productId).then(product => {
+    logger.info('membership product', product);
+
+    return new Promise((resolve, reject) => {
+      logger.info('processing charge');
+
+      processCharge({
+	currency: product.currency_code,
+	amount: product.price,
+	description: product.name
+      }, req.body.stripeToken, () => {
+	logger.info('stripe processing successful');
+	resolve(product);
+      }, err => {
+	logger.info('stripe processing failed');
+	let badRequest = new Error('Stripe rejected');
+	badRequest.status = 400;
+	reject(badRequest);
+      });
+    });
+  }).then(product => {
+    // Attach member type id to memberData
+    memberData.memberTypeId = product.attribute.member_type_id
+
+    return Member.findBy({ email: memberData.email }).then(members => {
+      if (members.length === 0) {
+	logger.info('new member, creating');
+	return Member.create(memberData);
+      }
+
+      logger.info('existing member, updating', {expirationDate: members[0].expiration_date, id: members[0].id, memberData});
+      return Member.update(members[0].id, memberData);
+    }).then(member => {
+      logger.info('extending membership', { id: member.id });
+      return Member.extendMembership(member, product).then(member => {
+	logger.info('new end date', {expirationDate: member.expiration_date});
+	return Payment.create({
+	  member: member,
+	  products: [product],
+	}).then(() => {
+	  logger.info('create confirmation mail');
+	  let mail = {
+	    sender: ewbMail.sender(),
+	    recipient: memberData.email,
+	    subject: ewbMail.getSubject('membership'),
+	    body: ewbMail.getBody('membership', { expirationDate: moment(member.expiration_date).format('YYYY-MM-DD') }),
+	  };
+
+	  return OutgoingMessage.create(mail);
+	});
+      });
+    }).then(() => {
+      return Promise.resolve(product);
+    });
+  }).then(product => {
+    logger.info('create receipt mail');
+    let receiptMail = {
+      sender: ewbMail.sender(),
+      recipient: memberData.email,
+      subject: ewbMail.getSubject('receipt', { name: product.name }),
+      body: ewbMail.getBody('receipt', {
+	buyer: memberData.email,
+	date: moment().format('YYYY-MM-DD HH:mm'),
+	total: Payment.formatTotal([product]),
+	tax: Payment.formatTax([product]),
+	list: Payment.formatProductList([product]),
+      }),
     };
 
-    Product.get(req.body.productId).then(product => {
-        logger.info('membership product', product);
-
-        return new Promise((resolve, reject) => {
-            logger.info('processing charge');
-
-            processCharge({
-                currency: product.currency_code,
-                amount: product.price,
-                description: product.name
-            }, req.body.stripeToken, () => {
-                logger.info('stripe processing successful');
-                resolve(product);
-            }, err => {
-                logger.info('stripe processing failed');
-                let badRequest = new Error('Stripe rejected');
-                badRequest.status = 400;
-                reject(badRequest);
-            });
-        });
-    }).then(product => {
-        // Attach member type id to memberData
-        memberData.memberTypeId = product.attribute.member_type_id
-
-        return Member.findBy({ email: memberData.email }).then(members => {
-            if (members.length === 0) {
-                logger.info('new member, creating');
-                return Member.create(memberData);
-            }
-
-            logger.info('existing member, updating', {expirationDate: members[0].expiration_date, id: members[0].id, memberData});
-            return Member.update(members[0].id, memberData);
-        }).then(member => {
-            logger.info('extending membership', { id: member.id });
-            return Member.extendMembership(member, product).then(member => {
-                logger.info('new end date', {expirationDate: member.expiration_date});
-                return Payment.create({
-                    member: member,
-                    products: [product],
-                }).then(() => {
-                    logger.info('create confirmation mail');
-                    let mail = {
-                        sender: ewbMail.sender(),
-                        recipient: memberData.email,
-                        subject: ewbMail.getSubject('membership'),
-                        body: ewbMail.getBody('membership', { expirationDate: moment(member.expiration_date).format('YYYY-MM-DD') }),
-                    };
-
-                    return OutgoingMessage.create(mail);
-                });
-            });
-        }).then(() => {
-            return Promise.resolve(product);
-        });
-    }).then(product => {
-        logger.info('create receipt mail');
-        let receiptMail = {
-            sender: ewbMail.sender(),
-            recipient: memberData.email,
-            subject: ewbMail.getSubject('receipt', { name: product.name }),
-            body: ewbMail.getBody('receipt', {
-                buyer: memberData.email,
-                date: moment().format('YYYY-MM-DD HH:mm'),
-                total: Payment.formatTotal([product]),
-                tax: Payment.formatTax([product]),
-                list: Payment.formatProductList([product]),
-            }),
-        };
-
-        return OutgoingMessage.create(receiptMail);
-    }).then(() => {
-        logger.info('all done');
-        res.sendStatus(201);
-    }).catch(err => {
-        next(err);
-    });
+    return OutgoingMessage.create(receiptMail);
+  }).then(() => {
+    logger.info('all done');
+    res.sendStatus(201);
+  }).catch(err => {
+    next(err);
+  });
 };
 
 /**
- * Confirm event payment
+ * Confirm event paymenT
  *
  * @memberOf controller.Payment
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Object} next - Express error function
  */
-exports.confirmEventPayment = function(req, res, next) {
+function confirmEventPayment(req, res, next) {
     if (!req.body.identifier || !Array.isArray(req.body.addonIds)) {
-        let badRequest = new Error('Missing parameters');
-        badRequest.status = 400;
-        return next(badRequest);
+	let badRequest = new Error('Missing parameters');
+	badRequest.status = 400;
+	return next(badRequest);
     }
 
     // Make sure that addonIds are integers
@@ -288,7 +280,7 @@ exports.confirmEventPayment = function(req, res, next) {
  * @param {Object} res - Express response object
  * @param {Object} next - Express error function
  */
-exports.stripeCheckoutKey = function (req, res) {
+function stripeCheckoutKey(req, res) {
     var key = '***REMOVED***';
     if (process.env.NODE_ENV === 'production') {
         key = 'pk_live_ATJZnfiF1iDDCQvNK6IgEFA2';
@@ -305,7 +297,7 @@ exports.stripeCheckoutKey = function (req, res) {
  * @param {Object} res - Express response object
  * @param {Object} next - Express error function
  */
-exports.generateReport = function (req, res, next) {
+function generateReport(req, res, next) {
     var start = moment(req.query.start);
     var end = moment(req.query.end);
     var recipient = req.query.recipient;
@@ -342,3 +334,28 @@ function processCharge(chargeAttributes, stripeToken, successCallback, errorCall
     });
 };
 
+async function processCharge2(chargeAttributes, stripeToken) {
+  return new Promise((resolve, reject) => {
+    stripe.charges.create({
+      currency: chargeAttributes.currency,
+      amount: chargeAttributes.amount * 100,
+      source: stripeToken.id,
+      description: chargeAttributes.description
+    }, function(err, charge) {
+      if (err) {
+	reject(err);
+      } else {
+	resolve(charge);
+      }
+    })
+  });
+}
+
+module.exports = {
+  index,
+  get,
+  confirmMembershipPayment,
+  confirmEventPayment,
+  stripeCheckoutKey,
+  generateReport,
+};
