@@ -10,6 +10,7 @@
     "compression": "~1.x",
     "cookie-parser": "~1.x",
     "csv": "~0.4.x",
+    "dotenv": "^6.0.0",
     "ejs": "~2.x",
     "errorhandler": "~1.x",
     "express": "~4.x",
@@ -35,6 +36,7 @@
   "devDependencies": {
     "bower": "^1.7.9",
     "chai": "^3.5.0",
+    "chai-as-promised": "^7.1.1",
     "connect-livereload": "~0.5.x",
     "grunt": "~0.4.x",
     "grunt-angular-gettext": "^2.1.11",
@@ -91,6 +93,7 @@
     "open": "~0.0.4",
     "requirejs": "~2.1.11",
     "should": "~3.3.1",
+    "sinon": "^6.2.0",
     "supertest": "~0.11.0",
     "time-grunt": "~0.3.1"
   },

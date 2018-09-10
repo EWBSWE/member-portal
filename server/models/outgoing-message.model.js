@@ -7,8 +7,11 @@
 
 'use strict';
 
+const moment = require('moment');
 var db = require('../db').db;
 var postgresHelper = require('../helpers/postgres.helper');
+const Payment = require('./payment.model');
+const ewbMail = require('../components/ewb-mail');
 
 const COLUMN_MAP = {
     recipient: 'recipient',
@@ -35,6 +38,32 @@ function create(data) {
         VALUES (${wrapped})
         RETURNING id
     `, data);
+}
+
+function createReceipt(recipient, products) {
+  return create({
+    sender: ewbMail.sender(),
+    recipient: recipient,
+    subject: ewbMail.getSubject('receipt'),
+    body: ewbMail.getBody('receipt', {
+      buyer: recipient,
+      date: moment().format('YYYY-MM-DD HH:mm'),
+      total: Payment.formatTotal(products),
+      tax: Payment.formatTax(products),
+      list: Payment.formatProductList(products),
+    })
+  });
+}
+
+function createMembership(recipient, expirationDate) {
+  return create({
+    sender: ewbMail.sender(),
+    recipient: recipient,
+    subject: ewbMail.getSubject('membership'),
+    body: ewbMail.getBody('membership', {
+      expirationDate: moment(expirationDate).format('YYYY-MM-DD')
+    })
+  });
 }
 
 /**
@@ -100,9 +129,11 @@ function find(recipient) {
 }
 
 module.exports = {
-    create: create,
-    fetch: fetch,
-    remove: remove,
-    fail: fail,
-    find: find
+  create,
+  createReceipt,
+  createMembership,
+  fetch,
+  remove,
+  fail,
+  find
 };

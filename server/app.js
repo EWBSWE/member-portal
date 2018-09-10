@@ -1,8 +1,6 @@
-/**
- * Main application file
- */
-
 'use strict';
+
+const dotenv = require('dotenv').config();
 
 // Set default node environment to development
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';

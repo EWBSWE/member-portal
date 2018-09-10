@@ -29,12 +29,12 @@ angular.module('ewbMemberApp')
         });
 
         return product;
-    }
+    };
 
     var callback = function(token) {
         var product = findMatchingProduct();
 
-        $http.post('/api/payments/confirm', {
+        $http.post('/api/members/membership', {
             stripeToken: token,
             productId: product.id,
             name: $scope.newMember.name,

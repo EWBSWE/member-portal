@@ -7,15 +7,17 @@
 
 'use strict';
 
-var moment = require('moment');
-var crypto = require('crypto');
+const moment = require('moment');
+const crypto = require('crypto');
 
-var routeHelper = require('../../helpers/route.helper');
+const stripe = require('../../stripe');
 
 const Member = require('../../models/member.model');
-var Payment = require('../../models/payment.model');
-var OutgoingMessage = require('../../models/outgoing-message.model');
-var ewbMail = require('../../components/ewb-mail');
+const Payment = require('../../models/payment.model');
+const OutgoingMessage = require('../../models/outgoing-message.model');
+const ewbMail = require('../../components/ewb-mail');
+
+const Product = require('../../models/product.model');
 
 /**
  * Returns all members.
@@ -323,6 +325,52 @@ function resetPasswordWithToken(req, res, next) {
     });
 };
 
+async function createMemberFromPurchase(params) {
+  const email = params.email.trim();
+  const productId = params.productId;
+  const stripeToken = params.stripeToken;
+
+  const name = params.name;
+  const location = params.location;
+  const profession = params.profession;
+  const education = params.education;
+  const gender = params.gender;
+  const yearOfBirth = params.yearOfBirth;
+
+  const memberAttributes = {
+    email,
+    name,
+    location,
+    profession,
+    education,
+    gender,
+    yearOfBirth
+  };
+
+  const membershipProduct = await Product.get(productId);
+
+  memberAttributes.memberTypeId = membershipProduct.attribute.member_type_id;
+
+  await stripe.processCharge2(
+    stripeToken,
+    membershipProduct.currency_code,
+    membershipProduct.price,
+    membershipProduct.name
+  );
+
+  const maybeMembers = await Member.findBy({ email: memberAttributes.email });
+
+  const member = maybeMembers.length === 0 ?
+	await Member.create(memberAttributes) :
+	await Member.update(maybeMembers[0].id, memberAttributes);
+
+  const extendedMember = await Member.extendMembership(member, membershipProduct);
+  const payment = await Payment.create({ member, products: [membershipProduct] });
+
+  await OutgoingMessage.createMembership(memberAttributes.email, extendedMember.expiration_date);
+  await OutgoingMessage.createReceipt(memberAttributes.email, [membershipProduct]);
+}
+
 module.exports = {
   index,
   get,
@@ -334,5 +382,6 @@ module.exports = {
   destroy,
   authCallback,
   resetPassword,
-  resetPasswordWithToken
+  resetPasswordWithToken,
+  createMemberFromPurchase
 };

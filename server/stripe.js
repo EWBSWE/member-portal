@@ -48,20 +48,20 @@ function processCharge(chargeAttributes, stripeToken, successCallback, errorCall
     });
 };
 
-async function processCharge2(stripeToken, currency, amount, source, description) {
+async function processCharge2(stripeToken, currency, amount, description) {
   return new Promise((resolve, reject) => {
     stripe.charges.create({
-      currency: chargeAttributes.currency,
-      amount: chargeAttributes.amount * 100,
       source: stripeToken.id,
-      description: chargeAttributes.description
+      amount: amount * 100,
+      currency,
+      description
     }, function(err, charge) {
       if (err) {
 	reject(err);
       } else {
 	resolve(charge);
       }
-    })
+    });
   });
 }
 
