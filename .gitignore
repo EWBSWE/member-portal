@@ -12,3 +12,4 @@ development.local.js
 coverage
 doc
 logs
+.env
