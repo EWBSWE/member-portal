@@ -155,3 +155,27 @@ CREATE TABLE event_payment (
     payment_id INTEGER REFERENCES payment(id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
     message TEXT
 );
+
+-- Member - Local chapters
+CREATE TABLE chapter (
+    id SERIAL PRIMARY KEY,
+    member_type_id INTEGER REFERENCES member_type (id) ON DELETE SET NULL ON UPDATE CASCADE,
+    name TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+INSERT INTO chapter (name, member_type_id)
+VALUES
+('Stockholm', (SELECT id FROM member_type WHERE member_type = 'working')),
+('Stockholm', (SELECT id FROM member_type WHERE member_type = 'student')),
+('Göteborg', (SELECT id FROM member_type WHERE member_type = 'working')),
+('Göteborg', (SELECT id FROM member_type WHERE member_type = 'student')),
+('Malmö', (SELECT id FROM member_type WHERE member_type = 'working')),
+('Lund', (SELECT id FROM member_type WHERE member_type = 'student')),
+('Linköping', (SELECT id FROM member_type WHERE member_type = 'student')),
+('Luleå', (SELECT id FROM member_type WHERE member_type = 'student')),
+('Karlstad', (SELECT id FROM member_type WHERE member_type = 'student')),
+('Helsingborg', (SELECT id FROM member_type WHERE member_type = 'student')),
+('Uppsala', (SELECT id FROM member_type WHERE member_type = 'student'));
+
