@@ -1,6 +1,6 @@
 'use strict';
 
-const db = require('./db').db;
+const db = require('../../db').db;
 
 const { Payment } = require('./Payment');
 

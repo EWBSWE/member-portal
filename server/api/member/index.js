@@ -10,6 +10,11 @@ const router = express.Router();
 
 router.get('/', auth.isAuthenticated(), controller.index);
 router.get('/me', auth.isAuthenticated(), controller.me);
+router.get(
+  '/chapters',
+  new RouteBuilder(controller2.getChapters)
+    .build()
+);
 router.get('/:id', auth.isAuthenticated(), controller.get);
 router.get('/:id/payments', auth.isAuthenticated(), controller.getPayments);
 
@@ -34,11 +39,6 @@ router.post(
     .build()
 );
 
-router.get(
-  '/chapters',
-  new RouteBuilder(controller2.getChapters)
-    .build()
-);
 
 module.exports = router;
 
