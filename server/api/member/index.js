@@ -2,6 +2,7 @@
 
 const express = require('express');
 const controller = require('./member.controller');
+const controller2 = require('./MemberController');
 const auth = require('../../auth/auth.service');
 const RouteBuilder = require('../../RouteBuilder');
 
@@ -25,11 +26,17 @@ router.delete('/:id', auth.isAuthenticated(), controller.destroy);
 
 router.post(
   '/membership',
-  new RouteBuilder(controller.createMemberFromPurchase)
+  new RouteBuilder(controller2.createMemberFromPurchase)
     .requiredParams([
       'productId',
       'stripeToken'
     ])
+    .build()
+);
+
+router.get(
+  '/chapters',
+  new RouteBuilder(controller2.getChapters)
     .build()
 );
 
