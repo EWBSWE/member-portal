@@ -5,7 +5,7 @@ const db = require('../../db').db;
 const { MembershipProduct } = require('./Product');
 
 class ProductRepository {
-  async getMembership(id) {
+  async getMembershipProduct(id) {
     const entity = await db.one(`
 	SELECT *
 	FROM product
@@ -13,7 +13,7 @@ class ProductRepository {
 	    AND product_type_id = (
 		SELECT id
 		FROM product_type
-		WHERE identifier = 'membership'
+		WHERE identifier = 'Membership'
 	    )
     `, [id]);
 
