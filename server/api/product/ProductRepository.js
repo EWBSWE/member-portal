@@ -27,6 +27,7 @@ class ProductRepository {
       entity.price,
       entity.description,
       entity.product_type_id,
+      entity.currency_code,
       entity.attribute.member_type_id,
       entity.attribute.days
     );

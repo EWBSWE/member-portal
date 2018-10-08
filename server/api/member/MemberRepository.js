@@ -59,6 +59,7 @@ class MemberRepository {
 	    year_of_birth = $[yearOfBirth],
 	    expiration_date = $[expirationDate]
 	WHERE id = $[id]
+	RETURNING *
     `, member);
 
     return this._toModel(entity);

@@ -42,7 +42,7 @@ async function createMemberFromPurchase(params) {
 
   await stripe.processCharge2(
     stripeToken,
-    membershipProduct.currency_code,
+    membershipProduct.currencyCode,
     membershipProduct.price,
     membershipProduct.name
   );
@@ -99,7 +99,7 @@ async function createMemberFromPurchase(params) {
   await paymentRepository.create(payment);
 
   // send mail and receipt to user
-  await OutgoingMessage.createMembership(memberAttributes.email, extendedMember.expiration_date);
+  await OutgoingMessage.createMembership(memberAttributes.email, member.expiration_date);
   await OutgoingMessage.createReceipt(memberAttributes.email, [membershipProduct]);
 }
 
