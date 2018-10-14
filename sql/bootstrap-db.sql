@@ -159,7 +159,7 @@ CREATE TABLE event_payment (
 -- Member - Local chapters
 CREATE TABLE chapter (
     id SERIAL PRIMARY KEY,
-    member_type_id INTEGER REFERENCES member_type (id) ON DELETE SET NULL ON UPDATE CASCADE,
+    member_type_id INTEGER REFERENCES member_type (id) ON DELETE SET NULL ON UPDATE CASCADE NOT NULL,
     name TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -179,3 +179,5 @@ VALUES
 ('Helsingborg', (SELECT id FROM member_type WHERE member_type = 'student')),
 ('Uppsala', (SELECT id FROM member_type WHERE member_type = 'student'));
 
+ALTER TABLE member 
+ADD COLUMN chapter_id INTEGER REFERENCES chapter(id) ON DELETE SET NULL ON UPDATE CASCADE

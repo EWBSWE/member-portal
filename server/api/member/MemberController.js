@@ -1,6 +1,9 @@
 'use strict';
 
 const moment = require('moment');
+
+const logger = require('../../config/logger');
+
 const stripe = require('../../stripe');
 const OutgoingMessage = require('../../models/outgoing-message.model');
 
@@ -17,7 +20,6 @@ async function createMemberFromPurchase(params) {
   const email = params.email.trim();
   const productId = params.productId;
   const stripeToken = params.stripeToken;
-  const maybeChapterId = params.chapterId;
 
   const name = params.name;
   const location = params.location;
@@ -26,19 +28,14 @@ async function createMemberFromPurchase(params) {
   const gender = params.gender;
   const yearOfBirth = params.yearOfBirth;
 
-  const memberAttributes = {
-    email,
-    name,
-    location,
-    profession,
-    education,
-    gender,
-    yearOfBirth
-  };
+  const chapter = await chapterRepository.get(params.chapterId);
+  const chapterId = chapter ? chapter.id : null;
+  if (!chapter) {
+    logger.warn(`Couldn't find Chapter with chapter id [${params.chapterId}]`);
+  }
 
   const membershipProduct = await productRepository.getMembershipProduct(productId);
-
-  memberAttributes.memberTypeId = membershipProduct.memberTypeId;
+  const memberTypeId = membershipProduct.memberTypeId;
 
   await stripe.processCharge2(
     stripeToken,
@@ -47,19 +44,20 @@ async function createMemberFromPurchase(params) {
     membershipProduct.name
   );
 
-  const maybeMember = await memberRepository.firstWithEmail(memberAttributes.email);
+  const maybeMember = await memberRepository.firstWithEmail(email);
 
   let member = null;
   if (maybeMember) {
     // Member exists! Update member with all attributes in case they
     // have changed. 
-    maybeMember.name = memberAttributes.name;
-    maybeMember.memberTypeId = memberAttributes.memberTypeId;
-    maybeMember.location = memberAttributes.location;
-    maybeMember.profession = memberAttributes.profession;
-    maybeMember.education = memberAttributes.education;
-    maybeMember.gender = memberAttributes.gender;
-    maybeMember.yearOfBirth = memberAttributes.yearOfBirth;
+    maybeMember.name = name;
+    maybeMember.memberTypeId = memberTypeId;
+    maybeMember.location = location;
+    maybeMember.profession = profession;
+    maybeMember.education = education;
+    maybeMember.gender = gender;
+    maybeMember.yearOfBirth = yearOfBirth;
+    maybeMember.chapterId = chapterId;
 
     maybeMember.extendExpirationDate(membershipProduct.membershipDurationDays);
 
@@ -68,15 +66,16 @@ async function createMemberFromPurchase(params) {
     // Member doesn't exist! Create a member with provided attributes
     const newMember = new Member(
       null, // we have no id yet
-      memberAttributes.email,
-      memberAttributes.name,
-      memberAttributes.location,
-      memberAttributes.education,
-      memberAttributes.profession,
-      memberAttributes.memberTypeId,
-      memberAttributes.gender,
-      memberAttributes.yearOfBirth,
-      null // expiration date is not set yet
+      email,
+      name,
+      location,
+      education,
+      profession,
+      memberTypeId,
+      gender,
+      yearOfBirth,
+      null, // expiration date is not set yet
+      chapterId
     );
 
     maybeMember.extendExpirationDate(membershipProduct.membershipDurationDays);
@@ -99,8 +98,8 @@ async function createMemberFromPurchase(params) {
   await paymentRepository.create(payment);
 
   // send mail and receipt to user
-  await OutgoingMessage.createMembership(memberAttributes.email, member.expiration_date);
-  await OutgoingMessage.createReceipt(memberAttributes.email, [membershipProduct]);
+  await OutgoingMessage.createMembership(member.email, member.expiration_date);
+  await OutgoingMessage.createReceipt(member.email, [membershipProduct]);
 }
 
 async function getChapters() {

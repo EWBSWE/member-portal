@@ -9,6 +9,18 @@ angular.module('ewbMemberApp')
     $http.get('/api/products/membership').success(function(data) {
         $scope.products = data;
     });
+    $http.get('/api/members/chapters').success(function(data) {
+	var studentLabel = gettextCatalog.getString('Student');
+	var workingLabel = gettextCatalog.getString('Working');
+
+	$scope.availableChapters = _.map(data, function(chapter) {
+	    var label = chapter.memberTypeId === 1 ? studentLabel : workingLabel;
+	    return {
+		id: chapter.id,
+		name: chapter.name + ' (' + label + ')'
+	    };
+	});
+    });
 
     var stripeHandler;
     $http.get('/api/payments/stripe-checkout').success(function (data) {
@@ -36,7 +48,7 @@ angular.module('ewbMemberApp')
 
         $http.post('/api/members/membership', {
             stripeToken: token,
-            productId: product.id,
+            productId: +product.id,
             name: $scope.newMember.name,
             location: $scope.newMember.location,
             profession: $scope.newMember.profession,
@@ -44,6 +56,7 @@ angular.module('ewbMemberApp')
             email: $scope.newMember.email,
             gender: $scope.newMember.gender,
             yearOfBirth: $scope.newMember.yearOfBirth,
+	    chapterId: +$scope.newMember.chapterId,
         }).success(function(data) {
             $scope.successEmail = $scope.newMember.email;
             $('.js-confirmation').modal('show');

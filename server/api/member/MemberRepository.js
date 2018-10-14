@@ -26,7 +26,8 @@ class MemberRepository {
 	    member_type_id,
 	    gender,
 	    year_of_birth,
-	    expiration_date
+	    expiration_date,
+	    chapter_id
 	)
 	VALUES (
 	    $[email],
@@ -37,7 +38,8 @@ class MemberRepository {
 	    $[memberTypeId],
 	    $[gender],
 	    $[yearOfBirth],
-	    $[expirationDate]
+	    $[expirationDate],
+	    $[chapterId]
 	)
         RETURNING *
     `, member);
@@ -57,7 +59,8 @@ class MemberRepository {
 	    member_type_id = $[memberTypeId],
 	    gender = $[gender],
 	    year_of_birth = $[yearOfBirth],
-	    expiration_date = $[expirationDate]
+	    expiration_date = $[expirationDate],
+	    chapter_id = $[chapterId]
 	WHERE id = $[id]
 	RETURNING *
     `, member);
@@ -77,6 +80,7 @@ class MemberRepository {
       entity.gender,
       entity.year_of_birth,
       entity.expiration_date,
+      entity.chapter_id,
     );
   }
 }

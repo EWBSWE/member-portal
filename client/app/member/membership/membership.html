@@ -94,7 +94,24 @@
           </div>
         </div>
 
-        <div class="form-group">
+	<div class="row">
+          <div class="col-xs-12">
+	    <div>
+	      <label translate>Local chapter</label>
+	    </div>
+	    <div>
+	      <select ng-model="newMember.chapterId">
+		<option translate>None selected</option>
+		<option ng-repeat="option in availableChapters" value="{{option.id}}">{{option.name}}</option>
+	      </select>
+	    </div>
+	    <p translate class="help-block">
+	      You may choose a local chapter if you would like to receive local news and information about activities near you.
+	    </p>
+	  </div>
+	</div>
+
+	<div class="form-group">
           <label class="control-label" for="inputName" translate>Name</label>
           <input class="form-control" type="text" name="inputName" id="inputName" ng-model="newMember.name" />
         </div>
