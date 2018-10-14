@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.7\n"
+"X-Generator: Poedit 2.2\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: client/app/member/membership/membership.html:87
@@ -20,7 +20,7 @@ msgstr "1 år"
 msgid "3 year"
 msgstr "3 år"
 
-#: client/app/member/membership/membership.html:107
+#: client/app/member/membership/membership.html:124
 msgid "4 digits, for instance 1988"
 msgstr "4 siffror, till exempel 1988"
 
@@ -32,7 +32,7 @@ msgstr ""
 "En bekräftelse på din medverkan skickas till <strong>{{successEmail}}</"
 "strong>."
 
-#: client/app/member/membership/membership.html:178
+#: client/app/member/membership/membership.html:195
 msgid ""
 "A confirmation of your payment and your membership is sent to "
 "<strong>{{successEmail}}</strong>."
@@ -43,8 +43,8 @@ msgstr ""
 #: client/app/account/login/login.html:71
 #: client/app/event/public/public.html:103
 #: client/app/event/public/public.html:86
-#: client/app/member/membership/membership.html:182
 #: client/app/member/membership/membership.html:199
+#: client/app/member/membership/membership.html:216
 msgid "Close"
 msgstr "Stäng"
 
@@ -67,8 +67,8 @@ msgstr ""
 "ict@ingenjorerutangranser.se\">ict@ingenjorerutangranser.se</a> för "
 "betalnings- och tekniska frågor."
 
-#: client/app/member/membership/membership.html:179
 #: client/app/member/membership/membership.html:196
+#: client/app/member/membership/membership.html:213
 #: client/app/member/membership/membership.html:35
 msgid ""
 "Do you any questions regarding your membership or anything payment related? "
@@ -79,7 +79,7 @@ msgstr ""
 "oss på <a href=\"mailto:volontar@ingenjorerutangranser.se"
 "\">volontar@ingenjorerutangranser.se</a>."
 
-#: client/app/member/membership/membership.html:142
+#: client/app/member/membership/membership.html:159
 msgid "Education"
 msgstr "Utbildning"
 
@@ -97,11 +97,11 @@ msgid "Email sent to {{user.email}}."
 msgstr "E-post skickat till {{user.email}}."
 
 #: client/app/event/public/public.controller.js:94
-#: client/app/member/membership/membership.controller.js:85
+#: client/app/member/membership/membership.controller.js:95
 msgid "Engineers without borders"
 msgstr "Ingenjörer utan gränser"
 
-#: client/app/member/membership/membership.html:123
+#: client/app/member/membership/membership.html:140
 msgid "Female"
 msgstr "Kvinna"
 
@@ -109,11 +109,11 @@ msgstr "Kvinna"
 msgid "Forgot your password?"
 msgstr "Glömt ditt lösenord?"
 
-#: client/app/member/membership/membership.html:115
+#: client/app/member/membership/membership.html:132
 msgid "Gender"
 msgstr "Kön"
 
-#: client/app/member/membership/membership.html:163
+#: client/app/member/membership/membership.html:180
 msgid ""
 "If you want to be removed as a member or want to request your data, please "
 "get in touch with ict@ewb-swe.org."
@@ -142,6 +142,10 @@ msgstr ""
 "en av våra befintliga grupper, kontaktar du oss med fördel på <a href="
 "\"mailto:info@ingenjorerutangranser.se\">info@ingenjorerutangranser.se</a>."
 
+#: client/app/member/membership/membership.html:100
+msgid "Local chapter"
+msgstr "Lokalgrupp"
+
 #: client/app/member/membership/membership.html:53
 msgid "Location *"
 msgstr "Ort *"
@@ -150,11 +154,11 @@ msgstr "Ort *"
 msgid "Login"
 msgstr "Logga in"
 
-#: client/app/member/membership/membership.html:119
+#: client/app/member/membership/membership.html:136
 msgid "Male"
 msgstr "Man"
 
-#: client/app/member/membership/membership.controller.js:86
+#: client/app/member/membership/membership.controller.js:96
 msgid "Membership"
 msgstr "Medlemskap"
 
@@ -163,11 +167,15 @@ msgid "Membership duration *"
 msgstr "Varaktighet *"
 
 #: client/app/event/public/public.html:44
-#: client/app/member/membership/membership.html:98
+#: client/app/member/membership/membership.html:115
 msgid "Name"
 msgstr "Namn"
 
-#: client/app/member/membership/membership.html:127
+#: client/app/member/membership/membership.html:104
+msgid "None selected"
+msgstr "Ingen vald"
+
+#: client/app/member/membership/membership.html:144
 msgid "Other"
 msgstr "Annat"
 
@@ -192,14 +200,14 @@ msgstr "Skriv en giltig e-postadress."
 msgid "Please enter your email and password."
 msgstr "Skriv in e-post och lösenord."
 
-#: client/app/member/membership/membership.html:151
+#: client/app/member/membership/membership.html:168
 msgid ""
 "Please fill out all required fields before clicking <strong>Sign up</strong>."
 msgstr ""
 "Var vänlig fyll i alla fälten innan du klickar på <strong>Bli medlem</"
 "strong>."
 
-#: client/app/member/membership/membership.html:136
+#: client/app/member/membership/membership.html:153
 msgid "Profession"
 msgstr "Yrke"
 
@@ -215,12 +223,12 @@ msgstr "Återställ lösenord"
 msgid "Senior"
 msgstr "Senior"
 
-#: client/app/member/membership/membership.html:155
+#: client/app/member/membership/membership.html:172
 #: client/app/member/membership/membership.html:5
 msgid "Sign up"
 msgstr "Bli medlem"
 
-#: client/app/member/membership/membership.html:148
+#: client/app/member/membership/membership.html:165
 msgid ""
 "Sign up for 1 year starting at 40 SEK for students or join 3 years for 90 "
 "SEK (costs for non-students are 100 SEK and 250 SEK, respectively)."
@@ -228,6 +236,7 @@ msgstr ""
 "Bli medlem i 1 år för 100 kr (40 kr för studerande) eller i 3 år för 250 kr "
 "(90 kr för studerande)."
 
+#: client/app/member/membership/membership.controller.js:13
 #: client/app/member/membership/membership.html:65
 msgid "Student"
 msgstr "Student"
@@ -240,12 +249,12 @@ msgstr "Delta"
 msgid "Thank you for participating!"
 msgstr "Tack för din medverkan!"
 
-#: client/app/member/membership/membership.html:175
+#: client/app/member/membership/membership.html:192
 msgid "Thank you for the support!"
 msgstr "Tack för ditt stöd!"
 
 #: client/app/event/public/public.html:96
-#: client/app/member/membership/membership.html:192
+#: client/app/member/membership/membership.html:209
 msgid "The transaction was unsuccessful"
 msgstr "Betalningen misslyckades"
 
@@ -253,7 +262,7 @@ msgstr "Betalningen misslyckades"
 msgid "Type *"
 msgstr "Typ *"
 
-#: client/app/member/membership/membership.html:160
+#: client/app/member/membership/membership.html:177
 msgid ""
 "We collect data about members to ensure that we reach out to as many people "
 "as possible. The data we collect is only used within Engineers Without "
@@ -268,7 +277,7 @@ msgstr ""
 "för att kunna kontakta dig och se till att du får information om aktiviteter "
 "på din ort."
 
-#: client/app/member/membership/membership.controller.js:56
+#: client/app/member/membership/membership.controller.js:66
 msgid "We failed to complete your transaction. No payment processed."
 msgstr "Vi misslyckades med att genomföra din betalning."
 
@@ -308,7 +317,7 @@ msgstr ""
 "vår verksamhet och vi behöver både aktiva och stödjande medlemmar. Du "
 "behöver inte vara ingenjör, alla behövs och alla är välkomna."
 
-#: client/app/member/membership/membership.html:157
+#: client/app/member/membership/membership.html:174
 msgid ""
 "When you click <strong>Sign up</strong> your transaction is managed securely "
 "by <a href=\"https://stripe.com/se\" target=\"_blank\">Stripe</a>. When the "
@@ -332,15 +341,24 @@ msgstr ""
 "uppgifter behandlas säkert. När betalningen är färdig skickar vi en "
 "bekräftelse till den e-postadress som angavs ovan."
 
+#: client/app/member/membership/membership.controller.js:14
 #: client/app/member/membership/membership.html:69
 msgid "Working"
 msgstr "Yrkesverksam"
 
-#: client/app/member/membership/membership.html:105
+#: client/app/member/membership/membership.html:122
 msgid "Year of birth"
 msgstr "Födelseår"
 
-#: client/app/member/membership/membership.controller.js:58
+#: client/app/member/membership/membership.html:108
+msgid ""
+"You may choose a local chapter if you would like to receive local news and "
+"information about activities near you."
+msgstr ""
+"Du kan välja lokalgrupp om du är intresserad av att få ta del av nyheter och "
+"få information om aktiviteter nära dig."
+
+#: client/app/member/membership/membership.controller.js:68
 msgid "Your card was declined. No payment processed."
 msgstr "Ditt kort medges ej. Ingen betalning genomförd."
 
