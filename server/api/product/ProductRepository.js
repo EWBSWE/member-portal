@@ -22,14 +22,14 @@ class ProductRepository {
 
   _toMembershipProduct(entity) {
     return new MembershipProduct(
-      entity.id,
+      +entity.id,
       entity.name,
-      entity.price,
+      +entity.price,
       entity.description,
-      entity.product_type_id,
+      +entity.product_type_id,
       entity.currency_code,
-      entity.attribute.member_type_id,
-      entity.attribute.days
+      +entity.attribute.member_type_id,
+      +entity.attribute.days
     );
   }
 }

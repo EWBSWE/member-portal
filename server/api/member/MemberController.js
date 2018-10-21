@@ -5,14 +5,15 @@ const moment = require('moment');
 const logger = require('../../config/logger');
 
 const stripe = require('../../stripe');
-const OutgoingMessage = require('../../models/outgoing-message.model');
 
 const { Member } = require('./Member');
 const { MembershipProduct } = require('../product/Product');
+const { OutgoingMessage } = require('../outgoing-message/OutgoingMessage');
 const { Payment } = require('../payment/Payment');
 
 const chapterRepository = require('./ChapterRepository');
 const memberRepository = require('./MemberRepository');
+const outgoingMessageRepository = require('../outgoing-message/OutgoingMessageRepository');
 const paymentRepository = require('../payment/PaymentRepository');
 const productRepository = require('../product/ProductRepository');
 
@@ -98,8 +99,13 @@ async function createMemberFromPurchase(params) {
   await paymentRepository.create(payment);
 
   // send mail and receipt to user
-  await OutgoingMessage.createMembership(member.email, member.expiration_date);
-  await OutgoingMessage.createReceipt(member.email, [membershipProduct]);
+  const welcomeMail = OutgoingMessage.createMembership(member);
+  const receiptMail = OutgoingMessage.createReceipt(member.email, [membershipProduct]);
+
+  // TODO consider doing this with one punch
+  await outgoingMessageRepository.create(welcomeMail);
+  await outgoingMessageRepository.create(receiptMail);
+
 }
 
 async function getChapters() {
