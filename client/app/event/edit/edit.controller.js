@@ -21,6 +21,7 @@ angular.module('ewbMemberApp')
             });
 
             ev.notificationOpen = ev.notification_open;
+	    ev.dueDate = ev.due_date;
 
             $scope.ev = ev;
             $scope.ev.dueDate = moment($scope.ev.dueDate).format('YYYY-MM-DD');
