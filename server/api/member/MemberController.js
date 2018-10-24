@@ -79,7 +79,7 @@ async function createMemberFromPurchase(params) {
       chapterId
     );
 
-    maybeMember.extendExpirationDate(membershipProduct.membershipDurationDays);
+    newMember.extendExpirationDate(membershipProduct.membershipDurationDays);
 
     member = await memberRepository.create(newMember);
   }

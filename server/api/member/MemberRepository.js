@@ -12,6 +12,10 @@ class MemberRepository {
 	WHERE email = $1
     `, [email]);
 
+    if (!entity) {
+      return null;
+    }
+
     return this._toModel(entity);
   }
 
