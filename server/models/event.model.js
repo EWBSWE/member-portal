@@ -64,21 +64,7 @@ function create(data) {
     }
 
     return new Promise((resolve, reject) => {
-        if (data.subscribers.length === 0) {
-            resolve();
-        } else {
-            Member.findBy({ email: data.subscribers }).then(ms => {
-                if (ms.length !== data.subscribers.length) {
-                    const invalidSubscribersError = new Error(`Invalid subscribers - could not find any members with emails ${data.subscribers}`);
-                    invalidSubscribersError.status = 400;
-                    invalidSubscribersError.invalidSubscribers = true;
-                    reject(invalidSubscribersError);
-                } else {
-                    members = ms;
-                    resolve();
-                }
-            });
-        }
+      resolve();
     }).then(() => {
         return EmailTemplate.create(data.emailTemplate);
     }).then(template => {
@@ -126,12 +112,12 @@ function create(data) {
                 `, [event.id, addon.capacity, addon.productId]);
             });
 
-            let subscriberQueries = members.map(m => {
+            let subscriberQueries = data.subscribers.map(email => {
                 return transaction.one(`
-                    INSERT INTO event_subscriber (event_id, member_id)
+                    INSERT INTO event_subscriber (event_id, email)
                     VALUES ($1, $2)
                     RETURNING *
-                `, [event.id, m.id]);
+                `, [event.id, email]);
             });
 
             let queries = addonQueries.concat(subscriberQueries);
@@ -293,8 +279,7 @@ function get(id) {
                 `, id),
                 t.any(`
                     SELECT email
-                    FROM member
-                    JOIN event_subscriber ON member.id = event_subscriber.member_id
+                    FROM event_subscriber
                     WHERE event_id = $1
                 `, id),
                 t.any(`
@@ -343,27 +328,42 @@ function destroy(id) {
  * @param {Object} data - Object with new attributes
  * @returns {Promise<Object|Error>} Resolves to new object
  */
-function update(id, data) {
-    let mapped = postgresHelper.update(COLUMN_MAP, data);
+async function update(id, data) {
+  let mapped = postgresHelper.update(COLUMN_MAP, data);
 
-    if (mapped === null) {
-        return Promise.reject('No attributes to update');
-    }
+  if (mapped === null) {
+    throw new Error('No attributes to update');
+  }
 
-    return db.one(`
-        UPDATE event
-        SET ${mapped}
-        WHERE id = $[id]
-        RETURNING *
-    `, Object.assign(data, {id: id})).then(e => {
-        if (data.emailTemplate) {
-            return EmailTemplate.update(e.email_template_id, data.emailTemplate).then(() => {
-                return Promise.resolve(e);
-            });
-        }
+  const updatedEvent = await db.one(`
+    UPDATE event
+    SET ${mapped}
+    WHERE id = $[id]
+    RETURNING *
+  `, Object.assign(data, { id }));
 
-        return Promise.resolve(e);
+  if (Array.isArray(data.subscribers) && data.subscribers.length > 0) {
+    await db.tx(async t => {
+      await t.any(`
+	DELETE FROM event_subscriber
+	WHERE event_id = $1
+      `, id);
+
+      for (const subscriber of data.subscribers) {
+	await t.any(`
+	  INSERT INTO event_subscriber (event_id, email)
+	  VALUES ($1, $2)
+	  RETURNING *
+	`, [id, subscriber]);
+      }
     });
+  }
+
+  if (data.emailTemplate) {
+    await EmailTemplate.update(updatedEvent.email_template_id, data.emailTemplate);
+  }
+
+  return updatedEvent;
 }
 
 module.exports = {

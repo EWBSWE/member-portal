@@ -181,3 +181,24 @@ VALUES
 
 ALTER TABLE member 
 ADD COLUMN chapter_id INTEGER REFERENCES chapter(id) ON DELETE SET NULL ON UPDATE CASCADE
+
+
+-- migrate member_id column to email
+-- add email column
+-- find all emails by member_id
+-- insert email where member_id matches
+-- drop column
+ALTER TABLE event_subscriber
+ADD COLUMN email TEXT;
+
+UPDATE event_subscriber
+SET email = foo.email
+FROM (
+     SELECT id, email
+     FROM member
+     WHERE id IN (SELECT member_id FROM event_subscriber)
+) as foo
+WHERE event_subscriber.member_id = foo.id;
+
+ALTER TABLE event_subscriber
+ALTER COLUMN member_id DROP NOT NULL;
