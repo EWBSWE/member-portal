@@ -18,6 +18,7 @@ class RouteBuilder {
       throw new Error('Missing endpoint!');
     }
 
+    logger.info(`Building endpoint ${this._endpoint.name}`);
     const requiredParams = this._requiredParams;
     const endpoint = this._endpoint;
 
@@ -28,6 +29,11 @@ class RouteBuilder {
 	badRequest.status = 400;
 	return next(badRequest);
       }
+
+      // TODO: Finetune the logging of parameters, right now it is too
+      // explicit, logging every parameter. Sensitive or not. Right
+      // now only a few routes use the RouteBuilder.
+      logger.info(`Endpoint ${endpoint.name} called with %j`, req.body);
 
       try {
 	const result = await endpoint(req.body);

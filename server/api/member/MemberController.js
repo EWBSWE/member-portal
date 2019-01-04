@@ -30,14 +30,17 @@ async function createMemberFromPurchase(params) {
   const gender = params.gender;
   const yearOfBirth = params.yearOfBirth;
 
+  logger.info(`Fetching chapter with id ${params.chapterId}`);
   const chapter = await chapterRepository.get(params.chapterId);
   const chapterId = chapter ? chapter.id : null;
   if (!chapter) {
     logger.warn(`Couldn't find Chapter with chapter id [${params.chapterId}]`);
   }
 
+  logger.info(`Fetching membership product with id ${productId}`);
   const membershipProduct = await productRepository.getMembershipProduct(productId);
   const memberTypeId = membershipProduct.memberTypeId;
+  logger.info(`Membership product is member type id ${memberTypeId}`);
 
   await stripe.processCharge2(
     stripeToken,
@@ -46,10 +49,12 @@ async function createMemberFromPurchase(params) {
     membershipProduct.name
   );
 
+  logger.info('Check if member exists');
   const maybeMember = await memberRepository.firstWithEmail(email);
 
   let member = null;
   if (maybeMember) {
+    logger.info('Existing member - old attributes %j', maybeMember);
     // Member exists! Update member with all attributes in case they
     // have changed. 
     maybeMember.name = name;
@@ -63,6 +68,7 @@ async function createMemberFromPurchase(params) {
 
     maybeMember.extendExpirationDate(membershipProduct.membershipDurationDays);
 
+    logger.info('Existing member - new attributes %j', maybeMember);
     member = await memberRepository.update(maybeMember);
   } else {
     // Member doesn't exist! Create a member with provided attributes
@@ -82,8 +88,11 @@ async function createMemberFromPurchase(params) {
 
     newMember.extendExpirationDate(membershipProduct.membershipDurationDays);
 
+    logger.info('New member - new attributes %j', newMember);
     member = await memberRepository.create(newMember);
   }
+
+  logger.info('Member saved/updated');
 
   // TODO There should be a better way than to create a Payment like
   // this. Delegate this job to some kind of transaction manager or
@@ -96,9 +105,13 @@ async function createMemberFromPurchase(params) {
     membershipProduct.price,
     null // database creates this attribute for us
   );
+  logger.info('Creating payment %j', payment);
 
   await paymentRepository.create(payment);
 
+  logger.info('Payment saved');
+
+  logger.info('Preparing emails, welcome/receipt');
   // send mail and receipt to user
   const welcomeMail = OutgoingMessage.createMembership(member);
   const receiptMail = OutgoingMessage.createReceipt(member.email, [membershipProduct]);
@@ -106,6 +119,7 @@ async function createMemberFromPurchase(params) {
   // TODO consider doing this with one punch
   await outgoingMessageRepository.create(welcomeMail);
   await outgoingMessageRepository.create(receiptMail);
+  logger.info('Emails queued');
 }
 
 async function getChapters() {
