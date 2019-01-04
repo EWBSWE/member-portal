@@ -20,7 +20,51 @@ class MemberRepository {
   }
 
   async create(member) {
-    const entity = await db.one(`
+    const entity = await this._transactionCreate(db, member);
+    return this._toModel(entity);
+  }
+
+  async update(member) {
+    const entity = await this._transactionUpdate(db, member);
+    return this._toModel(entity);
+  }
+
+  async findByEmails(emails) {
+    const entities = await db.any(`
+	SELECT *
+	FROM member
+	WHERE email IN ($1:csv)
+    `, [emails]);
+
+    return entities.map(this._toModel);
+  }
+
+  async createMany(members) {
+    const entities = await db.tx(tx =>
+	Promise.all(
+	  members.map(
+	    member => this._transactionCreate(tx, member)
+	  )
+	)
+    );
+
+    return entities.map(this._toModel);
+  }
+
+  async updateMany(members) {
+    const entities = await db.tx(tx =>
+	Promise.all(
+	  members.map(
+	    member => this._transactionUpdate(tx, member)
+	  )
+	)
+    );
+
+    return entities.map(this._toModel);
+  }
+
+  async _transactionCreate(transaction, member) {
+    return transaction.one(`
 	INSERT INTO member (
 	    email,
 	    name,
@@ -47,12 +91,10 @@ class MemberRepository {
 	)
         RETURNING *
     `, member);
-
-    return this._toModel(entity);
   }
 
-  async update(member) {
-    const entity = await db.one(`
+  async _transactionUpdate(transaction, member) {
+    return transaction.one(`
 	UPDATE member 
 	SET 
 	    email = $[email],
@@ -68,8 +110,6 @@ class MemberRepository {
 	WHERE id = $[id]
 	RETURNING *
     `, member);
-
-    return this._toModel(entity);
   }
 
   _toModel(entity) {

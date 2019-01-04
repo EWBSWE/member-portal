@@ -26,6 +26,11 @@ class Member {
       .add(days, 'days')
       .toDate();
   }
+
+  isCreatable() {
+    // As long as we have an email we're good.
+    return !!this.email;
+  }
 }
 
 module.exports = { Member };

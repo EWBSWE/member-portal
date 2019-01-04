@@ -19,6 +19,11 @@ angular.module('ewbMemberApp').controller('MemberBulkCtrl', function ($scope, $h
         $http.post('/api/members/bulk', {
             members: members
         }).success(function(data, status) {
+	    var allMembers = data.created
+		.concat(data.updated)
+		.concat(data.invalid);
+	    _.forEach(allMembers, replaceMemberTypeId);
+
             $scope.validMembers = data.created;
             $scope.updatedMembers = data.updated;
             $scope.invalidMembers = data.invalid;
@@ -64,5 +69,19 @@ angular.module('ewbMemberApp').controller('MemberBulkCtrl', function ($scope, $h
         }
 
         return matches[0].id;
+    }
+
+    function parseMemberTypeId(id) {
+	var matches = _.filter(memberTypes, function(m) {
+	    return m.id === id;
+	});
+	if (matches.length === 0) {
+	    return null;
+	}
+	return matches[0].member_type;
+    }
+
+    function replaceMemberTypeId(member) {
+	member.memberType = parseMemberTypeId(member.memberTypeId);
     }
 });

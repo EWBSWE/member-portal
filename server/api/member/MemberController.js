@@ -16,6 +16,7 @@ const memberRepository = require('./MemberRepository');
 const outgoingMessageRepository = require('../outgoing-message/OutgoingMessageRepository');
 const paymentRepository = require('../payment/PaymentRepository');
 const productRepository = require('../product/ProductRepository');
+const MemberFactory = require('./MemberFactory');
 
 async function createMemberFromPurchase(params) {
   const email = params.email.trim();
@@ -112,7 +113,96 @@ async function getChapters() {
   return chapterRepository.findAll();
 }
 
+async function bulk(params) {
+  const emails = params.members.map(data => data.email);
+  const existingMembers = await memberRepository.findByEmails(emails);
+
+  // TODO: Check if any existing member is admin and throw error.
+
+  const existingEmails = existingMembers.map(member => member.email);
+
+  // Remove existing members from input
+  const maybeNewMembers = params.members
+	.filter(data => !existingEmails.includes(data.email))
+	.map(maybeValidMember => MemberFactory.create(maybeValidMember));
+
+  const { left: toCreate, right: invalid } = partition(maybeNewMembers, member => member.isCreatable());
+
+  if (toCreate.length > 0) {
+    await memberRepository.createMany(toCreate);
+  }
+
+  const memberParamsByEmail = mapBy(params.members, data => data.email);
+  existingMembers.forEach(member => {
+    // The reason for updating member attributes here instead of
+    // delegating to a Member function is to not couple the logic too
+    // tight at the time of writing. There are also things to consider
+    // when updating values, what if some value is undefined or null?
+    // Do we update or keep the old? In some cases it might make sense
+    // to keep the old value but for this bulk create/update members
+    // we explicitly take the provided value and replace any current
+    // ones.
+    const memberParams = memberParamsByEmail[member.email];
+    member.name = memberParams.name;
+    member.location = memberParams.location;
+    member.education = memberParams.education;
+    member.profession = memberParams.profession;
+    member.memberTypeId = memberParams.memberTypeId;
+    member.gender = memberParams.gender;
+    member.yearOfBirth = memberParams.yearOfBirth;
+    member.expirationDate = memberParams.expirationDate;
+    member.chapterId = memberParams.chapterId;
+  });
+
+  if (existingMembers.length > 0) {
+    await memberRepository.updateMany(existingMembers);
+  }
+
+  return {
+    updated: existingMembers,
+    created: toCreate,
+    invalid
+  };
+}
+
+// TODO: Move to some util.js stuff
+/**
+ * Partition collection into left and right decided by the
+ * predicate. If predicate is true, put item in the left bin otherwise
+ * the right.
+ * @param {Array} collection is the collection to be partitioned.
+ * @param {Function} predicate is a function that given an item in the
+ * collection evaluates to true or false.
+ * @return {Object} result where left is bin where predicate is true
+ * and right bin is false.
+ */
+function partition(collection, predicate) {
+  return collection
+    .reduce((group, item) => {
+      if (predicate(item)) {
+	group.left.push(item);
+      } else {
+	group.right.push(item);
+      }
+      return group;
+    }, { left: [], right: [] });
+}
+
+/**
+ * Transform a collection to a map where key is decided by lambda.
+ */
+function mapBy(collection, lambda) {
+  return collection
+    .reduce((group, item) => {
+      const key = lambda(item);
+      group[key] = item;
+      return group;
+    }, {});
+}
+
+
 module.exports = {
   createMemberFromPurchase,
-  getChapters
+  getChapters,
+  bulk
 };

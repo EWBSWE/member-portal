@@ -1,18 +1,18 @@
-/**
- * Database
- *
- * @namespace db
- */
-
 'use strict';
 
-var Promise = require('bluebird');
-var pgp = require('pg-promise')({ promiseLib: Promise });
-var path = require('path');
+const Promise = require('bluebird');
+const options = {
+  promiseLib: Promise,
+  query(e) {
+    // TODO: toggle query logging by env
+    //console.log(e.query);
+  }
+};
+const pgp = require('pg-promise')(options);
 
-var environment = require('../config/environment');
+const environment = require('../config/environment');
 
-let db = pgp({
+const db = pgp({
     host: environment.db.host,
     port: environment.db.port,
     database: environment.db.database,

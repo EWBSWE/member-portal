@@ -20,7 +20,16 @@ router.get('/:id/payments', auth.isAuthenticated(), controller.getPayments);
 
 router.post('/', auth.isAuthenticated(), controller.create);
 
-router.post('/bulk', auth.isAuthenticated(), controller.bulkCreate);
+//router.post('/bulk', auth.isAuthenticated(), controller.bulkCreate);
+router.post(
+  '/bulk',
+  auth.isAuthenticated(),
+  new RouteBuilder(controller2.bulk)
+    .requiredParams([
+      'members'
+    ])
+    .build()
+);
 
 router.post('/reset-password', controller.resetPassword);
 router.post('/reset-password-token', controller.resetPasswordWithToken);
