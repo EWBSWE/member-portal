@@ -7,7 +7,6 @@ angular.module('ewbMemberApp', [
         'ui.bootstrap',
         'angularMoment',
         'nvd3',
-        'gettext',
         'angularUtils.directives.dirPagination',
 ])
 .config(function ($routeProvider, $locationProvider, $httpProvider) {
@@ -42,7 +41,7 @@ angular.module('ewbMemberApp', [
             }
         }
     };
-}).run(function ($rootScope, $location, Auth, gettextCatalog) {
+}).run(function ($rootScope, $location, Auth) {
     var headedTo = $location.path();
     // Redirect to login if route requires auth and you're not logged in
     $rootScope.$on('$routeChangeStart', function (event, next) {

@@ -1,17 +1,16 @@
 'use strict';
 /* globals StripeCheckout, alert*/
 angular.module('ewbMemberApp')
-.controller('MembershipCtrl', function ($scope, $http, $location, gettextCatalog) {
+.controller('MembershipCtrl', function ($scope, $http, $location) {
     $scope.products = [];
     $scope.newMember = {};
-    gettextCatalog.setCurrentLanguage('sv');
 
     $http.get('/api/products/membership').success(function(data) {
         $scope.products = data;
     });
     $http.get('/api/members/chapters').success(function(data) {
-	var studentLabel = gettextCatalog.getString('Student');
-	var workingLabel = gettextCatalog.getString('Working');
+	var studentLabel = 'Student';
+	var workingLabel = 'Working';
 
 	$scope.availableChapters = _.map(data, function(chapter) {
 	    var label = chapter.memberTypeId === 1 ? studentLabel : workingLabel;
@@ -63,9 +62,9 @@ angular.module('ewbMemberApp')
             $scope.newMember = {};
             $scope.form.$setPristine();
         }).error(function(data) {
-            var errorMessage = gettextCatalog.getString('We failed to complete your transaction. No payment processed.');
+            var errorMessage = 'We failed to complete your transaction. No payment processed.';
             if (data.errorType === 'StripeCardError') {
-                errorMessage = gettextCatalog.getString('Your card was declined. No payment processed.');
+                errorMessage = 'Your card was declined. No payment processed.';
             } else if (data.errorType === 'RateLimitError') {
                 // Too many requests made to the API too quickly
             } else if (data.errorType === 'StripeInvalidError') {
@@ -92,8 +91,8 @@ angular.module('ewbMemberApp')
 
         if (stripeHandler) {
             stripeHandler.open({
-                name: gettextCatalog.getString('Engineers without borders'),
-                description: gettextCatalog.getString('Membership'),
+                name: 'Engineers without borders',
+                description: 'Membership',
                 // image: 'bild.png', // TODO
                 currency: product.currency_code,
                 amount: product.price * 100,
@@ -102,10 +101,6 @@ angular.module('ewbMemberApp')
         } else {
             console.error('stripeHandler not initiated');
         }
-    };
-
-    $scope.setCurrentLanguage = function (lang) {
-        gettextCatalog.setCurrentLanguage(lang);
     };
 
     $scope.renewalMode = $location.path() === '/fornya-medlemskap';

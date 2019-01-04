@@ -489,24 +489,6 @@ module.exports = function (grunt) {
       }
     },
 
-    nggettext_extract: {
-        pot: {
-            files: {
-                'translations/po/template.pot': [
-                    '<%= yeoman.client %>/app/**/*.html',
-                    '<%= yeoman.client %>/app/**/*.js',
-                    'server/**/*.js',
-                ],
-            },
-        },
-    },
-    nggettext_compile: {
-        all: {
-            files: {
-                '<%= yeoman.client %>/components/translations/translations.js': [ 'translations/po/*.po' ],
-            },
-        },
-    },
       mocha_istanbul: {
           coverage: {
               src: ['server/models', 'server/api/*', 'server/test/*'],
@@ -525,7 +507,6 @@ module.exports = function (grunt) {
       },
   });
 
-  grunt.loadNpmTasks('grunt-angular-gettext');
   grunt.loadNpmTasks('grunt-mocha-istanbul');
     grunt.loadNpmTasks('grunt-jsdoc');
 

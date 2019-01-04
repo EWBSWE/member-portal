@@ -1,10 +1,9 @@
 'use strict';
 
 angular.module('ewbMemberApp')
-.controller('EventPublicCtrl', function ($scope, $http, $routeParams, gettextCatalog, $location) {
+.controller('EventPublicCtrl', function ($scope, $http, $routeParams, $location) {
     $scope.ev = {};
     $scope.participant = {};
-    gettextCatalog.setCurrentLanguage('sv');
 
     var stripeHandler;
 
@@ -91,7 +90,7 @@ angular.module('ewbMemberApp')
             callback(null);
         } else if (stripeHandler) {
             stripeHandler.open({
-                name: gettextCatalog.getString('Engineers without borders'),
+                name: 'Engineers without borders',
                 description: $scope.ev.name,
                 // image: 'bild.png', // TODO
                 currency: 'SEK',

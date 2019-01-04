@@ -6,7 +6,7 @@ angular.module('ewbMemberApp').controller('MemberBulkCtrl', function ($scope, $h
     $http.get('/api/member-types').success(function(mts) {
         memberTypes = mts;
     }).error(function() {
-        alert('Tillfälligt fel, försök att uppdatera sidan. Om problemet kvarstår kontakta ict@ingenjorerutangranser.se.');
+        alert('Tillfälligt fel, försök att uppdatera sidan. Om problemet kvarstår kontakta ict@ewb-swe.org.');
     });
 
     $scope.addMembers = function() {

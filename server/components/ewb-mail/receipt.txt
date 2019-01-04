@@ -11,4 +11,4 @@ Momsbelopp: {tax}
 Vänliga hälsningar,
 Ingenjörer utan gränser
 www.ewb-swe.org
-volontar@ingenjorerutangranser.se
+info@ewb-swe.org

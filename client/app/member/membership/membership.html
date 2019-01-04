@@ -1,76 +1,70 @@
 <div class="container membership">
   <div class="row">
     <div class="col-xs-12 col-md-6">
-      <h1 translate ng-show="renewalMode">Renew your membership</h1>
-      <h1 translate ng-show="!renewalMode">Sign up</h1>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-xs-12 col-md-6">
-      <a href="" ng-click="setCurrentLanguage('en')">English</a>
-      <a href="" ng-click="setCurrentLanguage('sv')">Svenska</a>
+      <h1 ng-show="renewalMode">Renew your membership</h1>
+      <h1 ng-show="!renewalMode">Sign up</h1>
     </div>
   </div>
   <div class="row">
     <div class="col-xs-12 col-md-6">
       <div ng-show="renewalMode">
-        <p><strong translate>
+        <p><strong>
           We would love to see your continued support. Being a part of Engineers without borders gives you the possibility to get involved and influence our work for a better world. Your membership also supports our organization greatly and we need both active and supporting members. There is no requirement for an engineering degree, everyone is needed and all are welcome.
         </strong></p>
 
-        <p class="help-block" translate>
-          If you want to get involved we recommend that you contact your local group that you can find over at <a target="_blank" href="https://www.ewb-swe.org/organisation">www.ewb-swe.org/organisation</a>. You can also find available positions for current projects at <a target="_blank" href="http://volontar.ingenjorerutangranser.se">volontar.ingenjorerutangranser.se</a>. If you have any other questions that can't be answered by one of the local groups, feel free to contact us at <a href="mailto:info@ingenjorerutangranser.se">info@ingenjorerutangranser.se</a>.
+        <p class="help-block">
+          If you want to get involved we recommend that you contact your local group that you can find over at <a target="_blank" href="https://www.ewb-swe.org/organisation">www.ewb-swe.org/organisation</a>. You can also find available positions for current projects at <a target="_blank" href="https://volunteer.ewb-swe.org">volunteer.ewb-swe.org</a>. If you have any other questions that can't be answered by one of the local groups, feel free to contact us at <a href="mailto:info@ewb-swe.org">info@ewb-swe.org</a>.
         </p>
       </div>
       <div ng-show="!renewalMode">
-        <p><strong translate>
+        <p><strong>
           We would love to see you join our community. Being a part of Engineers without borders gives you the possibility to get involved and influence our work for a better world. Your membership also supports our organization greatly and we need both active and supporting members. There is no requirement for an engineering degree, everyone is needed and all are welcome.
         </strong></p>
 
-        <p class="help-block" translate>
-          If you want to get involved we recommend that you contact your local group that you can find over at <a target="_blank" href="https://www.ewb-swe.org/organisation">www.ewb-swe.org/organisation</a>. You can also find available positions for current projects at <a target="_blank" href="http://volontar.ingenjorerutangranser.se">volontar.ingenjorerutangranser.se</a>. If you have any other questions that can't be answered by one of the local groups, feel free to contact us at <a href="mailto:info@ingenjorerutangranser.se">info@ingenjorerutangranser.se</a>.
+        <p class="help-block">
+          If you want to get involved we recommend that you contact your local group that you can find over at <a target="_blank" href="https://www.ewb-swe.org/organisation">www.ewb-swe.org/organisation</a>. You can also find available positions for current projects at <a target="_blank" href="https://volunteer.ewb-swe.org">volunteer.ewb-swe.org</a>. If you have any other questions that can't be answered by one of the local groups, feel free to contact us at <a href="mailto:info@ewb-swe.org">info@ewb-swe.org</a>.
         </p>
       </div>
 
-      <p class="help-block" translate>
-        Do you any questions regarding your membership or anything payment related? Reach out to us at <a href="mailto:volontar@ingenjorerutangranser.se">volontar@ingenjorerutangranser.se</a>.
+      <p class="help-block">
+        Do you any questions regarding your membership or anything payment related? Reach out to us at <a href="mailto:info@ewb-swe.org">info@ewb-swe.org</a>.
       </p>
 
-      <a href="http://www.ingenjorerutangranser.se">
+      <a href="http://www.ewb-swe.org">
         <img class="logo" src="/assets/images/ewb-logo.png" alt="Logo" />
       </a>
     </div>
     <div class="col-xs-12 col-md-6">
       <form novalidate name="form" class="payment-form">
         <div ng-class="{'form-group': true, 'has-error': form.inputEmail.$error.email, 'has-success': form.inputEmail.$valid}">
-          <label class="control-label" for="inputEmail" translate>Email *</label>
+          <label class="control-label" for="inputEmail">Email *</label>
           <input class="form-control" type="email" name="inputEmail" id="inputEmail" ng-model="newMember.email" required/>
-          <p class="help-block" ng-show="form.inputEmail.$error.email" translate>
+          <p class="help-block" ng-show="form.inputEmail.$error.email">
             Please enter a valid email address.
           </p>
         </div>
         <div class="form-group">
-          <label class="control-label" for="inputLocation" translate>Location *</label>
+          <label class="control-label" for="inputLocation">Location *</label>
           <input class="form-control" type="text" name="inputLocation" id="inputLocation" ng-model="newMember.location" required/>
         </div>
 
         <div class="row">
           <div class="col-xs-12">
             <div>
-                <label translate>Type *</label>
+                <label>Type *</label>
             </div>
             <div ng-class="{'form-group': true, 'has-error': !newMember.memberType && !form.$pristine, 'has-success': newMember.memberType }">
               <label class="radio-inline control-label">
                 <input type="radio" name="type" value="student" ng-model="newMember.memberType"/>
-                <span translate>Student</span>
+                <span>Student</span>
               </label>
               <label class="radio-inline control-label">
                 <input type="radio" name="type" value="working" ng-model="newMember.memberType" />
-                <span translate>Working</span>
+                <span>Working</span>
               </label>
               <label class="radio-inline control-label">
                 <input type="radio" name="type" value="senior" ng-model="newMember.memberType" />
-                <span translate>Senior</span>
+                <span>Senior</span>
               </label>
             </div>
           </div>
@@ -79,16 +73,16 @@
         <div class="row">
           <div class="col-xs-12">
             <div>
-                <label translate>Membership duration *</label>
+                <label>Membership duration *</label>
             </div>
             <div ng-class="{'form-group': true, 'has-error': !newMember.subscriptionLength && !form.$pristine, 'has-success': newMember.subscriptionLength}">
               <label class="radio-inline control-label">
                 <input type="radio" name="subscriptionLength" value="1" ng-model="newMember.subscriptionLength" />
-                <span translate>1 year</span>
+                <span>1 year</span>
               </label>
               <label class="radio-inline control-label">
                 <input type="radio" name="subscriptionLength" value="3" ng-model="newMember.subscriptionLength" />
-                <span translate>3 year</span>
+                <span>3 year</span>
               </label>
             </div>
           </div>
@@ -97,31 +91,31 @@
 	<div class="row">
           <div class="col-xs-12">
 	    <div>
-	      <label translate>Local chapter</label>
+	      <label>Local chapter</label>
 	    </div>
 	    <div>
 	      <select ng-model="newMember.chapterId">
-		<option translate>None selected</option>
+		<option>None selected</option>
 		<option ng-repeat="option in availableChapters" value="{{option.id}}">{{option.name}}</option>
 	      </select>
 	    </div>
-	    <p translate class="help-block">
+	    <p class="help-block">
 	      You may choose a local chapter if you would like to receive local news and information about activities near you.
 	    </p>
 	  </div>
 	</div>
 
 	<div class="form-group">
-          <label class="control-label" for="inputName" translate>Name</label>
+          <label class="control-label" for="inputName">Name</label>
           <input class="form-control" type="text" name="inputName" id="inputName" ng-model="newMember.name" />
         </div>
 
         <div class="row">
           <div class="col-xs-12 col-md-6">
             <div>
-              <label class="control-label" for="inputYearOfBirth" translate>Year of birth</label>
+              <label class="control-label" for="inputYearOfBirth">Year of birth</label>
               <input class="form-control" type="number" name="inputYearOfBirth" id="inputYearOfBirth" min="1900" ng-model="newMember.yearOfBirth"/>
-              <p class="help-block" translate>
+              <p class="help-block">
                 4 digits, for instance 1988
               </p>
             </div>
@@ -129,19 +123,19 @@
           <div class="col-xs-12 col-md-6">
             <div>
               <div>
-                <label translate>Gender</label>
+                <label>Gender</label>
               </div>
               <label class="radio-inline control-label">
                 <input type="radio" name="gender" value="male" ng-model="newMember.gender"/>
-                <span translate>Male</span>
+                <span>Male</span>
               </label>
               <label class="radio-inline control-label">
                 <input type="radio" name="gender" value="female" ng-model="newMember.gender" />
-                <span translate>Female</span>
+                <span>Female</span>
               </label>
               <label class="radio-inline control-label">
                 <input type="radio" name="gender" value="other" ng-model="newMember.gender" />
-                <span translate>Other</span>
+                <span>Other</span>
               </label>
             </div>
           </div>
@@ -150,34 +144,34 @@
         <div class="row">
           <div class="col-xs-12 col-md-6">
             <div ng-class="{'form-group': true }">
-              <label class="control-label" for="inputProfession" translate>Profession</label>
+              <label class="control-label" for="inputProfession">Profession</label>
               <input class="form-control" type="text" name="inputProfession" id="inputProfession" ng-model="newMember.profession"/>
             </div>
           </div>
           <div class="col-xs-12 col-md-6">
             <div ng-class="{'form-group': true }">
-              <label class="control-label" for="inputEducation" translate>Education</label>
+              <label class="control-label" for="inputEducation">Education</label>
               <input class="form-control" type="text" name="inputEducation" id="inputEducation" ng-model="newMember.education"/>
             </div>
           </div>
         </div>
         
-        <p class="help-block" for="subscriptionLength" translate>
+        <p class="help-block" for="subscriptionLength">
           Sign up for 1 year starting at 40 SEK for students or join 3 years for 90 SEK (costs for non-students are 100 SEK and 250 SEK, respectively).
         </p>
-        <p class="text-warning" ng-show="!newMember.memberType || !newMember.subscriptionLength" translate>
+        <p class="text-warning" ng-show="!newMember.memberType || !newMember.subscriptionLength">
           Please fill out all required fields before clicking <strong>Sign up</strong>.
         </p>
         <div class="form-group">
-          <button type="submit" class="btn btn-primary btn-lg" ng-click="initiatePayment()" translate>Sign up</button>
+          <button type="submit" class="btn btn-primary btn-lg" ng-click="initiatePayment()">Sign up</button>
         </div>
-        <p class="help-block" translate>
+        <p class="help-block">
           When you click <strong>Sign up</strong> your transaction is managed securely by <a href="https://stripe.com/se" target="_blank">Stripe</a>. When the transaction is completed we send you a confirmation to the email address specified above.
         </p>
-        <p class="help-block" translate>
+        <p class="help-block">
           We collect data about members to ensure that we reach out to as many people as possible. The data we collect is only used within Engineers Without Borders Sweden. All data except e-mail and location is optional, but we need those to get in touch with you and make sure that you get information about activities near you.
         </p>
-        <p class="help-block" translate>
+        <p class="help-block">
           If you want to be removed as a member or want to request your data, please get in touch with ict@ewb-swe.org.
         </p>
       </form>
@@ -189,14 +183,14 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title" id="confirmation-label" translate>Thank you for the support!</h4>
+        <h4 class="modal-title" id="confirmation-label">Thank you for the support!</h4>
       </div>
       <div class="modal-body">
-        <p translate>A confirmation of your payment and your membership is sent to <strong>{{successEmail}}</strong>.</p>
-        <p translate>Do you any questions regarding your membership or anything payment related? Reach out to us at <a href="mailto:volontar@ingenjorerutangranser.se">volontar@ingenjorerutangranser.se</a>.</p>
+        <p>A confirmation of your payment and your membership is sent to <strong>{{successEmail}}</strong>.</p>
+        <p>Do you any questions regarding your membership or anything payment related? Reach out to us at <a href="mailto:info@ewb-swe.org">info@ewb-swe.org</a>.</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" translate>Close</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -206,14 +200,14 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title" id="confirmation-label" translate>The transaction was unsuccessful</h4>
+        <h4 class="modal-title" id="confirmation-label">The transaction was unsuccessful</h4>
       </div>
       <div class="modal-body">
         <p>{{errorMessage}}</p>
-        <p translate>Do you any questions regarding your membership or anything payment related? Reach out to us at <a href="mailto:volontar@ingenjorerutangranser.se">volontar@ingenjorerutangranser.se</a>.</p>
+        <p>Do you any questions regarding your membership or anything payment related? Reach out to us at <a href="mailto:info@ewb-swe.org">info@ewb-swe.org</a>.</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" translate>Close</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>

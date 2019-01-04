@@ -106,7 +106,6 @@ async function createMemberFromPurchase(params) {
   // TODO consider doing this with one punch
   await outgoingMessageRepository.create(welcomeMail);
   await outgoingMessageRepository.create(receiptMail);
-
 }
 
 async function getChapters() {

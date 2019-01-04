@@ -21,7 +21,6 @@
     "lodash": "~2.4.1",
     "angular-moment": "~0.10.1",
     "angular-nvd3": "^1.0.5",
-    "angular-gettext": "~2.2.0",
     "angular-utils-pagination": "~0.9.3"
   },
   "devDependencies": {

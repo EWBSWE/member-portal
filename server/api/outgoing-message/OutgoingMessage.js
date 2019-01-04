@@ -4,8 +4,8 @@ const moment = require('moment');
 
 // TODO move this to some sort of env-variable?
 // TODO should maybe ewb-swe.org instead?
-const DEFAULT_SENDER = 'Ingenjörer utan gränser <volontar@ingenjorerutangranser.se>';
-const NO_REPLY = 'noreply@ingenjorerutangranser.se';
+const DEFAULT_SENDER = 'Engineers Without Borders Sweden <info@ewb-swe.org>';
+const NO_REPLY = 'noreply@ewb-swe.org';
 
 class OutgoingMessage {
   constructor(id, recipient, sender, subject, body, failedAttempts, sendAt, priority) {
@@ -20,7 +20,7 @@ class OutgoingMessage {
   }
 
   static createReceipt(recipient, products) {
-    const subject = `Kvitto ${products[0].name}`;
+    const subject = `Receipt ${products[0].name}`;
 
     // TODO this date should take server timezone into account
     const formattedDate = moment().format('YYYY-MM-DD HH:mm');
@@ -31,24 +31,21 @@ class OutgoingMessage {
 
     // TODO body in plain text should be moved to some simpler data format
     const body = `
-Köpare: ${recipient}
-Säljare: Ingenjörer utan gränser
-Datum: ${formattedDate}
+Buyer: ${recipient}
+Seller: Ingenjörer utan gränser
+Date: ${formattedDate}
 
 ---
 ${formattedProductList}
 ---
-Totalt: ${total} SEK
-Momsbelopp: 0 SEK
+Total: ${total} SEK
+VAT: 0 SEK
 
-Vänliga hälsningar,
+Kind regards,
 Ingenjörer utan gränser
 www.ewb-swe.org
-volontar@ingenjorerutangranser.se
+info@ewb-swe.org
 `;
-
-    console.log(body);
-    console.log(total);
 
     return new OutgoingMessage(null, recipient, DEFAULT_SENDER, subject, body);
   }
@@ -74,7 +71,7 @@ https://twitter.com/EWB_Ingenjorer
 Kind regards,
 Engineers without borders
 www.ewb-swe.org
-volontar@ingenjorerutangranser.se
+info@ewb-swe.org
 `;
 
     return new OutgoingMessage(null, member.email, DEFAULT_SENDER, subject, body);

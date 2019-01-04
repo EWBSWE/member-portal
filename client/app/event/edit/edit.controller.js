@@ -102,7 +102,7 @@ angular.module('ewbMemberApp')
                 $scope.ev.addons[addonId].success = 'Sparat!';
                 $scope.ev.addons[addonId].error = null;
             }).error(function(data, status) {
-                $scope.ev.addons[addonId].error = 'Misslyckades med uppdatering. Testa igen eller skicka ett mail till ict@ingenjorerutangranser.se.';
+                $scope.ev.addons[addonId].error = 'Misslyckades med uppdatering. Testa igen eller skicka ett mail till ict@ewb-swe.org.';
                 $scope.ev.addons[addonId].success = null;
             });
         } else {
@@ -118,7 +118,7 @@ angular.module('ewbMemberApp')
                 $scope.ev.addons[addonId].success = 'Lagt till alternativ!';
                 $scope.ev.addons[addonId].error = null;
             }).error(function(data, status) {
-                $scope.ev.addons[addonId].error = 'Misslyckades med tillägg. Testa igen eller skicka ett mail till ict@ingenjorerutangranser.se.';
+                $scope.ev.addons[addonId].error = 'Misslyckades med tillägg. Testa igen eller skicka ett mail till ict@ewb-swe.org.';
                 $scope.ev.addons[addonId].success = null;
             });
         }
@@ -133,12 +133,12 @@ angular.module('ewbMemberApp')
             $http.delete('/api/events/' + $scope.ev.id + '/addon/' + $scope.ev.addons[addonId].id).success(function(data, status) {
                 $scope.ev.addons.splice(addonId, 1);
             }).error(function(data, status) {
-                $scope.ev.addons[addonId].error = 'Misslyckades med borttagning. Testa igen eller skicka ett mail till ict@ingenjorerutangranser.se.';
+                $scope.ev.addons[addonId].error = 'Misslyckades med borttagning. Testa igen eller skicka ett mail till ict@ewb-swe.org.';
             });
         } else {
             $scope.ev.addons.splice(addonId, 1);
         }
-    }
+    };
 
     $scope.increaseAddons = function() {
         $scope.ev.addons.push({});
