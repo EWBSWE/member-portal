@@ -17,7 +17,7 @@ router.delete('/:id', auth.isAuthenticated(), eventController.destroy);
 
 router.post('/:id/add-participant', auth.isAuthenticated(), eventController.addParticipant);
 
-router.post('/:id/addon', auth.isAuthenticated(), addonController.create)
+router.post('/:id/addon', auth.isAuthenticated(), addonController.create);
 router.delete('/:id/addon/:addonId', auth.isAuthenticated(), addonController.destroy);
 router.put('/:id/addon/:addonId', auth.isAuthenticated(), addonController.update);
 

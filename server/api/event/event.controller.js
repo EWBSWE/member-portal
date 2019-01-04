@@ -47,11 +47,13 @@ exports.showPublic = function(req, res, next) {
         if (events.length === 0) {
             res.sendStatus(404);
         } else {
-            // TODO filter out stuff that is not going to the client
-
             return Event.get(events[0].id);
         }
     }).then(e => {
+	delete e.participants;
+	delete e.payments;
+	delete e.subscribers;
+	
         res.status(200).json(e);
     }).catch(err => {
         next(err);
