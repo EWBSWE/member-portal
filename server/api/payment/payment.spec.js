@@ -4,7 +4,6 @@ var expect = require('chai').expect;
 var moment = require('moment');
 var request = require('supertest');
 var app = require('../../app');
-var stripe = require('stripe')('***REMOVED***');
 
 var agent = request.agent(app);
 
@@ -282,7 +281,7 @@ describe('Payment controller', function() {
                 yearOfBirth: '1900',
                 memberTypeId: memberTypeId,
                 expirationDate: expirationDate,
-            }).then(() => { 
+            }).then(() => {
                 return new Promise((resolve, reject) => {
                     stripe.tokens.create({
                         card: {
@@ -383,7 +382,7 @@ describe('Payment controller', function() {
                 yearOfBirth: '1900',
                 memberTypeId: memberTypeId,
                 expirationDate: moment().add(1, 'year')
-            }).then(() => { 
+            }).then(() => {
                 return new Promise((resolve, reject) => {
                     stripe.tokens.create({
                         card: {
@@ -588,7 +587,7 @@ describe('Payment controller', function() {
                 console.log(err);
                 done(err);
             });
-            
+
         });
 
         it('should reject participants when payment fails', function(done) {

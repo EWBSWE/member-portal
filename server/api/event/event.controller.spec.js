@@ -4,7 +4,6 @@ var expect = require('chai').expect;
 var moment = require('moment');
 var request = require('supertest');
 var app = require('../../app');
-var stripe = require('stripe')('***REMOVED***');
 
 var agent = request.agent(app);
 

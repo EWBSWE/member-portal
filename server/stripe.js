@@ -1,36 +1,19 @@
 'use strict';
 
-const STRIPE_LIVE_KEY = process.env.STRIPE_LIVE_KEY;
-const STRIPE_LIVE_CHECKOUT_KEY = process.env.STRIPE_LIVE_CHECKOUT_KEY;
+const STRIPE_KEY = process.env.STRIPE_KEY;
+const STRIPE_CHECKOUT_KEY = process.env.STRIPE_CHECKOUT_KEY;
 
-const STRIPE_TEST_KEY = process.env.STRIPE_TEST_KEY;
-const STRIPE_TEST_CHECKOUT_KEY = process.env.STRIPE_TEST_CHECKOUT_KEY;
-
-if (!STRIPE_LIVE_KEY) {
-  throw new Error(`Env variable STRIPE_LIVE_KEY is missing.`);
+if (!STRIPE_KEY) {
+  throw new Error(`Env variable STRIPE_KEY is missing.`);
 }
-if (!STRIPE_LIVE_CHECKOUT_KEY) {
-  throw new Error(`Env variable STRIPE_LIVE_CHECKOUT_KEY is missing.`);
+if (!STRIPE_CHECKOUT_KEY) {
+  throw new Error(`Env variable STRIPE_CHECKOUT_KEY is missing.`);
 }
 
-if (!STRIPE_TEST_KEY) {
-  throw new Error(`Env variable STRIPE_TEST_KEY is missing.`);
-}
-if (!STRIPE_TEST_CHECKOUT_KEY) {
-  throw new Error(`Env variable STRIPE_TEST_CHECKOUT_KEY is missing.`);
-}
-
-const stripe = process.env.NODE_ENV === 'production' ?
-  require('stripe')(STRIPE_LIVE_KEY) :
-  require('stripe')(STRIPE_TEST_KEY);
-
+const stripe = require('stripe')(STRIPE_KEY);
 
 function getCheckoutKey() {
-  if (process.env.NODE_ENV === 'production') {
-    return STRIPE_LIVE_CHECKOUT_KEY;
-  }
-
-  return STRIPE_TEST_CHECKOUT_KEY;
+  return STRIPE_CHECKOUT_KEY;
 }
 
 function processCharge(chargeAttributes, stripeToken, successCallback, errorCallback) {
@@ -46,7 +29,7 @@ function processCharge(chargeAttributes, stripeToken, successCallback, errorCall
             errorCallback(err);
         }
     });
-};
+}
 
 async function processCharge2(stripeToken, currency, amount, description) {
   return new Promise((resolve, reject) => {
