@@ -9,7 +9,15 @@ var router = express.Router();
 
 router.get('/public', eventController.showPublic);
 
-router.get('/', auth.isAuthenticated(), eventController.index);
+const RouteBuilder = require('../../RouteBuilder');
+const EventController2 = require('./EventController');
+router.get(
+  '/',
+  auth.isAuthenticated(),
+  new RouteBuilder(EventController2.all)
+    .build()
+);
+
 router.get('/:id', auth.isAuthenticated(), eventController.show);
 router.post('/', auth.isAuthenticated(), eventController.create);
 router.put('/:id', auth.isAuthenticated(), eventController.update);

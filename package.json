@@ -98,12 +98,14 @@
     "should": "~3.3.1",
     "sinon": "^6.2.0",
     "supertest": "~0.11.0",
-    "time-grunt": "~0.3.1"
+    "time-grunt": "~0.3.1",
+    "typescript": "^3.2.4"
   },
   "engines": {
     "node": ">=0.10.0"
   },
   "scripts": {
+    "watch:build": "tsc --build server/tsconfig.json --watch",
     "start": "node server/app.js",
     "test": "grunt test",
     "update-webdriver": "node node_modules/grunt-protractor-runner/node_modules/protractor/bin/webdriver-manager update"
