@@ -4,13 +4,13 @@ const db = require('../../db/futureDb')
 const { EventRepository } = require('./EventRepository')
 const eventRepository = new EventRepository(db)
 
-async function all (params) {
+async function all () {
   const events = await eventRepository.findAll()
   return events.map(e => e.formatResponse())
 }
 
-async function show (params) {
-  const eventId = params.id
+async function show (params, urlParams) {
+  const eventId = urlParams.id
   const event = await eventRepository.find(eventId)
   if (!event) {
     throw new Error('Event not found')

@@ -4,13 +4,13 @@ var express = require('express');
 var eventController = require('./event.controller');
 var addonController = require('./event-product.controller');
 var auth = require('../../auth/auth.service');
-
 var router = express.Router();
-
-router.get('/public', eventController.showPublic);
 
 const RouteBuilder = require('../../RouteBuilder');
 const EventController2 = require('./EventController');
+
+router.get('/public', eventController.showPublic);
+
 router.get(
   '/',
   auth.isAuthenticated(),
@@ -18,7 +18,13 @@ router.get(
     .build()
 );
 
-router.get('/:id', auth.isAuthenticated(), eventController.show);
+router.get(
+  '/:id',
+  auth.isAuthenticated(),
+  new RouteBuilder(EventController2.show)
+    .build()
+);
+
 router.post('/', auth.isAuthenticated(), eventController.create);
 router.put('/:id', auth.isAuthenticated(), eventController.update);
 router.delete('/:id', auth.isAuthenticated(), eventController.destroy);
