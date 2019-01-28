@@ -18,8 +18,8 @@ async function show (params, urlParams) {
   return event.formatResponse()
 }
 
-async function showPublicEvent (params) {
-  const event = await eventRepository.findByPublicIdentifier(params.identifier)
+async function showPublicEvent (params, urlParams, qs) {
+  const event = await eventRepository.findByPublicIdentifier(qs.url)
   if (!event) {
     throw new Error('Event not found')
   }

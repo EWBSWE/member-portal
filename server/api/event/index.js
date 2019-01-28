@@ -9,15 +9,11 @@ var router = express.Router();
 const RouteBuilder = require('../../RouteBuilder');
 const EventController2 = require('./EventController');
 
-router.get('/public', eventController.showPublic);
-
-// const routes = [
-//   new RouteBuilder(EventController2.all)
-//     .requiresSession()
-//     .method('POST')
-//     .url('/')
-//     .build()
-// ];
+router.get(
+  '/public',
+  new RouteBuilder(EventController2.showPublicEvent)
+    .build()
+)
 
 router.get(
   '/',

@@ -73,14 +73,27 @@ export class Event implements Formattable, PublicFormattable {
 	}
 
 	formatPublicResponse(): any {
-		return {
+		const response: { [index: string]: any } = {
 			id: this.id,
 			name: this.name,
 			identifier: this.identifier,
 			active: this.active,
+			// TODO(dan) 27/01/19: The client currently consumes the due_date, until that is fixed we put both here.
 			dueDate: this.dueDate,
-			notificationOpen: this.notificationOpen
+			due_date: this.dueDate,
+			// TODO(dan) 27/01/19: The client currently consumes the notification_open, until that is fixed we put both here.
+			notificationOpen: this.notificationOpen,
+			notification_open: this.notificationOpen,
+			// TODO(dan) 27/01/19: The client currently consumes the created_at, until that is fixed we put both here.
+			createdAt: this.createdAt,
+			created_at: this.createdAt,
 		}
+
+		if (this.addons) {
+			response.addons = this.addons.map((p) => p.formatResponse())
+		}
+
+		return response
 	}
 }
 

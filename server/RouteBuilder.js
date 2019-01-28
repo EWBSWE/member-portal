@@ -42,7 +42,7 @@ class RouteBuilder {
 
       try {
         // TODO(dan) 27/01/19: not the nicest thing to add the URL params as the second parameter. Highly improvable for future me, yay.
-        const result = await endpoint(req.body, req.params)
+        const result = await endpoint(req.body, req.params, req.query)
         return res.status(200).json(result)
       } catch (err) {
         return next(err)

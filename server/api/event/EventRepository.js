@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Event_1 = require("./Event");
 const util_1 = require("../../util");
 const EventSubscriber_1 = require("./EventSubscriber");
 const EventPayment_1 = require("./EventPayment");
 const EventProduct_1 = require("./EventProduct");
 const EmailTemplate_1 = require("./EmailTemplate");
 const EventParticipant_1 = require("./EventParticipant");
+const EventModelEntityMapper_1 = require("./EventModelEntityMapper");
 class EventRepository {
     constructor(db) {
         this.db = db;
@@ -16,7 +16,7 @@ class EventRepository {
 			SELECT *
 			FROM event
 		`);
-        const events = eventEntities.map(this.toModel);
+        const events = eventEntities.map(EventModelEntityMapper_1.toEvent);
         const participantEntities = await this.db.any(`
 			SELECT event_id, member_id, name, email
 			FROM event_participant
@@ -45,12 +45,11 @@ class EventRepository {
             this.getPaymentsBatched(entity.id, t),
             this.getEmailTemplateBatched(entity.email_template_id, t)
         ]));
-        const event = this.toModel(entity);
+        const event = EventModelEntityMapper_1.toEvent(entity);
         event.addons = addons.map(EventProduct_1.EventProduct.fromEntity);
         event.participants = participants.map(EventParticipant_1.EventParticipant.fromEntity);
         event.subscribers = subscribers.map(EventSubscriber_1.EventSubscriber.fromEntity);
         event.payments = payments.map(EventPayment_1.EventPayment.fromEntity);
-        console.log(payments);
         event.emailTemplate = EmailTemplate_1.EmailTemplate.fromEntity(emailTemplate);
         return event;
     }
@@ -65,7 +64,14 @@ class EventRepository {
         if (!entity) {
             return null;
         }
-        return this.toModel(entity);
+        return this.get(entity.id);
+    }
+    async get(id) {
+        const maybeEvent = await this.find(id);
+        if (!maybeEvent) {
+            throw new Error('Event not found');
+        }
+        return maybeEvent;
     }
     async getAddonsBatched(eventId, db) {
         return db.many(`
@@ -125,9 +131,6 @@ class EventRepository {
 			FROM email_template
 			WHERE id = $1
 		`, emailTemplateId);
-    }
-    toModel(entity) {
-        return new Event_1.Event(entity.id, entity.name, entity.identifier, entity.active, entity.due_date, entity.notification_open, entity.created_at, entity.updated_at);
     }
 }
 exports.EventRepository = EventRepository;

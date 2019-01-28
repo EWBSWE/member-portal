@@ -12,6 +12,8 @@ import {EventPayment} from "./EventPayment"
 import {EventProduct} from "./EventProduct"
 import {EmailTemplate} from "./EmailTemplate"
 import {EventParticipant} from "./EventParticipant"
+// TODO(dan) 28/01/19: Unsure if this is the way to go with mapping stuff back and forth
+import {toEvent} from "./EventModelEntityMapper"
 
 export class EventRepository {
 	private db: IDatabase<any>
@@ -25,7 +27,7 @@ export class EventRepository {
 			SELECT *
 			FROM event
 		`)
-		const events: Event[] = eventEntities.map(this.toModel)
+		const events: Event[] = eventEntities.map(toEvent)
 
 		const participantEntities: EventParticipantEntity[] = await this.db.any(`
 			SELECT event_id, member_id, name, email
@@ -76,12 +78,11 @@ export class EventRepository {
 			])
 		)
 
-		const event = this.toModel(entity)
+		const event = toEvent(entity)
 		event.addons = addons.map(EventProduct.fromEntity)
 		event.participants = participants.map(EventParticipant.fromEntity)
 		event.subscribers = subscribers.map(EventSubscriber.fromEntity)
 		event.payments = payments.map(EventPayment.fromEntity)
-		console.log(payments)
 		event.emailTemplate = EmailTemplate.fromEntity(emailTemplate)
 
 		return event
@@ -98,7 +99,16 @@ export class EventRepository {
 		if (!entity) {
 			return null
 		}
-		return this.toModel(entity)
+
+		return this.get(entity.id)
+	}
+
+	async get(id: number): Promise<Event> {
+		const maybeEvent: Event | null = await this.find(id);
+		if (!maybeEvent) {
+			throw new Error('Event not found')
+		}
+		return maybeEvent
 	}
 
 	private async getAddonsBatched(eventId: number, db: IDatabase<any>): Promise<EventProductEntity[]> {
@@ -165,16 +175,4 @@ export class EventRepository {
 		`, emailTemplateId)
 	}
 
-	private toModel(entity: EventEntity): Event {
-		return new Event(
-			entity.id,
-			entity.name,
-			entity.identifier,
-			entity.active,
-			entity.due_date,
-			entity.notification_open,
-			entity.created_at,
-			entity.updated_at
-		)
-	}
 }

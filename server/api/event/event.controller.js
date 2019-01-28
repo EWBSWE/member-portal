@@ -22,13 +22,13 @@ var ProductType = require('../../models/product-type.model');
  * @param {Object} res - Express response object
  * @param {Object} next - Express error function
  */
-exports.index = function (req, res, next) {
-    Event.index().then(events => {
-        res.status(200).json(events);
-    }).catch(err => {
-        next(err);
-    });
-};
+// exports.index = function (req, res, next) {
+//     Event.index().then(events => {
+//         res.status(200).json(events);
+//     }).catch(err => {
+//         next(err);
+//     });
+// };
 
 /**
  * Fetch public event
@@ -53,7 +53,7 @@ exports.showPublic = function(req, res, next) {
 	delete e.participants;
 	delete e.payments;
 	delete e.subscribers;
-	
+
         res.status(200).json(e);
     }).catch(err => {
         next(err);
@@ -69,17 +69,17 @@ exports.showPublic = function(req, res, next) {
  * @param {Object} res - Express response object
  * @param {Object} next - Express error function
  */
-exports.show = function (req, res, next) {
-    Event.get(req.params.id).then(event => {
-        if (event === null) {
-            return res.sendStatus(404);
-        }
-
-        res.status(200).json(event);
-    }).catch(err => {
-        next(err);
-    });
-};
+// exports.show = function (req, res, next) {
+//     Event.get(req.params.id).then(event => {
+//         if (event === null) {
+//             return res.sendStatus(404);
+//         }
+//
+//         res.status(200).json(event);
+//     }).catch(err => {
+//         next(err);
+//     });
+// };
 
 /**
  * Create event

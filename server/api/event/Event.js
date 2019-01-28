@@ -38,14 +38,22 @@ class Event {
         return response;
     }
     formatPublicResponse() {
-        return {
+        const response = {
             id: this.id,
             name: this.name,
             identifier: this.identifier,
             active: this.active,
             dueDate: this.dueDate,
-            notificationOpen: this.notificationOpen
+            due_date: this.dueDate,
+            notificationOpen: this.notificationOpen,
+            notification_open: this.notificationOpen,
+            createdAt: this.createdAt,
+            created_at: this.createdAt,
         };
+        if (this.addons) {
+            response.addons = this.addons.map((p) => p.formatResponse());
+        }
+        return response;
     }
 }
 exports.Event = Event;
