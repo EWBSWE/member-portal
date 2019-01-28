@@ -1,6 +1,17 @@
 import {IDatabase} from "pg-promise"
-import {EmailTemplate, Event, EventParticipant, EventPayment, EventProduct, EventSubscriber} from "./Event"
+import {Event} from "./Event"
 import {groupBy} from "../../util"
+import {EventEntity} from "./EventEntity"
+import {EventSubscriberEntity} from "./EventSubscriberEntity"
+import {EventProductEntity} from "./EventProductEntity"
+import {EventParticipantEntity} from "./EventParticipantEntity"
+import {EmailTemplateEntity} from "./EmailTemplateEntity"
+import {EventPaymentEntity} from "./EventPaymentEntity"
+import {EventSubscriber} from "./EventSubscriber"
+import {EventPayment} from "./EventPayment"
+import {EventProduct} from "./EventProduct"
+import {EmailTemplate} from "./EmailTemplate"
+import {EventParticipant} from "./EventParticipant"
 
 export class EventRepository {
 	private db: IDatabase<any>
@@ -166,70 +177,4 @@ export class EventRepository {
 			entity.updated_at
 		)
 	}
-}
-
-// TODO(dan) 27/01/19: The types listed below are not an exact match to their Database entry. This is sad. But also a
-// step in the right direction!
-export type EventEntity = {
-	id: number
-	name: string
-	identifier: string
-	active: boolean
-	due_date: Date
-	notification_open: boolean
-	created_at: Date
-	updated_at: Date
-	email_template_id: number
-}
-
-export type EventParticipantEntity = MemberEntity & {
-	event_id: number
-	member_id: number
-}
-
-// TODO(dan) 27/01/19: this is incomplete
-type MemberEntity = {
-	name: string
-	email: string
-}
-
-// TODO(dan) 27/01/19: Future me, I'm sorry, what even is this type?
-export type EventPaymentEntity = PaymentEntity & {
-	event_id: number
-	payment_id: number
-	message: string | null
-	// TODO(dan) 27/01/19: name + email is for complex event query
-	name: string
-	email: string
-}
-
-type PaymentEntity = {
-	id: number
-	member_id: number
-	amount: number
-	currency_code: string
-	created_at: Date
-	addons: number[]
-}
-
-export type EventProductEntity = ProductEntity & {
-	id: number
-	event_id: number
-	capacity: number
-	product_id: number
-}
-
-export type ProductEntity = {
-	name: string
-	price: number
-	description: string
-}
-
-export type EventSubscriberEntity = {
-	email: string
-}
-
-export type EmailTemplateEntity = {
-	subject: string
-	body: string
 }

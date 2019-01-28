@@ -2,6 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Event_1 = require("./Event");
 const util_1 = require("../../util");
+const EventSubscriber_1 = require("./EventSubscriber");
+const EventPayment_1 = require("./EventPayment");
+const EventProduct_1 = require("./EventProduct");
+const EmailTemplate_1 = require("./EmailTemplate");
+const EventParticipant_1 = require("./EventParticipant");
 class EventRepository {
     constructor(db) {
         this.db = db;
@@ -20,7 +25,7 @@ class EventRepository {
         const participantsByEventId = util_1.groupBy(participantEntities, (p) => p.event_id);
         events.forEach((e) => {
             const maybeParticipants = participantsByEventId.get(e.id) || [];
-            e.participants = maybeParticipants.map(Event_1.EventParticipant.fromEntity);
+            e.participants = maybeParticipants.map(EventParticipant_1.EventParticipant.fromEntity);
         });
         return events;
     }
@@ -41,12 +46,12 @@ class EventRepository {
             this.getEmailTemplateBatched(entity.email_template_id, t)
         ]));
         const event = this.toModel(entity);
-        event.addons = addons.map(Event_1.EventProduct.fromEntity);
-        event.participants = participants.map(Event_1.EventParticipant.fromEntity);
-        event.subscribers = subscribers.map(Event_1.EventSubscriber.fromEntity);
-        event.payments = payments.map(Event_1.EventPayment.fromEntity);
+        event.addons = addons.map(EventProduct_1.EventProduct.fromEntity);
+        event.participants = participants.map(EventParticipant_1.EventParticipant.fromEntity);
+        event.subscribers = subscribers.map(EventSubscriber_1.EventSubscriber.fromEntity);
+        event.payments = payments.map(EventPayment_1.EventPayment.fromEntity);
         console.log(payments);
-        event.emailTemplate = Event_1.EmailTemplate.fromEntity(emailTemplate);
+        event.emailTemplate = EmailTemplate_1.EmailTemplate.fromEntity(emailTemplate);
         return event;
     }
     async findByPublicIdentifier(identifier) {

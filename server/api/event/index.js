@@ -11,6 +11,14 @@ const EventController2 = require('./EventController');
 
 router.get('/public', eventController.showPublic);
 
+// const routes = [
+//   new RouteBuilder(EventController2.all)
+//     .requiresSession()
+//     .method('POST')
+//     .url('/')
+//     .build()
+// ];
+
 router.get(
   '/',
   auth.isAuthenticated(),
