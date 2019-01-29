@@ -114,7 +114,7 @@
           <div class="col-xs-12 col-md-6">
             <div>
               <label class="control-label" for="inputYearOfBirth">Year of birth</label>
-              <input class="form-control" type="number" name="inputYearOfBirth" id="inputYearOfBirth" min="1900" ng-model="newMember.yearOfBirth"/>
+              <input class="form-control" type="text" name="inputYearOfBirth" id="inputYearOfBirth" maxLength="4" ng-model="newMember.yearOfBirth"/>
               <p class="help-block">
                 4 digits, for instance 1988
               </p>
@@ -155,7 +155,7 @@
             </div>
           </div>
         </div>
-        
+
         <p class="help-block" for="subscriptionLength">
           Sign up for 1 year starting at 40 SEK for students or join 3 years for 90 SEK (costs for non-students are 100 SEK and 250 SEK, respectively).
         </p>
