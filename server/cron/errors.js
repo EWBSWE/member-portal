@@ -6,10 +6,10 @@ const path = require('path');
 const Promise = require('bluebird');
 const moment = require('moment');
 
-const OutgoingMessage = require(path.join(__dirname, '../server/models/outgoing-message.model'));
-const ewbMail = require(path.join(__dirname, '../server/components/ewb-mail'));
-const logger = require(path.join(__dirname, '../server/config/logger'));
-const db = require(path.join(__dirname, '../server/db')).db;
+const OutgoingMessage = require(path.join(__dirname, '../models/outgoing-message.model'));
+const ewbMail = require(path.join(__dirname, '../components/ewb-mail'));
+const logger = require(path.join(__dirname, '../config/logger'));
+const db = require(path.join(__dirname, '../db')).db;
 
 const options = {
     from: moment().subtract(1, 'hours').toDate(),

@@ -6,13 +6,13 @@ const path = require('path');
 const moment = require('moment');
 const Promise = require('bluebird');
 
-const config = require(path.join(__dirname, '../server/config/environment'));
-const log = require(path.join(__dirname, '../server/config/logger'));
-const ewbMail = require(path.join(__dirname, '../server/components/ewb-mail'));
-const db = require(path.join(__dirname, '../server/db')).db;
+const config = require(path.join(__dirname, '../config/environment'));
+const log = require(path.join(__dirname, '../config/logger'));
+const ewbMail = require(path.join(__dirname, '../components/ewb-mail'));
+const db = require(path.join(__dirname, '../db')).db;
 
-const Payment = require(path.join(__dirname, '../server/models/payment.model'));
-const Setting = require(path.join(__dirname, '../server/models/setting.model'));
+const Payment = require(path.join(__dirname, '../models/payment.model'));
+const Setting = require(path.join(__dirname, '../models/setting.model'));
 
 Setting.findBy({
     key: ['StripeTransferDate', 'StripeTransferEmails']
@@ -43,7 +43,7 @@ Setting.findBy({
                 sender: ewbMail.sender(),
                 recipient: recipient,
                 subject: `EWB Report: ${params.periodStart.format('YYYY-MM-DD')} - ${params.periodEnd.format('YYYY-MM-DD')}`,
-                body: report, 
+                body: report,
             };
         });
 

@@ -5,12 +5,12 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 const path = require('path');
 const moment = require('moment');
 
-const config = require(path.join(__dirname, '../server/config/environment'));
-const ewbMail = require(path.join(__dirname, '../server/components/ewb-mail'));
-const log = require(path.join(__dirname, '../server/config/logger'));
-const db = require(path.join(__dirname, '../server/db')).db;
+const config = require(path.join(__dirname, '../config/environment'));
+const ewbMail = require(path.join(__dirname, '../components/ewb-mail'));
+const log = require(path.join(__dirname, '../config/logger'));
+const db = require(path.join(__dirname, '../db')).db;
 
-const Event = require(path.join(__dirname, '../server/models/event.model'));
+const Event = require(path.join(__dirname, '../models/event.model'));
 
 db.any(`
     SELECT id
