@@ -28,7 +28,11 @@ async function createMemberFromPurchase(params) {
   const profession = params.profession;
   const education = params.education;
   const gender = params.gender;
-  const yearOfBirth = params.yearOfBirth;
+
+  let yearOfBirth = null;
+  if (Number.parseInt(params.yearOfBirth) > 0) {
+    yearOfBirth = Number(`${params.yearOfBirth}`.substr(0, 4))
+  }
 
   logger.info(`Fetching chapter with id ${params.chapterId}`);
   const chapter = await chapterRepository.get(params.chapterId);
@@ -56,7 +60,7 @@ async function createMemberFromPurchase(params) {
   if (maybeMember) {
     logger.info('Existing member - old attributes %j', maybeMember);
     // Member exists! Update member with all attributes in case they
-    // have changed. 
+    // have changed.
     maybeMember.name = name;
     maybeMember.memberTypeId = memberTypeId;
     maybeMember.location = location;
