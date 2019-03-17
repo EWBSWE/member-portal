@@ -1,7 +1,0 @@
-'use strict';
-
-// Developer settings
-module.exports = {
-    mail: 'ict@ingenjorerutangranser.se',
-};
-
