@@ -36,7 +36,8 @@ class RouteBuilder {
       logger.info(`Endpoint ${endpoint.name} called with %j`, req.body);
 
       try {
-	const result = await endpoint(req.body);
+          // TODO: Unwrap RouteBuilder routes in favor of something like use cases perhaps..
+	const result = await endpoint(req.body, req.params);
 	return res.status(200).json(result);
       } catch (err) {
 	return next(err);

@@ -34,7 +34,13 @@ router.post(
 router.post('/reset-password', controller.resetPassword);
 router.post('/reset-password-token', controller.resetPasswordWithToken);
 
-router.put('/:id', auth.isAuthenticated(), controller.update);
+router.put(
+    '/:id',
+    auth.isAuthenticated(),
+    new RouteBuilder(controller2.update)
+        .build()
+);
+// router.put('/:id', auth.isAuthenticated(), controller.update);
 
 router.delete('/:id', auth.isAuthenticated(), controller.destroy);
 

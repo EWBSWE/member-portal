@@ -186,6 +186,28 @@ async function bulk(params) {
   };
 }
 
+async function update(params, urlParams) {
+  const memberId = urlParams.id;
+  const member = await memberRepository.get(memberId);
+
+  logger.info(`Updating member ${memberId} old attributes %j with %j`, member, params);
+
+  member.name = params.name;
+  member.location = params.location;
+  member.education = params.education;
+  member.profession = params.profession;
+  member.memberTypeId = params.memberTypeId;
+  member.gender = params.gender;
+  member.yearOfBirth = params.yearOfBirth;
+  member.expirationDate = params.expirationDate;
+  member.chapterId = params.chapterId;
+  member.employer = params.employer;
+
+  await memberRepository.update(member);
+
+  return member.formatResponse();
+}
+
 // TODO: Move to some util.js stuff
 /**
  * Partition collection into left and right decided by the
@@ -225,5 +247,6 @@ function mapBy(collection, lambda) {
 module.exports = {
   createMemberFromPurchase,
   getChapters,
-  bulk
+  bulk,
+  update
 };

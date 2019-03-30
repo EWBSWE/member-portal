@@ -33,6 +33,8 @@ const COLUMN_MAP = {
     gender: 'gender',
     yearOfBirth: 'year_of_birth',
     expirationDate: 'expiration_date',
+    chapterId: 'chapter_id',
+    employer: 'employer',
 };
 
 function create(data) {
@@ -242,7 +244,9 @@ function get(id) {
             gender,
             year_of_birth,
             expiration_date,
-            reset_token
+            reset_token,
+            chapter_id,
+            employer
         FROM member
         LEFT JOIN member_type ON (member.member_type_id = member_type.id)
         WHERE member.id = $1

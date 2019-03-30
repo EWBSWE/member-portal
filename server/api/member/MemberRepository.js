@@ -5,6 +5,11 @@ const db = require('../../db').db;
 const { Member } = require('./Member');
 
 class MemberRepository {
+  async get(id) {
+    const entity = await db.one(`SELECT * FROM member WHERE id = $1`, [id]);
+    return this._toModel(entity);
+  }
+
   async firstWithEmail(email) {
     const entity = await db.oneOrNone(`
 	SELECT *
