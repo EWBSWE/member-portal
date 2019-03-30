@@ -16,7 +16,9 @@ This is the repository for the backend and web frontend for the member registrat
 * Watch frontend changes with `npx grunt serve`
 
 # Building
-TODO
+* Run `$ npx grunt build` to build the project into directory `dist`
+* Move `dist` to remote host
+* Restart application `$ pm2 restart 0`
 
 # History
 Started out as a project generated with Yeoman.
