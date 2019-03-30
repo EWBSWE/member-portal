@@ -50,6 +50,13 @@
                             </a>
                         </td>
                         <td>
+                            <a href="#" ng-click="sortType = 'employer'; sortReverse = !sortReverse">
+                                Employer
+                                <span ng-show="sortType == 'employer' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
+                                <span ng-show="sortType == 'employer' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
+                            </a>
+                        </td>
+                        <td>
                             <a href="#" ng-click="sortType = 'location'; sortReverse = !sortReverse">
                                 Ort
                                 <span ng-show="sortType == 'location' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
@@ -78,13 +85,6 @@
                             </a>
                         </td>
                         <td>
-                            <a href="#" ng-click="sortType = 'createdAt'; sortReverse = !sortReverse">
-                                Skapad den
-                                <span ng-show="sortType == 'createdAt' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
-                                <span ng-show="sortType == 'createdAt' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
-                            </a>
-                        </td>
-                        <td>
                             <a href="#" ng-click="sortType = 'expirationDate'; sortReverse = !sortReverse">
                                 Medlem till
                                 <span ng-show="sortType == 'expirationDate' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
@@ -98,11 +98,11 @@
                     <tr dir-paginate="member in members | orderBy:sortType:sortReverse | filter:filterByEmail | filter:filterByLocation | itemsPerPage: 50">
                         <td><a href="/member/{{member.id}}">{{member.name}}</a></td>
                         <td>{{member.email}}</td>
+                        <td>{{member.employer}}</td>
                         <td>{{member.location}}</td>
                         <td>{{member.profession}}</td>
                         <td>{{member.education}}</td>
                         <td>{{member.member_type}}</td>
-                        <td>{{member.created_at | amDateFormat: 'YYYY-MM-DD'}}</td>
                         <td>{{member.expiration_date | amDateFormat: 'YYYY-MM-DD'}}</td>
                         <td>
                             <a href="/member/{{member.id}}/edit" class="btn btn-default btn-xs">Redigera</a>
