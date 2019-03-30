@@ -28,6 +28,7 @@ async function createMemberFromPurchase(params) {
   const profession = params.profession;
   const education = params.education;
   const gender = params.gender;
+  const employer = params.employer;
 
   let yearOfBirth = null;
   if (Number.parseInt(params.yearOfBirth) > 0) {
@@ -69,6 +70,7 @@ async function createMemberFromPurchase(params) {
     maybeMember.gender = gender;
     maybeMember.yearOfBirth = yearOfBirth;
     maybeMember.chapterId = chapterId;
+    maybeMember.employer = employer;
 
     maybeMember.extendExpirationDate(membershipProduct.membershipDurationDays);
 
@@ -87,7 +89,8 @@ async function createMemberFromPurchase(params) {
       gender,
       yearOfBirth,
       null, // expiration date is not set yet
-      chapterId
+      chapterId,
+      employer
     );
 
     newMember.extendExpirationDate(membershipProduct.membershipDurationDays);
@@ -169,6 +172,7 @@ async function bulk(params) {
     member.yearOfBirth = memberParams.yearOfBirth;
     member.expirationDate = memberParams.expirationDate;
     member.chapterId = memberParams.chapterId;
+    member.employer = memberParams.employer;
   });
 
   if (existingMembers.length > 0) {

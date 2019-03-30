@@ -55,7 +55,8 @@ angular.module('ewbMemberApp')
             email: $scope.newMember.email,
             gender: $scope.newMember.gender,
             yearOfBirth: $scope.newMember.yearOfBirth,
-	    chapterId: +$scope.newMember.chapterId,
+            chapterId: +$scope.newMember.chapterId,
+            employer: $scope.newMember.employer,
         }).success(function(data) {
             $scope.successEmail = $scope.newMember.email;
             $('.js-confirmation').modal('show');

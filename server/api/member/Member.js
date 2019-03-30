@@ -3,7 +3,7 @@
 const moment = require('moment');
 
 class Member {
-  constructor(id, email, name, location, education, profession, memberTypeId, gender, yearOfBirth, expirationDate, chapterId) {
+  constructor(id, email, name, location, education, profession, memberTypeId, gender, yearOfBirth, expirationDate, chapterId, employer) {
     this.id = id;
     this.email = email;
     this.name = name;
@@ -15,6 +15,7 @@ class Member {
     this.yearOfBirth = yearOfBirth;
     this.expirationDate = expirationDate;
     this.chapterId = chapterId;
+    this.employer = employer;
   }
 
   extendExpirationDate(days) {
