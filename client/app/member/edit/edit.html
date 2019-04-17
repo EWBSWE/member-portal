@@ -71,10 +71,22 @@
         </div>
 
         <div class="form-group">
-            <label for="inputTelephone">Födelseår</label>
-            <input type="number" name="inputYearOfBirth" id="inputYearOfBirth" class="form-control" min="1900" max="3000" ng-model="member.yearOfBirth"/>
+            <label for="inputYearOfBirth">Födelseår</label>
+            <input type="text" name="inputYearOfBirth" id="inputYearOfBirth" class="form-control" maxLength="4" ng-model="member.yearOfBirth"/>
         </div>
 
+        <div class="form-group">
+            <label for="inputEmployer">Employer</label>
+            <input type="text" name="inputEmployer" id="inputEmployer" class="form-control" ng-model="member.employer"/>
+        </div>
+
+        <div class="form-group">
+            <label>Lokalgrupp</label>
+            <select name="inputChapter" ng-model="member.chapterId">
+                <option>None selected</option>
+                <option ng-repeat="option in availableChapters" ng-selected="option.id == member.chapterId" value="{{option.id}}">{{option.name}}</option>
+            </select>
+        </div>
 
         <div class="form-group">
             <p>Nedan kan du välja att ge ett exakt slutdatum för medlemmen eller välja en fördefinierad längd</p>

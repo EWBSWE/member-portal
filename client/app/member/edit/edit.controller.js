@@ -14,6 +14,7 @@ angular.module('ewbMemberApp')
                 }
                 member.yearOfBirth = member.year_of_birth;
                 member.memberTypeId = member.member_type_id;
+                member.chapterId = member.chapter_id;
 
                 $scope.member = member;
             });
@@ -22,6 +23,19 @@ angular.module('ewbMemberApp')
         $http.get('/api/member-types').success(function(memberTypes) {
             $scope.memberTypes = memberTypes;
         });
+
+        $http.get('/api/members/chapters')
+            .success(function(chapters) {
+                var studentLabel = 'Student';
+                var workingLabel = 'Working';
+                $scope.availableChapters = _.map(chapters, function(chapter) {
+                    var label = chapter.memberTypeId === 1 ? studentLabel : workingLabel;
+                    return {
+                        id: chapter.id,
+                        name: chapter.name + ' (' + label + ')'
+                    };
+                });
+            });
 
         var addMember = function() {
             $scope.successMessages = {};
@@ -52,6 +66,8 @@ angular.module('ewbMemberApp')
                 memberType: $scope.member.type,
                 yearOfBirth: $scope.member.yearOfBirth,
                 expirationDate: expirationDate,
+                chapterId: $scope.member.chapterId,
+                employer: $scope.member.employer
             }).success(function(data, status) {
                 $scope.showSuccess = true;
                 $scope.member = {};
@@ -65,12 +81,14 @@ angular.module('ewbMemberApp')
                 name: $scope.member.name,
                 location: $scope.member.location,
                 profession: $scope.member.profession,
-                email: $scope.member.email, 
+                email: $scope.member.email,
                 education: $scope.member.education,
                 memberTypeId: $scope.member.memberTypeId,
                 gender: $scope.member.gender,
                 yearOfBirth: $scope.member.yearOfBirth,
                 expirationDate: $scope.member.expirationDate ? moment($scope.member.expirationDate).format() : null,
+                chapterId: $scope.member.chapterId,
+                employer: $scope.member.employer
             }).success(function(data, status) {
                 $scope.showSuccess = true;
             }).error(function(data, status) {

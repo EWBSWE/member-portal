@@ -28,6 +28,7 @@ async function createMemberFromPurchase(params) {
   const profession = params.profession;
   const education = params.education;
   const gender = params.gender;
+  const employer = params.employer;
 
   let yearOfBirth = null;
   if (Number.parseInt(params.yearOfBirth) > 0) {
@@ -69,6 +70,7 @@ async function createMemberFromPurchase(params) {
     maybeMember.gender = gender;
     maybeMember.yearOfBirth = yearOfBirth;
     maybeMember.chapterId = chapterId;
+    maybeMember.employer = employer;
 
     maybeMember.extendExpirationDate(membershipProduct.membershipDurationDays);
 
@@ -87,7 +89,8 @@ async function createMemberFromPurchase(params) {
       gender,
       yearOfBirth,
       null, // expiration date is not set yet
-      chapterId
+      chapterId,
+      employer
     );
 
     newMember.extendExpirationDate(membershipProduct.membershipDurationDays);
@@ -169,6 +172,7 @@ async function bulk(params) {
     member.yearOfBirth = memberParams.yearOfBirth;
     member.expirationDate = memberParams.expirationDate;
     member.chapterId = memberParams.chapterId;
+    member.employer = memberParams.employer;
   });
 
   if (existingMembers.length > 0) {
@@ -180,6 +184,28 @@ async function bulk(params) {
     created: toCreate,
     invalid
   };
+}
+
+async function update(params, urlParams) {
+  const memberId = urlParams.id;
+  const member = await memberRepository.get(memberId);
+
+  logger.info(`Updating member ${memberId} old attributes %j with %j`, member, params);
+
+  member.name = params.name;
+  member.location = params.location;
+  member.education = params.education;
+  member.profession = params.profession;
+  member.memberTypeId = params.memberTypeId;
+  member.gender = params.gender;
+  member.yearOfBirth = params.yearOfBirth;
+  member.expirationDate = params.expirationDate;
+  member.chapterId = params.chapterId;
+  member.employer = params.employer;
+
+  await memberRepository.update(member);
+
+  return member.formatResponse();
 }
 
 // TODO: Move to some util.js stuff
@@ -221,5 +247,6 @@ function mapBy(collection, lambda) {
 module.exports = {
   createMemberFromPurchase,
   getChapters,
-  bulk
+  bulk,
+  update
 };

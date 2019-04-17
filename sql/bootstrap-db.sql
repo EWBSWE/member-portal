@@ -180,7 +180,7 @@ VALUES
 ('Uppsala', (SELECT id FROM member_type WHERE member_type = 'student'));
 
 ALTER TABLE member 
-ADD COLUMN chapter_id INTEGER REFERENCES chapter(id) ON DELETE SET NULL ON UPDATE CASCADE
+ADD COLUMN chapter_id INTEGER REFERENCES chapter(id) ON DELETE SET NULL ON UPDATE CASCADE;
 
 
 -- migrate member_id column to email
@@ -202,3 +202,6 @@ WHERE event_subscriber.member_id = foo.id;
 
 ALTER TABLE event_subscriber
 ALTER COLUMN member_id DROP NOT NULL;
+
+ALTER TABLE member
+ADD COLUMN employer TEXT;
