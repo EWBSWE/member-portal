@@ -85,6 +85,9 @@
                 <span>3 year</span>
               </label>
             </div>
+            <p class="help-block" for="subscriptionLength">
+              Sign up for 1 year starting at 40 SEK for students or join 3 years for 90 SEK (costs for non-students are 100 SEK and 250 SEK, respectively).
+            </p>
           </div>
         </div>
 
@@ -108,11 +111,6 @@
 	<div class="form-group">
           <label class="control-label" for="inputName">Name</label>
           <input class="form-control" type="text" name="inputName" id="inputName" ng-model="newMember.name" />
-        </div>
-
-        <div class="form-group">
-          <label class="control-label" for="inputEmployer">Employer</label>
-          <input class="form-control" type="text" name="inputEmployer" id="inputEmployer" ng-model="newMember.employer" />
         </div>
 
         <div class="row">
@@ -161,9 +159,14 @@
           </div>
         </div>
 
-        <p class="help-block" for="subscriptionLength">
-          Sign up for 1 year starting at 40 SEK for students or join 3 years for 90 SEK (costs for non-students are 100 SEK and 250 SEK, respectively).
-        </p>
+        <div class="form-group">
+          <label class="control-label" for="inputEmployer">Employer</label>
+          <input class="form-control" type="text" name="inputEmployer" id="inputEmployer" ng-model="newMember.employer" />
+          <p class="help-block" for="inputEmployer">
+            EWB-SWE will not share any information with your employer, but may send information to you about initiatives at your workplace related to EWB-SWE.
+          </p>
+        </div>
+
         <p class="text-warning" ng-show="!newMember.memberType || !newMember.subscriptionLength">
           Please fill out all required fields before clicking <strong>Sign up</strong>.
         </p>
