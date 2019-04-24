@@ -12,3 +12,6 @@ coverage
 doc
 logs
 .env
+
+# typescript maps
+*.map
