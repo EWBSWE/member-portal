@@ -1,0 +1,15 @@
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: circleci/node
+    steps:
+      - checkout
+      - run: npm install
+      - run: npx bower install
+      - run: npx grunt build
+workflows:
+  version: 2
+  one_and_two:
+    jobs:
+      - build

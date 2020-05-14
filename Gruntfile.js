@@ -2,12 +2,23 @@
 'use strict';
 
 module.exports = function (grunt) {
-  // Load grunt tasks automatically, when needed
+  var sass = require('node-sass');
+  grunt.loadNpmTasks('grunt-sass');
+
+  //grunt.loadNpmTasks('grunt-contrib-sass');
+  // grunt.loadNpmTasks('grunt-express-server');
+  // grunt.loadNpmTasks('grunt-usemin');
+  // grunt.loadNpmTasks('grunt-angular-templates');
+  // grunt.loadNpmTasks('grunt-google-cdn');
+  // grunt.loadNpmTasks('grunt-protractor-runner');
+  // grunt.loadNpmTasks('grunt-asset-injector');
+
+  // // Load grunt tasks automatically, when needed
   require('jit-grunt')(grunt, {
     express: 'grunt-express-server',
     useminPrepare: 'grunt-usemin',
     ngtemplates: 'grunt-angular-templates',
-    cdnify: 'grunt-google-cdn',
+    cdnify: 'grunt-google-cdn2',
     protractor: 'grunt-protractor-runner',
     injector: 'grunt-asset-injector',
   });
@@ -378,7 +389,8 @@ module.exports = function (grunt) {
     sass: {
       server: {
         options: {
-          loadPath: [
+          implementation: sass,
+          includePaths: [
             '<%= yeoman.client %>/bower_components',
             '<%= yeoman.client %>/app',
             '<%= yeoman.client %>/components'
@@ -473,7 +485,7 @@ module.exports = function (grunt) {
   });
 
   grunt.loadNpmTasks('grunt-mocha-istanbul');
-    grunt.loadNpmTasks('grunt-jsdoc');
+  grunt.loadNpmTasks('grunt-jsdoc');
 
   // Used for delaying livereload until after server has restarted
   grunt.registerTask('wait', function () {
@@ -587,21 +599,21 @@ module.exports = function (grunt) {
     'build'
   ]);
 
-    grunt.registerTask('seed-database', function() {
-        var done = this.async();
-        var seed = require('./server/db/seed');
+  grunt.registerTask('seed-database', function() {
+    var done = this.async();
+    var seed = require('./server/db/seed');
 
-        seed.empty().then(() => {
-            console.log('Empty ok');
-            return seed.populate();
-        }).then(() => {
-            console.log('Seed complete');
-            done();
-        }).catch(err => {
-            console.error('Error during seed', err);
-            done();
-        });
+    seed.empty().then(() => {
+      console.log('Empty ok');
+      return seed.populate();
+    }).then(() => {
+      console.log('Seed complete');
+      done();
+    }).catch(err => {
+      console.error('Error during seed', err);
+      done();
     });
+  });
 
-    grunt.registerTask('coverage', ['env:test', 'mocha_istanbul']);
+  grunt.registerTask('coverage', ['env:test', 'mocha_istanbul']);
 };
