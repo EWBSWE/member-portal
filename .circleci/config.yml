@@ -3,13 +3,38 @@ jobs:
   build:
     docker:
       - image: circleci/node
+    working_directory: ~/ewb
     steps:
       - checkout
       - run: npm install
       - run: npx bower install
       - run: npx grunt build
+      - run: mv node_modules dist/node_modules
+      - run: tar czf dist.tgz dist
+      - persist_to_workspace:
+          root: ~/ewb
+          paths:
+            - dist.tgz
+  deploy:
+    machine:
+      enabled: true
+    steps:
+      - attach_workspace:
+          at: ~/ewb
+      - run:
+          name: Deploy over SSH
+          command: |
+            scp ~/ewb/dist.tgz $SSH_USER@$SSH_HOST:~/dist.tgz
+            ssh $SSH_USER@$SSH_HOST "./deploy.sh"
+
 workflows:
   version: 2
-  one_and_two:
+  build-and-deploy:
     jobs:
       - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
