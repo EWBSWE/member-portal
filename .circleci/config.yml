@@ -29,9 +29,18 @@ jobs:
 
 workflows:
   version: 2
-  build-and-deploy:
+  build: # build on every branch except master
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              ignore: master
+  build-and-deploy: # build and deploy iff branch is master
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: master
       - deploy:
           requires:
             - build
