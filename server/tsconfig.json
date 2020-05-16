@@ -6,12 +6,15 @@
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,
-    "strict": true
+    "strict": true,
+    "allowJs": true,
+    "outDir": "../server-dist"
   },
   "include": [
     "../server/**/*"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "dist"
   ]
 }

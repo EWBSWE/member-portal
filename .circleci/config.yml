@@ -8,6 +8,7 @@ jobs:
       - checkout
       - run: npm install
       - run: npx bower install
+      - run: npx tsc --build server/tsconfig.json
       - run: npx grunt build
       - run: mv node_modules dist/node_modules
       - run: tar czf dist.tgz dist
@@ -15,6 +16,15 @@ jobs:
           root: ~/ewb
           paths:
             - dist.tgz
+  test:
+    docker:
+      - image: circleci/node
+    working_directory: ~/ewb
+    steps:
+      - checkout
+      - run: npm install
+      - run: npx tsc --build server/tsconfig.json
+      - run: npx mocha --config server-dist/test/foo.js server-dist/test/**/*.js server-dist/test/*.js
   deploy:
     machine:
       enabled: true
@@ -35,6 +45,9 @@ workflows:
           filters:
             branches:
               ignore: master
+      - test:
+          requires:
+            - build
   build-and-deploy: # build and deploy iff branch is master
     jobs:
       - build:

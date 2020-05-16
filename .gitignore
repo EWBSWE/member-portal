@@ -12,6 +12,9 @@ coverage
 doc
 logs
 .env
+env
 
 # typescript maps
 *.map
+# build directory
+server-dist

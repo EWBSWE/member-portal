@@ -107,7 +107,7 @@ module.exports = function (grunt) {
       },
       express: {
         files: [
-          'server/**/*.{js,json}'
+          'server-dist/**/*.{js,json}'
         ],
         tasks: ['express:dev', 'wait'],
         options: {
@@ -152,7 +152,7 @@ module.exports = function (grunt) {
     // Use nodemon to run server in debug mode with an initial breakpoint
     nodemon: {
       debug: {
-        script: 'server/app.js',
+        script: 'server-dist/app.js',
         options: {
           nodeArgs: ['--debug-brk'],
           env: {
@@ -308,11 +308,14 @@ module.exports = function (grunt) {
           src: ['generated/*']
         }, {
           expand: true,
+          dest: '<%= yeoman.dist %>/server',
+          nonull: true,
+          cwd: 'server-dist',
+          src: '**'
+        }, {
+          expand: true,
           dest: '<%= yeoman.dist %>',
-          src: [
-            'package.json',
-            'server/**/*'
-          ]
+          src: 'package.json'
         }]
       },
       styles: {

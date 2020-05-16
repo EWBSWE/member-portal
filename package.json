@@ -30,13 +30,17 @@
     "passport-google-oauth": "latest",
     "passport-local": "~1.x",
     "passport-twitter": "latest",
-    "pg-promise": "^5.3.3",
+    "pg-promise": "^5.9.7",
     "rollbar": "^2.3.9",
     "serve-favicon": "~2.x",
     "stripe": "^3.3.4",
     "winston": "^2.4.4"
   },
   "devDependencies": {
+    "@types/chai": "^4.2.11",
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^14.0.1",
+    "@types/sinon": "^9.0.1",
     "bower": "^1.7.9",
     "chai": "^3.5.0",
     "chai-as-promised": "^7.1.1",
@@ -83,7 +87,7 @@
     "jit-grunt": "^0.5.0",
     "jpegtran-bin": "^4.0.0",
     "jsdoc": "^3.4.2",
-    "mocha": "^3.0.2",
+    "mocha": "7.1.2",
     "open": "~0.0.4",
     "optipng-bin": "^6.0.0",
     "requirejs": "~2.1.11",
@@ -98,7 +102,7 @@
   },
   "scripts": {
     "watch:build": "tsc --build server/tsconfig.json --watch",
-    "start": "node server/app.js",
+    "start": "node server-dist/app.js",
     "test": "grunt test",
     "update-webdriver": "node node_modules/grunt-protractor-runner/node_modules/protractor/bin/webdriver-manager update"
   },
