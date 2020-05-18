@@ -1,7 +1,5 @@
 'use strict';
 
-const moment = require('moment');
-
 const logger = require('../../config/logger');
 
 const stripe = require('../../stripe');
@@ -17,6 +15,8 @@ const outgoingMessageRepository = require('../outgoing-message/OutgoingMessageRe
 const paymentRepository = require('../payment/PaymentRepository');
 const productRepository = require('../product/ProductRepository');
 const MemberFactory = require('./MemberFactory');
+
+const { mapBy, partition } = require('../../util');
 
 async function createMemberFromPurchase(params) {
   const email = params.email.trim();
@@ -206,41 +206,6 @@ async function update(params, urlParams) {
   await memberRepository.update(member);
 
   return member.formatResponse();
-}
-
-// TODO: Move to some util.js stuff
-/**
- * Partition collection into left and right decided by the
- * predicate. If predicate is true, put item in the left bin otherwise
- * the right.
- * @param {Array} collection is the collection to be partitioned.
- * @param {Function} predicate is a function that given an item in the
- * collection evaluates to true or false.
- * @return {Object} result where left is bin where predicate is true
- * and right bin is false.
- */
-function partition(collection, predicate) {
-  return collection
-    .reduce((group, item) => {
-      if (predicate(item)) {
-	group.left.push(item);
-      } else {
-	group.right.push(item);
-      }
-      return group;
-    }, { left: [], right: [] });
-}
-
-/**
- * Transform a collection to a map where key is decided by lambda.
- */
-function mapBy(collection, lambda) {
-  return collection
-    .reduce((group, item) => {
-      const key = lambda(item);
-      group[key] = item;
-      return group;
-    }, {});
 }
 
 
