@@ -10,7 +10,7 @@
     "compression": "~1.x",
     "cookie-parser": "~1.x",
     "csv": "~0.4.x",
-    "dotenv": "^6.0.0",
+    "dotenv": "^8.2.0",
     "ejs": "~2.x",
     "errorhandler": "~1.x",
     "express": "~4.x",
@@ -37,6 +37,7 @@
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
+    "@types/dotenv": "^8.2.0",
     "@types/mocha": "^7.0.2",
     "@types/node": "^14.0.1",
     "@types/sinon": "^9.0.1",

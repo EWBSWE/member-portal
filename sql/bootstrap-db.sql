@@ -205,3 +205,14 @@ ALTER COLUMN member_id DROP NOT NULL;
 
 ALTER TABLE member
 ADD COLUMN employer TEXT;
+
+
+CREATE TABLE ewb_user (
+    id SERIAL PRIMARY KEY,
+    username TEXT NOT NULL UNIQUE,
+    hashed_password TEXT NOT NULL,
+    salt TEXT NOT NULL,
+    role TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+)

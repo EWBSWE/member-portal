@@ -9,13 +9,13 @@ exports.setup = (Member, config) => {
         }, (email, password, done) => {
             db.oneOrNone(`
                 SELECT id, hashed_password, salt, role
-                FROM member
-                WHERE email = $1
+                FROM ewb_user
+                WHERE username = $1
             `, email).then(data => {
                 if (!data) {
                     return done(null, false, {message: 'Failed to sign in.'});
                 }
-                if (!Member.authenticate(password, data.hashed_password, data.salt)) {
+                if (!Member.authenticate(password, data.salt, data.hashed_password)) {
                     return done(null, false, {message: 'Failed to sign in.'});
                 }
 

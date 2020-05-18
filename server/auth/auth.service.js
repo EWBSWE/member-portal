@@ -28,7 +28,7 @@ function isAuthenticated() {
         .use(function(req, res, next) {
             db.oneOrNone(`
                 SELECT id, role
-                FROM member
+                FROM ewb_user
                 WHERE id = $1
             `, req.user._id).then(data => {
                 if (!data) {

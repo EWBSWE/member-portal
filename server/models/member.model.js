@@ -16,6 +16,8 @@ var config = require('../config/environment');
 var db = require('../db').db;
 var postgresHelper = require('../helpers/postgres.helper');
 
+const { createPassword, authenticate } = require('../user/PasswordService');
+
 const COLUMN_MAP = {
     email: 'email',
     hashedPassword: 'hashed_password',
@@ -52,12 +54,11 @@ function create(data) {
     // Helper function to create member
     let _create = (member, transaction) => {
         if (member.password !== undefined && member.password !== null) {
-            let salt = makeSalt();
-            let hashedPassword = hashPassword(member.password, salt);
+            const pw = createPassword(member.password);
 
             Object.assign(member, {
-                hashedPassword: hashedPassword,
-                salt: salt,
+                hashedPassword: pw.hashed,
+                salt: pw.salt,
                 resetValidity: null,
                 resetToken: null,
             });
@@ -130,12 +131,11 @@ function update(id, data) {
                     return Promise.reject('Invalid password');
                 }
 
-                let salt = makeSalt();
-                let hashedPassword = hashPassword(data.newPassword, salt);
+                const pw = createPassword(data.newPassword);
 
                 Object.assign(data, {
-                    hashedPassword: hashedPassword,
-                    salt: salt,
+                    hashedPassword: pw.hashed,
+                    salt: pw.salt,
                     resetValidity: null,
                     resetToken: null,
                 });
@@ -149,12 +149,11 @@ function update(id, data) {
                 return Promise.reject('Invalid password');
             }
 
-            let salt = makeSalt();
-            let hashedPassword = hashPassword(data.newPassword, salt);
+            const pw = createPassword(data.newPassword);
 
             Object.assign(data, {
-                hashedPassword: hashedPassword,
-                salt: salt,
+                hashedPassword: pw.hashed,
+                salt: pw.salt,
                 resetValidity: null,
                 resetToken: null,
             });
@@ -291,24 +290,6 @@ function validRole(role) {
 
 function validPassword(password) {
     return password && password.length >= 8;
-}
-
-function authenticate(plainText, hashedPassword, salt) {
-    return hashPassword(plainText, salt) === hashedPassword;
-}
-
-function makeSalt() {
-    return crypto.randomBytes(16).toString('base64');
-}
-
-function hashPassword(plainText, salt) {
-    if (!plainText || !salt) {
-        return '';
-    }
-
-    let buffer = new Buffer(salt, 'base64');
-    
-    return crypto.pbkdf2Sync(plainText, buffer, 10000, 64, 'sha512').toString('base64');
 }
 
 function createResetToken(id) {
