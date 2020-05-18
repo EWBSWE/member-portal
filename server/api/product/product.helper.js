@@ -1,7 +1,5 @@
 'use strict';
 
-var _ = require('lodash');
-
 var Product = require('../../models/product.model');
 var ProductType = require('../../models/product-type.model');
 
