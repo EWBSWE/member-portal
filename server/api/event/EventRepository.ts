@@ -167,7 +167,7 @@ export class EventRepository {
 		`, eventId)
 	}
 
-	private async getEmailTemplateBatched(emailTemplateId: number, db: IDatabase<any>): Promise<EventSubscriberEntity[]> {
+	private async getEmailTemplateBatched(emailTemplateId: number, db: IDatabase<any>): Promise<EmailTemplateEntity> {
 		return db.one(`
 			SELECT subject, body
 			FROM email_template
