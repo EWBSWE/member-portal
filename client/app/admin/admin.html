@@ -14,7 +14,7 @@
             </div>
 
             <div class="bg-danger" ng-show="showError" style="padding: 20px; margin-top: 20px;">
-                <div ng-show="errors.email">Den här epost-adressen används redan.</div>
+                <div ng-show="!errors.removal">Failed to create user.</div>
                 <div ng-show="errors.removal">Misslyckades med borttagning.</div>
             </div>
         </div>

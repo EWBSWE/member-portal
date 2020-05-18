@@ -1,6 +1,7 @@
 import * as express from "express"
 import * as auth from "../auth/auth.service"
-import { me, allUsers } from "./UserController"
+import { me, allUsers, createUser } from "./UserController"
+import * as logger from "../config/logger"
 
 const router = express.Router()
 
@@ -14,6 +15,16 @@ router.get("/me", auth.isAuthenticated(), async (req, res, next) => {
 router.get("/", auth.isAuthenticated(), async (req, res, next) => {
     const response = await allUsers()
     return res.status(200).json(response)
+})
+
+router.post("/", auth.isAuthenticated(), async (req, res, next) => {
+     try {
+         const response = await createUser(req.body.email)
+         return res.status(200).json(response)
+     } catch (e) {
+         logger.error(e)
+         return res.sendStatus(400)
+     }
 })
 
 export default router

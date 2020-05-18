@@ -1,5 +1,5 @@
 import { UserRepository } from "./UserRepository"
-import { User } from "./User"
+import { User, UnsavedUser } from "./User"
 import * as UserRepositoryProvider from "./UserRepositoryProvider"
 
 type MeResponse = {
@@ -38,4 +38,16 @@ export async function allUsers(): Promise<AllUsersResponse> {
     const repo = UserRepositoryProvider.provide()
     const users = await repo.all()
     return createAllUsersResponse(users)
+}
+
+
+type CreateUserResponse = {
+}
+
+export async function createUser(email: string): Promise<CreateUserResponse> {
+    const repo = UserRepositoryProvider.provide()
+    const defaultPassword = "Change by reset password?"
+    const user = new UnsavedUser(email, defaultPassword, "user")
+    const maybeCreated = await repo.add(user)
+    return {}
 }
