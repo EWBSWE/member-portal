@@ -1,6 +1,6 @@
 import * as express from "express"
 import * as auth from "../auth/auth.service"
-import { me, allUsers, createUser } from "./UserController"
+import { me, allUsers, createUser, removeUser } from "./UserController"
 import * as logger from "../config/logger"
 
 const router = express.Router()
@@ -25,6 +25,18 @@ router.post("/", auth.isAuthenticated(), async (req, res, next) => {
          logger.error(e)
          return res.sendStatus(400)
      }
+})
+
+router.delete("/:id", auth.isAuthenticated(), async (req, res, next) => {
+    try {
+        // todo: Update Request interface
+        //@ts-ignore
+        const response = await removeUser(req.user.id, req.params.id)
+        return res.sendStatus(200)
+    } catch (e) {
+        logger.error(e)
+        return res.sendStatus(400)
+    }
 })
 
 export default router

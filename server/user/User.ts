@@ -8,6 +8,11 @@ export class User {
         this.username = username;
         this.role = role;
     }
+
+    canRemove(other: User): boolean {
+        if (this.role == "admin") return true
+        return other.role != "admin"
+    }
 }
 
 export class UnsavedUser {

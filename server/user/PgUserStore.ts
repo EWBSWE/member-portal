@@ -9,7 +9,6 @@ export class PgUserStore implements UserStore {
     constructor(sqlProvider: SqlProvider) {
         this.sqlProvider = sqlProvider;
     }
-
     async create(entity: UserEntity): Promise<UserEntity> {
         const result = await db.one(this.sqlProvider.insertUser, [entity.username, entity.hashedPassword, entity.salt, entity.role]);
         return new UserEntity(result.id, entity.username, entity.hashedPassword, entity.salt, entity.role);
@@ -28,5 +27,9 @@ export class PgUserStore implements UserStore {
 
     private entityFromRow(row: any): UserEntity {
         return new UserEntity(row.id, row.username, row.hashed_password, row.salt, row.role)
+    }
+
+    async remove(id: number): Promise<void> {
+        await db.any(this.sqlProvider.DeleteUser, [id])
     }
 }

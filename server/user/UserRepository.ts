@@ -25,4 +25,8 @@ export class UserRepository {
         const all = await this.userStore.all()
         return all.map(entity => new User(entity.id!!, entity.username, entity.role))
     }
+
+    async remove(user: User): Promise<void> {
+        return this.userStore.remove(user.id)
+    }
 }

@@ -6,10 +6,14 @@ angular.module('ewbMemberApp')
 
            $scope.isAdmin = Auth.isAdmin();
 
-           $http.get('/api/users')
-                .success(function(users) {
-                    $scope.users = users;
-                });
+           var refreshUsers = function() {
+               $http.get('/api/users')
+                    .success(function(users) {
+                        $scope.users = users;
+                    });
+           }
+
+           refreshUsers();
 
            $scope.createUser = function() {
                if (!$scope.email) {
@@ -18,7 +22,7 @@ angular.module('ewbMemberApp')
 
                $http.post('/api/users', { email: $scope.email })
                     .success(function(data) {
-                        $scope.users.push({ email: $scope.email, role: 'user' });
+                        refreshUsers();
 
                         $scope.email = '';
                         $scope.showSuccess = true;
@@ -32,15 +36,11 @@ angular.module('ewbMemberApp')
            };
 
            $scope.deleteUser = function(id) {
-               if (!id) {
-                   return;
-               }
-
                if (!confirm('Are you sure you want to remove user? This action cannot be undone.')) {
                    return;
                }
 
-               $http.delete('/api/members/' + id).success(function(data) {
+               $http.delete('/api/users/' + id).success(function(data) {
                    $scope.users = _.filter($scope.users, function(u) {
                        return u.id != id;
                    });

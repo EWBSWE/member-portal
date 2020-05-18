@@ -21,7 +21,7 @@ module.exports = function(app) {
     app.use('/api/products', require('./api/product'));
     app.use('/api/settings', require('./api/setting'));
     app.use('/api/stats', require('./api/stats'));
-    app.use('/api/users', require('./user/UserEndpoints').default);
+    app.use('/api/users', require('./user/UserRouter').default);
 
     app.use('/auth', require('./auth'));
 

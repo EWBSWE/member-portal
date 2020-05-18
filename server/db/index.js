@@ -18,9 +18,11 @@ const pgp = require('pg-promise')(options);
 
 const db = pgp(process.env.DB_URI)
 
-db.func('version')
-  .then(version => console.log('Connected to DB'))
-  .catch(e => console.log('DB Connection failed'))
+if (process.env.NODE_ENV !== "test") {
+  db.func('version')
+    .then(version => console.log('Connected to DB'))
+    .catch(e => console.log('DB Connection failed'))
+}
 
 module.exports = {
   db: db,

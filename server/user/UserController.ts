@@ -23,14 +23,16 @@ export async function me(userId: number): Promise<MeResponse | null> {
 }
 
 type AllUsersResponse = {
-    email: string,
+    id: number
+    email: string
     role: string
 }[]
 
 function createAllUsersResponse(users: User[]): AllUsersResponse {
-    return users.map(u => ({
-        email: u.username,
-        role: u.role
+    return users.map(user => ({
+        id: user.id,
+        email: user.username,
+        role: user.role
     }))
 }
 
@@ -50,4 +52,16 @@ export async function createUser(email: string): Promise<CreateUserResponse> {
     const user = new UnsavedUser(email, defaultPassword, "user")
     const maybeCreated = await repo.add(user)
     return {}
+}
+
+export async function removeUser(currentUserId: number, userIdToRemove: number): Promise<void> {
+    const repo = UserRepositoryProvider.provide()
+    const currentUser = await repo.get(currentUserId)
+    const otherUser = await repo.get(userIdToRemove)
+
+    if (currentUser?.canRemove(otherUser!!)) {
+        await repo.remove(otherUser!!)
+    } else {
+        throw Error(`Current user ${currentUser} not allowed to remove ${otherUser}`)
+    }
 }

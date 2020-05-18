@@ -13,7 +13,7 @@ describe("UserRepository", function() {
 
 class UserStoreStub implements UserStore {
     create(entity: UserEntity): Promise<UserEntity> {
-        throw Error()
+        throw new Error("Method not implemented.")
     }
 
     async get(id: number): Promise<UserEntity | null> {
@@ -21,6 +21,10 @@ class UserStoreStub implements UserStore {
     }
 
     all(): Promise<UserEntity[]> {
-        throw Error()
+        throw new Error("Method not implemented.")
+    }
+
+    remove(id: number): Promise<void> {
+        throw new Error("Method not implemented.")
     }
 }

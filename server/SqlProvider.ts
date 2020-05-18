@@ -10,10 +10,12 @@ export type SqlProvider = {
     insertUser: QueryFile
     UserById: QueryFile
     Users: QueryFile
+    DeleteUser: QueryFile
 }
 
 export const SqlProvider: SqlProvider = {
     insertUser: inflate("../sql/InsertUser.sql"),
     UserById: inflate("../sql/UserById.sql"),
     Users: inflate("../sql/Users.sql"),
+    DeleteUser: inflate("../sql/DeleteUser.sql"),
 }
