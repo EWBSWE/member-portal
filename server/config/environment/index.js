@@ -1,17 +1,12 @@
 'use strict';
 
-var path = require('path');
-var _ = require('lodash');
+const path = require('path');
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
-let defaultConfig = {
-    env: process.env.NODE_ENV,
-
-    // Root path of server
+module.exports = {
     root: path.normalize(__dirname + '/../../..'),
-
-    // Server port
+    env: process.env.NODE_ENV,
     port: process.env.PORT || 9000,
 
     // Secret for session, you will want to change this and make it an environment variable
@@ -19,18 +14,5 @@ let defaultConfig = {
         session: process.env.EWB_SESSION_SECRET || 'development-secret'
     },
 
-    // List of user roles
     userRoles: ['guest', 'user', 'admin'],
-
-    db: {
-        host: 'localhost',
-        port: 5432,
-        database: 'ewb_dev',
-        user: 'dev',
-        password: 'asdf',
-    },
-
-    developerMail: 'ict@ingenjorerutangranser.se',
 };
-
-module.exports = _.merge(defaultConfig, require(`./${process.env.NODE_ENV}.js`) || {});
