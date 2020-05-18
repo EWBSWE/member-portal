@@ -18,6 +18,15 @@ export class PgUserStore implements UserStore {
     async get(id: number): Promise<UserEntity | null> {
         const result = await db.oneOrNone(this.sqlProvider.UserById, [id]);
         if (result == null) return null
-        return new UserEntity(result.id, result.username, result.hashed_password, result.salt, result.role);
+        return this.entityFromRow(result)
+    }
+
+    async all(): Promise<UserEntity[]> {
+        const result = await db.many(this.sqlProvider.Users)
+        return result.map(row => this.entityFromRow(row))
+    }
+
+    private entityFromRow(row: any): UserEntity {
+        return new UserEntity(row.id, row.username, row.hashed_password, row.salt, row.role)
     }
 }

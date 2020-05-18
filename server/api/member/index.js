@@ -10,14 +10,6 @@ const userController = require('../../user/UserController');
 const router = express.Router();
 
 router.get('/', auth.isAuthenticated(), controller.index);
-router.get(
-  '/me',
-  auth.isAuthenticated(),
-  async (req, res, next) => {
-    const meResponse = await userController.me(req.user.id)
-    return res.status(200).json(meResponse)
-  }
-)
 
 router.get(
   '/chapters',

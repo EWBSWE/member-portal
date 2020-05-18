@@ -19,4 +19,8 @@ class UserStoreStub implements UserStore {
     async get(id: number): Promise<UserEntity | null> {
         return null
     }
+
+    all(): Promise<UserEntity[]> {
+        throw Error()
+    }
 }

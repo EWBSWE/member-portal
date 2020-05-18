@@ -6,9 +6,10 @@ angular.module('ewbMemberApp')
 
     $scope.isAdmin = Auth.isAdmin();
 
-    $http.get('/api/members', { params: { role: ['user', 'admin'] }}).success(function(users) {
-        $scope.users = users;
-    });
+    $http.get('/api/users')
+         .success(function(users) {
+             $scope.users = users;
+         });
 
     $scope.createUser = function() {
         if (!$scope.email) {
