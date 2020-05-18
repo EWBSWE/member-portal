@@ -8,9 +8,11 @@ function inflate(pathToFile: string): QueryFile {
 
 export type SqlProvider = {
     insertUser: QueryFile
+    UserById: QueryFile
 }
 
 export const SqlProvider: SqlProvider = {
-    insertUser: inflate("../sql/InsertUser.sql")
+    insertUser: inflate("../sql/InsertUser.sql"),
+    UserById: inflate("../sql/UserById.sql"),
 }
 

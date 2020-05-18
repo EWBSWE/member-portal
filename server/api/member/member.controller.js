@@ -215,26 +215,6 @@ function bulkCreate(req, res, next) {
     });
 };
 
-function me(req, res, next) {
-    let userId = req.user.id;
-
-    if (!userId) {
-        let forbidden = new Error('Not signed in.');
-        forbidden.status = 403;
-        return next(forbidden);
-    }
-
-    Member.get(userId).then(member => {
-        if (!member) {
-            return res.sendStatus(404);
-        }
-
-        res.status(200).json(member);
-    }).catch(err => {
-        next(err);
-    });
-};
-
 function authCallback(req, res, next) {
     res.redirect('/')
 };
@@ -377,7 +357,6 @@ module.exports = {
   getPayments,
   create,
   bulkCreate,
-  me,
   update,
   destroy,
   authCallback,

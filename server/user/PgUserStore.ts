@@ -12,6 +12,12 @@ export class PgUserStore implements UserStore {
 
     async create(entity: UserEntity): Promise<UserEntity> {
         const result = await db.one(this.sqlProvider.insertUser, [entity.username, entity.hashedPassword, entity.salt, entity.role]);
-        return new UserEntity(result[0], result[1], result[2], result[3]);
+        return new UserEntity(result.id, entity.username, entity.hashedPassword, entity.salt, entity.role);
+    }
+
+    async get(id: number): Promise<UserEntity | null> {
+        const result = await db.oneOrNone(this.sqlProvider.UserById, [id]);
+        if (result == null) return null
+        return new UserEntity(result.id, result.username, result.hashed_password, result.salt, result.role);
     }
 }

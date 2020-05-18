@@ -12,7 +12,12 @@ export class UserRepository {
     async add(user: UnsavedUser): Promise<User> {
         const entity = UserEntity.createFrom(user);
         const updated = await this.userStore.create(entity)
-        return new User(updated.username, updated.role);
+        return new User(updated.id!!, updated.username, updated.role)
+    }
+
+    async get(id: number): Promise<User | null> {
+        const maybe = await this.userStore.get(id)
+        if (!maybe) return null
+        return new User(maybe.id!!, maybe.username, maybe.role);
     }
 }
-

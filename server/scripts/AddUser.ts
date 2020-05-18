@@ -5,7 +5,7 @@ config({ path: path.resolve(__dirname, '../../env' )});
 
 import { UnsavedUser } from '../user/User'
 import { UserRepository } from '../user/UserRepository'
-import { PgUserStore } from '../user/UserStore'
+import { PgUserStore } from '../user/PgUserStore'
 import { SqlProvider } from "../SqlProvider"
 
 const repo = new UserRepository(new PgUserStore(SqlProvider));
