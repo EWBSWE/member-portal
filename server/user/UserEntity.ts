@@ -14,7 +14,7 @@ export class UserEntity {
         this.role = role;
     }
 
-    static foo(user: UnsavedUser): UserEntity {
+    static createFrom(user: UnsavedUser): UserEntity {
         const password = createPassword(user.password);
         return new UserEntity(user.username, password.hashed, password.salt, user.role);
     }

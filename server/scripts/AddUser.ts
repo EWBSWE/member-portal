@@ -6,8 +6,9 @@ config({ path: path.resolve(__dirname, '../../env' )});
 import { UnsavedUser } from '../user/User'
 import { UserRepository } from '../user/UserRepository'
 import { PgUserStore } from '../user/UserStore'
+import { SqlProvider } from "../SqlProvider"
 
-const repo = new UserRepository(new PgUserStore());
+const repo = new UserRepository(new PgUserStore(SqlProvider));
 
 const [,, email, password, role] = process.argv;
 const user = new UnsavedUser(email, password, role);

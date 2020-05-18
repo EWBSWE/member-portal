@@ -10,7 +10,7 @@ export class UserRepository {
     }
 
     async add(user: UnsavedUser): Promise<User> {
-        const entity = UserEntity.foo(user);
+        const entity = UserEntity.createFrom(user);
         const updated = await this.userStore.create(entity)
         return new User(updated.username, updated.role);
     }
