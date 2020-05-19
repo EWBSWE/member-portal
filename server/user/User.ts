@@ -22,6 +22,8 @@ export class UnsavedUser {
     readonly role: Role
     readonly password: string
 
+    resetToken?: string
+
     constructor(username: string, password: string, role: Role) {
         this.username = username;
         this.password = password;

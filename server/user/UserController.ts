@@ -1,6 +1,9 @@
 import { UserRepository } from "./UserRepository"
-import { User, UnsavedUser } from "./User"
-import { Role, serialize } from "./Role"
+import { User } from "./User"
+import { serialize } from "./Role"
+import { OutgoingMessageRepository } from "../outgoing-message/OutgoingMessageRepository"
+import { OutgoingMessageFactory } from "../outgoing-message/OutgoingMessageFactory"
+import { UserFactory } from "./UserFactory"
 
 type MeResponse = {
     id: number,
@@ -33,10 +36,16 @@ type CreateUserResponse = {
 
 
 export class UserController {
+    private userFactory: UserFactory
     private userRepository: UserRepository
+    private messageRepository: OutgoingMessageRepository
+    private messageFactory: OutgoingMessageFactory
 
-    constructor(userRepository: UserRepository) {
-        this.userRepository = userRepository;
+    constructor(userFactory: UserFactory, userRepository: UserRepository, messageRepository: OutgoingMessageRepository, messageFactory: OutgoingMessageFactory) {
+        this.userFactory = userFactory
+        this.userRepository = userRepository
+        this.messageRepository = messageRepository
+        this.messageFactory = messageFactory
     }
 
     async me(userId: number): Promise<MeResponse | null> {
@@ -51,9 +60,12 @@ export class UserController {
     }
 
     async createUser(email: string): Promise<CreateUserResponse> {
-        const defaultPassword = "Change by reset password?"
-        const user = new UnsavedUser(email, defaultPassword, Role.USER)
-        const maybeCreated = await this.userRepository.add(user)
+        const user = this.userFactory.create(email)
+        await this.userRepository.add(user)
+
+        const message = this.messageFactory.userCreated(email)
+        await this.messageRepository.enqueue(message)
+
         return {}
     }
 

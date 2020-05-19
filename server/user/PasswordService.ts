@@ -29,3 +29,11 @@ export function createPassword(password: string): Password {
 export function authenticate(plain: string, salt: string, hashedPassword: string): boolean {
     return hash(plain, salt) === hashedPassword;
 }
+
+export function randomPassword(): string {
+    return crypto.randomBytes(24).toString('hex')
+}
+
+export function createResetToken(): string {
+    return crypto.randomBytes(24).toString('hex')
+}

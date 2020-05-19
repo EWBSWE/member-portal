@@ -3,14 +3,28 @@ import * as auth from "../auth/auth.service"
 import { UserController } from "./UserController"
 import { PgUserStore } from "./PgUserStore"
 import { UserRepository } from "./UserRepository"
+import { UserFactory } from "./UserFactory"
 import { SqlProvider } from "../SqlProvider"
 import * as logger from "../config/logger"
+import { OutgoingMessageRepository } from "../outgoing-message/OutgoingMessageRepository"
+import { OutgoingMessageFactory } from "../outgoing-message/OutgoingMessageFactory"
+import { PgOutgoingMessageStore } from "../outgoing-message/PgOutgoingMessageStore"
+import { db } from "../db"
 
 const router = express.Router()
 
-const userStore = new PgUserStore(SqlProvider)
+const userFactory = new UserFactory()
+const userStore = new PgUserStore(db, SqlProvider)
 const userRepository = new UserRepository(userStore)
-const controller = new UserController(userRepository)
+
+const noReply = process.env.NO_REPLY
+const appUrl = process.env.APP_URL + "/login"
+const messageFactory = new OutgoingMessageFactory(noReply!, appUrl)
+
+const messageStore = new PgOutgoingMessageStore(db, SqlProvider)
+const messageRepository = new OutgoingMessageRepository(messageStore)
+
+const controller = new UserController(userFactory, userRepository, messageRepository, messageFactory)
 
 router.get("/me", auth.isAuthenticated(), async (req, res, next) => {
     // todo: Update Request interface

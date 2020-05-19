@@ -214,5 +214,7 @@ CREATE TABLE ewb_user (
     salt TEXT NOT NULL,
     role TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    reset_validity TIMESTAMPTZ,
+    reset_token TEXT
 )

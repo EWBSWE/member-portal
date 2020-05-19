@@ -17,6 +17,6 @@ export function deserialize(role: string): Role {
         return Role.USER;
     if (role === "admin")
         return Role.ADMIN;
-    throw Error(`Unknown role ${role}`);
+    throw Error(`Unknown role [${role}]`);
 
 }

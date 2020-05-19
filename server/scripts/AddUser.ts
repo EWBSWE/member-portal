@@ -8,8 +8,9 @@ import { UserRepository } from '../user/UserRepository'
 import { PgUserStore } from '../user/PgUserStore'
 import { SqlProvider } from "../SqlProvider"
 import { deserialize } from "../user/Role"
+import { db } from "../db"
 
-const repo = new UserRepository(new PgUserStore(SqlProvider))
+const repo = new UserRepository(new PgUserStore(db, SqlProvider))
 
 const [,, email, password, role] = process.argv
 const user = new UnsavedUser(email, password, deserialize(role))
