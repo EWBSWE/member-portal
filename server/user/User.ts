@@ -1,9 +1,12 @@
-import { Role } from "./Role";
+import { Role, deserialize } from "./Role";
+import { UserEntity } from "./UserEntity";
 
 export class User {
     readonly id: number
     readonly username: string
     readonly role: Role
+
+    resetToken?: string
 
     constructor(id: number, username: string, role: Role) {
         this.id = id;
@@ -14,6 +17,12 @@ export class User {
     canRemove(other: User): boolean {
         if (this.role == Role.ADMIN) return true
         return other.role != Role.ADMIN
+    }
+
+    static fromEntity(entity: UserEntity): User {
+        const user = new User(entity.id!, entity.username, deserialize(entity.role))
+        user.resetToken = entity.resetToken
+        return user
     }
 }
 

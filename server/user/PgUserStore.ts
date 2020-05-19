@@ -39,5 +39,16 @@ export class PgUserStore implements UserStore {
     async remove(id: number): Promise<void> {
         await this.db.any(this.sqlProvider.DeleteUser, [id])
     }
+
+    async findByEmail(email: string): Promise<UserEntity | null> {
+        const result = await this.db.oneOrNone<PgUserEntity>(this.sqlProvider.UserByEmail, [email])
+        if (result == null) return null
+        return this.entityFromRow(result)
+    }
+
+    async changePassword(id: number, token: string): Promise<void> {
+        const params = [id, token]
+        await this.db.one(this.sqlProvider.UserChangePassword, params)
+    }
 }
 

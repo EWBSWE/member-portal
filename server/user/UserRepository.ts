@@ -30,4 +30,14 @@ export class UserRepository {
     async remove(user: User): Promise<void> {
         return this.userStore.remove(user.id)
     }
+
+    async findByEmail(email: string): Promise<User | null> {
+        const maybe = await this.userStore.findByEmail(email)
+        if (maybe == null) return null
+        return User.fromEntity(maybe)
+    }
+
+    async updateResetToken(user: User): Promise<void> {
+        await this.userStore.changePassword(user.id, user.resetToken!)
+    }
 }

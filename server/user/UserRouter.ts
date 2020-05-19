@@ -18,8 +18,8 @@ const userStore = new PgUserStore(db, SqlProvider)
 const userRepository = new UserRepository(userStore)
 
 const noReply = process.env.NO_REPLY
-const appUrl = process.env.APP_URL + "/login"
-const messageFactory = new OutgoingMessageFactory(noReply!, appUrl)
+const appUrl = process.env.APP_URL
+const messageFactory = new OutgoingMessageFactory(noReply!, appUrl!)
 
 const messageStore = new PgOutgoingMessageStore(db, SqlProvider)
 const messageRepository = new OutgoingMessageRepository(messageStore)
@@ -53,6 +53,18 @@ router.delete("/:id", auth.isAuthenticated(), async (req, res, next) => {
         // todo: Update Request interface
         //@ts-ignore
         const response = await controller.removeUser(req.user.id, req.params.id)
+        return res.sendStatus(200)
+    } catch (e) {
+        logger.error(e)
+        return res.sendStatus(400)
+    }
+})
+
+router.post("/reset-password", async (req, res, next) => {
+    const email = req.body.email
+    if (!email) return res.sendStatus(400)
+    try {
+        const response = await controller.resetPassword(email)
         return res.sendStatus(200)
     } catch (e) {
         logger.error(e)

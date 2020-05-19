@@ -23,6 +23,12 @@ describe("UserRepository", function() {
 })
 
 class DummyUserStore implements UserStore {
+    findByEmail(email: string): Promise<UserEntity | null> {
+        throw new Error("Method not implemented.")
+    }
+    changePassword(id: number, token: string): Promise<void> {
+        throw new Error("Method not implemented.")
+    }
     create(entity: UserEntity): Promise<UserEntity> {
         throw new Error("Method not implemented.")
     }

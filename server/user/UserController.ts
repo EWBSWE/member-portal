@@ -4,6 +4,7 @@ import { serialize } from "./Role"
 import { OutgoingMessageRepository } from "../outgoing-message/OutgoingMessageRepository"
 import { OutgoingMessageFactory } from "../outgoing-message/OutgoingMessageFactory"
 import { UserFactory } from "./UserFactory"
+import { createResetToken } from "./PasswordService"
 
 type MeResponse = {
     id: number,
@@ -78,5 +79,15 @@ export class UserController {
         } else {
             throw Error(`Current user ${currentUser} not allowed to remove ${otherUser}`)
         }
+    }
+
+    async resetPassword(email: string): Promise<void> {
+        const user = await this.userRepository.findByEmail(email)
+        if (user == null) throw new Error(`No user with ${email} found`)
+        user.resetToken = createResetToken()
+        await this.userRepository.updateResetToken(user)
+
+        const message = this.messageFactory.resetPassword(email, user.resetToken)
+        await this.messageRepository.enqueue(message)
     }
 }

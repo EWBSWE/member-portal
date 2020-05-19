@@ -5,7 +5,6 @@ const controller = require('./member.controller');
 const controller2 = require('./MemberController');
 const auth = require('../../auth/auth.service');
 const RouteBuilder = require('../../RouteBuilder');
-const userController = require('../../user/UserController');
 
 const router = express.Router();
 
@@ -31,9 +30,6 @@ router.post(
     ])
     .build()
 );
-
-router.post('/reset-password', controller.resetPassword);
-router.post('/reset-password-token', controller.resetPasswordWithToken);
 
 router.put(
     '/:id',

@@ -12,6 +12,8 @@ export type SqlProvider = {
     Users: QueryFile
     DeleteUser: QueryFile
     InsertOutgoingMessage: QueryFile
+    UserByEmail: QueryFile
+    UserChangePassword: QueryFile
 }
 
 export const SqlProvider: SqlProvider = {
@@ -20,4 +22,6 @@ export const SqlProvider: SqlProvider = {
     Users: inflate("../sql/Users.sql"),
     DeleteUser: inflate("../sql/DeleteUser.sql"),
     InsertOutgoingMessage: inflate("../sql/InsertOutgoingMessage.sql"),
+    UserByEmail: inflate("../sql/UserByEmail.sql"),
+    UserChangePassword: inflate("../sql/UserChangePassword.sql"),
 }
