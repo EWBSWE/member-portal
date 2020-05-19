@@ -1,5 +1,6 @@
 import { UserRepository } from "./UserRepository"
 import { User, UnsavedUser } from "./User"
+import { Role, serialize } from "./Role"
 
 type MeResponse = {
     id: number,
@@ -9,7 +10,7 @@ type MeResponse = {
 function createMeResponse(user: User): MeResponse {
     return {
         id: user.id,
-        role: user.role
+        role: serialize(user.role)
     }
 }
 
@@ -23,7 +24,7 @@ function createAllUsersResponse(users: User[]): AllUsersResponse {
     return users.map(user => ({
         id: user.id,
         email: user.username,
-        role: user.role
+        role: serialize(user.role)
     }))
 }
 
@@ -51,7 +52,7 @@ export class UserController {
 
     async createUser(email: string): Promise<CreateUserResponse> {
         const defaultPassword = "Change by reset password?"
-        const user = new UnsavedUser(email, defaultPassword, "user")
+        const user = new UnsavedUser(email, defaultPassword, Role.USER)
         const maybeCreated = await this.userRepository.add(user)
         return {}
     }

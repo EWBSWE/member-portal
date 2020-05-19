@@ -1,29 +1,37 @@
 import { assert } from "chai"
+
+import * as sinon from "sinon"
 import { UserRepository } from "../../user/UserRepository"
 import { UserStore } from "../../user/UserStore"
 import { UserEntity } from "../../user/UserEntity"
 
 describe("UserRepository", function() {
+    const sandbox = sinon.createSandbox()
+
+    afterEach(function() {
+        sandbox.restore()
+    })
+
     it("returns null when no user found", async function() {
-        const sut = new UserRepository(new UserStoreStub())
+        const userStoreStub = sandbox.createStubInstance(DummyUserStore)
+        userStoreStub.get.resolves(null)
+
+        const sut = new UserRepository(userStoreStub)
         const result = await sut.get(4)
         assert.equal(result, null)
     })
 })
 
-class UserStoreStub implements UserStore {
+class DummyUserStore implements UserStore {
     create(entity: UserEntity): Promise<UserEntity> {
         throw new Error("Method not implemented.")
     }
-
-    async get(id: number): Promise<UserEntity | null> {
-        return null
+    get(id: number): Promise<UserEntity | null> {
+        throw new Error("Method not implemented.")
     }
-
     all(): Promise<UserEntity[]> {
         throw new Error("Method not implemented.")
     }
-
     remove(id: number): Promise<void> {
         throw new Error("Method not implemented.")
     }

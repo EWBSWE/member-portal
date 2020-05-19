@@ -1,12 +1,13 @@
 import { assert } from "chai"
 import { User } from "../../user/User"
+import { Role } from "../../user/Role"
 
 function createUser(): User {
-    return new User(1, "Dummy username", "user")
+    return new User(1, "Dummy username", Role.USER)
 }
 
 function createAdmin(): User {
-    return new User(1, "Dummy username", "admin")
+    return new User(1, "Dummy username", Role.ADMIN)
 }
 
 describe("User", function() {

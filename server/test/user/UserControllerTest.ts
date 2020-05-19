@@ -7,6 +7,7 @@ import * as sinon from "sinon"
 import { UserController } from "../../user/UserController"
 import { UserRepository } from "../../user/UserRepository"
 import { User } from "../../user/User"
+import { Role } from "../../user/Role"
 
 describe("UserController", function() {
     const sandbox = sinon.createSandbox()
@@ -15,8 +16,8 @@ describe("UserController", function() {
         sandbox.restore()
     })
 
-    const user = new User(1, "dummy username", "user")
-    const admin = new User(2, "dummy username", "admin")
+    const user = new User(1, "dummy username", Role.USER)
+    const admin = new User(2, "dummy username", Role.ADMIN)
     const userRepositoryStub = createStubRepo(sandbox, [user, admin])
 
     it("resolves if user can remove other user", async function() {

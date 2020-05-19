@@ -1,4 +1,5 @@
 import { UnsavedUser } from './User'
+import { Role, serialize } from "./Role"
 import { createPassword } from './PasswordService'
 
 export class UserEntity {
@@ -8,12 +9,12 @@ export class UserEntity {
     readonly salt: string
     readonly role: string
 
-    constructor(id: number | null, username: string, hashedPassword: string, salt: string, role: string) {
+    constructor(id: number | null, username: string, hashedPassword: string, salt: string, role: Role) {
         this.id = id 
         this.username = username
         this.hashedPassword = hashedPassword
         this.salt = salt
-        this.role = role
+        this.role = serialize(role)
     }
 
     static createFrom(user: UnsavedUser): UserEntity {

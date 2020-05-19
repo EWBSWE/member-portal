@@ -7,20 +7,21 @@ import { UnsavedUser } from '../user/User'
 import { UserRepository } from '../user/UserRepository'
 import { PgUserStore } from '../user/PgUserStore'
 import { SqlProvider } from "../SqlProvider"
+import { deserialize } from "../user/Role"
 
-const repo = new UserRepository(new PgUserStore(SqlProvider));
+const repo = new UserRepository(new PgUserStore(SqlProvider))
 
-const [,, email, password, role] = process.argv;
-const user = new UnsavedUser(email, password, role);
+const [,, email, password, role] = process.argv
+const user = new UnsavedUser(email, password, deserialize(role))
 
-console.log(`Creating user ${user}`);
+console.log(`Creating user ${user}`)
 
 repo.add(user)
     .then(user => {
-        console.log(`User ${user} created`);
-        process.exit(1);
+        console.log(`User ${user} created`)
+        process.exit(1)
     })
     .catch(err => {
-        console.log(err);
-        process.exit(1);
+        console.log(err)
+        process.exit(1)
     })
