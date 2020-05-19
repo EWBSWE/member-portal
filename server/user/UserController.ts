@@ -1,6 +1,5 @@
 import { UserRepository } from "./UserRepository"
 import { User, UnsavedUser } from "./User"
-import * as UserRepositoryProvider from "./UserRepositoryProvider"
 
 type MeResponse = {
     id: number,
@@ -12,14 +11,6 @@ function createMeResponse(user: User): MeResponse {
         id: user.id,
         role: user.role
     }
-}
-
-export async function me(userId: number): Promise<MeResponse | null> {
-    // todo: disapproves of the global stuff
-    const repo = UserRepositoryProvider.provide();
-    const maybe = await repo.get(userId)
-    if (maybe == null) return null
-    return createMeResponse(maybe)
 }
 
 type AllUsersResponse = {
@@ -36,32 +27,43 @@ function createAllUsersResponse(users: User[]): AllUsersResponse {
     }))
 }
 
-export async function allUsers(): Promise<AllUsersResponse> {
-    const repo = UserRepositoryProvider.provide()
-    const users = await repo.all()
-    return createAllUsersResponse(users)
-}
-
-
 type CreateUserResponse = {
 }
 
-export async function createUser(email: string): Promise<CreateUserResponse> {
-    const repo = UserRepositoryProvider.provide()
-    const defaultPassword = "Change by reset password?"
-    const user = new UnsavedUser(email, defaultPassword, "user")
-    const maybeCreated = await repo.add(user)
-    return {}
-}
 
-export async function removeUser(currentUserId: number, userIdToRemove: number): Promise<void> {
-    const repo = UserRepositoryProvider.provide()
-    const currentUser = await repo.get(currentUserId)
-    const otherUser = await repo.get(userIdToRemove)
+export class UserController {
+    private userRepository: UserRepository
 
-    if (currentUser?.canRemove(otherUser!!)) {
-        await repo.remove(otherUser!!)
-    } else {
-        throw Error(`Current user ${currentUser} not allowed to remove ${otherUser}`)
+    constructor(userRepository: UserRepository) {
+        this.userRepository = userRepository;
+    }
+
+    async me(userId: number): Promise<MeResponse | null> {
+        const maybe = await this.userRepository.get(userId)
+        if (maybe == null) return null
+        return createMeResponse(maybe)
+    }
+
+    async allUsers(): Promise<AllUsersResponse> {
+        const users = await this.userRepository.all()
+        return createAllUsersResponse(users)
+    }
+
+    async createUser(email: string): Promise<CreateUserResponse> {
+        const defaultPassword = "Change by reset password?"
+        const user = new UnsavedUser(email, defaultPassword, "user")
+        const maybeCreated = await this.userRepository.add(user)
+        return {}
+    }
+
+    async removeUser(currentUserId: number, userIdToRemove: number): Promise<void> {
+        const currentUser = await this.userRepository.get(currentUserId)
+        const otherUser = await this.userRepository.get(userIdToRemove)
+
+        if (currentUser?.canRemove(otherUser!!)) {
+            await this.userRepository.remove(otherUser!!)
+        } else {
+            throw Error(`Current user ${currentUser} not allowed to remove ${otherUser}`)
+        }
     }
 }
