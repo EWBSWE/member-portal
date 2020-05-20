@@ -1,4 +1,5 @@
 import * as crypto from 'crypto';
+import { User } from './User';
 
 function hash(text: string, salt: string): string {
     const buffer = Buffer.from(salt, 'base64');
@@ -10,7 +11,7 @@ function createSalt(): string {
     return crypto.randomBytes(16).toString('base64')
 }
 
-class Password {
+export class Password {
     readonly hashed: string
     readonly salt: string
 
@@ -36,4 +37,8 @@ export function randomPassword(): string {
 
 export function createResetToken(): string {
     return crypto.randomBytes(24).toString('hex')
+}
+
+export function resetPasswordAllowed(user: User): boolean {
+    return Date.now() <= user.resetValidity!.getTime()
 }

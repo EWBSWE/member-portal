@@ -6,5 +6,7 @@ export interface UserStore {
     all(): Promise<UserEntity[]>
     remove(id: number): Promise<void>
     findByEmail(email: string): Promise<UserEntity | null>
-    changePassword(id: number, token: string): Promise<void>
+    findByToken(token: string): Promise<UserEntity | null>
+    updateResetToken(id: number, token: string): Promise<void>
+    changePassword(id: number, hashed: string, salt: string): Promise<void>
 }

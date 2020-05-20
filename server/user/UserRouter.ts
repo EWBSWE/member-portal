@@ -72,4 +72,19 @@ router.post("/reset-password", async (req, res, next) => {
     }
 })
 
+router.post("/reset-password-token", async (req, res, next) => {
+    const token = req.body.token
+    const newPassword = req.body.newPassword
+    if (!token || !newPassword) return res.sendStatus(400)
+    try {
+        logger.debug(`Setting new password`)
+        await controller.setPassword(token, newPassword)
+        return res.sendStatus(200)
+    } catch (e) {
+        logger.error(e)
+        return res.sendStatus(400)
+    }
+})
+
+
 export default router

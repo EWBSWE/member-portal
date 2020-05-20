@@ -10,6 +10,7 @@ export class UserEntity {
     readonly role: string
 
     resetToken?: string
+    resetValidity?: Date
 
     constructor(id: number | null, username: string, hashedPassword: string, salt: string, role: string) {
         this.id = id 

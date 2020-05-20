@@ -19,8 +19,8 @@ describe("UserController", function() {
         sandbox.restore()
     })
 
-    const user = new User(1, "dummy username", Role.USER)
-    const admin = new User(2, "dummy username", Role.ADMIN)
+    const user = new User(1, "dummy username", Role.USER, "dummy", "dummy")
+    const admin = new User(2, "dummy username", Role.ADMIN, "dummy", "dummy")
 
     const dummyUserFactory = new UserFactory()
     const dummyMessageFactory = new OutgoingMessageFactory("noreply@localhost", "localhost")

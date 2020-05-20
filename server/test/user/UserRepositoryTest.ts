@@ -2,8 +2,7 @@ import { assert } from "chai"
 
 import * as sinon from "sinon"
 import { UserRepository } from "../../user/UserRepository"
-import { UserStore } from "../../user/UserStore"
-import { UserEntity } from "../../user/UserEntity"
+import { PgUserStore } from "../../user/PgUserStore"
 
 describe("UserRepository", function() {
     const sandbox = sinon.createSandbox()
@@ -13,7 +12,7 @@ describe("UserRepository", function() {
     })
 
     it("returns null when no user found", async function() {
-        const userStoreStub = sandbox.createStubInstance(DummyUserStore)
+        const userStoreStub = sandbox.createStubInstance(PgUserStore)
         userStoreStub.get.resolves(null)
 
         const sut = new UserRepository(userStoreStub)
@@ -21,24 +20,3 @@ describe("UserRepository", function() {
         assert.equal(result, null)
     })
 })
-
-class DummyUserStore implements UserStore {
-    findByEmail(email: string): Promise<UserEntity | null> {
-        throw new Error("Method not implemented.")
-    }
-    changePassword(id: number, token: string): Promise<void> {
-        throw new Error("Method not implemented.")
-    }
-    create(entity: UserEntity): Promise<UserEntity> {
-        throw new Error("Method not implemented.")
-    }
-    get(id: number): Promise<UserEntity | null> {
-        throw new Error("Method not implemented.")
-    }
-    all(): Promise<UserEntity[]> {
-        throw new Error("Method not implemented.")
-    }
-    remove(id: number): Promise<void> {
-        throw new Error("Method not implemented.")
-    }
-}

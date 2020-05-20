@@ -7,21 +7,25 @@ function inflate(pathToFile: string): QueryFile {
 }
 
 export type SqlProvider = {
-    insertUser: QueryFile
+    InsertUser: QueryFile
     UserById: QueryFile
     Users: QueryFile
     DeleteUser: QueryFile
     InsertOutgoingMessage: QueryFile
     UserByEmail: QueryFile
     UserChangePassword: QueryFile
+    UserResetPassword: QueryFile
+    UserByToken: QueryFile
 }
 
 export const SqlProvider: SqlProvider = {
-    insertUser: inflate("../sql/InsertUser.sql"),
+    InsertUser: inflate("../sql/InsertUser.sql"),
     UserById: inflate("../sql/UserById.sql"),
     Users: inflate("../sql/Users.sql"),
     DeleteUser: inflate("../sql/DeleteUser.sql"),
     InsertOutgoingMessage: inflate("../sql/InsertOutgoingMessage.sql"),
     UserByEmail: inflate("../sql/UserByEmail.sql"),
+    UserByToken: inflate("../sql/UserByToken.sql"),
     UserChangePassword: inflate("../sql/UserChangePassword.sql"),
+    UserResetPassword: inflate("../sql/UserResetPassword.sql"),
 }

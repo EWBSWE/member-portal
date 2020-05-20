@@ -1,3 +1,4 @@
+import { UserEntity } from "./UserEntity";
 
 export type PgUserEntity = {
     id: number;
@@ -9,3 +10,10 @@ export type PgUserEntity = {
     reset_token?: string;
     reset_validity?: Date;
 };
+
+export function toUserEntity(row: PgUserEntity): UserEntity {
+    const entity = new UserEntity(row.id, row.username, row.hashed_password, row.salt, row.role)
+    entity.resetToken = row.reset_token
+    entity.resetValidity = row.reset_validity
+    return entity
+}

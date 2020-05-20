@@ -4,7 +4,7 @@ import { serialize } from "./Role"
 import { OutgoingMessageRepository } from "../outgoing-message/OutgoingMessageRepository"
 import { OutgoingMessageFactory } from "../outgoing-message/OutgoingMessageFactory"
 import { UserFactory } from "./UserFactory"
-import { createResetToken } from "./PasswordService"
+import { createResetToken, createPassword, resetPasswordAllowed } from "./PasswordService"
 
 type MeResponse = {
     id: number,
@@ -89,5 +89,12 @@ export class UserController {
 
         const message = this.messageFactory.resetPassword(email, user.resetToken)
         await this.messageRepository.enqueue(message)
+    }
+
+    async setPassword(token: string, newPassword: string): Promise<void> {
+        const user = await this.userRepository.findByToken(token)
+        if (user == null) throw new Error(`No user found with token`)
+        if (!resetPasswordAllowed(user)) throw new Error("User outside reset period")
+        await this.userRepository.changePassword(user, createPassword(newPassword))
     }
 }

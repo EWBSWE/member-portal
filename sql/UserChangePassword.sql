@@ -1,6 +1,5 @@
 UPDATE ewb_user
 SET
-    reset_validity = NOW() + '15 minutes'::interval,
-    reset_token = $2
+    hashed_password = $2,
+    salt = $3
 WHERE id = $1
-RETURNING reset_token
