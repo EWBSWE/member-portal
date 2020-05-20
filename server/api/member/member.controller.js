@@ -7,17 +7,12 @@
 
 'use strict';
 
-const moment = require('moment');
 const crypto = require('crypto');
-
-const stripe = require('../../stripe');
 
 const Member = require('../../models/member.model');
 const Payment = require('../../models/payment.model');
 const OutgoingMessage = require('../../models/outgoing-message.model');
 const ewbMail = require('../../components/ewb-mail');
-
-const Product = require('../../models/product.model');
 
 /**
  * Returns all members.
@@ -129,20 +124,6 @@ function create(req, res, next) {
     }
 };
 
-function update(req, res, next) {
-    if (!req.body) {
-        let badRequest = new Error('Bad request.');
-        badRequest.status = 400;
-        return next(badRequest);
-    }
-
-    Member.update(req.params.id, req.body).then(data => {
-        res.status(202).json(data);
-    }).catch(err => {
-        next(err);
-    });
-};
-
 function destroy(req, res, next) {
     Member.get(req.params.id).then(member => {
         if ((member.role === 'admin' || member.role === 'user') && req.user.role !== 'admin') {
@@ -159,208 +140,15 @@ function destroy(req, res, next) {
     });
 };
 
-function bulkCreate(req, res, next) {
-    if (!req.body.members) {
-        let badRequest = new Error('Bad request.');
-        badRequest.status = 400;
-        return next(badRequest);
-    }
-
-    let roles = req.body.members.map(m => { return m.role });
-    if (req.user.role === 'user' && roles.includes('admin')) {
-        return res.sendStatus(403);
-    }
-
-    let emails = req.body.members.map(m => { return m.email; });
-
-    Member.findBy({ email: emails }).then(members => {
-        // First we filter out any existing members
-        let existingMembers = members.map(m => { return m.email; });
-
-        // Filter out members that do not exists yet and has valid
-        // attributes
-        let toCreate = req.body.members.filter(m => {
-            return !existingMembers.includes(m.email) && Member.validate(m);
-        });
-
-        let toUpdate = req.body.members.filter(m => {
-            return existingMembers.includes(m.email);
-        }).map(m => {
-            // Should always find someone since we already filtered out
-            // existing members.
-            let current = members.filter(c => { return c.email === m.email; })[0];
-
-            // Map id to its respective input
-            return Object.assign(m, { id: current.id });
-        });
-
-        // Filter out the remaining invalid members
-        let toReject = req.body.members.filter(m => {
-            return !Member.validate(m);
-        });
-
-        return Member.create(toCreate).then(created => {
-            let updates = toUpdate.map(m => { return Member.update(m.id, m)});
-
-            return Promise.all(updates);
-        }).then(() => {
-            res.status(201).json({
-                updated: toUpdate,
-                created: toCreate,
-                invalid: toReject,
-            });
-        });
-    }).catch(err => {
-        next(err)
-    });
-};
-
 function authCallback(req, res, next) {
     res.redirect('/')
 };
-
-/**
- * Reset password
- *
- * @memberOf controller.Member
- *
- * @param {object} req Request
- * @param {object} res Response
- * @param {object} next Error
- */
-function resetPassword(req, res, next) {
-    if (!req.body.email) {
-        let badRequest = new Error('Bad request.');
-        badRequest.status = 400;
-        return next(badRequest);
-    }
-
-    Member.find(req.body.email).then(member => {
-        if (!member) {
-            return Promise.reject('Member not found');
-        }
-
-        return Member.createResetToken(member.id);
-    }).then(member => {
-        let url = 'http://localhost:9000/reset-password?token=' + member.reset_token;
-        if (process.env.NODE_ENV === 'production') {
-            // TODO: Fix this URL
-            url = 'https://blimedlem.ingenjorerutangranser.se/reset-password?token=' + member.reset_token;
-        }
-
-        return OutgoingMessage.create({
-            sender: 'noreply@ingenjorerutangranser.se',
-            recipient: member.email,
-            subject: ewbMail.getSubject('reset-password'),
-            body: ewbMail.getBody('reset-password', { url: url }),
-        });
-    }).then(() => {
-        res.sendStatus(202);
-    }).catch(err => {
-        // Even though we didn't find any member with that email we pretend
-        // that we did just to prevent leaking out information about any
-        // email addresses that we have or may not have.
-        res.sendStatus(202);
-    });
-};
-
-/**
- * Reset password with token
- *
- * @memberOf controller.Member
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Object} next - Express error function
- */
-function resetPasswordWithToken(req, res, next) {
-    if (!req.body.token || !req.body.newPassword) {
-        let badRequest = new Error('Bad request.');
-        badRequest.status = 400;
-        return next(badRequest);
-    }
-
-    Member.findBy({ resetToken: req.body.token }).then(members => {
-        if (members.length > 1) {
-            return Promise.reject('Token invalid');
-        }
-
-        if (members.length === 0) {
-            return Promise.reject('No member found');
-        }
-
-        let member = members[0];
-
-        if (moment().isAfter(moment(member.reset_validity))) {
-            return Promise.reject('Token invalid');
-        }
-
-        return Member.update(member.id, {
-            newPassword: req.body.newPassword,
-            resetToken: req.body.token
-        });
-    }).then(member => {
-        res.sendStatus(202);
-    }).catch(err => {
-        next(err);
-    });
-};
-
-async function createMemberFromPurchase(params) {
-  const email = params.email.trim();
-  const productId = params.productId;
-  const stripeToken = params.stripeToken;
-
-  const name = params.name;
-  const location = params.location;
-  const profession = params.profession;
-  const education = params.education;
-  const gender = params.gender;
-  const yearOfBirth = params.yearOfBirth;
-
-  const memberAttributes = {
-    email,
-    name,
-    location,
-    profession,
-    education,
-    gender,
-    yearOfBirth
-  };
-
-  const membershipProduct = await Product.get(productId);
-
-  memberAttributes.memberTypeId = membershipProduct.attribute.member_type_id;
-
-  await stripe.processCharge2(
-    stripeToken,
-    membershipProduct.currency_code,
-    membershipProduct.price,
-    membershipProduct.name
-  );
-
-  const maybeMembers = await Member.findBy({ email: memberAttributes.email });
-
-  const member = maybeMembers.length === 0 ?
-	await Member.create(memberAttributes) :
-	await Member.update(maybeMembers[0].id, memberAttributes);
-
-  const extendedMember = await Member.extendMembership(member, membershipProduct);
-  const payment = await Payment.create({ member, products: [membershipProduct] });
-
-  await OutgoingMessage.createMembership(memberAttributes.email, extendedMember.expiration_date);
-  await OutgoingMessage.createReceipt(memberAttributes.email, [membershipProduct]);
-}
 
 module.exports = {
   index,
   get,
   getPayments,
   create,
-  bulkCreate,
-  update,
   destroy,
   authCallback,
-  resetPassword,
-  resetPasswordWithToken,
-  createMemberFromPurchase
 };
