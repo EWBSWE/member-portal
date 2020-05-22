@@ -11,7 +11,6 @@ router.get('/stripe-checkout', controller.stripeCheckoutKey);
 router.get('/report', auth.isAuthenticated(), controller.generateReport);
 router.get('/:id(\\d+)', auth.isAuthenticated(), controller.get);
 
-router.post('/confirm', controller.confirmMembershipPayment);
 router.post('/confirm-event', controller.confirmEventPayment);
 
 module.exports = router;

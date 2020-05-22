@@ -72,41 +72,8 @@ function create(req, res, next) {
     }
 
     if (req.body.role) {
-        if (req.user.role === 'user' && req.body.role === 'admin') {
-            let forbidden = new Error('Forbidden');
-            forbidden.status = 403;
-            return next(forbidden);
-        }
-
-        let randomPassword = crypto.randomBytes(24).toString('hex');
-
-        Member.findBy({email: req.body.email }).then(members => {
-            if (members.length === 0) {
-                return Member.create({
-                    email: req.body.email,
-                    password: randomPassword,
-                    role: req.body.role
-                });
-            }
-
-            let userOrAdmin = req.body.role === 'admin' ? 'admin' : 'user';
-
-            return Member.update(members[0].id, {role: userOrAdmin}).then(m => {
-                return Member.createResetToken(members[0].id);
-            });
-        }).then(member => {
-            let url = 'https://blimedlem.ingenjorerutangranser.se/login';
-            return OutgoingMessage.create({
-                sender: ewbMail.noreply(),
-                recipient: member.email,
-                subject: ewbMail.getSubject('create-user'),
-                body: ewbMail.getBody('create-user', { url: url })
-            });
-        }).then(() => {
-            res.sendStatus(201);
-        }).catch(err => {
-            next(err);
-        });
+        const error = new Error("Create user is removed");
+        return next(error);
     } else {
         Member.findBy({email: req.body.email}).then(members => {
             if (members.length > 0) {
