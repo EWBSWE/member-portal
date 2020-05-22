@@ -37,7 +37,6 @@ router.put(
     new RouteBuilder(controller2.update)
         .build()
 );
-// router.put('/:id', auth.isAuthenticated(), controller.update);
 
 router.delete('/:id', auth.isAuthenticated(), controller.destroy);
 
