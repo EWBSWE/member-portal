@@ -7,6 +7,10 @@ angular.module('ewbMemberApp')
         templateUrl: 'app/member/membership/membership.html',
         controller: 'MembershipCtrl'
       })
+      .when('/renew', {
+        templateUrl: 'app/member/membership/membership.html',
+        controller: 'MembershipCtrl'
+      })
       .when('/fornya-medlemskap', {
         templateUrl: 'app/member/membership/membership.html',
         controller: 'MembershipCtrl'

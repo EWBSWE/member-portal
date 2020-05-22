@@ -104,5 +104,5 @@ angular.module('ewbMemberApp')
         }
     };
 
-    $scope.renewalMode = $location.path() === '/fornya-medlemskap';
+    $scope.renewalMode = $location.path() === '/renew' || $location.path() === '/fornya-medlemskap';
 });

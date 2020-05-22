@@ -21,7 +21,7 @@ const body = `Hello,
 
 you receive this email because your membership soon expires and we would like to see that you would continue to support our organization. Your contribution and involvement is a part of the growth that Engineers without borders has reached over the last year. Both active and supporting members are very important since it allows us to continue our work as a non-profit organization.
 
-If you wish to extend your membership, follow the instructions at http://blimedlem.ingenjorerutangranser.se/fornya-medlemskap.
+If you wish to extend your membership, follow the instructions at https://member.ewb-swe.org/renew.
 
 If you have any questions or thoughts, don't hesitate to get in touch with us.
 
