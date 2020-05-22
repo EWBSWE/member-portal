@@ -60,6 +60,20 @@ router.delete("/:id", auth.isAuthenticated(), async (req, res, next) => {
     }
 })
 
+router.put("/:id", auth.isAuthenticated(), async (req, res, next) => {
+    const currentPassword = req.body.password
+    const newPassword = req.body.newPassword
+    if (!currentPassword || !newPassword) return res.sendStatus(400)
+    try {
+        //@ts-ignore
+        const response = await controller.changePassword(req.params.id, currentPassword, newPassword)
+        return res.sendStatus(200)
+    } catch (e) {
+        logger.error(e)
+        return res.sendStatus(400)
+    }
+})
+
 router.post("/reset-password", async (req, res, next) => {
     const email = req.body.email
     if (!email) return res.sendStatus(400)

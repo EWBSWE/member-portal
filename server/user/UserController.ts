@@ -4,7 +4,7 @@ import { serialize } from "./Role"
 import { OutgoingMessageRepository } from "../outgoing-message/OutgoingMessageRepository"
 import { OutgoingMessageFactory } from "../outgoing-message/OutgoingMessageFactory"
 import { UserFactory } from "./UserFactory"
-import { createResetToken, createPassword, resetPasswordAllowed } from "./PasswordService"
+import { createResetToken, createPassword, resetPasswordAllowed, authenticate } from "./PasswordService"
 
 type MeResponse = {
     id: number,
@@ -95,6 +95,14 @@ export class UserController {
         const user = await this.userRepository.findByToken(token)
         if (user == null) throw new Error(`No user found with token`)
         if (!resetPasswordAllowed(user)) throw new Error("User outside reset period")
+        await this.userRepository.changePassword(user, createPassword(newPassword))
+    }
+
+    async changePassword(id: number, currentPassword: string, newPassword: string): Promise<void> {
+        const user = await this.userRepository.get(id)
+        if (!user) throw new Error(`No user found with id ${id}`)
+        if (!authenticate(currentPassword, user.salt, user.hashedPassword)) throw new Error("Invalid password")
+        if (newPassword.length < 8) throw new Error("Password too short")
         await this.userRepository.changePassword(user, createPassword(newPassword))
     }
 }
