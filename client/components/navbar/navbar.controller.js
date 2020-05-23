@@ -13,9 +13,6 @@ angular.module('ewbMemberApp')
         title: 'Events',
         link: '/events',
       }, {
-        title: 'Settings',
-        link: '/settings',
-      }, {
         title: 'Admin',
         link: '/admin',
       }, {

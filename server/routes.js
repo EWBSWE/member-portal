@@ -19,7 +19,6 @@ module.exports = function(app) {
     app.use('/api/events', require('./api/event'));
     app.use('/api/payments', require('./api/payment'));
     app.use('/api/products', require('./api/product'));
-    app.use('/api/settings', require('./api/setting'));
     app.use('/api/stats', require('./api/stats'));
     app.use('/api/users', require('./user/UserRouter').default);
 
