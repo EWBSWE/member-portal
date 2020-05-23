@@ -14,26 +14,22 @@ import {EmailTemplate} from "./EmailTemplate"
 import {EventParticipant} from "./EventParticipant"
 // TODO(dan) 28/01/19: Unsure if this is the way to go with mapping stuff back and forth
 import {toEvent} from "./EventModelEntityMapper"
+import { SqlProvider } from "../../SqlProvider"
 
 export class EventRepository {
-	private db: IDatabase<any>
+	private readonly db: IDatabase<any>
+	private readonly sqlProvider: SqlProvider
 
-	constructor(db: any) {
+	constructor(db: any, sqlProvider: SqlProvider) {
 		this.db = db
+		this.sqlProvider = sqlProvider
 	}
 
 	async findAll(): Promise<Event[]> {
-		const eventEntities: EventEntity[] = await this.db.any(`
-			SELECT *
-			FROM event
-		`)
+		const eventEntities: EventEntity[] = await this.db.any(this.sqlProvider.Events)
 		const events: Event[] = eventEntities.map(toEvent)
 
-		const participantEntities: EventParticipantEntity[] = await this.db.any(`
-			SELECT event_id, member_id, name, email
-			FROM event_participant
-			JOIN member ON member_id = member.id
-		`)
+		const participantEntities: EventParticipantEntity[] = await this.db.any(this.sqlProvider.EventParticipants)
 
 		const participantsByEventId: Map<number, EventParticipantEntity[]> =
 			groupBy(participantEntities, (p: EventParticipantEntity) => p.event_id)
@@ -47,11 +43,7 @@ export class EventRepository {
 	}
 
 	async find(id: number): Promise<Event | null> {
-		const entity: EventEntity | null = await this.db.oneOrNone(`
-			SELECT *
-			FROM event
-			WHERE id = $1
-		`, id)
+		const entity: EventEntity | null = await this.db.oneOrNone(this.sqlProvider.EventById, id)
 		if (!entity) {
 			return null
 		}
@@ -89,13 +81,7 @@ export class EventRepository {
 	}
 
 	async findByPublicIdentifier(identifier: string): Promise<Event | null> {
-		const entity: EventEntity | null = await this.db.oneOrNone(`
-			SELECT *
-			FROM event 
-			WHERE 
-				active AND
-				identifier = $1
-		`, identifier)
+		const entity: EventEntity | null = await this.db.oneOrNone(this.sqlProvider.ActiveEventByIdentifier, identifier)
 		if (!entity) {
 			return null
 		}
@@ -112,67 +98,23 @@ export class EventRepository {
 	}
 
 	private async getAddonsBatched(eventId: number, db: IDatabase<any>): Promise<EventProductEntity[]> {
-		return db.many(`
-			SELECT
-			  event_product.id,
-			  product_id,
-			  product.name,
-			  product.price,
-			  capacity,
-			  product.description
-			FROM event_product
-			JOIN product ON product.id = event_product.product_id
-			WHERE event_id = $1
-			ORDER BY product.id
-		`, eventId)
+		return db.many(this.sqlProvider.EventAddonsById, eventId)
 	}
 
 	private async getParticipantsBatched(eventId: number, db: IDatabase<any>): Promise<EventParticipantEntity[]> {
-		return db.any(`
-			SELECT name, email
-			FROM event_participant
-			JOIN member ON member.id = member_id
-			WHERE event_id = $1
-		`, eventId)
+		return db.any(this.sqlProvider.EventParticipantsById, eventId)
 	}
 
 	private async getSubscribersBatched(eventId: number, db: IDatabase<any>): Promise<EventSubscriberEntity[]> {
-		return db.any(`
-			SELECT email
-			FROM event_subscriber
-			WHERE event_id = $1
-		`, eventId)
+		return db.any(this.sqlProvider.EventSubscribersById, eventId)
 	}
 
 	private async getPaymentsBatched(eventId: number, db: IDatabase<any>): Promise<EventPaymentEntity[]> {
-		return db.any(`
-			SELECT
-				event_payment.payment_id,
-				name,
-				email,
-				amount,
-				message,
-				array_agg(payment_product.product_id) AS addons
-			FROM event_payment
-			JOIN payment ON event_payment.payment_id = payment.id
-			JOIN member ON payment.member_id = member.id
-			JOIN payment_product ON payment.id = payment_product.payment_id
-			WHERE event_id = $1
-			GROUP BY 
-				event_payment.payment_id,
-				name,
-				email,
-				amount,
-				message
-		`, eventId)
+		return db.any(this.sqlProvider.EventPaymentsById, eventId)
 	}
 
 	private async getEmailTemplateBatched(emailTemplateId: number, db: IDatabase<any>): Promise<EmailTemplateEntity> {
-		return db.one(`
-			SELECT subject, body
-			FROM email_template
-			WHERE id = $1
-		`, emailTemplateId)
+		return db.one(this.sqlProvider.EventEmailTemplate, emailTemplateId)
 	}
 
 }

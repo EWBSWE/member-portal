@@ -16,6 +16,16 @@ export type SqlProvider = {
     UserChangePassword: QueryFile
     UserResetPassword: QueryFile
     UserByToken: QueryFile
+
+    Events: QueryFile
+    EventParticipants: QueryFile
+    EventById: QueryFile
+    ActiveEventByIdentifier: QueryFile
+    EventEmailTemplate: QueryFile
+    EventPaymentsById: QueryFile
+    EventSubscribersById: QueryFile
+    EventParticipantsById: QueryFile
+    EventAddonsById: QueryFile
 }
 
 export const SqlProvider: SqlProvider = {
@@ -28,4 +38,14 @@ export const SqlProvider: SqlProvider = {
     UserByToken: inflate("../sql/UserByToken.sql"),
     UserChangePassword: inflate("../sql/UserChangePassword.sql"),
     UserResetPassword: inflate("../sql/UserResetPassword.sql"),
+
+    Events: inflate("../sql/Events.sql"),
+    EventParticipants: inflate("../sql/EventParticipants.sql"),
+    EventById: inflate("../sql/EventById.sql"),
+    ActiveEventByIdentifier: inflate("../sql/ActiveEventByIdentifier.sql"),
+    EventEmailTemplate: inflate("../sql/EventEmailTemplate.sql"),
+    EventPaymentsById: inflate("../sql/EventPaymentsById.sql"),
+    EventSubscribersById: inflate("../sql/EventSubscribersById.sql"),
+    EventParticipantsById: inflate("../sql/EventParticipantsById.sql"),
+    EventAddonsById: inflate("../sql/EventAddonsById.sql"),
 }

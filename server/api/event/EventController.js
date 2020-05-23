@@ -2,7 +2,8 @@
 
 const db = require('../../db/futureDb')
 const { EventRepository } = require('./EventRepository')
-const eventRepository = new EventRepository(db)
+const { SqlProvider } = require('../../SqlProvider')
+const eventRepository = new EventRepository(db, SqlProvider)
 
 async function all () {
   const events = await eventRepository.findAll()
