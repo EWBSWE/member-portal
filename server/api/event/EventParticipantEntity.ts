@@ -1,11 +1,7 @@
-export type EventParticipantEntity = MemberEntity & {
-	event_id: number
-	member_id: number
-}
-
-// TODO(dan) 27/01/19: this is incomplete
-type MemberEntity = {
-	name: string
-	email: string
+export type EventParticipantEntity = {
+    name: string
+    email: string
+    eventId: number
+    memberId: number
 }
 

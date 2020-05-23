@@ -1,98 +1,93 @@
-import {IDatabase} from "pg-promise"
-import {Event} from "./Event"
-import {groupBy} from "../../util"
-import {EventEntity} from "./EventEntity"
-import {EventSubscriberEntity} from "./EventSubscriberEntity"
-import {EventProductEntity} from "./EventProductEntity"
-import {EventParticipantEntity} from "./EventParticipantEntity"
-import {EmailTemplateEntity} from "./EmailTemplateEntity"
-import {EventPaymentEntity} from "./EventPaymentEntity"
-import {EventSubscriber} from "./EventSubscriber"
-import {EventPayment} from "./EventPayment"
-import {EventProduct} from "./EventProduct"
-import {EmailTemplate} from "./EmailTemplate"
-import {EventParticipant} from "./EventParticipant"
+import { IDatabase } from "pg-promise"
+import { Event } from "./Event"
+import { groupBy } from "../../util"
+import { PgEventEntity, toEventEntity } from "./PgEventEntity"
+import { EventSubscriberEntity } from "./EventSubscriberEntity"
+import { EventProductEntity } from "./EventProductEntity"
+import { EventParticipantEntity } from "./EventParticipantEntity"
+import { PgEventParticipantEntity, toEventParticipantEntity } from "./PgEventParticipantEntity"
+import { EventPaymentEntity } from "./EventPaymentEntity"
+import { EventSubscriber } from "./EventSubscriber"
+import { EventPayment } from "./EventPayment"
+import { EventProduct } from "./EventProduct"
+import { EmailTemplate } from "./EmailTemplate"
+import { EventParticipant } from "./EventParticipant"
 // TODO(dan) 28/01/19: Unsure if this is the way to go with mapping stuff back and forth
-import {toEvent} from "./EventModelEntityMapper"
+import { toEvent } from "./EventModelEntityMapper"
 import { SqlProvider } from "../../SqlProvider"
 import { PgEmailTemplateEntity } from "./PgEmailTemplateEntity"
 
 export class EventRepository {
-	private readonly db: IDatabase<{}, any>
-	private readonly sqlProvider: SqlProvider
+    private readonly db: IDatabase<{}, any>
+    private readonly sqlProvider: SqlProvider
 
-	constructor(db: any, sqlProvider: SqlProvider) {
-		this.db = db
-		this.sqlProvider = sqlProvider
-	}
+    constructor(db: any, sqlProvider: SqlProvider) {
+        this.db = db
+        this.sqlProvider = sqlProvider
+    }
 
-	async findAll(): Promise<Event[]> {
-		const eventEntities: EventEntity[] = await this.db.any(this.sqlProvider.Events)
-		const events: Event[] = eventEntities.map(toEvent)
+    async findAll(): Promise<Event[]> {
+        const eventEntities = await this.db.any<PgEventEntity>(this.sqlProvider.Events)
+        const events = eventEntities.map(toEventEntity).map(toEvent)
 
-		const participantEntities: EventParticipantEntity[] = await this.db.any(this.sqlProvider.EventParticipants)
+        const participantRows = await this.db.any<PgEventParticipantEntity>(this.sqlProvider.EventParticipants)
+        const participantEntities = participantRows.map(toEventParticipantEntity)
+        const participantsByEventId = groupBy(participantEntities, (p: EventParticipantEntity) => p.eventId)
 
-		const participantsByEventId: Map<number, EventParticipantEntity[]> =
-			groupBy(participantEntities, (p: EventParticipantEntity) => p.event_id)
+        events.forEach(e => {
+            const maybeParticipants = participantsByEventId.get(e.id!) || []
+            e.participants = maybeParticipants.map(EventParticipant.fromEntity);
+        })
 
-		events.forEach((e: Event) => {
-			const maybeParticipants = participantsByEventId.get(e.id!) || []
-			e.participants = maybeParticipants.map(EventParticipant.fromEntity);
-		})
+        return events
+    }
 
-		return events
-	}
+    async find(id: number): Promise<Event | null> {
+        const maybeRow = await this.db.oneOrNone<PgEventEntity>(this.sqlProvider.EventById, id)
+        if (!maybeRow) return null
+        const entity = toEventEntity(maybeRow)
 
-	async find(id: number): Promise<Event | null> {
-		const entity: EventEntity | null = await this.db.oneOrNone(this.sqlProvider.EventById, id)
-		if (!entity) {
-			return null
-		}
+        const [
+            addons,
+            participants,
+            subscribers,
+            payments,
+            emailTemplate
+        ]: [
+                EventProductEntity[],
+                EventParticipantEntity[],
+                EventSubscriberEntity[],
+                EventPaymentEntity[],
+                PgEmailTemplateEntity
+            ] = await this.db.task(async (t) =>
+                Promise.all([
+                    t.many(this.sqlProvider.EventAddonsById, entity.id),
+                    t.any(this.sqlProvider.EventParticipantsById, entity.id),
+                    t.any(this.sqlProvider.EventSubscribersById, entity.id),
+                    t.any(this.sqlProvider.EventPaymentsById, entity.id),
+                    t.one<PgEmailTemplateEntity>(this.sqlProvider.EventEmailTemplate, entity.emailTemplateId)
+                ])
+            )
 
-		const [
-			addons,
-			participants,
-			subscribers,
-			payments,
-			emailTemplate
-		]: [
-			EventProductEntity[],
-			EventParticipantEntity[],
-			EventSubscriberEntity[],
-			EventPaymentEntity[],
-			PgEmailTemplateEntity
-			] = await this.db.task(async (t) =>
-			Promise.all([
-				t.many(this.sqlProvider.EventAddonsById, entity.id),
-				t.any(this.sqlProvider.EventParticipantsById, entity.id),
-				t.any(this.sqlProvider.EventSubscribersById, entity.id),
-				t.any(this.sqlProvider.EventPaymentsById, entity.id),
-				t.one<PgEmailTemplateEntity>(this.sqlProvider.EventEmailTemplate, entity.email_template_id)
-			])
-		)
+        const event = toEvent(entity)
+        event.addons = addons.map(EventProduct.fromEntity)
+        event.participants = participants.map(EventParticipant.fromEntity)
+        event.subscribers = subscribers.map(EventSubscriber.fromEntity)
+        event.payments = payments.map(EventPayment.fromEntity)
+        event.emailTemplate = EmailTemplate.fromEntity(emailTemplate)
 
-		const event = toEvent(entity)
-		event.addons = addons.map(EventProduct.fromEntity)
-		event.participants = participants.map(EventParticipant.fromEntity)
-		event.subscribers = subscribers.map(EventSubscriber.fromEntity)
-		event.payments = payments.map(EventPayment.fromEntity)
-		event.emailTemplate = EmailTemplate.fromEntity(emailTemplate)
+        return event
+    }
 
-		return event
-	}
+    async findByPublicIdentifier(identifier: string): Promise<Event | null> {
+        const entity = await this.db.oneOrNone<PgEventEntity>(this.sqlProvider.ActiveEventByIdentifier, identifier)
+        if (!entity) return null
+        return this.get(entity.id)
+    }
 
-	async findByPublicIdentifier(identifier: string): Promise<Event | null> {
-		const entity: EventEntity | null = await this.db.oneOrNone(this.sqlProvider.ActiveEventByIdentifier, identifier)
-		if (!entity) {
-			return null
-		}
-
-		return this.get(entity.id)
-	}
-
-	async get(id: number): Promise<Event> {
-		const maybeEvent: Event | null = await this.find(id);
-		if (!maybeEvent) throw new Error('Event not found')
-		return maybeEvent
-	}
+    async get(id: number): Promise<Event> {
+        const maybeEvent = await this.find(id);
+        if (!maybeEvent) throw new Error('Event not found')
+        return maybeEvent
+    }
 }
