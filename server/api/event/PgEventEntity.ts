@@ -1,4 +1,5 @@
 import { EventEntity } from "./EventEntity";
+import { PgEventParticipantEntity, toEventParticipantEntity } from "./PgEventParticipantEntity";
 
 export type PgEventEntity = {
     id: number;
@@ -13,7 +14,7 @@ export type PgEventEntity = {
     notification_open: boolean;
 };
 
-export function toEventEntity(row: PgEventEntity): EventEntity {
+export function toEventEntity(row: PgEventEntity, participants: PgEventParticipantEntity[]): EventEntity {
     return {
         id: row.id,
         name: row.name,
@@ -23,6 +24,7 @@ export function toEventEntity(row: PgEventEntity): EventEntity {
         notificationOpen: row.notification_open,
         createdAt: row.created_at,
         updatedAt: row.updated_at,
-        emailTemplateId: row.email_template_id
+        emailTemplateId: row.email_template_id,
+        participants: participants.map(toEventParticipantEntity)
     }
 }

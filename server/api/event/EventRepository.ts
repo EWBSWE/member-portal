@@ -1,56 +1,40 @@
 import { IDatabase } from "pg-promise"
 import { Event } from "./Event"
-import { groupBy } from "../../util"
-import { PgEventEntity, toEventEntity } from "./PgEventEntity"
 import { PgEventSubscriberEntity, toEventSubscriberEntity } from "./PgEventSubscriberEntity"
 import { PgEventProductEntity, toEventProductEntity } from "./PgEventProductEntity"
-import { EventParticipantEntity } from "./EventParticipantEntity"
-import { PgEventParticipantEntity, toEventParticipantEntity } from "./PgEventParticipantEntity"
 import { PgEventPaymentEntity, toEventPaymentEntity } from "./PgEventPaymentEntity"
 import { EventSubscriber } from "./EventSubscriber"
 import { EventPayment } from "./EventPayment"
 import { EventProduct } from "./EventProduct"
 import { EmailTemplate } from "./EmailTemplate"
-import { EventParticipant } from "./EventParticipant"
-// TODO(dan) 28/01/19: Unsure if this is the way to go with mapping stuff back and forth
-import { toEvent } from "./EventModelEntityMapper"
 import { SqlProvider } from "../../SqlProvider"
 import { PgEmailTemplateEntity } from "./PgEmailTemplateEntity"
+import { EventStore } from "../../event/EventStore"
+import { toEvent } from "./EventEntity"
 
 export class EventRepository {
     private readonly db: IDatabase<{}, any>
     private readonly sqlProvider: SqlProvider
+    private readonly eventStore: EventStore
 
-    constructor(db: any, sqlProvider: SqlProvider) {
+    constructor(db: any, sqlProvider: SqlProvider, eventStore: EventStore) {
         this.db = db
         this.sqlProvider = sqlProvider
+        this.eventStore = eventStore
     }
 
     async findAll(): Promise<Event[]> {
-        const eventEntities = await this.db.any<PgEventEntity>(this.sqlProvider.Events)
-        const events = eventEntities.map(toEventEntity).map(toEvent)
-
-        const participantRows = await this.db.any<PgEventParticipantEntity>(this.sqlProvider.EventParticipants)
-        const participantEntities = participantRows.map(toEventParticipantEntity)
-        const participantsByEventId = groupBy(participantEntities, (p: EventParticipantEntity) => p.eventId)
-
-        events.forEach(e => {
-            const maybeParticipants = participantsByEventId.get(e.id!) || []
-            e.participants = maybeParticipants.map(EventParticipant.fromEntity);
-        })
-
-        return events
+        const events = await this.eventStore.findAll()
+        return events.map(toEvent)
     }
 
     async find(id: number): Promise<Event | null> {
-        const maybeRow = await this.db.oneOrNone<PgEventEntity>(this.sqlProvider.EventById, id)
-        if (!maybeRow) return null
-        const entity = toEventEntity(maybeRow)
+        const entity = await this.eventStore.findById(id)
+        if (entity == null) return null
 
-        const [addons, participants, subscribers, payments, emailTemplate] = await this.db.task(async (t) =>
+        const [addons, subscribers, payments, emailTemplate] = await this.db.task(async (t) =>
             Promise.all([
                 t.many<PgEventProductEntity>(this.sqlProvider.EventAddonsById, entity.id),
-                t.any<PgEventParticipantEntity>(this.sqlProvider.EventParticipantsById, entity.id),
                 t.any<PgEventSubscriberEntity>(this.sqlProvider.EventSubscribersById, entity.id),
                 t.any<PgEventPaymentEntity>(this.sqlProvider.EventPaymentsById, entity.id),
                 t.one<PgEmailTemplateEntity>(this.sqlProvider.EventEmailTemplate, entity.emailTemplateId)
@@ -58,8 +42,8 @@ export class EventRepository {
         )
 
         const event = toEvent(entity)
+
         event.addons = addons.map(toEventProductEntity).map(EventProduct.fromEntity)
-        event.participants = participants.map(toEventParticipantEntity).map(EventParticipant.fromEntity)
         event.subscribers = subscribers.map(toEventSubscriberEntity).map(EventSubscriber.fromEntity)
         event.payments = payments.map(toEventPaymentEntity).map(EventPayment.fromEntity)
         event.emailTemplate = EmailTemplate.fromEntity(emailTemplate)
@@ -68,14 +52,8 @@ export class EventRepository {
     }
 
     async findByPublicIdentifier(identifier: string): Promise<Event | null> {
-        const entity = await this.db.oneOrNone<PgEventEntity>(this.sqlProvider.ActiveEventByIdentifier, identifier)
+        const entity = await this.eventStore.findBySlug(identifier)
         if (!entity) return null
-        return this.get(entity.id)
-    }
-
-    async get(id: number): Promise<Event> {
-        const maybeEvent = await this.find(id);
-        if (!maybeEvent) throw new Error('Event not found')
-        return maybeEvent
+        return this.find(entity.id)
     }
 }
