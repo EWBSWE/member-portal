@@ -15,9 +15,10 @@ import {EventParticipant} from "./EventParticipant"
 // TODO(dan) 28/01/19: Unsure if this is the way to go with mapping stuff back and forth
 import {toEvent} from "./EventModelEntityMapper"
 import { SqlProvider } from "../../SqlProvider"
+import { PgEmailTemplateEntity } from "./PgEmailTemplateEntity"
 
 export class EventRepository {
-	private readonly db: IDatabase<any>
+	private readonly db: IDatabase<{}, any>
 	private readonly sqlProvider: SqlProvider
 
 	constructor(db: any, sqlProvider: SqlProvider) {
@@ -59,14 +60,14 @@ export class EventRepository {
 			EventParticipantEntity[],
 			EventSubscriberEntity[],
 			EventPaymentEntity[],
-			EmailTemplateEntity
+			PgEmailTemplateEntity
 			] = await this.db.task(async (t) =>
 			Promise.all([
-				this.getAddonsBatched(entity.id, t),
-				this.getParticipantsBatched(entity.id, t),
-				this.getSubscribersBatched(entity.id, t),
-				this.getPaymentsBatched(entity.id, t),
-				this.getEmailTemplateBatched(entity.email_template_id, t)
+				t.many(this.sqlProvider.EventAddonsById, entity.id),
+				t.any(this.sqlProvider.EventParticipantsById, entity.id),
+				t.any(this.sqlProvider.EventSubscribersById, entity.id),
+				t.any(this.sqlProvider.EventPaymentsById, entity.id),
+				t.one<PgEmailTemplateEntity>(this.sqlProvider.EventEmailTemplate, entity.email_template_id)
 			])
 		)
 
@@ -91,30 +92,7 @@ export class EventRepository {
 
 	async get(id: number): Promise<Event> {
 		const maybeEvent: Event | null = await this.find(id);
-		if (!maybeEvent) {
-			throw new Error('Event not found')
-		}
+		if (!maybeEvent) throw new Error('Event not found')
 		return maybeEvent
 	}
-
-	private async getAddonsBatched(eventId: number, db: IDatabase<any>): Promise<EventProductEntity[]> {
-		return db.many(this.sqlProvider.EventAddonsById, eventId)
-	}
-
-	private async getParticipantsBatched(eventId: number, db: IDatabase<any>): Promise<EventParticipantEntity[]> {
-		return db.any(this.sqlProvider.EventParticipantsById, eventId)
-	}
-
-	private async getSubscribersBatched(eventId: number, db: IDatabase<any>): Promise<EventSubscriberEntity[]> {
-		return db.any(this.sqlProvider.EventSubscribersById, eventId)
-	}
-
-	private async getPaymentsBatched(eventId: number, db: IDatabase<any>): Promise<EventPaymentEntity[]> {
-		return db.any(this.sqlProvider.EventPaymentsById, eventId)
-	}
-
-	private async getEmailTemplateBatched(emailTemplateId: number, db: IDatabase<any>): Promise<EmailTemplateEntity> {
-		return db.one(this.sqlProvider.EventEmailTemplate, emailTemplateId)
-	}
-
 }

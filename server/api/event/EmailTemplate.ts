@@ -1,8 +1,8 @@
 import {EmailTemplateEntity} from "./EmailTemplateEntity"
 
 export class EmailTemplate {
-	subject: string
-	body: string
+	readonly subject: string
+	readonly body: string
 
 	constructor(subject: string, body: string) {
 		this.subject = subject
