@@ -1,12 +1,9 @@
-export type EventProductEntity = ProductEntity & {
+export type EventProductEntity = {
 	id: number
-	event_id: number
-	capacity: number
-	product_id: number
-}
-
-export type ProductEntity = {
 	name: string
 	price: number
 	description: string
+	capacity: number
+	productId: number
 }
+

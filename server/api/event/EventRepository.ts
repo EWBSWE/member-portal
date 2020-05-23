@@ -2,11 +2,11 @@ import { IDatabase } from "pg-promise"
 import { Event } from "./Event"
 import { groupBy } from "../../util"
 import { PgEventEntity, toEventEntity } from "./PgEventEntity"
-import { EventSubscriberEntity } from "./EventSubscriberEntity"
-import { EventProductEntity } from "./EventProductEntity"
+import { PgEventSubscriberEntity, toEventSubscriberEntity } from "./PgEventSubscriberEntity"
+import { PgEventProductEntity, toEventProductEntity } from "./PgEventProductEntity"
 import { EventParticipantEntity } from "./EventParticipantEntity"
 import { PgEventParticipantEntity, toEventParticipantEntity } from "./PgEventParticipantEntity"
-import { EventPaymentEntity } from "./EventPaymentEntity"
+import { PgEventPaymentEntity, toEventPaymentEntity } from "./PgEventPaymentEntity"
 import { EventSubscriber } from "./EventSubscriber"
 import { EventPayment } from "./EventPayment"
 import { EventProduct } from "./EventProduct"
@@ -47,33 +47,21 @@ export class EventRepository {
         if (!maybeRow) return null
         const entity = toEventEntity(maybeRow)
 
-        const [
-            addons,
-            participants,
-            subscribers,
-            payments,
-            emailTemplate
-        ]: [
-                EventProductEntity[],
-                EventParticipantEntity[],
-                EventSubscriberEntity[],
-                EventPaymentEntity[],
-                PgEmailTemplateEntity
-            ] = await this.db.task(async (t) =>
-                Promise.all([
-                    t.many(this.sqlProvider.EventAddonsById, entity.id),
-                    t.any(this.sqlProvider.EventParticipantsById, entity.id),
-                    t.any(this.sqlProvider.EventSubscribersById, entity.id),
-                    t.any(this.sqlProvider.EventPaymentsById, entity.id),
-                    t.one<PgEmailTemplateEntity>(this.sqlProvider.EventEmailTemplate, entity.emailTemplateId)
-                ])
-            )
+        const [addons, participants, subscribers, payments, emailTemplate] = await this.db.task(async (t) =>
+            Promise.all([
+                t.many<PgEventProductEntity>(this.sqlProvider.EventAddonsById, entity.id),
+                t.any<PgEventParticipantEntity>(this.sqlProvider.EventParticipantsById, entity.id),
+                t.any<PgEventSubscriberEntity>(this.sqlProvider.EventSubscribersById, entity.id),
+                t.any<PgEventPaymentEntity>(this.sqlProvider.EventPaymentsById, entity.id),
+                t.one<PgEmailTemplateEntity>(this.sqlProvider.EventEmailTemplate, entity.emailTemplateId)
+            ])
+        )
 
         const event = toEvent(entity)
-        event.addons = addons.map(EventProduct.fromEntity)
-        event.participants = participants.map(EventParticipant.fromEntity)
-        event.subscribers = subscribers.map(EventSubscriber.fromEntity)
-        event.payments = payments.map(EventPayment.fromEntity)
+        event.addons = addons.map(toEventProductEntity).map(EventProduct.fromEntity)
+        event.participants = participants.map(toEventParticipantEntity).map(EventParticipant.fromEntity)
+        event.subscribers = subscribers.map(toEventSubscriberEntity).map(EventSubscriber.fromEntity)
+        event.payments = payments.map(toEventPaymentEntity).map(EventPayment.fromEntity)
         event.emailTemplate = EmailTemplate.fromEntity(emailTemplate)
 
         return event

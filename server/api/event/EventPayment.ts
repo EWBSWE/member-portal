@@ -38,7 +38,7 @@ export class EventPayment implements Formattable {
 
 	static fromEntity(entity: EventPaymentEntity): EventPayment {
 		return new EventPayment(
-			entity.payment_id,
+			entity.paymentId,
 			entity.name,
 			entity.email,
 			entity.amount,

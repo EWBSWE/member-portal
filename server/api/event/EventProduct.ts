@@ -41,7 +41,7 @@ export class EventProduct implements Formattable {
 	static fromEntity(entity: EventProductEntity): EventProduct {
 		return new EventProduct(
 			entity.id,
-			entity.product_id,
+			entity.productId,
 			entity.name,
 			entity.price,
 			entity.capacity,
