@@ -18,6 +18,7 @@ export function toEventEntity(row: PgEventEntity, participants: PgEventParticipa
     return {
         id: row.id,
         name: row.name,
+        description: row.description,
         identifier: row.identifier,
         active: row.active,
         dueDate: row.due_date,

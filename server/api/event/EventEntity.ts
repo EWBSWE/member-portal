@@ -4,6 +4,7 @@ import { Event } from "./Event";
 export type EventEntity = {
     id: number
     name: string
+    description: string
     identifier: string
     active: boolean
     dueDate: Date
@@ -18,6 +19,7 @@ export function toEvent(entity: EventEntity): Event {
     const event = new Event(
         entity.id,
         entity.name,
+        entity.description,
         entity.identifier,
         entity.active,
         entity.dueDate,

@@ -36,6 +36,8 @@ type DetailedEventResponse = {
     due_date: Date
     notificationOpen: boolean
     created_at: Date
+    description: string
+    emailTemplate: { subject: string, body: string }
     subscribers: { email: string }[]
     participants: { email: string }[]
     payments: {
@@ -64,6 +66,8 @@ function createDetailedEventResponse(event: Event): DetailedEventResponse {
         due_date: event.dueDate,
         notificationOpen: event.notificationOpen,
         created_at: event.createdAt!,
+        description: event.description,
+        emailTemplate: { subject: event.emailTemplate!.subject, body: event.emailTemplate!.body },
         subscribers: event.subscribers!.map(subscriber => ({ email: subscriber.email })),
         participants: event.participants!.map(participant => ({ email: participant.email })),
         payments: event.payments!.map(payment => ({

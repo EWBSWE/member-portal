@@ -8,6 +8,7 @@ import {EventParticipant} from "./EventParticipant"
 export class Event implements Formattable, PublicFormattable {
 	id: number | null
 	name: string
+	description: string
 	identifier: string
 	active: boolean
 	dueDate: Date
@@ -24,6 +25,7 @@ export class Event implements Formattable, PublicFormattable {
 	constructor(
 		id: number,
 		name: string,
+		description: string,
 		identifier: string,
 		active: boolean,
 		dueDate: Date,
@@ -33,6 +35,7 @@ export class Event implements Formattable, PublicFormattable {
 	) {
 		this.id = id
 		this.name = name
+		this.description = description
 		this.identifier = identifier
 		this.active = active
 		this.dueDate = dueDate
@@ -45,6 +48,7 @@ export class Event implements Formattable, PublicFormattable {
 		const response: { [index: string]: any } = {
 			id: this.id,
 			name: this.name,
+			description: this.description,
 			identifier: this.identifier,
 			active: this.active,
 			// TODO(dan) 27/01/19: The client currently consumes the due_date, until that is fixed we put both here.
@@ -76,6 +80,7 @@ export class Event implements Formattable, PublicFormattable {
 		const response: { [index: string]: any } = {
 			id: this.id,
 			name: this.name,
+			description: this.description,
 			identifier: this.identifier,
 			active: this.active,
 			// TODO(dan) 27/01/19: The client currently consumes the due_date, until that is fixed we put both here.
