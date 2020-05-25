@@ -101,10 +101,11 @@ function createDetailedEventResponse(event: Event): DetailedEventResponse {
 type PublicEventResponse = {
   id: number;
   name: string;
+  description: string;
   identifier: string;
   active: boolean;
   due_date: Date;
-  notificationOpen: boolean;
+  notification_open: boolean;
   created_at: Date;
   addons: {
     id: number;
@@ -120,10 +121,11 @@ function createPublicEventResponse(event: Event): PublicEventResponse {
   return {
     id: event.id!,
     name: event.name,
+    description: event.description,
     identifier: event.identifier,
     active: event.active,
     due_date: event.dueDate,
-    notificationOpen: event.notificationOpen,
+    notification_open: event.notificationOpen,
     created_at: event.createdAt!,
     addons: event.addons!.map((addon) => ({
       id: addon.id,
