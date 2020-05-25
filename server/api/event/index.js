@@ -1,33 +1,51 @@
 'use strict';
 
-var express = require('express');
-var eventController = require('./event.controller');
-var addonController = require('./event-product.controller');
-var auth = require('../../auth/auth.service');
-var router = express.Router();
+const express = require('express');
+const eventController = require('./event.controller');
+const addonController = require('./event-product.controller');
+const auth = require('../../auth/auth.service');
+const router = express.Router();
 
-const RouteBuilder = require('../../RouteBuilder');
-const EventController2 = require('./EventController');
+const logger = require("../../config/logger")
+const { EventController } = require('../../event/EventController');
 
-router.get(
-  '/public',
-  new RouteBuilder(EventController2.showPublicEvent)
-    .build()
-)
+const db = require('../../db/futureDb')
+const { EventRepository } = require('./EventRepository')
+const { SqlProvider } = require('../../SqlProvider')
+const { PgEventStore } = require('../../event/PgEventStore')
+const eventRepository = new EventRepository(new PgEventStore(db, SqlProvider))
+const controller = new EventController(eventRepository);
 
-router.get(
-  '/',
-  auth.isAuthenticated(),
-  new RouteBuilder(EventController2.all)
-    .build()
-);
+router.get("/public", async (req, res, next) => {
+  const slug = req.query.url
+  try {
+    const response = await controller.showPublic(slug)
+    return res.status(200).json(response)
+  } catch (e) {
+    logger.error(e)
+    return res.sendStatus(400)
+  }
+})
 
-router.get(
-  '/:id',
-  auth.isAuthenticated(),
-  new RouteBuilder(EventController2.show)
-    .build()
-);
+router.get("/", auth.isAuthenticated(), async (req, res, next) => {
+  try {
+    const response = await controller.all()
+    return res.status(200).json(response)
+  } catch (e) {
+    next(e)
+  }
+})
+
+router.get("/:id", auth.isAuthenticated(), async (req, res, next) => {
+  const id = req.params.id
+  try {
+    const response = await controller.show(id)
+    return res.status(200).json(response)
+  } catch (e) {
+    logger.error(e)
+    return res.status(400)
+  }
+})
 
 router.post('/', auth.isAuthenticated(), eventController.create);
 router.put('/:id', auth.isAuthenticated(), eventController.update);
