@@ -1,4 +1,3 @@
-import {Formattable} from "./Formattable"
 import {EventProductEntity} from "./EventProductEntity"
 
 export class EventProduct {
