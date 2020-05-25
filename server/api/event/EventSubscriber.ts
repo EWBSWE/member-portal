@@ -1,15 +1,10 @@
-import {Formattable} from "./Formattable"
-import {EventSubscriberEntity} from "./EventSubscriberEntity"
+import { EventSubscriberEntity } from "./EventSubscriberEntity"
 
-export class EventSubscriber implements Formattable {
-	email: string
+export class EventSubscriber {
+	readonly email: string
 
 	constructor(email: string) {
 		this.email = email
-	}
-
-	formatResponse(): any {
-		return { email: this.email }
 	}
 
 	static fromEntity(entity: EventSubscriberEntity): EventSubscriber {

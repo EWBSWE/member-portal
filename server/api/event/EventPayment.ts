@@ -1,14 +1,12 @@
-import {Formattable} from "./Formattable"
-import {EventPaymentEntity} from "./EventPaymentEntity"
+import { EventPaymentEntity } from "./EventPaymentEntity"
 
-export class EventPayment implements Formattable {
-	paymentId: number
-	name: string
-	email: string
-	amount: number
-	// TODO(dan) 27/01/19: consider using type Partial<EventProduct>, or change to addonIds
-	addons: number[]
-	message: string | null
+export class EventPayment {
+	readonly paymentId: number
+	readonly name: string
+	readonly email: string
+	readonly amount: number
+	readonly addons: number[]
+	readonly message: string | null
 
 	constructor(
 		paymentId: number,
@@ -24,16 +22,6 @@ export class EventPayment implements Formattable {
 		this.amount = amount
 		this.message = message
 		this.addons = addons
-	}
-
-	formatResponse(): any {
-		return {
-			name: this.name,
-			email: this.email,
-			amount: this.amount,
-			addons: this.addons,
-			message: this.message
-		}
 	}
 
 	static fromEntity(entity: EventPaymentEntity): EventPayment {
