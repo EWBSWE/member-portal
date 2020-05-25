@@ -1,15 +1,24 @@
-import {EmailTemplateEntity} from "./EmailTemplateEntity"
+import { EmailTemplateEntity } from "./EmailTemplateEntity";
 
 export class EmailTemplate {
-	readonly subject: string
-	readonly body: string
+  readonly id: number;
+  readonly sender: string;
+  subject: string;
+  body: string;
 
-	constructor(subject: string, body: string) {
-		this.subject = subject
-		this.body = body
-	}
+  constructor(id: number, sender: string, subject: string, body: string) {
+    this.id = id;
+    this.sender = sender;
+    this.subject = subject;
+    this.body = body;
+  }
 
-	static fromEntity(entity: EmailTemplateEntity): EmailTemplate {
-		return new EmailTemplate(entity.subject, entity.body)
-	}
+  static fromEntity(entity: EmailTemplateEntity): EmailTemplate {
+    return new EmailTemplate(
+      entity.id,
+      entity.sender,
+      entity.subject,
+      entity.body
+    );
+  }
 }
