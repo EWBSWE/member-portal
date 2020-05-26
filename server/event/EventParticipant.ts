@@ -1,4 +1,4 @@
-import { PgEventParticipantEntity } from "./PgEventParticipantEntity";
+import { EventParticipantEntity } from "./EventParticipantEntity";
 
 export class EventParticipant {
   readonly name: string;
@@ -9,7 +9,7 @@ export class EventParticipant {
     this.email = email;
   }
 
-  static fromEntity(entity: PgEventParticipantEntity): EventParticipant {
+  static fromEntity(entity: EventParticipantEntity): EventParticipant {
     return new EventParticipant(entity.name, entity.email);
   }
 }

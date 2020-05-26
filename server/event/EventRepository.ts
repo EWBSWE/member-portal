@@ -1,13 +1,13 @@
 import { Event } from "./Event";
-import { SqlProvider } from "../../SqlProvider";
+import { SqlProvider } from "../SqlProvider";
 import { IDatabase } from "pg-promise";
-import { PgEventEntity } from "./PgEventEntity";
-import { PgEmailTemplateEntity } from "./PgEmailTemplateEntity";
-import { PgEventParticipantEntity } from "./PgEventParticipantEntity";
-import { PgEventProductEntity } from "./PgEventProductEntity";
-import { PgEventSubscriberEntity } from "./PgEventSubscriberEntity";
-import { PgEventPaymentEntity } from "./PgEventPaymentEntity";
-import { groupBy, mapBy } from "../../util";
+import { EventEntity } from "./EventEntity";
+import { EmailTemplateEntity } from "./EmailTemplateEntity";
+import { EventParticipantEntity } from "./EventParticipantEntity";
+import { EventProductEntity } from "./EventProductEntity";
+import { EventSubscriberEntity } from "./EventSubscriberEntity";
+import { EventPaymentEntity } from "./EventPaymentEntity";
+import { groupBy, mapBy } from "../util";
 
 export class EventRepository {
   private readonly db: IDatabase<{}, any>;
@@ -28,12 +28,12 @@ export class EventRepository {
       emails,
     ] = await this.db.tx(async (t) =>
       Promise.all([
-        t.any<PgEventEntity>(this.sqlProvider.Events),
-        t.any<PgEventParticipantEntity>(this.sqlProvider.EventParticipants),
-        t.any<PgEventProductEntity>(this.sqlProvider.EventAddons),
-        t.any<PgEventSubscriberEntity>(this.sqlProvider.EventSubscribers),
-        t.any<PgEventPaymentEntity>(this.sqlProvider.EventPayments),
-        t.any<PgEmailTemplateEntity>(this.sqlProvider.EventEmailTemplate),
+        t.any<EventEntity>(this.sqlProvider.Events),
+        t.any<EventParticipantEntity>(this.sqlProvider.EventParticipants),
+        t.any<EventProductEntity>(this.sqlProvider.EventAddons),
+        t.any<EventSubscriberEntity>(this.sqlProvider.EventSubscribers),
+        t.any<EventPaymentEntity>(this.sqlProvider.EventPayments),
+        t.any<EmailTemplateEntity>(this.sqlProvider.EventEmailTemplate),
       ])
     );
 
@@ -56,7 +56,7 @@ export class EventRepository {
   }
 
   async find(id: number): Promise<Event | null> {
-    const event = await this.db.oneOrNone<PgEventEntity>(
+    const event = await this.db.oneOrNone<EventEntity>(
       this.sqlProvider.EventById,
       id
     );
@@ -70,23 +70,17 @@ export class EventRepository {
       emailTemplate,
     ] = await this.db.task(async (t) =>
       Promise.all([
-        t.any<PgEventParticipantEntity>(
+        t.any<EventParticipantEntity>(
           this.sqlProvider.EventParticipantsById,
           event.id
         ),
-        t.many<PgEventProductEntity>(
-          this.sqlProvider.EventAddonsById,
-          event.id
-        ),
-        t.any<PgEventSubscriberEntity>(
+        t.many<EventProductEntity>(this.sqlProvider.EventAddonsById, event.id),
+        t.any<EventSubscriberEntity>(
           this.sqlProvider.EventSubscribersById,
           event.id
         ),
-        t.any<PgEventPaymentEntity>(
-          this.sqlProvider.EventPaymentsById,
-          event.id
-        ),
-        t.one<PgEmailTemplateEntity>(
+        t.any<EventPaymentEntity>(this.sqlProvider.EventPaymentsById, event.id),
+        t.one<EmailTemplateEntity>(
           this.sqlProvider.EventEmailTemplateById,
           event.email_template_id
         ),
@@ -104,7 +98,7 @@ export class EventRepository {
   }
 
   async findByPublicIdentifier(identifier: string): Promise<Event | null> {
-    const event = await this.db.oneOrNone<PgEventEntity>(
+    const event = await this.db.oneOrNone<EventEntity>(
       this.sqlProvider.ActiveEventByIdentifier,
       identifier
     );

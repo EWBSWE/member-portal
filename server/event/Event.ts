@@ -3,12 +3,12 @@ import { EventPayment } from "./EventPayment";
 import { EventSubscriber } from "./EventSubscriber";
 import { EventProduct } from "./EventProduct";
 import { EventParticipant } from "./EventParticipant";
-import { PgEventEntity } from "./PgEventEntity";
-import { PgEventParticipantEntity } from "./PgEventParticipantEntity";
-import { PgEventProductEntity } from "./PgEventProductEntity";
-import { PgEventSubscriberEntity } from "./PgEventSubscriberEntity";
-import { PgEventPaymentEntity } from "./PgEventPaymentEntity";
-import { PgEmailTemplateEntity } from "./PgEmailTemplateEntity";
+import { EventEntity } from "./EventEntity";
+import { EventParticipantEntity } from "./EventParticipantEntity";
+import { EventProductEntity } from "./EventProductEntity";
+import { EventSubscriberEntity } from "./EventSubscriberEntity";
+import { EventPaymentEntity } from "./EventPaymentEntity";
+import { EmailTemplateEntity } from "./EmailTemplateEntity";
 
 export class Event {
   readonly id: number | null;
@@ -58,7 +58,7 @@ export class Event {
     this.emailTemplate = emailTemplate;
   }
 
-  static fromEvent(event: Event): PgEventEntity {
+  static fromEvent(event: Event): EventEntity {
     const id = check(event.id);
     return {
       id: id,
@@ -75,12 +75,12 @@ export class Event {
   }
 
   static toEvent(
-    entity: PgEventEntity,
-    participants: PgEventParticipantEntity[],
-    addons: PgEventProductEntity[],
-    subscribers: PgEventSubscriberEntity[],
-    payments: PgEventPaymentEntity[],
-    emailTemplate: PgEmailTemplateEntity
+    entity: EventEntity,
+    participants: EventParticipantEntity[],
+    addons: EventProductEntity[],
+    subscribers: EventSubscriberEntity[],
+    payments: EventPaymentEntity[],
+    emailTemplate: EmailTemplateEntity
   ): Event {
     const event = new Event(
       entity.id,

@@ -1,4 +1,4 @@
-import { PgEventPaymentEntity } from "./PgEventPaymentEntity";
+import { EventPaymentEntity } from "./EventPaymentEntity";
 
 export class EventPayment {
   readonly paymentId: number;
@@ -24,7 +24,7 @@ export class EventPayment {
     this.addons = addons;
   }
 
-  static fromEntity(entity: PgEventPaymentEntity): EventPayment {
+  static fromEntity(entity: EventPaymentEntity): EventPayment {
     return new EventPayment(
       entity.payment_id,
       entity.name,

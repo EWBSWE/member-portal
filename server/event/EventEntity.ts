@@ -1,4 +1,4 @@
-export type PgEventEntity = {
+export type EventEntity = {
   id: number;
   name: string;
   description: string;

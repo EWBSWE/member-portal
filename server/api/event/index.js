@@ -10,7 +10,7 @@ const logger = require("../../config/logger");
 const { EventController } = require("../../event/EventController");
 
 const db = require("../../db/futureDb");
-const { EventRepository } = require("./EventRepository");
+const { EventRepository } = require("../../event/EventRepository");
 const { SqlProvider } = require("../../SqlProvider");
 const eventRepository = new EventRepository(db, SqlProvider);
 const controller = new EventController(eventRepository);

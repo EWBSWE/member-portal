@@ -1,6 +1,6 @@
-import { EventRepository } from "../api/event/EventRepository";
-import { Event } from "../api/event/Event";
-import { EventSubscriber } from "../api/event/EventSubscriber";
+import { EventRepository } from "./EventRepository";
+import { Event } from "./Event";
+import { EventSubscriber } from "./EventSubscriber";
 
 type AllEventsResponse = {
   id: number;
