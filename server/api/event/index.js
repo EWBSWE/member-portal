@@ -12,8 +12,7 @@ const { EventController } = require("../../event/EventController");
 const db = require("../../db/futureDb");
 const { EventRepository } = require("./EventRepository");
 const { SqlProvider } = require("../../SqlProvider");
-const { PgEventStore } = require("../../event/PgEventStore");
-const eventRepository = new EventRepository(new PgEventStore(db, SqlProvider));
+const eventRepository = new EventRepository(db, SqlProvider);
 const controller = new EventController(eventRepository);
 
 router.get("/public", async (req, res, next) => {
