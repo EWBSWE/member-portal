@@ -91,9 +91,17 @@ router.post(
 );
 
 router.delete(
-  "/:id/addon/:addonId",
+  "/:eventId/addon/:addonId",
   auth.isAuthenticated(),
-  addonController.destroy
+  async (req, res, next) => {
+    try {
+      await controller.deleteAddon(req.params.eventId, req.params.addonId);
+      return res.sendStatus(200);
+    } catch (e) {
+      logger.error(e);
+      return res.sendStatus(400);
+    }
+  }
 );
 router.put(
   "/:id/addon/:addonId",

@@ -5,33 +5,9 @@
  * @memberOf controller
  */
 
-'use strict';
+"use strict";
 
-var EventProduct = require('../../models/event-product.model');
-
-/**
- * Create event product
- *
- * @memberOf controller.EventProduct
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Object} next - Express error function
- */
-exports.create = function (req, res, next) {
-    var data = {
-        eventId: req.params.id,
-        name: req.body.name,
-        price: req.body.price,
-        description: req.body.description,
-        capacity: req.body.capacity,
-    };
-
-    EventProduct.create(data).then(a => {
-        res.status(201).json(a);
-    }).catch(err => {
-        next(err);
-    });
-};
+var EventProduct = require("../../models/event-product.model");
 
 /**
  * Update event product
@@ -41,11 +17,13 @@ exports.create = function (req, res, next) {
  * @param {Object} res - Express response object
  * @param {Object} next - Express error function
  */
-exports.update = function(req, res, next) {
-    EventProduct.update(req.params.addonId, req.body).then(event => {
-        res.sendStatus(202);
-    }).catch(err => {
-        next(err);
+exports.update = function (req, res, next) {
+  EventProduct.update(req.params.addonId, req.body)
+    .then((event) => {
+      res.sendStatus(202);
+    })
+    .catch((err) => {
+      next(err);
     });
 };
 
@@ -58,9 +36,11 @@ exports.update = function(req, res, next) {
  * @param {Object} next - Express error function
  */
 exports.destroy = function (req, res, next) {
-    EventProduct.destroy(req.params.addonId).then(() => {
-        res.sendStatus(204);
-    }).catch(err => {
-        next(err);
+  EventProduct.destroy(req.params.addonId)
+    .then(() => {
+      res.sendStatus(204);
+    })
+    .catch((err) => {
+      next(err);
     });
 };

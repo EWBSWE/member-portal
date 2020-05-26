@@ -237,4 +237,8 @@ export class EventRepository {
       ]);
     });
   }
+
+  async destroyAddon(addonId: number): Promise<void> {
+    await this.db.any(this.sqlProvider.EventProductDelete, [addonId]);
+  }
 }

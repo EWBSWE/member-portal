@@ -289,4 +289,8 @@ export class EventController {
     );
     await this.eventRepository.attachAddon(event, product);
   }
+
+  async deleteAddon(eventId: number, addonId: number): Promise<void> {
+    await this.eventRepository.destroyAddon(addonId);
+  }
 }
