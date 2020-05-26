@@ -9,7 +9,7 @@ import { EventSubscriberEntity } from "./EventSubscriberEntity";
 import { EventPaymentEntity } from "./EventPaymentEntity";
 import { groupBy, mapBy } from "../util";
 import { ProductTypeEntity, ProductEntity } from "../product/ProductEntity";
-import { UnsavedEventProduct } from "./EventProduct";
+import { UnsavedEventProduct, EventProduct } from "./EventProduct";
 
 export class EventRepository {
   private readonly db: IDatabase<{}, any>;
@@ -240,5 +240,21 @@ export class EventRepository {
 
   async destroyAddon(addonId: number): Promise<void> {
     await this.db.any(this.sqlProvider.EventProductDelete, [addonId]);
+  }
+
+  async updateAddon(addon: EventProduct): Promise<void> {
+    await this.db.tx(async (t) => {
+      await t.any(this.sqlProvider.ProductUpdate, [
+        addon.productId,
+        addon.name,
+        addon.description,
+        addon.price,
+      ]);
+
+      await t.any(this.sqlProvider.EventProductUpdate, [
+        addon.id,
+        addon.capacity,
+      ]);
+    });
   }
 }

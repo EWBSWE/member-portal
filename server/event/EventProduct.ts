@@ -3,10 +3,10 @@ import { EventProductEntity } from "./EventProductEntity";
 export class EventProduct {
   readonly id: number;
   readonly productId: number;
-  readonly name: string;
-  readonly price: number;
-  readonly capacity: number;
-  readonly description: string;
+  name: string;
+  price: number;
+  capacity: number;
+  description: string;
 
   constructor(
     id: number,

@@ -293,4 +293,29 @@ export class EventController {
   async deleteAddon(eventId: number, addonId: number): Promise<void> {
     await this.eventRepository.destroyAddon(addonId);
   }
+
+  async updateAddon(
+    eventId: number,
+    addonId: number,
+    request: UpdateAddonRequest
+  ): Promise<void> {
+    const event = await this.eventRepository.find(eventId);
+    if (event == null) throw new Error(`No event found with id ${eventId}`);
+    const addon = event.addons.find((a) => a.id === addonId);
+    if (!addon) throw new Error(`No addon found with id ${addonId}`);
+
+    addon.name = request.name;
+    addon.description = request.description;
+    addon.price = request.price;
+    addon.capacity = request.price;
+
+    await this.eventRepository.updateAddon(addon);
+  }
 }
+
+type UpdateAddonRequest = {
+  name: string;
+  description: string;
+  price: number;
+  capacity: number;
+};

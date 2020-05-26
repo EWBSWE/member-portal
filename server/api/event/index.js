@@ -103,10 +103,23 @@ router.delete(
     }
   }
 );
+
 router.put(
-  "/:id/addon/:addonId",
+  "/:eventId/addon/:addonId",
   auth.isAuthenticated(),
-  addonController.update
+  async (req, res, next) => {
+    try {
+      await controller.updateAddon(
+        +req.params.eventId,
+        +req.params.addonId,
+        req.body
+      );
+      return res.sendStatus(200);
+    } catch (e) {
+      logger.error(e);
+      return res.sendStatus(400);
+    }
+  }
 );
 
 module.exports = router;
