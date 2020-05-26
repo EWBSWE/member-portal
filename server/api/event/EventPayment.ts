@@ -1,4 +1,3 @@
-import { EventPaymentEntity } from "./EventPaymentEntity";
 import { PgEventPaymentEntity } from "./PgEventPaymentEntity";
 
 export class EventPayment {

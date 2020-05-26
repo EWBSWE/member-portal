@@ -3,7 +3,6 @@ import { EventPayment } from "./EventPayment";
 import { EventSubscriber } from "./EventSubscriber";
 import { EventProduct } from "./EventProduct";
 import { EventParticipant } from "./EventParticipant";
-import { EventEntity } from "./EventEntity";
 import { PgEventEntity } from "./PgEventEntity";
 import { PgEventParticipantEntity } from "./PgEventParticipantEntity";
 import { PgEventProductEntity } from "./PgEventProductEntity";

@@ -1,4 +1,3 @@
-import { EventProductEntity } from "./EventProductEntity";
 import { PgEventProductEntity } from "./PgEventProductEntity";
 
 export class EventProduct {

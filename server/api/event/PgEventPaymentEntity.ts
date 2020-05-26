@@ -1,5 +1,3 @@
-import { EventPaymentEntity } from "./EventPaymentEntity";
-
 export type PgEventPaymentEntity = {
   event_id: number;
   payment_id: number;
@@ -9,16 +7,3 @@ export type PgEventPaymentEntity = {
   message: string | null;
   addons: number[];
 };
-
-export function toEventPaymentEntity(
-  row: PgEventPaymentEntity
-): EventPaymentEntity {
-  return {
-    paymentId: row.payment_id,
-    name: row.name,
-    email: row.email,
-    amount: row.amount,
-    message: row.message,
-    addons: row.addons,
-  };
-}

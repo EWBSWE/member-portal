@@ -1,5 +1,3 @@
-import { EventProductEntity } from "./EventProductEntity";
-
 export type PgEventProductEntity = {
   id: number;
   event_id: number;
@@ -9,16 +7,3 @@ export type PgEventProductEntity = {
   capacity: number;
   description: string;
 };
-
-export function toEventProductEntity(
-  row: PgEventProductEntity
-): EventProductEntity {
-  return {
-    id: row.id,
-    productId: row.product_id,
-    name: row.name,
-    price: row.price,
-    capacity: row.capacity,
-    description: row.description,
-  };
-}

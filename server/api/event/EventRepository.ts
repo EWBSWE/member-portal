@@ -46,10 +46,10 @@ export class EventRepository {
     return events.map((event) => {
       return Event.toEvent(
         event,
-        participantsByEventId.get(event.id)!,
-        addonsByEventId.get(event.id)!,
-        subscribersByEventId.get(event.id)!,
-        paymentsByEventId.get(event.id)!,
+        participantsByEventId.get(event.id) || [],
+        addonsByEventId.get(event.id) || [],
+        subscribersByEventId.get(event.id) || [],
+        paymentsByEventId.get(event.id) || [],
         emailsById.get(event.email_template_id)!
       );
     });
@@ -87,7 +87,7 @@ export class EventRepository {
           event.id
         ),
         t.one<PgEmailTemplateEntity>(
-          this.sqlProvider.EventEmailTemplate,
+          this.sqlProvider.EventEmailTemplateById,
           event.email_template_id
         ),
       ])
