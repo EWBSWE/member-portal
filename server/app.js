@@ -1,21 +1,26 @@
-'use strict';
+"use strict";
 
-const path = require('path');
+require("source-map-support").install();
 
-require('dotenv')
-  .config({ path: path.resolve(__dirname, '../env') });
+const path = require("path");
 
-console.log('NODE_ENV:', process.env.NODE_ENV);
+require("dotenv").config({ path: path.resolve(__dirname, "../env") });
 
-const express = require('express');
+console.log("NODE_ENV:", process.env.NODE_ENV);
+
+const express = require("express");
 
 const app = express();
-const server = require('http').createServer(app);
-require('./config/express')(app);
-require('./routes')(app);
+const server = require("http").createServer(app);
+require("./config/express")(app);
+require("./routes")(app);
 
 server.listen(process.env.PORT, function () {
-  console.log('Express server listening on %d, in %s mode', process.env.PORT, app.get('env'));
+  console.log(
+    "Express server listening on %d, in %s mode",
+    process.env.PORT,
+    app.get("env")
+  );
 });
 
 exports = module.exports = app;
