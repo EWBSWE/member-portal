@@ -41,6 +41,7 @@ export type SqlProvider = {
   EventInsert: QueryFile;
   EventProductInsert: QueryFile;
   EventSubscriberInsert: QueryFile;
+  EventDelete: QueryFile;
 };
 
 export const SqlProvider: SqlProvider = {
@@ -85,4 +86,5 @@ export const SqlProvider: SqlProvider = {
   EventInsert: inflate("../sql/EventInsert.sql"),
   EventProductInsert: inflate("../sql/EventProductInsert.sql"),
   EventSubscriberInsert: inflate("../sql/EventSubscriberInsert.sql"),
+  EventDelete: inflate("../sql/EventDelete.sql"),
 };

@@ -208,4 +208,8 @@ export class EventRepository {
       );
     });
   }
+
+  async destroy(id: number): Promise<void> {
+    await this.db.none(this.sqlProvider.EventDelete, [id]);
+  }
 }

@@ -263,4 +263,8 @@ export class EventController {
     );
     await this.eventRepository.create(event);
   }
+
+  async destroy(id: number): Promise<void> {
+    await this.eventRepository.destroy(id);
+  }
 }

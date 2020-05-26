@@ -66,7 +66,16 @@ router.post("/", auth.isAuthenticated(), async (req, res, next) => {
     return res.sendStatus(400);
   }
 });
-router.delete("/:id", auth.isAuthenticated(), eventController.destroy);
+
+router.delete("/:id", auth.isAuthenticated(), async (req, res, next) => {
+  try {
+    await controller.destroy(req.params.id);
+    return res.sendStatus(200);
+  } catch (e) {
+    logger.error(e);
+    return res.sendStatus(400);
+  }
+});
 
 // TODO suspect it is not used
 router.post("/:id/addon", auth.isAuthenticated(), addonController.create);
