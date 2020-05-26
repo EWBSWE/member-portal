@@ -20,3 +20,11 @@ export class EventSubscriber {
     return new EventSubscriber(entity.event_id, entity.email);
   }
 }
+
+export class UnsavedEventSubscriber {
+  readonly email: string;
+
+  constructor(email: string) {
+    this.email = email;
+  }
+}

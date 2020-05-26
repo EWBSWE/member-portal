@@ -1,4 +1,4 @@
-import { Event } from "./Event";
+import { Event, UnsavedEvent } from "./Event";
 import { SqlProvider } from "../SqlProvider";
 import { IDatabase } from "pg-promise";
 import { EventEntity } from "./EventEntity";
@@ -8,6 +8,7 @@ import { EventProductEntity } from "./EventProductEntity";
 import { EventSubscriberEntity } from "./EventSubscriberEntity";
 import { EventPaymentEntity } from "./EventPaymentEntity";
 import { groupBy, mapBy } from "../util";
+import { ProductTypeEntity, ProductEntity } from "../product/ProductEntity";
 
 export class EventRepository {
   private readonly db: IDatabase<{}, any>;
@@ -140,6 +141,71 @@ export class EventRepository {
         emailTemplateEntity.subject,
         emailTemplateEntity.body,
       ]);
+    });
+  }
+
+  async create(event: UnsavedEvent): Promise<void> {
+    await this.db.tx(async (t) => {
+      const emailTemplateParams = [
+        event.emailTemplate.body,
+        event.emailTemplate.subject,
+        event.emailTemplate.sender,
+      ];
+      const emailTemplate = await t.one<EmailTemplateEntity>(
+        this.sqlProvider.EmailTemplateInsert,
+        emailTemplateParams
+      );
+      const productType = await t.one<ProductTypeEntity>(
+        this.sqlProvider.ProductTypeEvent
+      );
+
+      const products = await t.tx(
+        async (t) =>
+          await Promise.all(
+            event.addons.map((product) => {
+              const productParams = [
+                product.name,
+                product.description,
+                product.price,
+                productType.id,
+              ];
+              return t.one<ProductEntity>(
+                this.sqlProvider.ProductInsert,
+                productParams
+              );
+            })
+          )
+      );
+
+      const eventParams = [
+        event.name,
+        event.description,
+        event.identifier,
+        event.active,
+        event.dueDate,
+        event.notificationOpen,
+        emailTemplate.id,
+      ];
+      const savedEvent = await t.one(this.sqlProvider.EventInsert, eventParams);
+
+      await t.tx((t) =>
+        products.map((product, index) =>
+          t.one(this.sqlProvider.EventProductInsert, [
+            savedEvent.id,
+            event.addons[index].capacity,
+            product.id,
+          ])
+        )
+      );
+
+      await t.tx((t) =>
+        event.subscribers.map((subscriber) =>
+          t.one(this.sqlProvider.EventSubscriberInsert, [
+            savedEvent.id,
+            subscriber.email,
+          ])
+        )
+      );
     });
   }
 }

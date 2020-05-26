@@ -31,3 +31,15 @@ export class EmailTemplate {
     );
   }
 }
+
+export class UnsavedEmailTemplate {
+  readonly subject: string;
+  readonly body: string;
+  readonly sender: string;
+
+  constructor(subject: string, body: string, sender: string) {
+    this.subject = subject;
+    this.body = body;
+    this.sender = sender;
+  }
+}

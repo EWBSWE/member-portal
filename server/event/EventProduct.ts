@@ -35,3 +35,22 @@ export class EventProduct {
     );
   }
 }
+
+export class UnsavedEventProduct {
+  readonly name: string;
+  readonly price: number;
+  readonly capacity: number;
+  readonly description: string;
+
+  constructor(
+    name: string,
+    price: number,
+    capacity: number,
+    description: string
+  ) {
+    this.name = name;
+    this.price = price;
+    this.capacity = capacity;
+    this.description = description;
+  }
+}

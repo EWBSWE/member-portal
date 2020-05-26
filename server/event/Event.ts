@@ -1,7 +1,7 @@
-import { EmailTemplate } from "./EmailTemplate";
+import { EmailTemplate, UnsavedEmailTemplate } from "./EmailTemplate";
 import { EventPayment } from "./EventPayment";
-import { EventSubscriber } from "./EventSubscriber";
-import { EventProduct } from "./EventProduct";
+import { EventSubscriber, UnsavedEventSubscriber } from "./EventSubscriber";
+import { EventProduct, UnsavedEventProduct } from "./EventProduct";
 import { EventParticipant } from "./EventParticipant";
 import { EventEntity } from "./EventEntity";
 import { EventParticipantEntity } from "./EventParticipantEntity";
@@ -107,4 +107,38 @@ export function check<T>(maybe?: T | null): T {
   if (maybe == null) throw new Error("Expected item to be not null");
   if (maybe == undefined) throw new Error("Expected item to be defined");
   return maybe;
+}
+
+export class UnsavedEvent {
+  readonly name: string;
+  readonly description: string;
+  readonly identifier: string;
+  readonly active: boolean;
+  readonly dueDate: Date;
+  readonly notificationOpen: boolean;
+  readonly addons: UnsavedEventProduct[];
+  readonly subscribers: UnsavedEventSubscriber[];
+  readonly emailTemplate: UnsavedEmailTemplate;
+
+  constructor(
+    name: string,
+    description: string,
+    identifier: string,
+    active: boolean,
+    dueDate: Date,
+    notificationOpen: boolean,
+    addons: UnsavedEventProduct[],
+    subscribers: UnsavedEventSubscriber[],
+    emailTemplate: UnsavedEmailTemplate
+  ) {
+    this.name = name;
+    this.description = description;
+    this.identifier = identifier;
+    this.active = active;
+    this.dueDate = dueDate;
+    this.notificationOpen = notificationOpen;
+    this.addons = addons;
+    this.subscribers = subscribers;
+    this.emailTemplate = emailTemplate;
+  }
 }

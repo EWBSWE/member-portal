@@ -57,10 +57,18 @@ router.put("/:id", auth.isAuthenticated(), async (req, res, next) => {
   }
 });
 
-router.post("/", auth.isAuthenticated(), eventController.create);
-//router.put("/:id", auth.isAuthenticated(), eventController.update);
+router.post("/", auth.isAuthenticated(), async (req, res, next) => {
+  try {
+    const response = await controller.create(req.body);
+    return res.status(200).json(response);
+  } catch (e) {
+    logger.error(e);
+    return res.sendStatus(400);
+  }
+});
 router.delete("/:id", auth.isAuthenticated(), eventController.destroy);
 
+// TODO suspect it is not used
 router.post("/:id/addon", auth.isAuthenticated(), addonController.create);
 router.delete(
   "/:id/addon/:addonId",

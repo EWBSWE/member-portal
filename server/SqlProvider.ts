@@ -34,6 +34,13 @@ export type SqlProvider = {
   EventClearSubscribers: QueryFile;
   EventAddSubscriber: QueryFile;
   EventUpdateEmailTemplate: QueryFile;
+
+  EmailTemplateInsert: QueryFile;
+  ProductTypeEvent: QueryFile;
+  ProductInsert: QueryFile;
+  EventInsert: QueryFile;
+  EventProductInsert: QueryFile;
+  EventSubscriberInsert: QueryFile;
 };
 
 export const SqlProvider: SqlProvider = {
@@ -71,4 +78,11 @@ export const SqlProvider: SqlProvider = {
   EventClearSubscribers: inflate("../sql/EventClearSubscribers.sql"),
   EventAddSubscriber: inflate("../sql/EventAddSubscriber.sql"),
   EventUpdateEmailTemplate: inflate("../sql/EventUpdateEmailTemplate.sql"),
+
+  EmailTemplateInsert: inflate("../sql/EmailTemplateInsert.sql"),
+  ProductTypeEvent: inflate("../sql/ProductTypeEvent.sql"),
+  ProductInsert: inflate("../sql/ProductInsert.sql"),
+  EventInsert: inflate("../sql/EventInsert.sql"),
+  EventProductInsert: inflate("../sql/EventProductInsert.sql"),
+  EventSubscriberInsert: inflate("../sql/EventSubscriberInsert.sql"),
 };

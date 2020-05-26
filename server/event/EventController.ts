@@ -1,6 +1,8 @@
 import { EventRepository } from "./EventRepository";
-import { Event } from "./Event";
-import { EventSubscriber } from "./EventSubscriber";
+import { Event, UnsavedEvent, check } from "./Event";
+import { EventSubscriber, UnsavedEventSubscriber } from "./EventSubscriber";
+import { EmailTemplate, UnsavedEmailTemplate } from "./EmailTemplate";
+import { UnsavedEventProduct } from "./EventProduct";
 
 type AllEventsResponse = {
   id: number;
@@ -157,6 +159,27 @@ type UpdateEventRequest = {
   }[];
 };
 
+type CreateEventRequest = {
+  name: string;
+  identifier: string;
+  description: string;
+  active: boolean;
+  contact: string;
+  emailTemplate: {
+    subject: string;
+    body: string;
+  };
+  notificationOpen: boolean;
+  subscribers: string[];
+  dueDate: string;
+  addons: {
+    name: string;
+    price: number;
+    description: string;
+    capacity: number;
+  }[];
+};
+
 export class EventController {
   private readonly eventRepository: EventRepository;
 
@@ -201,5 +224,43 @@ export class EventController {
     event.emailTemplate.body = request.emailTemplate.body;
 
     await this.eventRepository.update(event);
+  }
+
+  async create(request: CreateEventRequest): Promise<void> {
+    const sameSlugEvent = await this.eventRepository.findByPublicIdentifier(
+      request.identifier
+    );
+    if (sameSlugEvent != null)
+      throw new Error(
+        `Already exists an event with identifier ${request.identifier}`
+      );
+    // TODO validate request -> Joi?
+    const emailTemplate = new UnsavedEmailTemplate(
+      request.emailTemplate.subject,
+      request.emailTemplate.body,
+      check(process.env.EWB_SENDER)
+    );
+
+    const products = request.addons.map(
+      (p) => new UnsavedEventProduct(p.name, p.price, p.capacity, p.description)
+    );
+    if (products.length === 0) throw new Error("No products");
+    const subscribers = request.subscribers.map(
+      (email) => new UnsavedEventSubscriber(email)
+    );
+    if (subscribers.length === 0) throw new Error("No subscribers");
+
+    const event = new UnsavedEvent(
+      request.name,
+      request.description,
+      request.identifier,
+      !!request.active,
+      new Date(request.dueDate),
+      !!request.notificationOpen,
+      products,
+      subscribers,
+      emailTemplate
+    );
+    await this.eventRepository.create(event);
   }
 }
