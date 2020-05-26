@@ -1,7 +1,6 @@
 "use strict";
 
 const express = require("express");
-const eventController = require("./event.controller");
 const addonController = require("./event-product.controller");
 const auth = require("../../auth/auth.service");
 const router = express.Router();
@@ -77,8 +76,20 @@ router.delete("/:id", auth.isAuthenticated(), async (req, res, next) => {
   }
 });
 
-// TODO suspect it is not used
-router.post("/:id/addon", auth.isAuthenticated(), addonController.create);
+router.post(
+  "/:eventId/addon",
+  auth.isAuthenticated(),
+  async (req, res, next) => {
+    try {
+      await controller.createAddon(req.params.eventId, req.body);
+      return res.sendStatus(200);
+    } catch (e) {
+      logger.error(e);
+      return res.sendStatus(400);
+    }
+  }
+);
+
 router.delete(
   "/:id/addon/:addonId",
   auth.isAuthenticated(),

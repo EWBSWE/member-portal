@@ -180,6 +180,13 @@ type CreateEventRequest = {
   }[];
 };
 
+type CreateAddonRequest = {
+  name: string;
+  description: string;
+  price: number;
+  capacity: number;
+};
+
 export class EventController {
   private readonly eventRepository: EventRepository;
 
@@ -266,5 +273,20 @@ export class EventController {
 
   async destroy(id: number): Promise<void> {
     await this.eventRepository.destroy(id);
+  }
+
+  async createAddon(
+    eventId: number,
+    request: CreateAddonRequest
+  ): Promise<void> {
+    const event = await this.eventRepository.find(eventId);
+    if (event == null) throw new Error(`No event found with id ${eventId}`);
+    const product = new UnsavedEventProduct(
+      request.name,
+      request.price,
+      request.capacity,
+      request.description
+    );
+    await this.eventRepository.attachAddon(event, product);
   }
 }
