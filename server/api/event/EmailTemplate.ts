@@ -1,4 +1,4 @@
-import { EmailTemplateEntity } from "./EmailTemplateEntity";
+import { PgEmailTemplateEntity } from "./PgEmailTemplateEntity";
 
 export class EmailTemplate {
   readonly id: number;
@@ -13,7 +13,16 @@ export class EmailTemplate {
     this.body = body;
   }
 
-  static fromEntity(entity: EmailTemplateEntity): EmailTemplate {
+  toEntity(): PgEmailTemplateEntity {
+    return {
+      id: this.id,
+      sender: this.sender,
+      subject: this.subject,
+      body: this.body,
+    };
+  }
+
+  static fromEntity(entity: PgEmailTemplateEntity): EmailTemplate {
     return new EmailTemplate(
       entity.id,
       entity.sender,

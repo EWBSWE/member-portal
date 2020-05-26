@@ -1,4 +1,5 @@
 import { EventProductEntity } from "./EventProductEntity";
+import { PgEventProductEntity } from "./PgEventProductEntity";
 
 export class EventProduct {
   readonly id: number;
@@ -24,10 +25,10 @@ export class EventProduct {
     this.description = description;
   }
 
-  static fromEntity(entity: EventProductEntity): EventProduct {
+  static fromEntity(entity: PgEventProductEntity): EventProduct {
     return new EventProduct(
       entity.id,
-      entity.productId,
+      entity.product_id,
       entity.name,
       entity.price,
       entity.capacity,

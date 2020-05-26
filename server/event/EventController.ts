@@ -1,7 +1,6 @@
 import { EventRepository } from "../api/event/EventRepository";
 import { Event } from "../api/event/Event";
 import { EventSubscriber } from "../api/event/EventSubscriber";
-import { EmailTemplate } from "../api/event/EmailTemplate";
 
 type AllEventsResponse = {
   id: number;
@@ -195,7 +194,7 @@ export class EventController {
     event.notificationOpen = request.notificationOpen;
 
     event.subscribers = request.subscribers.map(
-      (email) => new EventSubscriber(email)
+      (email) => new EventSubscriber(event.id!, email)
     );
 
     event.emailTemplate.subject = request.emailTemplate.subject;

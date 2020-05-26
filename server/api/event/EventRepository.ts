@@ -1,60 +1,151 @@
 import { Event } from "./Event";
-import { EventStore } from "../../event/EventStore";
-import { toEvent, fromEvent } from "./EventEntity";
-import { fromEmailTemplate } from "./EmailTemplateEntity";
-import { toEventSubscriberEntity } from "./EventSubscriberEntity";
+import { SqlProvider } from "../../SqlProvider";
+import { IDatabase } from "pg-promise";
+import { PgEventEntity } from "./PgEventEntity";
+import { PgEmailTemplateEntity } from "./PgEmailTemplateEntity";
+import { PgEventParticipantEntity } from "./PgEventParticipantEntity";
+import { PgEventProductEntity } from "./PgEventProductEntity";
+import { PgEventSubscriberEntity } from "./PgEventSubscriberEntity";
+import { PgEventPaymentEntity } from "./PgEventPaymentEntity";
+import { groupBy, mapBy } from "../../util";
 
 export class EventRepository {
-  private readonly eventStore: EventStore;
+  private readonly db: IDatabase<{}, any>;
+  private readonly sqlProvider: SqlProvider;
 
-  constructor(eventStore: EventStore) {
-    this.eventStore = eventStore;
+  constructor(db: IDatabase<{}, any>, sqlProvider: SqlProvider) {
+    this.db = db;
+    this.sqlProvider = sqlProvider;
   }
 
   async findAll(): Promise<Event[]> {
-    const events = await this.eventStore.findAll();
-
-    return Promise.all(
-      events.map(async (event) => {
-        const details = await this.eventStore.getDetails(event);
-        return toEvent(
-          event,
-          details.participants,
-          details.addons,
-          details.subscribers,
-          details.payments,
-          details.emailTemplate
-        );
-      })
+    const [
+      events,
+      participants,
+      addons,
+      subscribers,
+      payments,
+      emails,
+    ] = await this.db.tx(async (t) =>
+      Promise.all([
+        t.any<PgEventEntity>(this.sqlProvider.Events),
+        t.any<PgEventParticipantEntity>(this.sqlProvider.EventParticipants),
+        t.any<PgEventProductEntity>(this.sqlProvider.EventAddons),
+        t.any<PgEventSubscriberEntity>(this.sqlProvider.EventSubscribers),
+        t.any<PgEventPaymentEntity>(this.sqlProvider.EventPayments),
+        t.any<PgEmailTemplateEntity>(this.sqlProvider.EventEmailTemplate),
+      ])
     );
+
+    const participantsByEventId = groupBy(participants, (p) => p.event_id);
+    const addonsByEventId = groupBy(addons, (a) => a.event_id);
+    const subscribersByEventId = groupBy(subscribers, (s) => s.event_id);
+    const paymentsByEventId = groupBy(payments, (p) => p.event_id);
+    const emailsById = mapBy(emails, (e) => e.id);
+
+    return events.map((event) => {
+      return Event.toEvent(
+        event,
+        participantsByEventId.get(event.id)!,
+        addonsByEventId.get(event.id)!,
+        subscribersByEventId.get(event.id)!,
+        paymentsByEventId.get(event.id)!,
+        emailsById.get(event.email_template_id)!
+      );
+    });
   }
 
   async find(id: number): Promise<Event | null> {
-    const entity = await this.eventStore.findById(id);
-    if (entity == null) return null;
-    const details = await this.eventStore.getDetails(entity);
+    const event = await this.db.oneOrNone<PgEventEntity>(
+      this.sqlProvider.EventById,
+      id
+    );
+    if (event == null) return null;
 
-    return toEvent(
-      entity,
-      details.participants,
-      details.addons,
-      details.subscribers,
-      details.payments,
-      details.emailTemplate
+    const [
+      participants,
+      addons,
+      subscribers,
+      payments,
+      emailTemplate,
+    ] = await this.db.task(async (t) =>
+      Promise.all([
+        t.any<PgEventParticipantEntity>(
+          this.sqlProvider.EventParticipantsById,
+          event.id
+        ),
+        t.many<PgEventProductEntity>(
+          this.sqlProvider.EventAddonsById,
+          event.id
+        ),
+        t.any<PgEventSubscriberEntity>(
+          this.sqlProvider.EventSubscribersById,
+          event.id
+        ),
+        t.any<PgEventPaymentEntity>(
+          this.sqlProvider.EventPaymentsById,
+          event.id
+        ),
+        t.one<PgEmailTemplateEntity>(
+          this.sqlProvider.EventEmailTemplate,
+          event.email_template_id
+        ),
+      ])
+    );
+
+    return Event.toEvent(
+      event,
+      participants,
+      addons,
+      subscribers,
+      payments,
+      emailTemplate
     );
   }
 
   async findByPublicIdentifier(identifier: string): Promise<Event | null> {
-    const entity = await this.eventStore.findBySlug(identifier);
-    if (!entity) return null;
-    return this.find(entity.id);
+    const event = await this.db.oneOrNone<PgEventEntity>(
+      this.sqlProvider.ActiveEventByIdentifier,
+      identifier
+    );
+    if (event == null) return null;
+    return this.find(event.id);
   }
 
   async update(event: Event): Promise<void> {
-    await this.eventStore.updateEvent(
-      fromEvent(event),
-      event.subscribers!.map(toEventSubscriberEntity),
-      fromEmailTemplate(event.emailTemplate!)
-    );
+    const eventEntity = Event.fromEvent(event);
+    const subscriberEntities = event.subscribers.map((s) => s.toEntity());
+    const emailTemplateEntity = event.emailTemplate.toEntity();
+
+    await this.db.tx(async (t) => {
+      const params = [
+        eventEntity.id,
+        eventEntity.name,
+        eventEntity.description,
+        eventEntity.identifier,
+        eventEntity.active,
+        eventEntity.due_date,
+        eventEntity.notification_open,
+      ];
+      await t.one(this.sqlProvider.EventUpdate, params);
+
+      await t.tx(async (t) => {
+        await t.any(this.sqlProvider.EventClearSubscribers, event.id);
+        await Promise.all(
+          subscriberEntities.map((subscriber) =>
+            t.any(this.sqlProvider.EventAddSubscriber, [
+              event.id,
+              subscriber.email,
+            ])
+          )
+        );
+      });
+
+      await t.any(this.sqlProvider.EventUpdateEmailTemplate, [
+        emailTemplateEntity.id,
+        emailTemplateEntity.subject,
+        emailTemplateEntity.body,
+      ]);
+    });
   }
 }

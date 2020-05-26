@@ -22,10 +22,14 @@ export type SqlProvider = {
   EventById: QueryFile;
   ActiveEventByIdentifier: QueryFile;
   EventEmailTemplate: QueryFile;
+  EventEmailTemplateById: QueryFile;
   EventPaymentsById: QueryFile;
+  EventPayments: QueryFile;
   EventSubscribersById: QueryFile;
+  EventSubscribers: QueryFile;
   EventParticipantsById: QueryFile;
   EventAddonsById: QueryFile;
+  EventAddons: QueryFile;
   EventUpdate: QueryFile;
   EventClearSubscribers: QueryFile;
   EventAddSubscriber: QueryFile;
@@ -44,14 +48,25 @@ export const SqlProvider: SqlProvider = {
   UserResetPassword: inflate("../sql/UserResetPassword.sql"),
 
   Events: inflate("../sql/Events.sql"),
-  EventParticipants: inflate("../sql/EventParticipants.sql"),
   EventById: inflate("../sql/EventById.sql"),
-  ActiveEventByIdentifier: inflate("../sql/ActiveEventByIdentifier.sql"),
-  EventEmailTemplate: inflate("../sql/EventEmailTemplate.sql"),
-  EventPaymentsById: inflate("../sql/EventPaymentsById.sql"),
-  EventSubscribersById: inflate("../sql/EventSubscribersById.sql"),
+
+  EventParticipants: inflate("../sql/EventParticipants.sql"),
   EventParticipantsById: inflate("../sql/EventParticipantsById.sql"),
+
+  ActiveEventByIdentifier: inflate("../sql/ActiveEventByIdentifier.sql"),
+
+  EventEmailTemplate: inflate("../sql/EventEmailTemplate.sql"),
+  EventEmailTemplateById: inflate("../sql/EventEmailTemplateById.sql"),
+
+  EventPayments: inflate("../sql/EventPayments.sql"),
+  EventPaymentsById: inflate("../sql/EventPaymentsById.sql"),
+
+  EventSubscribers: inflate("../sql/EventSubscribers.sql"),
+  EventSubscribersById: inflate("../sql/EventSubscribersById.sql"),
+
+  EventAddons: inflate("../sql/EventAddons.sql"),
   EventAddonsById: inflate("../sql/EventAddonsById.sql"),
+
   EventUpdate: inflate("../sql/EventUpdate.sql"),
   EventClearSubscribers: inflate("../sql/EventClearSubscribers.sql"),
   EventAddSubscriber: inflate("../sql/EventAddSubscriber.sql"),

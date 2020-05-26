@@ -1,3 +1,2 @@
-SELECT subject, body
+SELECT *
 FROM email_template
-WHERE id = $1
