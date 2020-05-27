@@ -4,7 +4,7 @@ import { SqlProvider } from "../SqlProvider";
 import * as logger from "../config/logger";
 import { db } from "../db";
 import { EventRepository } from "./EventRepository";
-import { EventController } from "./EventController";
+import { EventController, parseUpdateAddonRequest } from "./EventController";
 
 const router = express.Router();
 
@@ -105,16 +105,19 @@ router.put(
   "/:eventId/addon/:addonId",
   auth.isAuthenticated(),
   async (req, res, next) => {
+    const params = Object.assign(req.body, {
+      eventId: req.params.eventId,
+      addonId: req.params.addonId,
+    });
+
+    const result = parseUpdateAddonRequest(params);
+    if (!result.success) return res.sendStatus(400);
+
     try {
-      await controller.updateAddon(
-        +req.params.eventId,
-        +req.params.addonId,
-        req.body
-      );
+      await controller.updateAddon(result.value);
       return res.sendStatus(200);
     } catch (e) {
-      logger.error(e);
-      return res.sendStatus(400);
+      next(e);
     }
   }
 );

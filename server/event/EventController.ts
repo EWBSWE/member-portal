@@ -1,8 +1,10 @@
+import * as Joi from "@hapi/joi";
 import { EventRepository } from "./EventRepository";
 import { Event, UnsavedEvent, check } from "./Event";
 import { EventSubscriber, UnsavedEventSubscriber } from "./EventSubscriber";
 import { EmailTemplate, UnsavedEmailTemplate } from "./EmailTemplate";
 import { UnsavedEventProduct } from "./EventProduct";
+import { ValidationResult, parseParams } from "../RequestValidation";
 
 type AllEventsResponse = {
   id: number;
@@ -294,15 +296,11 @@ export class EventController {
     await this.eventRepository.destroyAddon(addonId);
   }
 
-  async updateAddon(
-    eventId: number,
-    addonId: number,
-    request: UpdateAddonRequest
-  ): Promise<void> {
-    const event = await this.eventRepository.find(eventId);
-    if (event == null) throw new Error(`No event found with id ${eventId}`);
-    const addon = event.addons.find((a) => a.id === addonId);
-    if (!addon) throw new Error(`No addon found with id ${addonId}`);
+  async updateAddon(request: UpdateAddonRequest): Promise<void> {
+    const event = await this.eventRepository.find(request.eventId);
+    if (event == null) throw new Error("Event not found");
+    const addon = event.addons.find((a) => a.id === request.addonId);
+    if (!addon) throw new Error("Addon not found on event");
 
     addon.name = request.name;
     addon.description = request.description;
@@ -313,9 +311,26 @@ export class EventController {
   }
 }
 
-type UpdateAddonRequest = {
+export type UpdateAddonRequest = {
+  eventId: number;
+  addonId: number;
   name: string;
   description: string;
   price: number;
   capacity: number;
 };
+
+const UpdateAddonRequestSchema = Joi.object<UpdateAddonRequest>({
+  eventId: Joi.number().required(),
+  addonId: Joi.number().required(),
+  name: Joi.string().required(),
+  description: Joi.string().required(),
+  price: Joi.number().required().min(0),
+  capacity: Joi.number().required().min(0),
+});
+
+export function parseUpdateAddonRequest(
+  params: any
+): ValidationResult<UpdateAddonRequest> {
+  return parseParams(params, UpdateAddonRequestSchema);
+}
