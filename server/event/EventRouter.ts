@@ -1,23 +1,20 @@
-"use strict";
+import * as express from "express";
+import * as auth from "../auth/auth.service";
+import { SqlProvider } from "../SqlProvider";
+import * as logger from "../config/logger";
+import { db } from "../db";
+import { EventRepository } from "./EventRepository";
+import { EventController } from "./EventController";
 
-const express = require("express");
-const addonController = require("./event-product.controller");
-const auth = require("../../auth/auth.service");
 const router = express.Router();
 
-const logger = require("../../config/logger");
-const { EventController } = require("../../event/EventController");
-
-const db = require("../../db/futureDb");
-const { EventRepository } = require("../../event/EventRepository");
-const { SqlProvider } = require("../../SqlProvider");
 const eventRepository = new EventRepository(db, SqlProvider);
 const controller = new EventController(eventRepository);
 
 router.get("/public", async (req, res, next) => {
   const slug = req.query.url;
   try {
-    const response = await controller.showPublic(slug);
+    const response = await controller.showPublic(slug as string);
     return res.status(200).json(response);
   } catch (e) {
     logger.error(e);
@@ -37,7 +34,7 @@ router.get("/", auth.isAuthenticated(), async (req, res, next) => {
 router.get("/:id", auth.isAuthenticated(), async (req, res, next) => {
   const id = req.params.id;
   try {
-    const response = await controller.show(id);
+    const response = await controller.show(+id);
     return res.status(200).json(response);
   } catch (e) {
     logger.error(e);
@@ -68,7 +65,7 @@ router.post("/", auth.isAuthenticated(), async (req, res, next) => {
 
 router.delete("/:id", auth.isAuthenticated(), async (req, res, next) => {
   try {
-    await controller.destroy(req.params.id);
+    await controller.destroy(+req.params.id);
     return res.sendStatus(200);
   } catch (e) {
     logger.error(e);
@@ -81,7 +78,7 @@ router.post(
   auth.isAuthenticated(),
   async (req, res, next) => {
     try {
-      await controller.createAddon(req.params.eventId, req.body);
+      await controller.createAddon(+req.params.eventId, req.body);
       return res.sendStatus(200);
     } catch (e) {
       logger.error(e);
@@ -95,7 +92,7 @@ router.delete(
   auth.isAuthenticated(),
   async (req, res, next) => {
     try {
-      await controller.deleteAddon(req.params.eventId, req.params.addonId);
+      await controller.deleteAddon(+req.params.eventId, +req.params.addonId);
       return res.sendStatus(200);
     } catch (e) {
       logger.error(e);
@@ -122,4 +119,4 @@ router.put(
   }
 );
 
-module.exports = router;
+export default router;
