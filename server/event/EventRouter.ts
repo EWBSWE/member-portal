@@ -4,7 +4,8 @@ import { SqlProvider } from "../SqlProvider";
 import * as logger from "../config/logger";
 import { db } from "../db";
 import { EventRepository } from "./EventRepository";
-import { EventController, parseUpdateAddonRequest } from "./EventController";
+import { EventController } from "./EventController";
+import { parseUpdateAddonRequest } from "./UpdateAddonRequest";
 
 const router = express.Router();
 

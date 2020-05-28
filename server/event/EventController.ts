@@ -1,10 +1,9 @@
-import * as Joi from "@hapi/joi";
 import { EventRepository } from "./EventRepository";
 import { Event, UnsavedEvent, check } from "./Event";
 import { EventSubscriber, UnsavedEventSubscriber } from "./EventSubscriber";
 import { EmailTemplate, UnsavedEmailTemplate } from "./EmailTemplate";
 import { UnsavedEventProduct } from "./EventProduct";
-import { ValidationResult, parseParams } from "../RequestValidation";
+import { UpdateAddonRequest } from "./UpdateAddonRequest";
 
 type AllEventsResponse = {
   id: number;
@@ -309,28 +308,4 @@ export class EventController {
 
     await this.eventRepository.updateAddon(addon);
   }
-}
-
-export type UpdateAddonRequest = {
-  eventId: number;
-  addonId: number;
-  name: string;
-  description: string;
-  price: number;
-  capacity: number;
-};
-
-const UpdateAddonRequestSchema = Joi.object<UpdateAddonRequest>({
-  eventId: Joi.number().required(),
-  addonId: Joi.number().required(),
-  name: Joi.string().required(),
-  description: Joi.string().required(),
-  price: Joi.number().required().min(0),
-  capacity: Joi.number().required().min(0),
-});
-
-export function parseUpdateAddonRequest(
-  params: any
-): ValidationResult<UpdateAddonRequest> {
-  return parseParams(params, UpdateAddonRequestSchema);
 }
