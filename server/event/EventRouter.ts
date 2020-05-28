@@ -6,6 +6,7 @@ import { db } from "../db";
 import { EventRepository } from "./EventRepository";
 import { EventController } from "./EventController";
 import { parseUpdateAddonRequest } from "./UpdateAddonRequest";
+import { parseCreateAddonRequest } from "./CreateAddonRequest";
 
 const router = express.Router();
 
@@ -79,7 +80,10 @@ router.post(
   auth.isAuthenticated(),
   async (req, res, next) => {
     try {
-      await controller.createAddon(+req.params.eventId, req.body);
+      const params = Object.assign(req.body, { eventId: req.params.eventId })
+      const result = parseCreateAddonRequest(params)
+      if (!result.success) return res.sendStatus(400)
+      await controller.createAddon(params);
       return res.sendStatus(200);
     } catch (e) {
       logger.error(e);

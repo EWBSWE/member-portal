@@ -4,6 +4,7 @@ import { EventSubscriber, UnsavedEventSubscriber } from "./EventSubscriber";
 import { EmailTemplate, UnsavedEmailTemplate } from "./EmailTemplate";
 import { UnsavedEventProduct } from "./EventProduct";
 import { UpdateAddonRequest } from "./UpdateAddonRequest";
+import { CreateAddonRequest } from "./CreateAddonRequest";
 
 type AllEventsResponse = {
   id: number;
@@ -181,13 +182,6 @@ type CreateEventRequest = {
   }[];
 };
 
-type CreateAddonRequest = {
-  name: string;
-  description: string;
-  price: number;
-  capacity: number;
-};
-
 export class EventController {
   private readonly eventRepository: EventRepository;
 
@@ -276,12 +270,9 @@ export class EventController {
     await this.eventRepository.destroy(id);
   }
 
-  async createAddon(
-    eventId: number,
-    request: CreateAddonRequest
-  ): Promise<void> {
-    const event = await this.eventRepository.find(eventId);
-    if (event == null) throw new Error(`No event found with id ${eventId}`);
+  async createAddon(request: CreateAddonRequest): Promise<void> {
+    const event = await this.eventRepository.find(request.eventId);
+    if (event == null) throw new Error(`No event found with id ${request.eventId}`);
     const product = new UnsavedEventProduct(
       request.name,
       request.price,
