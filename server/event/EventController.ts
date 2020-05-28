@@ -217,9 +217,9 @@ export class EventController {
       request.name,
       request.description,
       request.identifier,
-      !!request.active,
-      new Date(request.dueDate),
-      !!request.notificationOpen,
+      request.active,
+      request.dueDate,
+      request.notificationOpen,
       products,
       subscribers,
       emailTemplate

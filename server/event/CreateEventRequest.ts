@@ -13,7 +13,7 @@ export type CreateEventRequest = {
     };
     notificationOpen: boolean;
     subscribers: string[];
-    dueDate: string;
+    dueDate: Date;
     addons: {
         name: string;
         price: number;
