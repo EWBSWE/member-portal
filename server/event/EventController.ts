@@ -6,6 +6,7 @@ import { UnsavedEventProduct } from "./EventProduct";
 import { UpdateAddonRequest } from "./UpdateAddonRequest";
 import { CreateAddonRequest } from "./CreateAddonRequest";
 import { CreateEventRequest } from "./CreateEventRequest";
+import { UpdateEventRequest } from "./UpdateEventRequest";
 
 type AllEventsResponse = {
   id: number;
@@ -141,26 +142,6 @@ function createPublicEventResponse(event: Event): PublicEventResponse {
     })),
   };
 }
-
-type UpdateEventRequest = {
-  id: number;
-  name: string;
-  description: string;
-  identifier: string;
-  active: boolean;
-  dueDate: Date;
-  emailTemplate: { subject: string; body: string };
-  notificationOpen: boolean;
-  subscribers: string[];
-  addons: {
-    id: number;
-    capacity: number;
-    description: string;
-    name: string;
-    price: number;
-    product_id: number;
-  }[];
-};
 
 export class EventController {
   private readonly eventRepository: EventRepository;

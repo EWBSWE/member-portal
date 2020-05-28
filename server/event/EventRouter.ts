@@ -8,6 +8,7 @@ import { EventController } from "./EventController";
 import { parseUpdateAddonRequest } from "./UpdateAddonRequest";
 import { parseCreateAddonRequest } from "./CreateAddonRequest";
 import { parseCreateEventRequest } from "./CreateEventRequest";
+import { parseUpdateEventRequest } from "./UpdateEventRequest";
 
 const router = express.Router();
 
@@ -47,8 +48,9 @@ router.get("/:id", auth.isAuthenticated(), async (req, res, next) => {
 
 router.put("/:id", auth.isAuthenticated(), async (req, res, next) => {
   try {
-    const params = Object.assign(req.body, { id: req.params.id });
-    await controller.update(params);
+    const maybeParams = parseUpdateEventRequest(Object.assign(req.body, { id: req.params.id }))
+    if (!maybeParams.success) return res.sendStatus(400);
+    await controller.update(maybeParams.value);
     return res.sendStatus(200);
   } catch (e) {
     logger.error(e);
