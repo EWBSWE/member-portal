@@ -1,10 +1,11 @@
 import { EventRepository } from "./EventRepository";
 import { Event, UnsavedEvent, check } from "./Event";
 import { EventSubscriber, UnsavedEventSubscriber } from "./EventSubscriber";
-import { EmailTemplate, UnsavedEmailTemplate } from "./EmailTemplate";
+import { UnsavedEmailTemplate } from "./EmailTemplate";
 import { UnsavedEventProduct } from "./EventProduct";
 import { UpdateAddonRequest } from "./UpdateAddonRequest";
 import { CreateAddonRequest } from "./CreateAddonRequest";
+import { CreateEventRequest } from "./CreateEventRequest";
 
 type AllEventsResponse = {
   id: number;
@@ -158,27 +159,6 @@ type UpdateEventRequest = {
     name: string;
     price: number;
     product_id: number;
-  }[];
-};
-
-type CreateEventRequest = {
-  name: string;
-  identifier: string;
-  description: string;
-  active: boolean;
-  contact: string;
-  emailTemplate: {
-    subject: string;
-    body: string;
-  };
-  notificationOpen: boolean;
-  subscribers: string[];
-  dueDate: string;
-  addons: {
-    name: string;
-    price: number;
-    description: string;
-    capacity: number;
   }[];
 };
 

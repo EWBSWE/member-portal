@@ -7,6 +7,7 @@ import { EventRepository } from "./EventRepository";
 import { EventController } from "./EventController";
 import { parseUpdateAddonRequest } from "./UpdateAddonRequest";
 import { parseCreateAddonRequest } from "./CreateAddonRequest";
+import { parseCreateEventRequest } from "./CreateEventRequest";
 
 const router = express.Router();
 
@@ -57,7 +58,9 @@ router.put("/:id", auth.isAuthenticated(), async (req, res, next) => {
 
 router.post("/", auth.isAuthenticated(), async (req, res, next) => {
   try {
-    const response = await controller.create(req.body);
+    const maybeParams = parseCreateEventRequest(req.body);
+    if (!maybeParams.success) return res.sendStatus(400);
+    const response = await controller.create(maybeParams.value);
     return res.status(200).json(response);
   } catch (e) {
     logger.error(e);
