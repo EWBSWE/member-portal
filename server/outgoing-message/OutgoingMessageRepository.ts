@@ -1,16 +1,29 @@
 import { OutgoingMessage } from "./OutgoingMessage";
-import { OutgoingMessageStore } from "./OutgoingMessageStore";
 import { OutgoingMessageEntity } from "./OutgoingMessageEntity";
+import { SqlProvider } from "../SqlProvider";
+import { IDatabase } from "pg-promise";
 
 export class OutgoingMessageRepository {
-    private store: OutgoingMessageStore;
+  private readonly db: IDatabase<{}, any>;
+  private readonly sqlProvider: SqlProvider;
 
-    constructor(store: OutgoingMessageStore) {
-        this.store = store;
-    }
+  constructor(db: IDatabase<{}, any>, sqlProvider: SqlProvider) {
+    this.sqlProvider = sqlProvider;
+    this.db = db;
+  }
 
-    async enqueue(message: OutgoingMessage): Promise<void> {
-        const entity = new OutgoingMessageEntity(message.recipient, message.sender, message.subject, message.body);
-        await this.store.create(entity);
-    }
+  async enqueue(message: OutgoingMessage): Promise<void> {
+    const entity = message.toEntity();
+
+    const params = [
+      entity.recipient,
+      entity.sender,
+      entity.subject,
+      entity.body,
+    ];
+    await this.db.any<OutgoingMessageEntity>(
+      this.sqlProvider.InsertOutgoingMessage,
+      params
+    );
+  }
 }
