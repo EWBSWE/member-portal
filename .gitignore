@@ -18,3 +18,4 @@ env
 *.map
 # build directory
 server-dist
+.log
