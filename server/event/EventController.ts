@@ -7,6 +7,7 @@ import { UpdateAddonRequest } from "./UpdateAddonRequest";
 import { CreateAddonRequest } from "./CreateAddonRequest";
 import { CreateEventRequest } from "./CreateEventRequest";
 import { UpdateEventRequest } from "./UpdateEventRequest";
+import { Result, fail, empty } from "../Result";
 
 type AllEventsResponse = {
   id: number;
@@ -231,9 +232,9 @@ export class EventController {
     await this.eventRepository.destroy(id);
   }
 
-  async createAddon(request: CreateAddonRequest): Promise<void> {
+  async createAddon(request: CreateAddonRequest): Promise<Result<void>> {
     const event = await this.eventRepository.find(request.eventId);
-    if (event == null) throw new Error(`No event found with id ${request.eventId}`);
+    if (event == null) return fail(`No event found with id ${request.eventId}`);
     const product = new UnsavedEventProduct(
       request.name,
       request.price,
@@ -241,6 +242,7 @@ export class EventController {
       request.description
     );
     await this.eventRepository.attachAddon(event, product);
+    return empty();
   }
 
   async deleteAddon(eventId: number, addonId: number): Promise<void> {

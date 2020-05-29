@@ -6,9 +6,13 @@ import { db } from "../db";
 import { EventRepository } from "./EventRepository";
 import { EventController } from "./EventController";
 import { parseUpdateAddonRequest } from "./UpdateAddonRequest";
-import { parseCreateAddonRequest } from "./CreateAddonRequest";
+import {
+  parseCreateAddonRequest,
+  CreateAddonRequest,
+} from "./CreateAddonRequest";
 import { parseCreateEventRequest } from "./CreateEventRequest";
 import { parseUpdateEventRequest } from "./UpdateEventRequest";
+import { createHandler } from "../createHandler";
 
 const router = express.Router();
 
@@ -48,7 +52,9 @@ router.get("/:id", auth.isAuthenticated(), async (req, res, next) => {
 
 router.put("/:id", auth.isAuthenticated(), async (req, res, next) => {
   try {
-    const maybeParams = parseUpdateEventRequest(Object.assign(req.body, { id: req.params.id }))
+    const maybeParams = parseUpdateEventRequest(
+      Object.assign(req.body, { id: req.params.id })
+    );
     if (!maybeParams.success) return res.sendStatus(400);
     await controller.update(maybeParams.value);
     return res.sendStatus(200);
@@ -85,9 +91,9 @@ router.post(
   auth.isAuthenticated(),
   async (req, res, next) => {
     try {
-      const params = Object.assign(req.body, { eventId: req.params.eventId })
-      const result = parseCreateAddonRequest(params)
-      if (!result.success) return res.sendStatus(400)
+      const params = Object.assign(req.body, { eventId: req.params.eventId });
+      const result = parseCreateAddonRequest(params);
+      if (!result.success) return res.sendStatus(400);
       await controller.createAddon(params);
       return res.sendStatus(200);
     } catch (e) {
