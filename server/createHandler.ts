@@ -1,5 +1,5 @@
 import * as express from "express";
-import { ValidationResult } from "./RequestValidation";
+import { ValidationResult, valid } from "./RequestValidation";
 import { Result } from "./Result";
 import logger = require("./config/logger");
 
@@ -43,4 +43,13 @@ export function createHandler<T, U>(
       next(e);
     }
   };
+}
+
+// helper handler for endpoints w/o args
+export function createHandlerNoInput<U>(endpoint: () => Promise<Result<U>>) {
+  return createHandler<void, U>(
+    (req: express.Request) => undefined,
+    (params: any) => valid(undefined),
+    endpoint
+  );
 }

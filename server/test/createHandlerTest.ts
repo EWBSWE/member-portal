@@ -1,5 +1,5 @@
 import { Result, ok, empty, fail } from "../Result";
-import { createHandler } from "../createHandler";
+import { createHandler, createHandlerNoInput } from "../createHandler";
 import * as express from "express";
 import sinon = require("sinon");
 import { assert } from "chai";
@@ -105,5 +105,16 @@ describe("createHandler", function () {
     await handler(dummyRequest, mockRes, dummyNextFun);
 
     assert.isTrue(dummyNextFun.calledOnce);
+  });
+
+  it("calls endpoint w/o params", async function () {
+    const statusStub = sandbox.stub();
+    const mockRes = createResponse(statusStub);
+
+    const handler = createHandlerNoInput(async () => dummyEndpoint());
+
+    await handler(dummyRequest, mockRes, dummyNextFun);
+
+    assert.isTrue(dummyEndpoint.calledOnce);
   });
 });
