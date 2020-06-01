@@ -17,7 +17,7 @@ module.exports = function (app) {
   app.use("/api/members", require("./api/member"));
   app.use("/api/member-types", require("./api/member-type"));
   app.use("/api/events", require("./event/EventRouter").default);
-  app.use("/api/payments", require("./api/payment"));
+  app.use("/api/payments", require("./payment/PaymentRouter").default);
   app.use("/api/products", require("./api/product"));
   app.use("/api/stats", require("./api/stats"));
   app.use("/api/users", require("./user/UserRouter").default);

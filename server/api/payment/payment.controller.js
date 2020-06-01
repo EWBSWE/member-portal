@@ -23,24 +23,6 @@ const { OutgoingMessage2 } = require("../outgoing-message/OutgoingMessage");
 const outgoingMessageRepository = require("../outgoing-message/OutgoingMessageRepository");
 
 /**
- * Get payment
- *
- * @memberOf controller.Payment
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Object} next - Express error function
- */
-function get(req, res, next) {
-  Payment.get(req.params.id)
-    .then((data) => {
-      res.status(200).json(data);
-    })
-    .catch((err) => {
-      next(err);
-    });
-}
-
-/**
  * Confirm event paymenT
  *
  * @memberOf controller.Payment
