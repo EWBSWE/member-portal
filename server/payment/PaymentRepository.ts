@@ -1,20 +1,23 @@
 import { Payment } from "./Payment";
-
-const LegacyPayment = require("../models/payment.model");
+import { IDatabase } from "pg-promise";
+import { SqlProvider } from "../SqlProvider";
+import { PaymentEntity } from "./PaymentEntity";
 
 export class PaymentRepository {
+  private readonly db: IDatabase<{}, any>;
+  private readonly sqlProvider: SqlProvider;
+
+  constructor(db: IDatabase<{}, any>, sqlProvider: SqlProvider) {
+    this.db = db;
+    this.sqlProvider = sqlProvider;
+  }
+
   async find(id: number): Promise<Payment | null> {
-    try {
-      const legacyPayment = await LegacyPayment.get(id);
-      return new Payment(
-        legacyPayment.id,
-        legacyPayment.member_id,
-        legacyPayment.currency_code,
-        legacyPayment.amount,
-        legacyPayment.created_at
-      );
-    } catch (e) {
-      return null;
-    }
+    const result = await this.db.oneOrNone<PaymentEntity>(
+      this.sqlProvider.PaymentById,
+      id
+    );
+    if (result == null) return null;
+    return Payment.fromEntity(result);
   }
 }
