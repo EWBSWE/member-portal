@@ -7,30 +7,6 @@
 </header>
 
 <div class="container">
-    <div ng-show="success" class="row">
-        <div class="col-xs-12">
-            <div class="bg-success">
-                Rapport skickad till {{success}}.
-            </div>
-        </div>
-    </div>
-    <div class="row member-actions">
-        <div class="col-xs-12 col-sm-3 form-group" ng-class="{ 'has-error': !validParams.periodStart && validParams.periodStart != undefined }">
-            <input type="text" class="form-control" name="periodStart" ng-model="report.periodStart">
-            <p class="help-block">Rapport från YYYY-MM-DD 00:00:00</p>
-        </div>
-        <div class="col-xs-12 col-sm-3 form-group" ng-class="{ 'has-error': !validParams.periodEnd && validParams.periodEnd != undefined }">
-            <input type="text" class="form-control" name="periodEnd" ng-model="report.periodEnd">
-            <p class="help-block">Till och med YYYY-MM-DD 23:59:59</p>
-        </div>
-        <div class="col-xs-12 col-sm-3 form-group" ng-class="{ 'has-error': !validParams.recipient && validParams.recipient != undefined }">
-            <input type="text" class="form-control" name="recipient" ng-model="report.recipient" placeholder="Epost">
-            <p class="help-block">Epost-adress att skicka rapporten till.</p>
-        </div>
-        <div class="col-xs-12 col-sm-3 form-group">
-            <button ng-click="generateReport()" class="btn btn-default">Generera rapport</button>
-        </div>
-    </div>
     <div class="row">
         <div class="col-lg-12">
             <dir-pagination-controls></dir-pagination-controls>
