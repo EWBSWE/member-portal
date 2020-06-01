@@ -23,24 +23,6 @@ const { OutgoingMessage2 } = require("../outgoing-message/OutgoingMessage");
 const outgoingMessageRepository = require("../outgoing-message/OutgoingMessageRepository");
 
 /**
- * Get all payments
- *
- * @memberOf controller.Payment
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Object} next - Express error function
- */
-function index(req, res, next) {
-  Payment.index()
-    .then((data) => {
-      res.status(200).json(data);
-    })
-    .catch((err) => {
-      next(err);
-    });
-}
-
-/**
  * Get payment
  *
  * @memberOf controller.Payment
@@ -197,7 +179,6 @@ function stripeCheckoutKey(req, res) {
 }
 
 module.exports = {
-  index,
   get,
   confirmEventPayment,
   stripeCheckoutKey,
