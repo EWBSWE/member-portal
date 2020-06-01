@@ -66,7 +66,7 @@ info@ewb-swe.org
   fromTemplate(email: string, template: EmailTemplate): OutgoingMessage {
     return new OutgoingMessage(
       email,
-      template.sender,
+      this.noReplySender,
       template.subject,
       template.body
     );

@@ -3,4 +3,5 @@ export type EventParticipantEntity = {
   email: string;
   event_id: number;
   member_id: number;
+  comment?: string;
 };

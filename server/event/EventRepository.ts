@@ -10,6 +10,7 @@ import { EventPaymentEntity } from "./EventPaymentEntity";
 import { groupBy, mapBy } from "../util";
 import { ProductTypeEntity, ProductEntity } from "../product/ProductEntity";
 import { UnsavedEventProduct, EventProduct } from "./EventProduct";
+import { EventParticipant } from "./EventParticipant";
 
 export class EventRepository {
   private readonly db: IDatabase<{}, any>;
@@ -256,5 +257,21 @@ export class EventRepository {
         addon.capacity,
       ]);
     });
+  }
+
+  async addParticipant(
+    event: Event,
+    selectedAddons: EventProduct[],
+    participant: EventParticipant
+  ): Promise<void> {
+    const productIds = selectedAddons.map((product) => product.id);
+
+    await this.db.any(this.sqlProvider.EventAddParticipant, [
+      event.id,
+      productIds,
+      participant.email,
+      participant.name,
+      participant.comment,
+    ]);
   }
 }

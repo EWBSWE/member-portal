@@ -7,7 +7,7 @@ import { UpdateAddonRequest } from "./UpdateAddonRequest";
 import { CreateAddonRequest } from "./CreateAddonRequest";
 import { CreateEventRequest } from "./CreateEventRequest";
 import { UpdateEventRequest } from "./UpdateEventRequest";
-import { Result, fail, empty } from "../Result";
+import { Result, fail, empty, ok } from "../Result";
 
 type AllEventsResponse = {
   id: number;
@@ -151,9 +151,9 @@ export class EventController {
     this.eventRepository = eventRepository;
   }
 
-  async all(): Promise<AllEventsResponse> {
+  async all(): Promise<Result<AllEventsResponse>> {
     const events = await this.eventRepository.findAll();
-    return createAllEventsResponse(events);
+    return ok(createAllEventsResponse(events));
   }
 
   async show(id: number): Promise<DetailedEventResponse> {

@@ -218,3 +218,17 @@ CREATE TABLE ewb_user (
     reset_validity TIMESTAMPTZ,
     reset_token TEXT
 )
+
+ALTER TABLE event_participant
+ADD COLUMN email TEXT;
+
+ALTER TABLE event_participant
+ADD COLUMN name TEXT;
+
+ALTER TABLE event_participant
+ADD COLUMN comment TEXT;
+
+UPDATE event_participant
+SET email = member.email
+FROM member
+WHERE event_participant.member_id = member.id;

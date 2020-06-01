@@ -12,7 +12,7 @@ import {
 } from "./CreateAddonRequest";
 import { parseCreateEventRequest } from "./CreateEventRequest";
 import { parseUpdateEventRequest } from "./UpdateEventRequest";
-import { createHandler } from "../createHandler";
+import { createHandler, createHandlerNoInput } from "../createHandler";
 
 const router = express.Router();
 
@@ -30,14 +30,11 @@ router.get("/public", async (req, res, next) => {
   }
 });
 
-router.get("/", auth.isAuthenticated(), async (req, res, next) => {
-  try {
-    const response = await controller.all();
-    return res.status(200).json(response);
-  } catch (e) {
-    next(e);
-  }
-});
+router.get(
+  "/",
+  auth.isAuthenticated(),
+  createHandlerNoInput(controller.all.bind(controller))
+);
 
 router.get("/:id", auth.isAuthenticated(), async (req, res, next) => {
   const id = req.params.id;

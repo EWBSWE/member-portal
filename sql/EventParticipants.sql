@@ -1,3 +1,2 @@
-SELECT event_id, member_id, name, email
+SELECT *
 FROM event_participant
-JOIN member ON member_id = member.id
