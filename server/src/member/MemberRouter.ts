@@ -10,9 +10,11 @@ import { MemberRepository } from "./MemberRepository";
 import { SqlProvider } from "../SqlProvider";
 import { db } from "../db";
 import { createHandlerNoInput } from "../createHandler";
+import { ChapterRepository } from "./ChapterRepository";
 
 const memberRepository = new MemberRepository(db, SqlProvider);
-const controller = new MemberController(memberRepository);
+const chapterRepository = new ChapterRepository(db, SqlProvider);
+const controller = new MemberController(memberRepository, chapterRepository);
 const router = express.Router();
 
 router.get(
@@ -23,7 +25,7 @@ router.get(
 
 router.get(
   "/chapters",
-  new RouteBuilder(legacyController2.getChapters).build()
+  createHandlerNoInput(controller.chapters.bind(controller))
 );
 router.get("/:id", auth.isAuthenticated(), legacyController1.get);
 

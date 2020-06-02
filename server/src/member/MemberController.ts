@@ -1,7 +1,10 @@
 import { Result, ok } from "../Result";
 import { MemberRepository } from "./MemberRepository";
 import { Member } from "./Member";
-import { MemberType } from "./MemberType";
+import { serialize as serializeMemberType } from "./MemberType";
+import { Chapter } from "./Chapter";
+import { serialize as serializeGender } from "./Gender";
+import { ChapterRepository } from "./ChapterRepository";
 
 type AllMembers = {
   id: number;
@@ -27,8 +30,8 @@ function createAllMembersResponse(members: Member[]): AllMembers {
       location: member.location,
       education: member.education,
       profession: member.profession,
-      member_type: "student",
-      gender: null,
+      member_type: serializeMemberType(member.memberType),
+      gender: member.gender ? serializeGender(member.gender) : null,
       year_of_birth: member.yearOfBirth,
       expiration_date: member.expirationDate,
       employer: member.employer,
@@ -37,15 +40,41 @@ function createAllMembersResponse(members: Member[]): AllMembers {
   });
 }
 
+type AllChapters = {
+  id: number;
+  name: string;
+  memberType: string;
+  memberTypeId: number;
+}[];
+
+function createAllChaptersResponse(chapters: Chapter[]): AllChapters {
+  return chapters.map((chapter) => ({
+    id: chapter.id,
+    name: chapter.name,
+    memberType: serializeMemberType(chapter.memberType),
+    memberTypeId: chapter.memberTypeId,
+  }));
+}
+
 export class MemberController {
   private readonly memberRepository: MemberRepository;
+  private readonly chapterRepository: ChapterRepository;
 
-  constructor(memberRepository: MemberRepository) {
+  constructor(
+    memberRepository: MemberRepository,
+    chapterRepository: ChapterRepository
+  ) {
     this.memberRepository = memberRepository;
+    this.chapterRepository = chapterRepository;
   }
 
   async all(): Promise<Result<AllMembers>> {
     const members = await this.memberRepository.all();
     return ok(createAllMembersResponse(members));
+  }
+
+  async chapters(): Promise<Result<AllChapters>> {
+    const chapters = await this.chapterRepository.all();
+    return ok(createAllChaptersResponse(chapters));
   }
 }
