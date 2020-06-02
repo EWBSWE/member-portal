@@ -111,7 +111,6 @@ function authCallback(req, res, next) {
 module.exports = {
   index,
   get,
-  getPayments,
   create,
   destroy,
   authCallback,
