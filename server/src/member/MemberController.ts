@@ -1,11 +1,15 @@
-import { Result, ok, fail } from "../Result";
+import { Result, ok, fail, empty } from "../Result";
 import { MemberRepository } from "./MemberRepository";
-import { Member } from "./Member";
+import { Member, UnsavedMember } from "./Member";
 import { serialize as serializeMemberType } from "./MemberType";
 import { Chapter } from "./Chapter";
-import { serialize as serializeGender } from "./Gender";
+import {
+  serialize as serializeGender,
+  deserialize as deserializeGender,
+} from "./Gender";
 import { ChapterRepository } from "./ChapterRepository";
 import { ShowMemberRequest } from "./ShowMemberRequest";
+import { CreateMemberRequest } from "./CreateMemberRequest";
 
 type AllMembers = {
   id: number;
@@ -115,5 +119,28 @@ export class MemberController {
     const member = await this.memberRepository.find(request.id);
     if (member == null) return fail(`Member with id ${request.id} not found`);
     return ok(createShowMemberResponse(member));
+  }
+
+  async create(request: CreateMemberRequest): Promise<Result<ShowMember>> {
+    const member = await this.memberRepository.findByEmail(request.email);
+    if (member != null)
+      return fail(`Member with email ${request.email} exists`);
+
+    const unsaved = new UnsavedMember(
+      request.email,
+      request.name,
+      request.location,
+      request.education,
+      request.profession,
+      request.memberTypeId,
+      request.gender ? deserializeGender(request.gender) : null,
+      request.yearOfBirth,
+      request.expirationDate,
+      request.chapterId,
+      request.employer
+    );
+
+    const saved = await this.memberRepository.add(unsaved);
+    return ok(createShowMemberResponse(saved));
   }
 }

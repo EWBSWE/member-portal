@@ -74,3 +74,43 @@ export class Member {
     );
   }
 }
+
+export class UnsavedMember {
+  readonly email: string;
+  readonly name: string | null;
+  readonly location: string | null;
+  readonly education: string | null;
+  readonly profession: string | null;
+  readonly memberTypeId: number;
+  readonly gender: Gender | null;
+  readonly yearOfBirth: number | null;
+  readonly expirationDate: Date | null;
+  readonly chapterId: number | null;
+  readonly employer: string | null;
+
+  constructor(
+    email: string,
+    name: string | null,
+    location: string | null,
+    education: string | null,
+    profession: string | null,
+    memberTypeId: number,
+    gender: Gender | null,
+    yearOfBirth: number | null,
+    expirationDate: Date | null,
+    chapterId: number | null,
+    employer: string | null
+  ) {
+    this.email = email;
+    this.name = name;
+    this.location = location;
+    this.education = education;
+    this.profession = profession;
+    this.memberTypeId = memberTypeId;
+    this.gender = gender;
+    this.yearOfBirth = yearOfBirth;
+    this.expirationDate = expirationDate;
+    this.chapterId = chapterId;
+    this.employer = employer;
+  }
+}

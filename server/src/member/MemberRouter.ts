@@ -1,7 +1,6 @@
 import * as express from "express";
 import * as auth from "../auth/auth.service";
 
-const legacyController1 = require("../api/member/member.controller");
 const legacyController2 = require("../api/member/MemberController");
 
 import RouteBuilder = require("../RouteBuilder");
@@ -12,6 +11,7 @@ import { SqlProvider } from "../SqlProvider";
 import { db } from "../db";
 import { createHandlerNoInput, createHandler } from "../createHandler";
 import { ChapterRepository } from "./ChapterRepository";
+import { parseCreateMemberRequest } from "./CreateMemberRequest";
 
 const memberRepository = new MemberRepository(db, SqlProvider);
 const chapterRepository = new ChapterRepository(db, SqlProvider);
@@ -39,9 +39,16 @@ router.get(
   )
 );
 
-router.post("/", auth.isAuthenticated(), legacyController1.create);
+router.post(
+  "/",
+  auth.isAuthenticated(),
+  createHandler(
+    (req: express.Request) => req.body,
+    parseCreateMemberRequest,
+    controller.create.bind(controller)
+  )
+);
 
-//router.post('/bulk', auth.isAuthenticated(), controller.bulkCreate);
 router.post(
   "/bulk",
   auth.isAuthenticated(),
