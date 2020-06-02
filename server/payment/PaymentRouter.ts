@@ -3,13 +3,11 @@ import * as auth from "../auth/auth.service";
 import { SqlProvider } from "../SqlProvider";
 import { db } from "../db";
 import { createHandlerNoInput, createHandler } from "../createHandler";
-import {
-  PaymentController,
-  parseConfirmEventPayment,
-} from "./PaymentController";
+import { PaymentController } from "./PaymentController";
 import { EventRepository } from "../event/EventRepository";
 import { OutgoingMessageRepository } from "../outgoing-message/OutgoingMessageRepository";
 import { OutgoingMessageFactory } from "../outgoing-message/OutgoingMessageFactory";
+import { parseConfirmEventPayment } from "./ConfirmEventPaymentRequest";
 
 const noReply = process.env.NO_REPLY;
 const appUrl = process.env.APP_URL;
