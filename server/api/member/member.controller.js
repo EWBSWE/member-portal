@@ -52,16 +52,6 @@ function get(req, res, next) {
     });
 }
 
-function getPayments(req, res, next) {
-  Payment.findBy({ memberId: req.params.id })
-    .then((payments) => {
-      return res.status(200).json(payments);
-    })
-    .catch((err) => {
-      next(err);
-    });
-}
-
 function create(req, res, next) {
   if (!req.body.email) {
     let badRequest = new Error("Bad request.");

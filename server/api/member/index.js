@@ -1,55 +1,40 @@
-'use strict';
+"use strict";
 
-const express = require('express');
-const controller = require('./member.controller');
-const controller2 = require('./MemberController');
-const auth = require('../../auth/auth.service');
-const RouteBuilder = require('../../RouteBuilder');
+const express = require("express");
+const controller = require("./member.controller");
+const controller2 = require("./MemberController");
+const auth = require("../../auth/auth.service");
+const RouteBuilder = require("../../RouteBuilder");
 
 const router = express.Router();
 
-router.get('/', auth.isAuthenticated(), controller.index);
+router.get("/", auth.isAuthenticated(), controller.index);
 
-router.get(
-  '/chapters',
-  new RouteBuilder(controller2.getChapters)
-    .build()
-);
-router.get('/:id', auth.isAuthenticated(), controller.get);
-router.get('/:id/payments', auth.isAuthenticated(), controller.getPayments);
+router.get("/chapters", new RouteBuilder(controller2.getChapters).build());
+router.get("/:id", auth.isAuthenticated(), controller.get);
 
-router.post('/', auth.isAuthenticated(), controller.create);
+router.post("/", auth.isAuthenticated(), controller.create);
 
 //router.post('/bulk', auth.isAuthenticated(), controller.bulkCreate);
 router.post(
-  '/bulk',
+  "/bulk",
   auth.isAuthenticated(),
-  new RouteBuilder(controller2.bulk)
-    .requiredParams([
-      'members'
-    ])
-    .build()
+  new RouteBuilder(controller2.bulk).requiredParams(["members"]).build()
 );
 
 router.put(
-    '/:id',
-    auth.isAuthenticated(),
-    new RouteBuilder(controller2.update)
-        .build()
+  "/:id",
+  auth.isAuthenticated(),
+  new RouteBuilder(controller2.update).build()
 );
 
-router.delete('/:id', auth.isAuthenticated(), controller.destroy);
+router.delete("/:id", auth.isAuthenticated(), controller.destroy);
 
 router.post(
-  '/membership',
+  "/membership",
   new RouteBuilder(controller2.createMemberFromPurchase)
-    .requiredParams([
-      'productId',
-      'stripeToken'
-    ])
+    .requiredParams(["productId", "stripeToken"])
     .build()
 );
 
-
 module.exports = router;
-
