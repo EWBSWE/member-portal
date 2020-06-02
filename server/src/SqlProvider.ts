@@ -47,6 +47,8 @@ export type SqlProvider = {
   ProductUpdate: QueryFile;
   EventAddParticipant: QueryFile;
   PaymentById: QueryFile;
+
+  Members: QueryFile;
 };
 
 export const SqlProvider: SqlProvider = {
@@ -97,4 +99,6 @@ export const SqlProvider: SqlProvider = {
   ProductUpdate: inflate("../../sql/ProductUpdate.sql"),
   EventAddParticipant: inflate("../../sql/EventAddParticipant.sql"),
   PaymentById: inflate("../../sql/PaymentById.sql"),
+
+  Members: inflate("../../sql/Members.sql"),
 };
