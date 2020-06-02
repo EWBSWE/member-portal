@@ -54,8 +54,6 @@ router.put(
   new RouteBuilder(legacyController2.update).build()
 );
 
-router.delete("/:id", auth.isAuthenticated(), legacyController1.destroy);
-
 router.post(
   "/membership",
   new RouteBuilder(legacyController2.createMemberFromPurchase)
