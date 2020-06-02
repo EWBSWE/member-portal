@@ -6,10 +6,11 @@ const legacyController2 = require("../api/member/MemberController");
 
 import RouteBuilder = require("../RouteBuilder");
 import { MemberController } from "./MemberController";
+import { parseShowMemberParams } from "./ShowMemberRequest";
 import { MemberRepository } from "./MemberRepository";
 import { SqlProvider } from "../SqlProvider";
 import { db } from "../db";
-import { createHandlerNoInput } from "../createHandler";
+import { createHandlerNoInput, createHandler } from "../createHandler";
 import { ChapterRepository } from "./ChapterRepository";
 
 const memberRepository = new MemberRepository(db, SqlProvider);
@@ -27,7 +28,16 @@ router.get(
   "/chapters",
   createHandlerNoInput(controller.chapters.bind(controller))
 );
-router.get("/:id", auth.isAuthenticated(), legacyController1.get);
+
+router.get(
+  "/:id",
+  auth.isAuthenticated(),
+  createHandler(
+    (req: express.Request) => ({ id: req.params.id }),
+    parseShowMemberParams,
+    controller.show.bind(controller)
+  )
+);
 
 router.post("/", auth.isAuthenticated(), legacyController1.create);
 

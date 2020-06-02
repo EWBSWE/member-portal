@@ -1,10 +1,11 @@
-import { Result, ok } from "../Result";
+import { Result, ok, fail } from "../Result";
 import { MemberRepository } from "./MemberRepository";
 import { Member } from "./Member";
 import { serialize as serializeMemberType } from "./MemberType";
 import { Chapter } from "./Chapter";
 import { serialize as serializeGender } from "./Gender";
 import { ChapterRepository } from "./ChapterRepository";
+import { ShowMemberRequest } from "./ShowMemberRequest";
 
 type AllMembers = {
   id: number;
@@ -56,6 +57,38 @@ function createAllChaptersResponse(chapters: Chapter[]): AllChapters {
   }));
 }
 
+type ShowMember = {
+  id: number;
+  email: string;
+  name: string | null;
+  location: string | null;
+  education: string | null;
+  profession: string | null;
+  member_type: string;
+  gender: string | null;
+  year_of_birth: number | null;
+  created_at: Date;
+  expiration_date: Date | null;
+  employer: string | null;
+};
+
+function createShowMemberResponse(member: Member): ShowMember {
+  return {
+    id: member.id,
+    email: member.email,
+    name: member.name,
+    location: member.location,
+    education: member.education,
+    profession: member.profession,
+    member_type: serializeMemberType(member.memberType),
+    gender: member.gender ? serializeGender(member.gender) : null,
+    year_of_birth: member.yearOfBirth,
+    expiration_date: member.expirationDate,
+    employer: member.employer,
+    created_at: member.createdAt,
+  };
+}
+
 export class MemberController {
   private readonly memberRepository: MemberRepository;
   private readonly chapterRepository: ChapterRepository;
@@ -76,5 +109,11 @@ export class MemberController {
   async chapters(): Promise<Result<AllChapters>> {
     const chapters = await this.chapterRepository.all();
     return ok(createAllChaptersResponse(chapters));
+  }
+
+  async show(request: ShowMemberRequest): Promise<Result<ShowMember>> {
+    const member = await this.memberRepository.find(request.id);
+    if (member == null) return fail(`Member with id ${request.id} not found`);
+    return ok(createShowMemberResponse(member));
   }
 }

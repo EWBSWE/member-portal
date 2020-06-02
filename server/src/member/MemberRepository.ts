@@ -15,4 +15,13 @@ export class MemberRepository {
     const result = await this.db.many<MemberEntity>(this.sqlProvider.Members);
     return result.map(Member.fromEntity);
   }
+
+  async find(id: number): Promise<Member | null> {
+    const result = await this.db.oneOrNone<MemberEntity>(
+      this.sqlProvider.MemberById,
+      id
+    );
+    if (result == null) return null;
+    return Member.fromEntity(result);
+  }
 }
