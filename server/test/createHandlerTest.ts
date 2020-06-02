@@ -1,9 +1,9 @@
-import { Result, ok, empty, fail } from "../Result";
-import { createHandler, createHandlerNoInput } from "../createHandler";
-import * as express from "express";
-import sinon = require("sinon");
 import { assert } from "chai";
-import { parseParams } from "../RequestValidation";
+import * as express from "express";
+import { createHandler, createHandlerNoInput } from "../src/createHandler";
+import { parseParams } from "../src/RequestValidation";
+import { ok } from "../src/Result";
+import sinon = require("sinon");
 import Joi = require("@hapi/joi");
 
 function createRequest(params: any): express.Request {

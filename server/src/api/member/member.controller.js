@@ -10,7 +10,6 @@
 const crypto = require("crypto");
 
 const Member = require("../../models/member.model");
-const Payment = require("../../models/payment.model");
 const OutgoingMessage = require("../../models/outgoing-message.model");
 const ewbMail = require("../../components/ewb-mail");
 

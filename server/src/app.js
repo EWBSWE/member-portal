@@ -4,7 +4,7 @@ require("source-map-support").install();
 
 const path = require("path");
 
-require("dotenv").config({ path: path.resolve(__dirname, "../env") });
+require("dotenv").config({ path: path.resolve(__dirname, "../../env") });
 
 console.log("NODE_ENV:", process.env.NODE_ENV);
 

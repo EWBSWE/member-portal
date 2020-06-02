@@ -5,7 +5,7 @@ process.env.NODE_ENV = process.env.NODE_ENV || "development";
 const path = require("path");
 const moment = require("moment");
 
-require("dotenv").config({ path: path.resolve(__dirname, "../../env") });
+require("dotenv").config({ path: path.resolve(__dirname, "../../../env") });
 
 const ewbMail = require(path.join(__dirname, "../components/ewb-mail"));
 const log = require(path.join(__dirname, "../config/logger"));

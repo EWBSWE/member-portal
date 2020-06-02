@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import Joi = require("@hapi/joi");
-import { parseParams } from "../RequestValidation";
+import { parseParams } from "../src/RequestValidation";
 
 describe("RequestValidation", function () {
   describe("parseParams", function () {

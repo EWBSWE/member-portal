@@ -107,8 +107,8 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "watch:build": "tsc --build server/tsconfig.json --watch",
-    "start": "node server-dist/app.js",
+    "watch:build": "tsc --build server/src/tsconfig.json --watch",
+    "start": "node server-dist/src/app.js",
     "test": "grunt test",
     "update-webdriver": "node node_modules/grunt-protractor-runner/node_modules/protractor/bin/webdriver-manager update"
   },

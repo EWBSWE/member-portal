@@ -8,10 +8,11 @@
     "preserveConstEnums": true,
     "strict": true,
     "allowJs": true,
-    "outDir": "../server-dist"
+    "outDir": "../../server-dist"
   },
   "include": [
-    "../server/**/*"
+    "../src/**/*",
+    "../test/**/*"
   ],
   "exclude": [
     "node_modules",
