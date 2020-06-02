@@ -46,7 +46,7 @@ If you haven't requested a password reset you can ignore this email.
     const total = products.reduce((sum, product) => sum + product.price, 0);
     const body = `
 Buyer: ${email}
-Seller: Ingenjörer utan gränser
+Seller: Engineers Without Borders Sweden
 Date: ${formattedDate}
 
 ---
@@ -56,7 +56,7 @@ Total: ${total} SEK
 VAT: 0 SEK
 
 Kind regards,
-Ingenjörer utan gränser
+Engineers Without Borders Sweden
 www.ewb-swe.org
 info@ewb-swe.org
 `;
