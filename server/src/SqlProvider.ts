@@ -56,6 +56,9 @@ export type SqlProvider = {
   MemberUpdate: QueryFile;
 
   Chapters: QueryFile;
+
+  MembershipProductById: QueryFile;
+  MemberTypeById: QueryFile;
 };
 
 export const SqlProvider: SqlProvider = {
@@ -115,4 +118,7 @@ export const SqlProvider: SqlProvider = {
   MemberUpdate: inflate("../../sql/MemberUpdate.sql"),
 
   Chapters: inflate("../../sql/Chapters.sql"),
+
+  MembershipProductById: inflate("../../sql/MembershipProductById.sql"),
+  MemberTypeById: inflate("../../sql/MemberTypeById.sql"),
 };

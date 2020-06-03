@@ -9,6 +9,7 @@ import {
   deserialize as deserializeGender,
   serialize as serializeGender,
 } from "./Gender";
+import moment = require("moment");
 
 export class Member {
   readonly id: number;
@@ -56,6 +57,15 @@ export class Member {
     this.expirationDate = expirationDate;
     this.chapterId = chapterId;
     this.employer = employer;
+  }
+
+  extendExpirationDate(days: number) {
+    if (this.expirationDate != null) {
+      const extended = moment(this.expirationDate).add(days, "days").toDate();
+      this.expirationDate = extended;
+    } else {
+      this.expirationDate = moment().add(days, "days").toDate();
+    }
   }
 
   toEntity(): MemberEntity {

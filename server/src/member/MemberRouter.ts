@@ -14,10 +14,29 @@ import { ChapterRepository } from "./ChapterRepository";
 import { parseCreateMemberRequest } from "./CreateMemberRequest";
 import { parseBulkCreateParams } from "./BulkCreateRequest";
 import { parseUpdateMemberParams } from "./UpdateMemberRequest";
+import { parseConfirmMembershipParams } from "./ConfirmMembershipRequest";
+import { ProductRepository } from "../product/ProductRepository";
+import { OutgoingMessageFactory } from "../outgoing-message/OutgoingMessageFactory";
+import { OutgoingMessageRepository } from "../outgoing-message/OutgoingMessageRepository";
 
 const memberRepository = new MemberRepository(db, SqlProvider);
 const chapterRepository = new ChapterRepository(db, SqlProvider);
-const controller = new MemberController(memberRepository, chapterRepository);
+const productRepository = new ProductRepository(db, SqlProvider);
+const noReply = process.env.NO_REPLY;
+const appUrl = process.env.APP_URL;
+const outgoingMessageFactory = new OutgoingMessageFactory(noReply!, appUrl!);
+const outgoingMessageRepository = new OutgoingMessageRepository(
+  db,
+  SqlProvider
+);
+
+const controller = new MemberController(
+  memberRepository,
+  chapterRepository,
+  productRepository,
+  outgoingMessageFactory,
+  outgoingMessageRepository
+);
 const router = express.Router();
 
 router.get(
@@ -73,9 +92,11 @@ router.put(
 
 router.post(
   "/membership",
-  new RouteBuilder(legacyController2.createMemberFromPurchase)
-    .requiredParams(["productId", "stripeToken"])
-    .build()
+  createHandler(
+    (req: express.Request) => req.body,
+    parseConfirmMembershipParams,
+    controller.confirmMembership.bind(controller)
+  )
 );
 
 export default router;

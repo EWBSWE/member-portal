@@ -2,6 +2,7 @@ import { IDatabase } from "pg-promise";
 import { SqlProvider } from "../SqlProvider";
 import { MemberEntity } from "./MemberEntity";
 import { Member, UnsavedMember } from "./Member";
+import { MemberType, deserialize } from "./MemberType";
 
 export class MemberRepository {
   private readonly db: IDatabase<{}, any>;
@@ -93,5 +94,14 @@ export class MemberRepository {
       member.id
     );
     return Member.fromEntity(updated);
+  }
+
+  async findType(id: number): Promise<MemberType | null> {
+    const result = await this.db.oneOrNone<{ member_type: string }>(
+      this.sqlProvider.MemberTypeById,
+      id
+    );
+    if (result == null) return null;
+    return deserialize(result.member_type);
   }
 }

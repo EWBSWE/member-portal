@@ -71,4 +71,30 @@ info@ewb-swe.org
       template.body
     );
   }
+
+  membership(email: string, expirationDate: Date): OutgoingMessage {
+    const subject = "Welcome to Engineers without borders!";
+
+    const formattedExpiration = moment(expirationDate).format("YYYY-MM-DD");
+    // TODO body in plain text should be moved to some simpler data format
+    const body = `
+Hello and thank you for supporting Engineers without borders!
+
+We are happy that you decided to support our work. If you have any questions or thoughts regarding our organization, don't hesitate to get in touch with us.
+
+Keep an eye out for news and updates on www.ewb-swe.org and available positions.
+
+Your membership expires ${formattedExpiration}.
+
+Follow us on Facebook and Twitter!
+http://www.facebook.com/ingenjorerutangranser
+https://twitter.com/EWB_Ingenjorer
+
+Kind regards,
+Engineers without borders
+www.ewb-swe.org
+info@ewb-swe.org
+`;
+    return new OutgoingMessage(email, this.noReplySender, subject, body);
+  }
 }

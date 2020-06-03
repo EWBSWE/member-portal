@@ -16,6 +16,13 @@ import { CreateMemberRequest } from "./CreateMemberRequest";
 import { BulkCreateRequest } from "./BulkCreateRequest";
 import { groupBy, mapBy } from "../util";
 import { UpdateMemberRequest } from "./UpdateMemberRequest";
+import { ConfirmMembershipRequest } from "./ConfirmMembershipRequest";
+import stripe = require("../stripe");
+import { ProductRepository } from "../product/ProductRepository";
+import moment = require("moment");
+import logger = require("../config/logger");
+import { OutgoingMessageRepository } from "../outgoing-message/OutgoingMessageRepository";
+import { OutgoingMessageFactory } from "../outgoing-message/OutgoingMessageFactory";
 
 type AllMembers = {
   id: number;
@@ -104,13 +111,22 @@ function createShowMemberResponse(member: Member): ShowMember {
 export class MemberController {
   private readonly memberRepository: MemberRepository;
   private readonly chapterRepository: ChapterRepository;
+  private readonly productRepository: ProductRepository;
+  private readonly outgoingMessageFactory: OutgoingMessageFactory;
+  private readonly outgoingMessageRepository: OutgoingMessageRepository;
 
   constructor(
     memberRepository: MemberRepository,
-    chapterRepository: ChapterRepository
+    chapterRepository: ChapterRepository,
+    productRepository: ProductRepository,
+    outgoingMessageFactory: OutgoingMessageFactory,
+    outgoingMessageRepository: OutgoingMessageRepository
   ) {
     this.memberRepository = memberRepository;
     this.chapterRepository = chapterRepository;
+    this.productRepository = productRepository;
+    this.outgoingMessageFactory = outgoingMessageFactory;
+    this.outgoingMessageRepository = outgoingMessageRepository;
   }
 
   async all(): Promise<Result<AllMembers>> {
@@ -203,6 +219,91 @@ export class MemberController {
     member.employer = request.employer;
 
     await this.memberRepository.update(member);
+
+    return empty();
+  }
+
+  async confirmMembership(
+    request: ConfirmMembershipRequest
+  ): Promise<Result<void>> {
+    const member = await this.memberRepository.findByEmail(request.email);
+    const membership = await this.productRepository.findMembership(
+      request.productId
+    );
+
+    if (membership == null)
+      return fail(`Membership product with id ${request.productId} not found`);
+
+    const memberType = await this.memberRepository.findType(
+      membership.memberTypeId()
+    );
+
+    if (memberType == null)
+      return fail(`Member type with id ${membership.memberTypeId()} not found`);
+
+    let savedExpirationDate: Date | null = null;
+
+    if (member) {
+      savedExpirationDate = member.expirationDate;
+
+      member.name = request.name;
+      member.location = request.location;
+      member.education = request.education;
+      member.profession = request.profession;
+      member.gender = request.gender ? deserializeGender(request.gender) : null;
+      member.yearOfBirth = request.yearOfBirth;
+      member.chapterId = request.chapterId;
+      member.employer = request.employer;
+      member.extendExpirationDate(membership.durationDays());
+      member.memberType = memberType;
+
+      await this.memberRepository.update(member);
+    } else {
+      const unsaved = new UnsavedMember(
+        request.email,
+        request.name,
+        request.location,
+        request.education,
+        request.profession,
+        membership.memberTypeId(),
+        request.gender ? deserializeGender(request.gender) : null,
+        request.yearOfBirth,
+        moment().add(membership.durationDays(), "days").toDate(),
+        request.chapterId,
+        request.employer
+      );
+      await this.memberRepository.add(unsaved);
+    }
+
+    const savedMember = await this.memberRepository.findByEmail(request.email);
+    // we should always have a member here
+    if (savedMember == null)
+      return fail("Couldn't find member after creating/updating");
+
+    try {
+      await stripe.processCharge2(
+        request.stripeToken,
+        membership.currencyCode,
+        membership.price,
+        membership.name
+      );
+    } catch (e) {
+      logger.error(e);
+      savedMember.expirationDate = savedExpirationDate;
+      await this.memberRepository.update(savedMember);
+      return fail("Stripe failed to process the transaction");
+    }
+
+    const receipt = this.outgoingMessageFactory.receipt(request.email, [
+      membership,
+    ]);
+    await this.outgoingMessageRepository.enqueue(receipt);
+
+    const welcomeMessage = this.outgoingMessageFactory.membership(
+      request.email,
+      savedMember.expirationDate!
+    );
+    await this.outgoingMessageRepository.enqueue(welcomeMessage);
 
     return empty();
   }
