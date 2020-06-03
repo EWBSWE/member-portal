@@ -15,7 +15,6 @@ const logger = require("./config/logger");
 
 module.exports = function (app) {
   app.use("/api/members", require("./member/MemberRouter").default);
-  app.use("/api/member-types", require("./api/member-type"));
   app.use("/api/events", require("./event/EventRouter").default);
   app.use("/api/payments", require("./payment/PaymentRouter").default);
   app.use("/api/products", require("./api/product"));

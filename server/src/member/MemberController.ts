@@ -23,6 +23,7 @@ import moment = require("moment");
 import logger = require("../config/logger");
 import { OutgoingMessageRepository } from "../outgoing-message/OutgoingMessageRepository";
 import { OutgoingMessageFactory } from "../outgoing-message/OutgoingMessageFactory";
+import { MemberTypeEntity } from "./MemberTypeEntity";
 
 type AllMembers = {
   id: number;
@@ -306,6 +307,11 @@ export class MemberController {
     await this.outgoingMessageRepository.enqueue(welcomeMessage);
 
     return empty();
+  }
+
+  async types(): Promise<Result<MemberTypeEntity[]>> {
+    const types = await this.memberRepository.types();
+    return ok(types);
   }
 }
 

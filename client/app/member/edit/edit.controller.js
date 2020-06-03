@@ -19,7 +19,7 @@ angular
       console.log("Fetching member");
       Promise.all([
         $http.get("/api/members/chapters"),
-        $http.get("/api/member-types"),
+        $http.get("/api/members/types"),
         $http.get("/api/members/" + $routeParams.id),
       ])
         .then(function (data) {
@@ -64,7 +64,7 @@ angular
           };
         });
       });
-      $http.get("/api/member-types").success(function (memberTypes) {
+      $http.get("/api/members/types").success(function (memberTypes) {
         $scope.memberTypes = memberTypes;
       });
     }

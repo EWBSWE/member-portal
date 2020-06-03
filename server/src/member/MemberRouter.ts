@@ -50,6 +50,8 @@ router.get(
   createHandlerNoInput(controller.chapters.bind(controller))
 );
 
+router.get("/types", createHandlerNoInput(controller.types.bind(controller)));
+
 router.get(
   "/:id",
   auth.isAuthenticated(),

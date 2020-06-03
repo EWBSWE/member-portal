@@ -3,6 +3,7 @@ import { SqlProvider } from "../SqlProvider";
 import { MemberEntity } from "./MemberEntity";
 import { Member, UnsavedMember } from "./Member";
 import { MemberType, deserialize } from "./MemberType";
+import { MemberTypeEntity } from "./MemberTypeEntity";
 
 export class MemberRepository {
   private readonly db: IDatabase<{}, any>;
@@ -103,5 +104,12 @@ export class MemberRepository {
     );
     if (result == null) return null;
     return deserialize(result.member_type);
+  }
+
+  async types(): Promise<MemberTypeEntity[]> {
+    const result = await this.db.many<MemberTypeEntity>(
+      this.sqlProvider.MemberTypes
+    );
+    return result;
   }
 }

@@ -6,7 +6,7 @@ angular
   .controller("MemberBulkCtrl", function ($scope, $http) {
     var memberTypes = [];
     $http
-      .get("/api/member-types")
+      .get("/api/members/types")
       .success(function (mts) {
         memberTypes = mts;
       })
