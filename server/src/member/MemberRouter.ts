@@ -12,6 +12,7 @@ import { db } from "../db";
 import { createHandlerNoInput, createHandler } from "../createHandler";
 import { ChapterRepository } from "./ChapterRepository";
 import { parseCreateMemberRequest } from "./CreateMemberRequest";
+import { parseBulkCreateParams } from "./BulkCreateRequest";
 
 const memberRepository = new MemberRepository(db, SqlProvider);
 const chapterRepository = new ChapterRepository(db, SqlProvider);
@@ -52,7 +53,11 @@ router.post(
 router.post(
   "/bulk",
   auth.isAuthenticated(),
-  new RouteBuilder(legacyController2.bulk).requiredParams(["members"]).build()
+  createHandler(
+    (req: express.Request) => req.body,
+    parseBulkCreateParams,
+    controller.bulkCreate.bind(controller)
+  )
 );
 
 router.put(

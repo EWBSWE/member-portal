@@ -10,6 +10,8 @@ import {
 import { ChapterRepository } from "./ChapterRepository";
 import { ShowMemberRequest } from "./ShowMemberRequest";
 import { CreateMemberRequest } from "./CreateMemberRequest";
+import { BulkCreateRequest } from "./BulkCreateRequest";
+import { groupBy, mapBy } from "../util";
 
 type AllMembers = {
   id: number;
@@ -143,4 +145,88 @@ export class MemberController {
     const saved = await this.memberRepository.add(unsaved);
     return ok(createShowMemberResponse(saved));
   }
+
+  async bulkCreate(
+    request: BulkCreateRequest
+  ): Promise<Result<BulkCreateResponse>> {
+    const emails = request.members.map((member) => member.email);
+    const existing = await this.memberRepository.findByEmails(emails);
+    const existingMemberByEmail = mapBy(
+      existing,
+      (member: Member) => member.email
+    );
+
+    const unsaved = request.members
+      .filter((member) => !existingMemberByEmail.has(member.email))
+      .map(
+        (member) =>
+          new UnsavedMember(
+            member.email,
+            member.name,
+            member.location,
+            member.education,
+            member.profession,
+            member.memberTypeId,
+            member.gender ? deserializeGender(member.gender) : null,
+            member.yearOfBirth,
+            member.expirationDate,
+            null, // TODO: chapter id not supported by bulk create
+            null // TODO: employer not supported by bulk create
+          )
+      );
+
+    const saved = await this.memberRepository.addAll(unsaved);
+
+    return ok(createBulkCreateResponse(saved, existing));
+  }
+}
+
+type BulkCreateResponse = {
+  existing: {
+    id: number;
+    email: string;
+    name: string | null;
+    location: string | null;
+    education: string | null;
+    profession: string | null;
+    memberType: string;
+    gender: string | null;
+    yearOfBirth: number | null;
+    expirationDate: Date | null;
+  }[];
+  created: {
+    id: number;
+    email: string;
+    name: string | null;
+    location: string | null;
+    education: string | null;
+    profession: string | null;
+    memberType: string;
+    gender: string | null;
+    yearOfBirth: number | null;
+    expirationDate: Date | null;
+  }[];
+};
+
+function createBulkCreateResponse(
+  created: Member[],
+  existing: Member[]
+): BulkCreateResponse {
+  const formatMember = (member: Member) => ({
+    id: member.id,
+    email: member.email,
+    name: member.name,
+    location: member.location,
+    education: member.education,
+    profession: member.profession,
+    memberType: serializeMemberType(member.memberType),
+    gender: member.gender ? serializeGender(member.gender) : null,
+    yearOfBirth: member.yearOfBirth,
+    expirationDate: member.expirationDate,
+  });
+
+  return {
+    created: created.map(formatMember),
+    existing: existing.map(formatMember),
+  };
 }

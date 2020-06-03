@@ -1,22 +1,22 @@
-'use strict';
+"use strict";
 
-const logger = require('../../config/logger');
+const logger = require("../../config/logger");
 
-const stripe = require('../../stripe');
+const stripe = require("../../stripe");
 
-const { Member } = require('./Member');
-const { MembershipProduct } = require('../product/Product');
-const { OutgoingMessage } = require('../outgoing-message/OutgoingMessage');
-const { Payment } = require('../payment/Payment');
+const { Member } = require("./Member");
+const { MembershipProduct } = require("../product/Product");
+const { OutgoingMessage } = require("../outgoing-message/OutgoingMessage");
+const { Payment } = require("../payment/Payment");
 
-const chapterRepository = require('./ChapterRepository');
-const memberRepository = require('./MemberRepository');
-const outgoingMessageRepository = require('../outgoing-message/OutgoingMessageRepository');
-const paymentRepository = require('../payment/PaymentRepository');
-const productRepository = require('../product/ProductRepository');
-const MemberFactory = require('./MemberFactory');
+const chapterRepository = require("./ChapterRepository");
+const memberRepository = require("./MemberRepository");
+const outgoingMessageRepository = require("../outgoing-message/OutgoingMessageRepository");
+const paymentRepository = require("../payment/PaymentRepository");
+const productRepository = require("../product/ProductRepository");
+const MemberFactory = require("./MemberFactory");
 
-const { mapBy, partition } = require('../../util');
+const { mapBy, partition } = require("../../util");
 
 async function createMemberFromPurchase(params) {
   const email = params.email.trim();
@@ -32,7 +32,7 @@ async function createMemberFromPurchase(params) {
 
   let yearOfBirth = null;
   if (Number.parseInt(params.yearOfBirth) > 0) {
-    yearOfBirth = Number(`${params.yearOfBirth}`.substr(0, 4))
+    yearOfBirth = Number(`${params.yearOfBirth}`.substr(0, 4));
   }
 
   logger.info(`Fetching chapter with id ${params.chapterId}`);
@@ -43,7 +43,9 @@ async function createMemberFromPurchase(params) {
   }
 
   logger.info(`Fetching membership product with id ${productId}`);
-  const membershipProduct = await productRepository.getMembershipProduct(productId);
+  const membershipProduct = await productRepository.getMembershipProduct(
+    productId
+  );
   const memberTypeId = membershipProduct.memberTypeId;
   logger.info(`Membership product is member type id ${memberTypeId}`);
 
@@ -54,12 +56,12 @@ async function createMemberFromPurchase(params) {
     membershipProduct.name
   );
 
-  logger.info('Check if member exists');
+  logger.info("Check if member exists");
   const maybeMember = await memberRepository.firstWithEmail(email);
 
   let member = null;
   if (maybeMember) {
-    logger.info('Existing member - old attributes %j', maybeMember);
+    logger.info("Existing member - old attributes %j", maybeMember);
     // Member exists! Update member with all attributes in case they
     // have changed.
     maybeMember.name = name;
@@ -74,7 +76,7 @@ async function createMemberFromPurchase(params) {
 
     maybeMember.extendExpirationDate(membershipProduct.membershipDurationDays);
 
-    logger.info('Existing member - new attributes %j', maybeMember);
+    logger.info("Existing member - new attributes %j", maybeMember);
     member = await memberRepository.update(maybeMember);
   } else {
     // Member doesn't exist! Create a member with provided attributes
@@ -95,11 +97,11 @@ async function createMemberFromPurchase(params) {
 
     newMember.extendExpirationDate(membershipProduct.membershipDurationDays);
 
-    logger.info('New member - new attributes %j', newMember);
+    logger.info("New member - new attributes %j", newMember);
     member = await memberRepository.create(newMember);
   }
 
-  logger.info('Member saved/updated');
+  logger.info("Member saved/updated");
 
   // TODO There should be a better way than to create a Payment like
   // this. Delegate this job to some kind of transaction manager or
@@ -112,21 +114,23 @@ async function createMemberFromPurchase(params) {
     membershipProduct.price,
     null // database creates this attribute for us
   );
-  logger.info('Creating payment %j', payment);
+  logger.info("Creating payment %j", payment);
 
   await paymentRepository.create(payment);
 
-  logger.info('Payment saved');
+  logger.info("Payment saved");
 
-  logger.info('Preparing emails, welcome/receipt');
+  logger.info("Preparing emails, welcome/receipt");
   // send mail and receipt to user
   const welcomeMail = OutgoingMessage.createMembership(member);
-  const receiptMail = OutgoingMessage.createReceipt(member.email, [membershipProduct]);
+  const receiptMail = OutgoingMessage.createReceipt(member.email, [
+    membershipProduct,
+  ]);
 
   // TODO consider doing this with one punch
   await outgoingMessageRepository.create(welcomeMail);
   await outgoingMessageRepository.create(receiptMail);
-  logger.info('Emails queued');
+  logger.info("Emails queued");
 }
 
 async function getChapters() {
@@ -134,26 +138,29 @@ async function getChapters() {
 }
 
 async function bulk(params) {
-  const emails = params.members.map(data => data.email);
+  const emails = params.members.map((data) => data.email);
   const existingMembers = await memberRepository.findByEmails(emails);
 
   // TODO: Check if any existing member is admin and throw error.
 
-  const existingEmails = existingMembers.map(member => member.email);
+  const existingEmails = existingMembers.map((member) => member.email);
 
   // Remove existing members from input
   const maybeNewMembers = params.members
-	.filter(data => !existingEmails.includes(data.email))
-	.map(maybeValidMember => MemberFactory.create(maybeValidMember));
+    .filter((data) => !existingEmails.includes(data.email))
+    .map((maybeValidMember) => MemberFactory.create(maybeValidMember));
 
-  const { left: toCreate, right: invalid } = partition(maybeNewMembers, member => member.isCreatable());
+  const { left: toCreate, right: invalid } = partition(
+    maybeNewMembers,
+    (member) => member.isCreatable()
+  );
 
   if (toCreate.length > 0) {
     await memberRepository.createMany(toCreate);
   }
 
-  const memberParamsByEmail = mapBy(params.members, data => data.email);
-  existingMembers.forEach(member => {
+  const memberParamsByEmail = mapBy(params.members, (data) => data.email);
+  existingMembers.forEach((member) => {
     // The reason for updating member attributes here instead of
     // delegating to a Member function is to not couple the logic too
     // tight at the time of writing. There are also things to consider
@@ -182,7 +189,7 @@ async function bulk(params) {
   return {
     updated: existingMembers,
     created: toCreate,
-    invalid
+    invalid,
   };
 }
 
@@ -190,7 +197,11 @@ async function update(params, urlParams) {
   const memberId = urlParams.id;
   const member = await memberRepository.get(memberId);
 
-  logger.info(`Updating member ${memberId} old attributes %j with %j`, member, params);
+  logger.info(
+    `Updating member ${memberId} old attributes %j with %j`,
+    member,
+    params
+  );
 
   member.name = params.name;
   member.location = params.location;
@@ -208,10 +219,9 @@ async function update(params, urlParams) {
   return member.formatResponse();
 }
 
-
 module.exports = {
   createMemberFromPurchase,
   getChapters,
   bulk,
-  update
+  update,
 };

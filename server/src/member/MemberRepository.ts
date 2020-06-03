@@ -34,8 +34,21 @@ export class MemberRepository {
     return Member.fromEntity(result);
   }
 
+  async findByEmails(emails: string[]): Promise<Member[]> {
+    const result = await this.db.any<MemberEntity>(
+      this.sqlProvider.MemberByEmails,
+      [emails]
+    );
+    return result.map(Member.fromEntity);
+  }
+
   async add(unsaved: UnsavedMember): Promise<Member> {
-    const params = [
+    const result = await this.addAll([unsaved]);
+    return result[0];
+  }
+
+  async addAll(members: UnsavedMember[]): Promise<Member[]> {
+    const createParams = (unsaved: UnsavedMember) => [
       unsaved.email,
       unsaved.location,
       unsaved.name,
@@ -46,10 +59,16 @@ export class MemberRepository {
       unsaved.chapterId,
       unsaved.employer,
     ];
-    const saved = await this.db.one<MemberEntity>(
-      this.sqlProvider.MemberInsert,
-      params
+
+    const saved = await this.db.task((t) =>
+      Promise.all(
+        members.map((unsaved) => {
+          const params = createParams(unsaved);
+          return t.one<MemberEntity>(this.sqlProvider.MemberInsert, params);
+        })
+      )
     );
-    return Member.fromEntity(saved);
+
+    return saved.map(Member.fromEntity);
   }
 }

@@ -8,79 +8,17 @@
 
 <div class="container">
     <form class="member-form">
-        <div class="bg-success" ng-show="validMembers.length > 0 || updatedMembers.length > 0">
-            <div class="new-members" ng-show="validMembers.length > 0">
-                <p>Tillagda medlemmar:</p>
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <td>Id</td>
-                            <td>Name</td>
-                            <td>Epost</td>
-                            <td>Ort</td>
-                            <td>Yrke</td>
-                            <td>Utbildning</td>
-                            <td>Typ</td>
-                            <td>Kön</td>
-                            <td>Födelseår</td>
-                            <td>Member until</td>
-                        </tr>
-                    </thead>
-                    <tbody ng-repeat="member in validMembers">
-                        <tr>
-                            <td>{{member.id}}</td>
-                            <td>{{member.name}}</td>
-                            <td>{{member.email}}</td>
-                            <td>{{member.location}}</td>
-                            <td>{{member.profession}}</td>
-                            <td>{{member.education}}</td>
-                            <td>{{member.memberType}}</td>
-                            <td>{{member.gender}}</td>
-                            <td>{{member.yearOfBirth}}</td>
-                            <td>{{member.expirationDate | amDateFormat: 'YYYY-MM-DD'}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="updated-members" ng-show="updatedMembers.length > 0">
-                <p>Uppdaterade medlemmar:</p>
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <td>Id</td>
-                            <td>Name</td>
-                            <td>Epost</td>
-                            <td>Ort</td>
-                            <td>Yrke</td>
-                            <td>Utbildning</td>
-                            <td>Typ</td>
-                            <td>Kön</td>
-                            <td>Födelseår</td>
-                            <td>Member until</td>
-                        </tr>
-                    </thead>
-                    <tbody ng-repeat="member in updatedMembers">
-                        <tr>
-                            <td>{{member.id}}</td>
-                            <td>{{member.name}}</td>
-                            <td>{{member.email}}</td>
-                            <td>{{member.location}}</td>
-                            <td>{{member.profession}}</td>
-                            <td>{{member.education}}</td>
-                            <td>{{member.memberType}}</td>
-                            <td>{{member.gender}}</td>
-                            <td>{{member.yearOfBirth}}</td>
-                            <td>{{member.expirationDate | amDateFormat: 'YYYY-MM-DD'}}</td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div class="bg-success" ng-show="submittedMembersCount > 0">
+            <div class="new-members" ng-show="submittedMembersCount > 0">
+                <p>Added {{addedMembers.length}} of {{submittedMembersCount}}</p>
             </div>
         </div>
-        <div class="bg-danger" ng-show="invalidMembers.length > 0">
-            <p>Misslyckades med följande medlemmar:</p>
+        <div class="bg-danger" ng-show="existing.length > 0">
+            <p>{{existing.length}} exists:</p>
             <table class="table table-hover">
                 <thead>
                     <tr>
+                        <td>Id</td>
                         <td>Name</td>
                         <td>Epost</td>
                         <td>Ort</td>
@@ -92,8 +30,9 @@
                         <td>Member until</td>
                     </tr>
                 </thead>
-                <tbody ng-repeat="member in invalidMembers">
+                <tbody ng-repeat="member in existing">
                     <tr>
+                        <td>{{member.id}}</td>
                         <td>{{member.name}}</td>
                         <td>{{member.email}}</td>
                         <td>{{member.location}}</td>
