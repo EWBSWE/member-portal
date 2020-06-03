@@ -13,8 +13,6 @@ angular
     $scope.showSuccess = false;
     $scope.editMember = $routeParams.id;
 
-    console.log($routeParams.id);
-
     if ($routeParams.id) {
       console.log("Fetching member");
       Promise.all([
@@ -48,7 +46,7 @@ angular
 
           $scope.member = member;
         })
-        .catch((e) => {
+        .catch(function (e) {
           console.log(e);
         });
     } else {
