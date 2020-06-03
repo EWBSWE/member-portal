@@ -1,5 +1,4 @@
 import { OutgoingMessage } from "./OutgoingMessage";
-import Product = require("../api/product/Product");
 import moment = require("moment");
 import { EmailTemplate } from "../event/EmailTemplate";
 
