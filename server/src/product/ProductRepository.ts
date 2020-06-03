@@ -19,4 +19,11 @@ export class ProductRepository {
     if (entity == null) return null;
     return MembershipProduct.fromEntity(entity);
   }
+
+  async memberships(): Promise<MembershipProduct[]> {
+    const result = await this.db.many<ProductEntity>(
+      this.sqlProvider.MembershipProducts
+    );
+    return result.map(MembershipProduct.fromEntity);
+  }
 }
