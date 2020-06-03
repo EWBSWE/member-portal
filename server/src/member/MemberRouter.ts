@@ -1,9 +1,6 @@
 import * as express from "express";
 import * as auth from "../auth/auth.service";
 
-const legacyController2 = require("../api/member/MemberController");
-
-import RouteBuilder = require("../RouteBuilder");
 import { MemberController } from "./MemberController";
 import { parseShowMemberParams } from "./ShowMemberRequest";
 import { MemberRepository } from "./MemberRepository";
