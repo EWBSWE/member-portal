@@ -13,6 +13,7 @@ import { createHandlerNoInput, createHandler } from "../createHandler";
 import { ChapterRepository } from "./ChapterRepository";
 import { parseCreateMemberRequest } from "./CreateMemberRequest";
 import { parseBulkCreateParams } from "./BulkCreateRequest";
+import { parseUpdateMemberParams } from "./UpdateMemberRequest";
 
 const memberRepository = new MemberRepository(db, SqlProvider);
 const chapterRepository = new ChapterRepository(db, SqlProvider);
@@ -63,7 +64,11 @@ router.post(
 router.put(
   "/:id",
   auth.isAuthenticated(),
-  new RouteBuilder(legacyController2.update).build()
+  createHandler(
+    (req: express.Request) => Object.assign(req.body, { id: req.params.id }),
+    parseUpdateMemberParams,
+    controller.update.bind(controller)
+  )
 );
 
 router.post(

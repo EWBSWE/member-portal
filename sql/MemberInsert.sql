@@ -7,7 +7,8 @@ INSERT INTO member (
     member_type_id,
     expiration_date,
     chapter_id,
-    employer
+    employer,
+    year_of_birth
 )
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 RETURNING id

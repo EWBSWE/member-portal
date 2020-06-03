@@ -35,7 +35,7 @@
 
         <div class="radio">
             <label class="radio-inline" ng-repeat="memberType in memberTypes">
-                <input type="radio" name="type" value="{{memberType.id}}" ng-model="member.memberTypeId" />
+                <input type="radio" name="type" value="{{memberType.member_type}}" ng-model="member.member_type" />
                 {{memberType.member_type}}
             </label>
         </div>
@@ -83,7 +83,7 @@
         <div class="form-group">
             <label>Lokalgrupp</label>
             <select name="inputChapter" ng-model="member.chapterId">
-                <option>None selected</option>
+                <option value="-1">None selected</option>
                 <option ng-repeat="option in availableChapters" ng-selected="option.id == member.chapterId" value="{{option.id}}">{{option.name}}</option>
             </select>
         </div>

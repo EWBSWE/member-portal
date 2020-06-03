@@ -1,7 +1,10 @@
 import { Result, ok, fail, empty } from "../Result";
 import { MemberRepository } from "./MemberRepository";
 import { Member, UnsavedMember } from "./Member";
-import { serialize as serializeMemberType } from "./MemberType";
+import {
+  serialize as serializeMemberType,
+  deserialize as deserializeMemberType,
+} from "./MemberType";
 import { Chapter } from "./Chapter";
 import {
   serialize as serializeGender,
@@ -12,6 +15,7 @@ import { ShowMemberRequest } from "./ShowMemberRequest";
 import { CreateMemberRequest } from "./CreateMemberRequest";
 import { BulkCreateRequest } from "./BulkCreateRequest";
 import { groupBy, mapBy } from "../util";
+import { UpdateMemberRequest } from "./UpdateMemberRequest";
 
 type AllMembers = {
   id: number;
@@ -76,6 +80,7 @@ type ShowMember = {
   created_at: Date;
   expiration_date: Date | null;
   employer: string | null;
+  chapter_id: number | null;
 };
 
 function createShowMemberResponse(member: Member): ShowMember {
@@ -92,6 +97,7 @@ function createShowMemberResponse(member: Member): ShowMember {
     expiration_date: member.expirationDate,
     employer: member.employer,
     created_at: member.createdAt,
+    chapter_id: member.chapterId,
   };
 }
 
@@ -120,6 +126,7 @@ export class MemberController {
   async show(request: ShowMemberRequest): Promise<Result<ShowMember>> {
     const member = await this.memberRepository.find(request.id);
     if (member == null) return fail(`Member with id ${request.id} not found`);
+    console.log(member);
     return ok(createShowMemberResponse(member));
   }
 
@@ -178,6 +185,26 @@ export class MemberController {
     const saved = await this.memberRepository.addAll(unsaved);
 
     return ok(createBulkCreateResponse(saved, existing));
+  }
+
+  async update(request: UpdateMemberRequest): Promise<Result<void>> {
+    const member = await this.memberRepository.find(request.id);
+    if (member == null) return fail(`Member with id ${request.id} not found`);
+
+    member.name = request.name;
+    member.location = request.location;
+    member.education = request.education;
+    member.profession = request.profession;
+    member.memberType = deserializeMemberType(request.memberType);
+    member.gender = request.gender ? deserializeGender(request.gender) : null;
+    member.yearOfBirth = request.yearOfBirth;
+    member.expirationDate = request.expirationDate;
+    member.chapterId = request.chapterId;
+    member.employer = request.employer;
+
+    await this.memberRepository.update(member);
+
+    return empty();
   }
 }
 

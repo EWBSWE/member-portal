@@ -58,6 +58,7 @@ export class MemberRepository {
       unsaved.expirationDate,
       unsaved.chapterId,
       unsaved.employer,
+      unsaved.yearOfBirth,
     ];
 
     const saved = await this.db.task((t) =>
@@ -70,5 +71,27 @@ export class MemberRepository {
     );
 
     return saved.map(Member.fromEntity);
+  }
+
+  async update(member: Member): Promise<Member> {
+    const entity = member.toEntity();
+    const params = [
+      entity.id,
+      entity.name,
+      entity.location,
+      entity.education,
+      entity.profession,
+      entity.member_type,
+      entity.expiration_date,
+      entity.chapter_id,
+      entity.employer,
+      entity.year_of_birth,
+    ];
+    await this.db.any(this.sqlProvider.MemberUpdate, params);
+    const updated = await this.db.one<MemberEntity>(
+      this.sqlProvider.MemberById,
+      member.id
+    );
+    return Member.fromEntity(updated);
   }
 }

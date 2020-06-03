@@ -10,7 +10,8 @@ SELECT
     year_of_birth,
     created_at,
     expiration_date,
-    employer
+    employer,
+    chapter_id
 FROM member
 LEFT JOIN member_type ON (member.member_type_id = member_type.id)
 WHERE member.id = $1
