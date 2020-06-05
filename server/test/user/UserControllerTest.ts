@@ -75,7 +75,7 @@ function stubUserRepository(sandbox: sinon.SinonSandbox, users: User[]): any {
   return stub;
 }
 
-function stubMessageRepository(sandbox: sinon.SinonSandbox): any {
+export function stubMessageRepository(sandbox: sinon.SinonSandbox): any {
   const stub = sandbox.createStubInstance(OutgoingMessageRepository);
   stub.enqueue.resolves();
   return stub;

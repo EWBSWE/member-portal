@@ -16,20 +16,6 @@ export type ConfirmMembershipRequest = {
   chapterId: number | null;
 };
 
-/*
- *chapterId	3
-education	asdasdasd
-email	dan.albin.johansson@gmail.com
-employer	asdasdasdasd
-gender	male
-location	asdasd
-name	Årsmöte 2016
-productId	18
-profession	asdasd
-stripeToken	{…}
-yearOfBirth	1111
- * */
-
 const schema = Joi.object<ConfirmMembershipRequest>({
   email: Joi.string().required(),
   productId: Joi.number().required(),
