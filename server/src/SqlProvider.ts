@@ -62,6 +62,7 @@ export type SqlProvider = {
 
   MemberTypeById: QueryFile;
   MemberTypes: QueryFile;
+  MembersActive: QueryFile;
 };
 
 export const SqlProvider: SqlProvider = {
@@ -127,4 +128,5 @@ export const SqlProvider: SqlProvider = {
 
   MemberTypeById: inflate("../../sql/MemberTypeById.sql"),
   MemberTypes: inflate("../../sql/MemberTypes.sql"),
+  MembersActive: inflate("../../sql/MembersActive.sql"),
 };

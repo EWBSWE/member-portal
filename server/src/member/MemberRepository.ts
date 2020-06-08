@@ -112,4 +112,11 @@ export class MemberRepository {
     );
     return result;
   }
+
+  async findActive(): Promise<Member[]> {
+    const result = await this.db.many<MemberEntity>(
+      this.sqlProvider.MembersActive
+    );
+    return result.map(Member.fromEntity);
+  }
 }
