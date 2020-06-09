@@ -63,6 +63,10 @@ export type SqlProvider = {
   MemberTypeById: QueryFile;
   MemberTypes: QueryFile;
   MembersActive: QueryFile;
+
+  OutgoingMessages: QueryFile;
+  OutgoingMessageUpdate: QueryFile;
+  OutgoingMessageDelete: QueryFile;
 };
 
 export const SqlProvider: SqlProvider = {
@@ -129,4 +133,8 @@ export const SqlProvider: SqlProvider = {
   MemberTypeById: inflate("../../sql/MemberTypeById.sql"),
   MemberTypes: inflate("../../sql/MemberTypes.sql"),
   MembersActive: inflate("../../sql/MembersActive.sql"),
+
+  OutgoingMessages: inflate("../../sql/OutgoingMessages.sql"),
+  OutgoingMessageUpdate: inflate("../../sql/OutgoingMessageUpdate.sql"),
+  OutgoingMessageDelete: inflate("../../sql/OutgoingMessageDelete.sql"),
 };

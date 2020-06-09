@@ -1,4 +1,4 @@
-import { OutgoingMessage } from "./OutgoingMessage";
+import { OutgoingMessage, UnsavedOutgoingMessage } from "./OutgoingMessage";
 import moment = require("moment");
 import { EmailTemplate } from "../event/EmailTemplate";
 
@@ -11,16 +11,16 @@ export class OutgoingMessageFactory {
     this.appUrl = appUrl;
   }
 
-  userCreated(email: string): OutgoingMessage {
+  userCreated(email: string): UnsavedOutgoingMessage {
     const subject = "New user";
     const signInUrl = this.appUrl + "/login";
     const body = `A user has been created.
 
 Go to ${signInUrl} and click 'Forgot your password?' and follow the instructions to create a new password.`;
-    return new OutgoingMessage(email, this.noReplySender, subject, body);
+    return new UnsavedOutgoingMessage(email, this.noReplySender, subject, body);
   }
 
-  resetPassword(email: string, token: string): OutgoingMessage {
+  resetPassword(email: string, token: string): UnsavedOutgoingMessage {
     const subject = "Reset password";
     const resetPasswordUrl = this.appUrl + `/reset-password?token=${token}`;
     const body = `
@@ -30,11 +30,11 @@ The URL is valid for 15 minutes.
 
 If you haven't requested a password reset you can ignore this email.
 `;
-    return new OutgoingMessage(email, this.noReplySender, subject, body);
+    return new UnsavedOutgoingMessage(email, this.noReplySender, subject, body);
   }
 
   // TODO update type when products migrated
-  receipt(email: string, products: any[]): OutgoingMessage {
+  receipt(email: string, products: any[]): UnsavedOutgoingMessage {
     const subject = `Receipt ${products[0].name}`;
     const formattedDate = moment().format("YYYY-MM-DD HH:mm");
     const formattedProductList = products
@@ -59,11 +59,11 @@ Engineers Without Borders Sweden
 www.ewb-swe.org
 info@ewb-swe.org
 `;
-    return new OutgoingMessage(email, this.noReplySender, subject, body);
+    return new UnsavedOutgoingMessage(email, this.noReplySender, subject, body);
   }
 
-  fromTemplate(email: string, template: EmailTemplate): OutgoingMessage {
-    return new OutgoingMessage(
+  fromTemplate(email: string, template: EmailTemplate): UnsavedOutgoingMessage {
+    return new UnsavedOutgoingMessage(
       email,
       this.noReplySender,
       template.subject,
@@ -71,7 +71,7 @@ info@ewb-swe.org
     );
   }
 
-  membership(email: string, expirationDate: Date): OutgoingMessage {
+  membership(email: string, expirationDate: Date): UnsavedOutgoingMessage {
     const subject = "Welcome to Engineers without borders!";
 
     const formattedExpiration = moment(expirationDate).format("YYYY-MM-DD");
@@ -94,6 +94,6 @@ Engineers without borders
 www.ewb-swe.org
 info@ewb-swe.org
 `;
-    return new OutgoingMessage(email, this.noReplySender, subject, body);
+    return new UnsavedOutgoingMessage(email, this.noReplySender, subject, body);
   }
 }
