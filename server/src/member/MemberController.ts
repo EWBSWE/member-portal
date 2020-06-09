@@ -62,16 +62,12 @@ function createAllMembersResponse(members: Member[]): AllMembers {
 type AllChapters = {
   id: number;
   name: string;
-  memberType: string;
-  memberTypeId: number;
 }[];
 
 function createAllChaptersResponse(chapters: Chapter[]): AllChapters {
   return chapters.map((chapter) => ({
     id: chapter.id,
     name: chapter.name,
-    memberType: serializeMemberType(chapter.memberType),
-    memberTypeId: chapter.memberTypeId,
   }));
 }
 

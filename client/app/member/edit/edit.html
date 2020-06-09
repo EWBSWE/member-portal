@@ -83,11 +83,11 @@
         <div class="form-group">
             <label>Lokalgrupp</label>
             <select name="inputChapter" ng-model="member.chapterId">
-                <option value="-1">None selected</option>
+                <option value="">None selected</option>
                 <option ng-repeat="option in availableChapters" ng-selected="option.id == member.chapterId" value="{{option.id}}">{{option.name}}</option>
             </select>
         </div>
-
+        
         <div class="form-group">
             <p>Nedan kan du välja att ge ett exakt slutdatum för medlemmen eller välja en fördefinierad längd</p>
             <label for="inputDate">Medlem till och med</label>

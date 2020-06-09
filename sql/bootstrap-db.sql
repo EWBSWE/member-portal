@@ -232,3 +232,6 @@ UPDATE event_participant
 SET email = member.email
 FROM member
 WHERE event_participant.member_id = member.id;
+
+ALTER TABLE chapter
+DROP COLUMN member_type_id

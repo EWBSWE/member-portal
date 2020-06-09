@@ -14,7 +14,6 @@ angular
     $scope.editMember = $routeParams.id;
 
     if ($routeParams.id) {
-      console.log("Fetching member");
       Promise.all([
         $http.get("/api/members/chapters"),
         $http.get("/api/members/types"),
@@ -25,17 +24,7 @@ angular
           var memberTypes = data[1].data;
           var member = data[2].data;
 
-          var studentLabel = "Student";
-          var workingLabel = "Working";
-          $scope.availableChapters = _.map(chapters, function (chapter) {
-            var label =
-              chapter.memberTypeId === 1 ? studentLabel : workingLabel;
-            return {
-              id: chapter.id,
-              name: chapter.name + " (" + label + ")",
-            };
-          });
-
+          $scope.availableChapters = chapters;
           $scope.memberTypes = memberTypes;
 
           if (member.expiration_date) {
@@ -50,17 +39,8 @@ angular
           console.log(e);
         });
     } else {
-      console.log("Preparing new member");
       $http.get("/api/members/chapters").success(function (chapters) {
-        var studentLabel = "Student";
-        var workingLabel = "Working";
-        $scope.availableChapters = _.map(chapters, function (chapter) {
-          var label = chapter.memberTypeId === 1 ? studentLabel : workingLabel;
-          return {
-            id: chapter.id,
-            name: chapter.name + " (" + label + ")",
-          };
-        });
+        $scope.availableChapters = chapters;
       });
       $http.get("/api/members/types").success(function (memberTypes) {
         $scope.memberTypes = memberTypes;
