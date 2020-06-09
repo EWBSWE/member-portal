@@ -53,6 +53,7 @@ function setupErrorHandler(app: express.Application) {
       res: express.Response,
       next: express.NextFunction
     ) {
+      err.message = req.url + "\n" + err.message;
       logger.error(err);
 
       res.status(500);
@@ -64,6 +65,7 @@ function setupErrorHandler(app: express.Application) {
       res: express.Response,
       next: express.NextFunction
     ) {
+      err.message = req.url + "\n" + err.message;
       logger.error(err);
       next(err);
     });
