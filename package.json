@@ -1,7 +1,6 @@
 {
   "name": "ewb-member",
   "version": "0.0.0",
-  "main": "server/app.js",
   "dependencies": {
     "@hapi/joi": "^17.1.1",
     "async": "~0.9.x",
@@ -108,7 +107,7 @@
   },
   "scripts": {
     "watch:build": "tsc --build server/src/tsconfig.json --watch",
-    "start": "node server-dist/src/app.js",
+    "start": "node server-dist/src/App.js",
     "test": "grunt test",
     "update-webdriver": "node node_modules/grunt-protractor-runner/node_modules/protractor/bin/webdriver-manager update"
   },
