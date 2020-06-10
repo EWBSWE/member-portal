@@ -30,7 +30,7 @@ function setupRoutes(app: express.Application) {
   app.use("/api/products", require("./product/ProductRouter").default);
   app.use("/api/stats", require("./stats/StatsRouter").default);
   app.use("/api/users", require("./user/UserRouter").default);
-  app.use("/auth", require("./auth"));
+  app.use("/auth", require("./auth/AuthRouter").default);
 
   // All undefined asset or api routes should return a 404
   app
