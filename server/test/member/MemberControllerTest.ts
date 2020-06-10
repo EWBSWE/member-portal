@@ -9,7 +9,7 @@ import { ProductRepository } from "../../src/product/ProductRepository";
 import { MembershipProduct } from "../../src/product/Product";
 import { Member, UnsavedMember } from "../../src/member/Member";
 import { MemberType } from "../../src/member/MemberType";
-import stripe = require("../../src/stripe");
+import * as stripe from "../../src/Stripe";
 import { assert } from "chai";
 import moment = require("moment");
 import { assertResultMessage, assertResultEmpty } from "../assertResult";

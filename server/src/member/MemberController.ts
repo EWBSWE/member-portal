@@ -17,7 +17,7 @@ import { BulkCreateRequest } from "./BulkCreateRequest";
 import { groupBy, mapBy } from "../util";
 import { UpdateMemberRequest } from "./UpdateMemberRequest";
 import { ConfirmMembershipRequest } from "./ConfirmMembershipRequest";
-import stripe = require("../stripe");
+import { processCharge2 } from "../Stripe";
 import { ProductRepository } from "../product/ProductRepository";
 import moment = require("moment");
 import logger = require("../config/logger");
@@ -278,7 +278,7 @@ export class MemberController {
       return fail("Couldn't find member after creating/updating");
 
     try {
-      await stripe.processCharge2(
+      await processCharge2(
         request.stripeToken,
         membership.currencyCode,
         membership.price,

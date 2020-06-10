@@ -1,10 +1,10 @@
 import { Result, fail, ok, empty } from "../Result";
-import stripe = require("../stripe");
 import { EventRepository } from "../event/EventRepository";
 import logger = require("../config/logger");
 import { OutgoingMessageFactory } from "../outgoing-message/OutgoingMessageFactory";
 import { OutgoingMessageRepository } from "../outgoing-message/OutgoingMessageRepository";
 import { ConfirmEventPayment } from "./ConfirmEventPaymentRequest";
+import { processCharge2, getCheckoutKey } from "../Stripe";
 
 type CheckoutResponse = {
   key: string;
@@ -27,7 +27,7 @@ export class PaymentController {
   }
 
   async checkoutKey(): Promise<Result<CheckoutResponse>> {
-    const key = stripe.getCheckoutKey();
+    const key = getCheckoutKey();
     if (!key) throw new Error("Missing Stripe checkout key");
     return ok({ key });
   }
@@ -52,12 +52,7 @@ export class PaymentController {
     } else if (request.stripeToken) {
       // only process charge if stripe token is present
       try {
-        await stripe.processCharge2(
-          request.stripeToken,
-          "SEK",
-          sum,
-          event.name
-        );
+        await processCharge2(request.stripeToken, "SEK", sum, event.name);
       } catch (e) {
         logger.info("Payment failed");
         return fail("Stripe rejected");

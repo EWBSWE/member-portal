@@ -1,5 +1,3 @@
-"use strict";
-
 const STRIPE_KEY = process.env.STRIPE_KEY;
 const STRIPE_CHECKOUT_KEY = process.env.STRIPE_CHECKOUT_KEY;
 
@@ -12,11 +10,16 @@ if (!STRIPE_CHECKOUT_KEY) {
 
 const stripe = require("stripe")(STRIPE_KEY);
 
-function getCheckoutKey() {
+export function getCheckoutKey() {
   return STRIPE_CHECKOUT_KEY;
 }
 
-async function processCharge2(stripeToken, currency, amount, description) {
+export async function processCharge2(
+  stripeToken: any,
+  currency: string,
+  amount: number,
+  description: string
+): Promise<any> {
   return new Promise((resolve, reject) => {
     stripe.charges.create(
       {
@@ -25,7 +28,7 @@ async function processCharge2(stripeToken, currency, amount, description) {
         currency,
         description,
       },
-      function (err, charge) {
+      function (err: any, charge: any) {
         if (err) {
           reject(err);
         } else {
@@ -35,8 +38,3 @@ async function processCharge2(stripeToken, currency, amount, description) {
     );
   });
 }
-
-module.exports = {
-  getCheckoutKey,
-  processCharge2,
-};
