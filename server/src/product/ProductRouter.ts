@@ -1,6 +1,6 @@
 import * as express from "express";
 import { createHandlerNoInput } from "../createHandler";
-import { db } from "../db";
+import { db } from "../Db";
 import { ProductRepository } from "../product/ProductRepository";
 import { SqlProvider } from "../SqlProvider";
 import { ProductController } from "./ProductController";

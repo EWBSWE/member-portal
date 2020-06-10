@@ -5,7 +5,7 @@ import { MemberController } from "./MemberController";
 import { parseShowMemberParams } from "./ShowMemberRequest";
 import { MemberRepository } from "./MemberRepository";
 import { SqlProvider } from "../SqlProvider";
-import { db } from "../db";
+import { db } from "../Db";
 import { createHandlerNoInput, createHandler } from "../createHandler";
 import { ChapterRepository } from "./ChapterRepository";
 import { parseCreateMemberRequest } from "./CreateMemberRequest";

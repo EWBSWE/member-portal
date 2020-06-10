@@ -8,7 +8,7 @@ import { UserRepository } from "../user/UserRepository";
 import { PgUserStore } from "../user/PgUserStore";
 import { SqlProvider } from "../SqlProvider";
 import { deserialize } from "../user/Role";
-import { db } from "../db";
+import { db } from "../Db";
 
 const repo = new UserRepository(new PgUserStore(db, SqlProvider));
 

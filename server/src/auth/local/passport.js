@@ -1,6 +1,6 @@
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
-const db = require("../../db").db;
+const db = require("../../Db").db;
 const { authenticate } = require("../../user/PasswordService");
 
 exports.setup = (config) => {

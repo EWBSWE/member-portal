@@ -10,7 +10,7 @@ const mailgun = require("mailgun-js")({
 });
 
 import { SqlProvider } from "../SqlProvider";
-import { db } from "../db";
+import { db } from "../Db";
 import { OutgoingMessageRepository } from "../outgoing-message/OutgoingMessageRepository";
 import logger = require("../config/logger");
 import { OutgoingMessage } from "../outgoing-message/OutgoingMessage";

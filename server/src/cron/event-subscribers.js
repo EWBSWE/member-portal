@@ -9,7 +9,7 @@ require("dotenv").config({ path: path.resolve(__dirname, "../../../env") });
 
 const ewbMail = require(path.join(__dirname, "../components/ewb-mail"));
 const log = require(path.join(__dirname, "../config/logger"));
-const db = require(path.join(__dirname, "../db")).db;
+const db = require(path.join(__dirname, "../Db")).db;
 
 const { EventRepository } = require(path.join(
   __dirname,

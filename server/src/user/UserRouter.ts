@@ -8,7 +8,7 @@ import { SqlProvider } from "../SqlProvider";
 import * as logger from "../config/logger";
 import { OutgoingMessageRepository } from "../outgoing-message/OutgoingMessageRepository";
 import { OutgoingMessageFactory } from "../outgoing-message/OutgoingMessageFactory";
-import { db } from "../db";
+import { db } from "../Db";
 
 const router = express.Router();
 

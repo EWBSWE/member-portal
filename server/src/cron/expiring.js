@@ -12,7 +12,7 @@ require("dotenv").config({
 const config = require(path.join(__dirname, "../config/environment"));
 const ewbMail = require(path.join(__dirname, "../components/ewb-mail"));
 const log = require(path.join(__dirname, "../config/logger"));
-const db = require(path.join(__dirname, "../db")).db;
+const db = require(path.join(__dirname, "../Db")).db;
 
 const subject = "Your membership will soon end";
 const body = `Hello,

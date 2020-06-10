@@ -2,7 +2,7 @@ import * as express from "express";
 import * as auth from "../auth/auth.service";
 import { SqlProvider } from "../SqlProvider";
 import * as logger from "../config/logger";
-import { db } from "../db";
+import { db } from "../Db";
 import { EventRepository } from "./EventRepository";
 import { EventController } from "./EventController";
 import { parseUpdateAddonRequest } from "./UpdateAddonRequest";
