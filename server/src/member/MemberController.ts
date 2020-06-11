@@ -227,6 +227,10 @@ export class MemberController {
     const membership = await this.productRepository.findMembership(
       request.productId
     );
+    let chapter: Chapter | null = null;
+    if (request.chapterId != null) {
+      chapter = await this.chapterRepository.findBy(request.chapterId);
+    }
 
     if (membership == null)
       return fail(`Membership product with id ${request.productId} not found`);
@@ -249,7 +253,7 @@ export class MemberController {
       member.profession = request.profession;
       member.gender = request.gender ? deserializeGender(request.gender) : null;
       member.yearOfBirth = request.yearOfBirth;
-      member.chapterId = request.chapterId;
+      member.chapterId = chapter ? chapter.id : null;
       member.employer = request.employer;
       member.extendExpirationDate(membership.durationDays());
       member.memberType = memberType;
@@ -266,7 +270,7 @@ export class MemberController {
         request.gender ? deserializeGender(request.gender) : null,
         request.yearOfBirth,
         moment().add(membership.durationDays(), "days").toDate(),
-        request.chapterId,
+        chapter ? chapter.id : null,
         request.employer
       );
       await this.memberRepository.add(unsaved);
