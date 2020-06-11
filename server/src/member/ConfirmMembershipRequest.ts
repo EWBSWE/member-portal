@@ -21,12 +21,12 @@ const schema = Joi.object<ConfirmMembershipRequest>({
   productId: Joi.number().required(),
   stripeToken: Joi.object().required(),
 
-  name: Joi.string().optional().allow(null),
-  location: Joi.string().optional().allow(null),
-  profession: Joi.string().optional().allow(null),
-  education: Joi.string().optional().allow(null),
-  gender: Joi.string().optional().allow(null),
-  employer: Joi.string().optional().allow(null),
+  name: Joi.string().optional().allow(null, ""),
+  location: Joi.string().optional().allow(null, ""),
+  profession: Joi.string().optional().allow(null, ""),
+  education: Joi.string().optional().allow(null, ""),
+  gender: Joi.string().optional().allow(null, ""),
+  employer: Joi.string().optional().allow(null, ""),
   yearOfBirth: Joi.number().min(0).max(10000).optional().allow(null),
   chapterId: Joi.number().optional().allow(null),
 });
