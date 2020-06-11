@@ -607,25 +607,5 @@ module.exports = function (grunt) {
 
   grunt.registerTask("default", ["newer:jshint", "test", "build"]);
 
-  grunt.registerTask("seed-database", function () {
-    var done = this.async();
-    var seed = require("./server/db/seed");
-
-    seed
-      .empty()
-      .then(() => {
-        console.log("Empty ok");
-        return seed.populate();
-      })
-      .then(() => {
-        console.log("Seed complete");
-        done();
-      })
-      .catch((err) => {
-        console.error("Error during seed", err);
-        done();
-      });
-  });
-
   grunt.registerTask("coverage", ["env:test", "mocha_istanbul"]);
 };
