@@ -52,7 +52,9 @@ angular
           education: $scope.newMember.education,
           email: $scope.newMember.email,
           gender: $scope.newMember.gender,
-          yearOfBirth: $scope.newMember.yearOfBirth,
+          yearOfBirth: $scope.newMember.yearOfBirth
+            ? +$scope.newMember.yearOfBirth
+            : null,
           chapterId: +$scope.newMember.chapterId,
           employer: $scope.newMember.employer,
         })

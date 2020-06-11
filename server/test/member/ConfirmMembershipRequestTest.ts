@@ -1,5 +1,13 @@
-import { parseConfirmMembershipParams } from "../../src/member/ConfirmMembershipRequest";
+import {
+  parseConfirmMembershipParams,
+  ConfirmMembershipRequest,
+} from "../../src/member/ConfirmMembershipRequest";
 import { assert } from "chai";
+import { assertResultData } from "../assertResult";
+import {
+  assertValidationResult,
+  assertValidationResultError,
+} from "../assertValidationResult";
 
 describe("ConfirmMembershipRequest", function () {
   it("require only necessary params", function () {
@@ -39,10 +47,21 @@ describe("ConfirmMembershipRequest", function () {
       profession: "",
       education: "",
       gender: "",
-      yearOfBirth: null,
+      yearOfBirth: "4",
       chapterId: null,
     };
     const result = parseConfirmMembershipParams(params);
     assert.isTrue(result.success);
+  });
+
+  it("disallow empty string for year of birth", function () {
+    const params = {
+      email: "dummy@email.com",
+      productId: 4,
+      stripeToken: {},
+      yearOfBirth: "",
+    };
+    const result = parseConfirmMembershipParams(params);
+    assertValidationResultError(result, /"yearOfBirth" must be a number/);
   });
 });
