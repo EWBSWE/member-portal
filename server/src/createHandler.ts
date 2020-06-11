@@ -23,7 +23,7 @@ export function createHandler<T, U>(
     const params = parse(extracted);
 
     if (!params.success) {
-      logger.error(params.error.message);
+      logger.error(req.url + "\n" + params.error.message);
       return res.status(400).json({ message: params.error.message });
     }
 
@@ -35,10 +35,11 @@ export function createHandler<T, U>(
       } else if (result.success) {
         res.sendStatus(200);
       } else {
-        logger.error(result.message);
+        logger.error(req.url + "\n" + result.message);
         res.status(400).json({ message: result.message });
       }
     } catch (e) {
+      e.message = req.url + "\n" + e.message;
       logger.error(e);
       next(e);
     }
