@@ -3,12 +3,11 @@
   "version": "0.0.0",
   "dependencies": {
     "@hapi/joi": "^17.1.1",
+    "@types/jsonwebtoken": "^8.5.0",
     "@types/passport": "^1.0.3",
     "@types/passport-local": "^1.0.33",
     "async": "~0.9.x",
-    "bluebird": "^3.4.6",
     "body-parser": "~1.x",
-    "composable-middleware": "~0.3.x",
     "compression": "~1.x",
     "cookie-parser": "~1.x",
     "csv": "~0.4.x",
@@ -16,7 +15,6 @@
     "ejs": "~2.x",
     "errorhandler": "~1.x",
     "express": "~4.x",
-    "express-jwt": "~3.x",
     "express-session": "~1.x",
     "grunt-sass": "^3.1.0",
     "jpegtran": "^1.0.6",
@@ -27,10 +25,7 @@
     "morgan": "^1.9.1",
     "node-sass": "^4.14.1",
     "passport": "~0.2.x",
-    "passport-facebook": "latest",
-    "passport-google-oauth": "latest",
     "passport-local": "~1.x",
-    "passport-twitter": "latest",
     "pg-promise": "^10.5.6",
     "rollbar": "^2.3.9",
     "serve-favicon": "~2.x",
@@ -104,14 +99,10 @@
     "time-grunt": "~0.3.1",
     "typescript": "^3.2.4"
   },
-  "engines": {
-    "node": ">=0.10.0"
-  },
   "scripts": {
     "watch:build": "tsc --build server/src/tsconfig.json --watch",
     "start": "node server-dist/src/App.js",
-    "test": "grunt test",
-    "update-webdriver": "node node_modules/grunt-protractor-runner/node_modules/protractor/bin/webdriver-manager update"
+    "test": "grunt test"
   },
   "private": true
 }
