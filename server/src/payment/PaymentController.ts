@@ -23,7 +23,6 @@ export class PaymentController {
     this.eventRepository = eventRepository;
     this.outgoingMessageRepository = outgoingMessageRepository;
     this.outgoingMessageFactory = outgoingMessageFactory;
-    console.log("constructor");
   }
 
   async checkoutKey(): Promise<Result<CheckoutResponse>> {

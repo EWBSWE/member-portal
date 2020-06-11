@@ -1,5 +1,4 @@
 import * as express from "express";
-import * as auth from "../auth/auth.service";
 import { UserController } from "./UserController";
 import { PgUserStore } from "./PgUserStore";
 import { UserRepository } from "./UserRepository";
@@ -9,6 +8,7 @@ import * as logger from "../config/logger";
 import { OutgoingMessageRepository } from "../outgoing-message/OutgoingMessageRepository";
 import { OutgoingMessageFactory } from "../outgoing-message/OutgoingMessageFactory";
 import { db } from "../Db";
+import { isAuthenticated } from "../auth/AuthService";
 
 const router = express.Router();
 
@@ -29,19 +29,19 @@ const controller = new UserController(
   messageFactory
 );
 
-router.get("/me", auth.isAuthenticated(), async (req, res, next) => {
+router.get("/me", isAuthenticated(), async (req, res, next) => {
   // todo: Update Request interface
   //@ts-ignore
   const response = await controller.me(req.user.id);
   return res.status(200).json(response);
 });
 
-router.get("/", auth.isAuthenticated(), async (req, res, next) => {
+router.get("/", isAuthenticated(), async (req, res, next) => {
   const response = await controller.allUsers();
   return res.status(200).json(response);
 });
 
-router.post("/", auth.isAuthenticated(), async (req, res, next) => {
+router.post("/", isAuthenticated(), async (req, res, next) => {
   try {
     const response = await controller.createUser(req.body.email);
     return res.status(200).json(response);
@@ -51,7 +51,7 @@ router.post("/", auth.isAuthenticated(), async (req, res, next) => {
   }
 });
 
-router.delete("/:id", auth.isAuthenticated(), async (req, res, next) => {
+router.delete("/:id", isAuthenticated(), async (req, res, next) => {
   try {
     // todo: Update Request interface
     //@ts-ignore
@@ -63,7 +63,7 @@ router.delete("/:id", auth.isAuthenticated(), async (req, res, next) => {
   }
 });
 
-router.put("/:id", auth.isAuthenticated(), async (req, res, next) => {
+router.put("/:id", isAuthenticated(), async (req, res, next) => {
   const currentPassword = req.body.password;
   const newPassword = req.body.newPassword;
   if (!currentPassword || !newPassword) return res.sendStatus(400);

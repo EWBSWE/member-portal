@@ -1,5 +1,4 @@
 import * as express from "express";
-import * as auth from "../auth/auth.service";
 import { SqlProvider } from "../SqlProvider";
 import { db } from "../Db";
 import { createHandlerNoInput, createHandler } from "../createHandler";

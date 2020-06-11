@@ -1,11 +1,11 @@
 import * as express from "express";
 import * as passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import { signToken } from "./auth.service";
 import { db } from "../Db";
 import { SqlProvider } from "../SqlProvider";
 import { authenticate } from "../user/PasswordService";
 import { PgUserEntity } from "../user/PgUserEntity";
+import { signToken } from "./AuthService";
 
 const router = express.Router();
 

@@ -1,5 +1,4 @@
 import * as express from "express";
-import * as auth from "../auth/auth.service";
 import { SqlProvider } from "../SqlProvider";
 import * as logger from "../config/logger";
 import { db } from "../Db";
@@ -13,6 +12,7 @@ import {
 import { parseCreateEventRequest } from "./CreateEventRequest";
 import { parseUpdateEventRequest } from "./UpdateEventRequest";
 import { createHandler, createHandlerNoInput } from "../createHandler";
+import { isAuthenticated } from "../auth/AuthService";
 
 const router = express.Router();
 
@@ -32,11 +32,11 @@ router.get("/public", async (req, res, next) => {
 
 router.get(
   "/",
-  auth.isAuthenticated(),
+  isAuthenticated(),
   createHandlerNoInput(controller.all.bind(controller))
 );
 
-router.get("/:id", auth.isAuthenticated(), async (req, res, next) => {
+router.get("/:id", isAuthenticated(), async (req, res, next) => {
   const id = req.params.id;
   try {
     const response = await controller.show(+id);
@@ -47,7 +47,7 @@ router.get("/:id", auth.isAuthenticated(), async (req, res, next) => {
   }
 });
 
-router.put("/:id", auth.isAuthenticated(), async (req, res, next) => {
+router.put("/:id", isAuthenticated(), async (req, res, next) => {
   try {
     const maybeParams = parseUpdateEventRequest(
       Object.assign(req.body, { id: req.params.id })
@@ -61,7 +61,7 @@ router.put("/:id", auth.isAuthenticated(), async (req, res, next) => {
   }
 });
 
-router.post("/", auth.isAuthenticated(), async (req, res, next) => {
+router.post("/", isAuthenticated(), async (req, res, next) => {
   try {
     const maybeParams = parseCreateEventRequest(req.body);
     if (!maybeParams.success) return res.sendStatus(400);
@@ -73,7 +73,7 @@ router.post("/", auth.isAuthenticated(), async (req, res, next) => {
   }
 });
 
-router.delete("/:id", auth.isAuthenticated(), async (req, res, next) => {
+router.delete("/:id", isAuthenticated(), async (req, res, next) => {
   try {
     await controller.destroy(+req.params.id);
     return res.sendStatus(200);
@@ -83,26 +83,22 @@ router.delete("/:id", auth.isAuthenticated(), async (req, res, next) => {
   }
 });
 
-router.post(
-  "/:eventId/addon",
-  auth.isAuthenticated(),
-  async (req, res, next) => {
-    try {
-      const params = Object.assign(req.body, { eventId: req.params.eventId });
-      const result = parseCreateAddonRequest(params);
-      if (!result.success) return res.sendStatus(400);
-      await controller.createAddon(params);
-      return res.sendStatus(200);
-    } catch (e) {
-      logger.error(e);
-      return res.sendStatus(400);
-    }
+router.post("/:eventId/addon", isAuthenticated(), async (req, res, next) => {
+  try {
+    const params = Object.assign(req.body, { eventId: req.params.eventId });
+    const result = parseCreateAddonRequest(params);
+    if (!result.success) return res.sendStatus(400);
+    await controller.createAddon(params);
+    return res.sendStatus(200);
+  } catch (e) {
+    logger.error(e);
+    return res.sendStatus(400);
   }
-);
+});
 
 router.delete(
   "/:eventId/addon/:addonId",
-  auth.isAuthenticated(),
+  isAuthenticated(),
   async (req, res, next) => {
     try {
       await controller.deleteAddon(+req.params.eventId, +req.params.addonId);
@@ -116,7 +112,7 @@ router.delete(
 
 router.put(
   "/:eventId/addon/:addonId",
-  auth.isAuthenticated(),
+  isAuthenticated(),
   async (req, res, next) => {
     const params = Object.assign(req.body, {
       eventId: req.params.eventId,

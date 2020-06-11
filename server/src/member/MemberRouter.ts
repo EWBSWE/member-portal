@@ -1,5 +1,4 @@
 import * as express from "express";
-import * as auth from "../auth/auth.service";
 
 import { MemberController } from "./MemberController";
 import { parseShowMemberParams } from "./ShowMemberRequest";
@@ -15,6 +14,7 @@ import { parseConfirmMembershipParams } from "./ConfirmMembershipRequest";
 import { ProductRepository } from "../product/ProductRepository";
 import { OutgoingMessageFactory } from "../outgoing-message/OutgoingMessageFactory";
 import { OutgoingMessageRepository } from "../outgoing-message/OutgoingMessageRepository";
+import { isAuthenticated } from "../auth/AuthService";
 
 const memberRepository = new MemberRepository(db, SqlProvider);
 const chapterRepository = new ChapterRepository(db, SqlProvider);
@@ -38,7 +38,7 @@ const router = express.Router();
 
 router.get(
   "/",
-  auth.isAuthenticated(),
+  isAuthenticated(),
   createHandlerNoInput(controller.all.bind(controller))
 );
 
@@ -51,7 +51,7 @@ router.get("/types", createHandlerNoInput(controller.types.bind(controller)));
 
 router.get(
   "/:id",
-  auth.isAuthenticated(),
+  isAuthenticated(),
   createHandler(
     (req: express.Request) => ({ id: req.params.id }),
     parseShowMemberParams,
@@ -61,7 +61,7 @@ router.get(
 
 router.post(
   "/",
-  auth.isAuthenticated(),
+  isAuthenticated(),
   createHandler(
     (req: express.Request) => req.body,
     parseCreateMemberRequest,
@@ -71,7 +71,7 @@ router.post(
 
 router.post(
   "/bulk",
-  auth.isAuthenticated(),
+  isAuthenticated(),
   createHandler(
     (req: express.Request) => req.body,
     parseBulkCreateParams,
@@ -81,7 +81,7 @@ router.post(
 
 router.put(
   "/:id",
-  auth.isAuthenticated(),
+  isAuthenticated(),
   createHandler(
     (req: express.Request) => Object.assign(req.body, { id: req.params.id }),
     parseUpdateMemberParams,
