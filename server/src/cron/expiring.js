@@ -9,8 +9,6 @@ require("dotenv").config({
   path: path.resolve(__dirname, "../../../env"),
 });
 
-const config = require(path.join(__dirname, "../config/environment"));
-const ewbMail = require(path.join(__dirname, "../components/ewb-mail"));
 const log = require(path.join(__dirname, "../config/logger"));
 const db = require(path.join(__dirname, "../Db")).db;
 
@@ -53,7 +51,7 @@ db.any(
     return db.task((tx) => {
       let queries = members.map((member) => {
         let data = {
-          sender: ewbMail.sender(),
+          sender: process.env.EWB_SENDER,
           recipient: process.env.DEV_MAIL,
           subject: subject,
           body: body,

@@ -7,7 +7,6 @@ const moment = require("moment");
 
 require("dotenv").config({ path: path.resolve(__dirname, "../../../env") });
 
-const ewbMail = require(path.join(__dirname, "../components/ewb-mail"));
 const log = require(path.join(__dirname, "../config/logger"));
 const db = require(path.join(__dirname, "../Db")).db;
 
@@ -66,7 +65,7 @@ db.any(
 
       e.subscribers.forEach((s) => {
         mails.push({
-          sender: ewbMail.noreply(),
+          sender: process.env.NO_REPLY,
           recipient: s.email,
           subject: e.name + " - " + moment().format("YYYY-MM-DD"),
           body: eventSummary,
