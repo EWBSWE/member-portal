@@ -23,26 +23,27 @@ const app = express();
 const server = require("http").createServer(app);
 
 function setupRoutes(app: express.Application) {
-  app.use("/api/members", require("./member/MemberRouter").default);
-  app.use("/api/events", require("./event/EventRouter").default);
-  app.use("/api/payments", require("./payment/PaymentRouter").default);
-  app.use("/api/products", require("./product/ProductRouter").default);
-  app.use("/api/stats", require("./stats/StatsRouter").default);
-  app.use("/api/users", require("./user/UserRouter").default);
-  app.use("/auth", require("./auth/AuthRouter").default);
+  //app.use("/api/members", require("./member/MemberRouter").default);
+  //app.use("/api/events", require("./event/EventRouter").default);
+  //app.use("/api/payments", require("./payment/PaymentRouter").default);
+  //app.use("/api/products", require("./product/ProductRouter").default);
+  //app.use("/api/stats", require("./stats/StatsRouter").default);
+  //app.use("/api/users", require("./user/UserRouter").default);
+  //app.use("/auth", require("./auth/AuthRouter").default);
 
   // All undefined asset or api routes should return a 404
-  app
-    .route("/:url(api|auth|components|app|bower_components|assets)/*")
-    .get(function (req: express.Request, res: express.Response) {
-      res.sendStatus(404);
-    });
+  //app
+  //  .route("/:url(api|auth|components|app|bower_components|assets)/*")
+  //  .get(function (req: express.Request, res: express.Response) {
+  //    res.sendStatus(404);
+  //  });
 
   // All other routes should redirect to the index.html
   app.route("/*").get(function (req: express.Request, res: express.Response) {
-    res.sendFile("index.html", {
-      root: path.join(__dirname, "../../" + app.get("appPath")),
-    });
+    //res.sendFile("index.html", {
+    //  root: path.join(__dirname, "../../" + app.get("appPath")),
+    //});
+    res.redirect('https://www.ewb-swe.org/membership-under-maintanance');
   });
 }
 
