@@ -39,7 +39,8 @@ function setupRoutes(app: express.Application) {
   //  });
 
   // All other routes should redirect to the index.html
-  app.route("/*").get(function (req: express.Request, res: express.Response) {
+  //app.route("/*").get(function (req: express.Request, res: express.Response) {
+  app.route("*").get(function (req: express.Request, res: express.Response) {
     //res.sendFile("index.html", {
     //  root: path.join(__dirname, "../../" + app.get("appPath")),
     //});
