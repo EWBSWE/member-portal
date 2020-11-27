@@ -23,7 +23,7 @@ const app = express();
 const server = require("http").createServer(app);
 
 function setupRoutes(app: express.Application) {
-  express.Request.redirect('https://www.ewb-swe.org/membership-under-maintanance'); // Plz remove me
+  app.Response.redirect('https://www.ewb-swe.org/membership-under-maintanance'); // Plz remove me
   //app.use("/api/members", require("./member/MemberRouter").default);
   //app.use("/api/events", require("./event/EventRouter").default);
   //app.use("/api/payments", require("./payment/PaymentRouter").default);
