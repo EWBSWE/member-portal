@@ -23,7 +23,7 @@ const app = express();
 const server = require("http").createServer(app);
 
 function setupRoutes(app: express.Application) {
-  app.Response.redirect('https://www.ewb-swe.org/membership-under-maintanance'); // Plz remove me
+  //app.Response.redirect('https://www.ewb-swe.org/membership-under-maintanance'); // Plz remove me
   //app.use("/api/members", require("./member/MemberRouter").default);
   //app.use("/api/events", require("./event/EventRouter").default);
   //app.use("/api/payments", require("./payment/PaymentRouter").default);
@@ -41,7 +41,7 @@ function setupRoutes(app: express.Application) {
 
   // All other routes should redirect to the index.html
   //app.route("/*").get(function (req: express.Request, res: express.Response) {
-  app.route("*").get(function (req: express.Request, res: express.Response) {
+  app.route("/").get(function (req: express.Request, res: express.Response) {
     //res.sendFile("index.html", {
     //  root: path.join(__dirname, "../../" + app.get("appPath")),
     //});
