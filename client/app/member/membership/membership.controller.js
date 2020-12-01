@@ -7,7 +7,7 @@ angular
     $scope.newMember = {};
 
     // temporary redirect until payment sorted
-    window.location = "https://www.ewb-swe.org/membership-under-maintanance"
+    //window.location = "https://www.ewb-swe.org/membership-under-maintanance"
 
     $http.get("/api/products/membership").success(function (data) {
       $scope.products = data;
