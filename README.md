@@ -10,7 +10,7 @@ This is the repository for the backend and web frontend for the member registrat
 * Copy file `server/src/env.sample` to `./env` and fill in the placeholders
 * Run `npm install`
 * Run `npx bower install`
-* Build frontend with `npm watch:build`
+* Build frontend with `npm run watch:build`
 * Start the backend with `npm start`
 
 # Deploying
