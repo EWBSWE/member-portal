@@ -88,7 +88,7 @@
     "jpegtran-bin": "^4.0.0",
     "jsdoc": "^3.6.4",
     "mocha": "7.1.2",
-    "open": "~0.0.4",
+    "open": "~6.0.0",
     "optipng-bin": "^6.0.0",
     "prettier": "^2.0.5",
     "requirejs": "~2.1.11",
