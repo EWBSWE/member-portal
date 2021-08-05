@@ -6,6 +6,7 @@ import { AppEnv, deserialize } from "./AppEnv";
 
 require("dotenv").config({ path: path.resolve(__dirname, "../../env") });
 
+console.log("PATH: ", path.resolve(__dirname, "../../env"));
 console.log("NODE_ENV:", process.env.NODE_ENV);
 const env = deserialize(process.env.NODE_ENV!);
 
