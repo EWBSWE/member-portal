@@ -61,7 +61,9 @@ export class Member {
 
   extendExpirationDate(days: number) {
     if (this.expirationDate != null) {
-      const extended = moment(this.expirationDate).add(days, "days").toDate();
+      const startFrom =
+        this.expirationDate < new Date() ? new Date() : this.expirationDate;
+      const extended = moment(startFrom).add(days, "days").toDate();
       this.expirationDate = extended;
     } else {
       this.expirationDate = moment().add(days, "days").toDate();
