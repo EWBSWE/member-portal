@@ -6,6 +6,7 @@ jobs:
     working_directory: ~/ewb
     steps:
       - checkout
+      - run: npm --version
       - run: npm install
       - run: npx bower install
       - run: npx tsc --build server/src/tsconfig.json
@@ -22,6 +23,7 @@ jobs:
     working_directory: ~/ewb
     steps:
       - checkout
+      - run: npm --version
       - run: npm install
       - run: npx tsc --build server/src/tsconfig.json
       - run: npx mocha --config server-dist/test/foo.js server-dist/test/**/*.js server-dist/test/*.js
