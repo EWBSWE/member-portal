@@ -72,12 +72,12 @@ info@ewb-swe.org
   }
 
   membership(email: string, expirationDate: Date): UnsavedOutgoingMessage {
-    const subject = "Welcome to Engineers without borders!";
+    const subject = "Welcome to Engineers Without Borders Sweden!";
 
     const formattedExpiration = moment(expirationDate).format("YYYY-MM-DD");
     // TODO body in plain text should be moved to some simpler data format
     const body = `
-Hello and thank you for supporting Engineers without borders!
+Hello and thank you for supporting Engineers Without Borders Sweden!
 
 We are happy that you decided to support our work. If you have any questions or thoughts regarding our organization, don't hesitate to get in touch with us.
 
@@ -85,12 +85,14 @@ Keep an eye out for news and updates on www.ewb-swe.org and available positions.
 
 Your membership expires ${formattedExpiration}.
 
-Follow us on Facebook and Twitter!
+Follow us on Facebook, Instagram and LinkedIn!
 http://www.facebook.com/ingenjorerutangranser
-https://twitter.com/EWB_Ingenjorer
+https://www.instagram.com/ewb_swe
+https://www.linkedin.com/company/engineerswithoutborderssweden
+
 
 Kind regards,
-Engineers without borders
+Engineers Without Borders Sweden
 www.ewb-swe.org
 info@ewb-swe.org
 `;
