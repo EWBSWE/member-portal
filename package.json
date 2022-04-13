@@ -6,7 +6,7 @@
     "@types/jsonwebtoken": "^8.5.0",
     "@types/passport": "^1.0.3",
     "@types/passport-local": "^1.0.33",
-    "async": "~0.9.x",
+    "async": "~3.2.x",
     "body-parser": "~1.x",
     "compression": "~1.x",
     "cookie-parser": "~1.x",
