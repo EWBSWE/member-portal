@@ -21,7 +21,7 @@
     "jsonwebtoken": "~5.x",
     "mailgun-js": "^0.22.0",
     "method-override": "~2.x",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "morgan": "^1.9.1",
     "node-sass": "6.0.1",
     "passport": "~0.2.x",
