@@ -18,7 +18,7 @@
     "express-session": "~1.x",
     "grunt-sass": "^3.1.0",
     "jpegtran": "^1.0.6",
-    "jsonwebtoken": "~5.x",
+    "jsonwebtoken": "~9.x",
     "mailgun-js": "^0.22.0",
     "method-override": "~2.x",
     "moment": "^2.24.0",
